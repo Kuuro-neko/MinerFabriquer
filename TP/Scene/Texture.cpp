@@ -24,9 +24,10 @@ Texture::Texture(char* filename, int bindingIndex) {
 }
 
 void Texture::loadTexture(const char* filename) {
-    data = stbi_load(filename, &width, &height, &nrChannels, 0);
+    data = stbi_load(filename, &width, &height, &nrChannels, STBI_rgb_alpha);
     if (data) {
         std::cout << "Loaded texture " << filename << " with size " << width << "x" << height << std::endl;
+        std::cout << "Nb channels: " << nrChannels << std::endl;
     } else {
         std::cerr << "Failed to load texture " << filename << std::endl;
     }
@@ -35,7 +36,7 @@ void Texture::loadTexture(const char* filename) {
 void Texture::genTexture() {
     glGenTextures(1, &handleIndex);
     glBindTexture(GL_TEXTURE_2D, handleIndex);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

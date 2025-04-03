@@ -87,7 +87,7 @@ private:
     GLuint handleIndex;
     GLuint bindingIndex;
     GLuint textureID;
-    GLuint format = GL_RGBA; // could be GL_RGBA
+    GLuint format = GL_RGBA;
     int width, height, nrChannels = 0;
 };
 
