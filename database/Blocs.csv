@@ -1,0 +1,7 @@
+Id,Name,xTexSide,yTexSide,xTexTop,yTexTop,xTexBottom,yTexBottom
+1,Stone,0,0,0,0,0,0
+2,Dirt,1,0,1,0,1,0
+3,Grass,2,0,3,0,1,0
+4,Oak_Planks,4,0,4,0,4,0
+5,Oak_Log,5,0,6,0,6,0
+6,Oak_Leaves,7,0,7,0,7,0

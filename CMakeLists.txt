@@ -39,6 +39,7 @@ include_directories(
 	external/glfw-3.1.2/include/
 	external/glm-0.9.7.1/
 	external/glew-1.13.0/include/
+	external/csv
 	.
 )
 
@@ -73,7 +74,13 @@ add_executable(TP1
 	common/imageLoader.cpp
 	TP/Camera/Camera.cpp
 	TP/Camera/Camera_Helper.cpp
-	TP/Scene/Scene.cpp
+	TP/Scene/SceneNode.cpp
+	TP/Scene/BlocTypes.cpp
+	TP/Scene/Texture.cpp
+	TP/Scene/MeshObject.cpp
+	TP/Scene/VoxelChunk.cpp
+	utils/GLUtils.cpp
+	utils/Transform.hpp
 	
 	TP1/vertex_shader.glsl
 	TP1/fragment_shader.glsl
@@ -101,6 +108,12 @@ add_custom_command(
    TARGET TP1 POST_BUILD
    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/TP1/"
    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TP1${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_SOURCE_DIR}/TP1/"
+)
+add_custom_command(
+    TARGET TP1 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/database/Blocs.csv
+        ${CMAKE_BINARY_DIR}/database/Blocs.csv
 )
 elseif (${CMAKE_GENERATOR} MATCHES "Xcode" )
 
