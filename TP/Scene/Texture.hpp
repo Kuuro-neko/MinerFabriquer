@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/imageLoader.h>
+#include <stb_image.h>
 #include <GL/glew.h>
 #include <TP/Scene/BlocTypes.hpp>
 
@@ -24,7 +24,7 @@ public:
 
 class Texture{
 public:
-    ppmLoader::ImageRGB image;
+    unsigned char * data = nullptr;
     /**
      * @brief Construct a new Texture object with empty texture image, and assigns it the next free binding index
      * 
@@ -55,6 +55,9 @@ public:
      */
     Texture(char* filename, int bindingIndex);
 
+
+    void loadTexture(const char* filename);
+
     /**
      * @brief Generate texture buffer and set texture parameters
      * 
@@ -84,7 +87,8 @@ private:
     GLuint handleIndex;
     GLuint bindingIndex;
     GLuint textureID;
-    GLuint format = GL_RGB; // could be GL_RGBA
+    GLuint format = GL_RGBA; // could be GL_RGBA
+    int width, height, nrChannels = 0;
 };
 
 /**
@@ -94,7 +98,7 @@ private:
 class TextureAtlas {
 private:
     TextureAtlas() {
-        m_texture = Texture("../textures/texture_atlas.ppm");
+        m_texture = Texture("../textures/texture_atlas.png");
         m_texture.genTexture();
     }
     Texture m_texture;

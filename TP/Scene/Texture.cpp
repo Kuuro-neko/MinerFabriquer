@@ -5,28 +5,37 @@
 // ---- Texture ----
 
 Texture::Texture(char* filename) {
-    ppmLoader::load_ppm(image, filename);
+    loadTexture(filename);
     setNextFreeBindingIndex();
 
     genTexture();
 }
 
 Texture::Texture(const char* filename) {
-    ppmLoader::load_ppm(image, filename);
+    loadTexture(filename);
     setNextFreeBindingIndex();
 
     genTexture();
 }
 
 Texture::Texture(char* filename, int bindingIndex) {
-    ppmLoader::load_ppm(image, filename);
+    loadTexture(filename);
     this->bindingIndex = bindingIndex;
+}
+
+void Texture::loadTexture(const char* filename) {
+    data = stbi_load(filename, &width, &height, &nrChannels, 0);
+    if (data) {
+        std::cout << "Loaded texture " << filename << " with size " << width << "x" << height << std::endl;
+    } else {
+        std::cerr << "Failed to load texture " << filename << std::endl;
+    }
 }
 
 void Texture::genTexture() {
     glGenTextures(1, &handleIndex);
     glBindTexture(GL_TEXTURE_2D, handleIndex);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, image.w, image.h, 0, format, GL_UNSIGNED_BYTE, &image.data[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

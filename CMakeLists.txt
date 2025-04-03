@@ -40,6 +40,7 @@ include_directories(
 	external/glm-0.9.7.1/
 	external/glew-1.13.0/include/
 	external/csv
+	external/stb_image
 	.
 )
 
@@ -84,7 +85,6 @@ add_executable(TP1
 	
 	TP1/vertex_shader.glsl
 	TP1/fragment_shader.glsl
-		external/stb_image/stb_image.h
 )
 target_link_libraries(TP1
 	${ALL_LIBS}
