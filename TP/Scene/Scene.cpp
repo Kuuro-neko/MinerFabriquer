@@ -181,10 +181,6 @@ void SceneNode::draw(GLuint programID) {
         if (m_texture) {
             m_texture->bind(programID);
         }
-
-        if (m_lodManager) {
-            m_mesh = m_lodManager->updateLOD(m_transform.m_translation);
-        }
         
         m_mesh->draw(programID);
     }

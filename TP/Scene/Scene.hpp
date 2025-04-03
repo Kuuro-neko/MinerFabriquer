@@ -278,68 +278,19 @@ public:
     }
 };
 
-class LODManager
-{
-public:
-    std::vector<MeshObject*> m_meshes;
-    std::vector<float> m_distances;
-    glm::vec3 m_cameraPosition;
-    LODManager(glm::vec3 cameraPosition) : m_cameraPosition(cameraPosition) {}
-    ~LODManager() {}
-
-    void addLOD(MeshObject* mesh, float distance) {
-        m_meshes.push_back(mesh);
-        m_distances.push_back(distance);
-
-        // Keeping lists ordered
-        for (int i = 0; i < m_meshes.size(); i++) {
-            for (int j = i+1; j < m_meshes.size(); j++) {
-                if (m_distances[i] > m_distances[j]) {
-                    std::swap(m_meshes[i], m_meshes[j]);
-                    std::swap(m_distances[i], m_distances[j]);
-                }
-            }
-        }
-    }
-
-    void removeLOD(MeshObject* mesh) {
-        for (int i = 0; i < m_meshes.size(); i++) {
-            if (m_meshes[i] == mesh) {
-                m_meshes.erase(m_meshes.begin() + i);
-                m_distances.erase(m_distances.begin() + i);
-                return;
-            }
-        }
-    }
-
-    MeshObject* updateLOD(glm::vec3 target) {
-        float distance = glm::distance(target, m_cameraPosition);
-        for (int i = 0; i < m_meshes.size(); i++) {
-            if (distance < m_distances[i]) {
-                return m_meshes[i];
-            }
-        }
-        return m_meshes[m_meshes.size()-1];
-    }
-
-};
-
 class SceneNode
 {
 public:
     MeshObject* m_mesh;
-    LODManager* m_lodManager;
     Texture* m_texture;
     Transform m_transform;
     
     SceneNode(
         Transform transform = Transform(),
         MeshObject* mesh = nullptr,
-        LODManager* lodManager = nullptr,
         Texture* texture = nullptr) : 
         m_transform(transform),
         m_mesh(mesh),
-        m_lodManager(lodManager),
         m_texture(texture),
         m_parent(nullptr),
         m_children(std::vector<SceneNode*>()) {

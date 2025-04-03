@@ -202,22 +202,6 @@ int main( void )
     create_sphere_textured(64, 64, sphereMesh64);
     sphereMesh64.initializeBuffers();
 
-    MeshObject sphereMesh32 = MeshObject();
-    create_sphere_textured(32, 32, sphereMesh32);
-    sphereMesh32.initializeBuffers();
-
-    MeshObject sphereMesh16 = MeshObject();
-    create_sphere_textured(16, 16, sphereMesh16);
-    sphereMesh16.initializeBuffers();
-
-    MeshObject sphereMesh8 = MeshObject();
-    create_sphere_textured(8, 8, sphereMesh8);
-    sphereMesh8.initializeBuffers();
-
-    MeshObject sphereMesh6 = MeshObject();
-    create_sphere_textured(6, 6, sphereMesh6);
-    sphereMesh6.initializeBuffers();
-
     MeshObject terrainMesh = MeshObject();
     Texture heightMap = Texture("../textures/heightmap-rocky.ppm", DONT_INCREMENT_BINDING);
     create_plan_textured(64, 64, glm::vec3(25, 8, 25), terrainMesh.vertices, terrainMesh.triangles, terrainMesh.uvs, heightMap);
@@ -251,17 +235,6 @@ int main( void )
 
     controllableSphere.m_mesh = &sphereMesh64;
     root.addChild(&controllableSphere);
-
-    LODManager lodManager = LODManager(
-        camera.getPosition()
-    );
-    lodManager.addLOD(&sphereMesh64, 12);
-    lodManager.addLOD(&sphereMesh32, 18);
-    lodManager.addLOD(&sphereMesh16, 25);
-    lodManager.addLOD(&sphereMesh8, 32);
-    lodManager.addLOD(&sphereMesh6, 40);
-    controllableSphere.m_lodManager = &lodManager;
-
     camera.setTarget(controllableSphere.getWorldPosition());
 
     Texture controllableSphereTexture = Texture("../textures/s7.ppm");
