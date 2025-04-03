@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        
+        {
+            "name": "Launch TP1",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/TP1/TP1",
+            "args": [],
+            "cwd": "${workspaceFolder}/TP1/",
+            "preLaunchTask": "Build Project",
+            "stopAtEntry": false,
+            "MIMode": "gdb",
+            "environment": [],
+            "externalConsole": false
+        }
+    ]
+}
