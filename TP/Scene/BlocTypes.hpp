@@ -57,15 +57,7 @@ public:
      * @param side defined macro you can use : BLOC_FRONT, BLOC_BACK, BLOC_LEFT, BLOC_RIGHT, BLOC_TOP, BLOC_BOTTOM
      * @return std::pair<float, float> 
      */
-    std::pair<float, float> getTexCoords(unsigned char side) {
-        if (side == BLOC_TOP) {
-            return std::make_pair(xTexTop, yTexTop);
-        }
-        if (side == BLOC_BOTTOM) {
-            return std::make_pair(xTexBottom, yTexBottom);
-        }
-        return std::make_pair(xTexSide, yTexSide);
-    }
+    std::pair<float, float> getTexCoords(unsigned char side);
 };
 
 /**
@@ -114,13 +106,7 @@ public:
      * @param id The bloc id, you can use macros such as : AIR, STONE, DIRT, GRASS, PLANKS_OAK, ...
      * @return BlockData* 
      */
-    BlockData* getBloc(int id) {
-        auto it = m_blocs.find(id);
-        if (it != m_blocs.end()) {
-            return &it->second;
-        }
-        return nullptr;
-    }
+    BlockData* getBloc(int id);
 
     /**
      * @brief Get the Tex Coords object
@@ -129,11 +115,5 @@ public:
      * @param side defined macro you can use : BLOC_FRONT, BLOC_BACK, BLOC_LEFT, BLOC_RIGHT, BLOC_TOP, BLOC_BOTTOM
      * @return std::pair<float, float> 
      */
-    std::pair<float, float> getTexCoords(int id, unsigned char side) {
-        auto it = m_blocs.find(id);
-        if (it != m_blocs.end()) {
-            return it->second.getTexCoords(side);
-        }
-        return std::make_pair(0.0f, 0.0f);
-    }
+    std::pair<float, float> getTexCoords(int id, unsigned char side);
 };

@@ -4,6 +4,16 @@
 #include <glm/glm.hpp>
 #include <TP/Scene/BlocTypes.hpp>
 
+#define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
+
+/**
+ * @brief Add an offset to the last 4 vertices in the vertices vector
+ * 
+ * @param vertices 
+ * @param x_offset 
+ * @param y_offset 
+ * @param z_offset 
+ */
 void addOffsetToLast4Vertices(std::vector<glm::vec3> &vertices, float x_offset, float y_offset, float z_offset) {
     int vertexInsertIndex = vertices.size() - 4;
     for (int i = 0; i < 4; i++) {
@@ -11,6 +21,12 @@ void addOffsetToLast4Vertices(std::vector<glm::vec3> &vertices, float x_offset, 
     }
 }
 
+/**
+ * @brief Add the quad to the triangles vector
+ * 
+ * @param triangles 
+ * @param vertexInsertIndex 
+ */
 void addQuadToTriangles(std::vector<unsigned short> &triangles, int vertexInsertIndex) {
     triangles.push_back(vertexInsertIndex);
     triangles.push_back(vertexInsertIndex + 1);
@@ -20,11 +36,17 @@ void addQuadToTriangles(std::vector<unsigned short> &triangles, int vertexInsert
     triangles.push_back(vertexInsertIndex + 2);
 }
 
+/**
+ * @brief Add the texture coordinates to the uvs vector
+ * 
+ * @param uvs 
+ * @param texCoords 
+ */
 void addUvs(std::vector<glm::vec2> &uvs, std::pair<float, float> texCoords) {
-    uvs.push_back(glm::vec2(texCoords.first, texCoords.second + TEXTUREATLAS_UNIT));
-    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT, texCoords.second + TEXTUREATLAS_UNIT));
-    uvs.push_back(glm::vec2(texCoords.first, texCoords.second));
-    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT, texCoords.second));
+    uvs.push_back(glm::vec2(texCoords.first + EPSILON, texCoords.second + TEXTUREATLAS_UNIT - EPSILON));
+    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT - EPSILON, texCoords.second + TEXTUREATLAS_UNIT - EPSILON));
+    uvs.push_back(glm::vec2(texCoords.first + EPSILON, texCoords.second + EPSILON));
+    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT - EPSILON, texCoords.second + EPSILON));
 }
 
 void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset, float y_offset, float z_offset, float size) {

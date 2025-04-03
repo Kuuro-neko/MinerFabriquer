@@ -10,6 +10,7 @@
 #include <TP/Scene/Texture.hpp>
 #include <iostream>
 #include <utils/GLUtils.hpp>
+#include <utils/Ray.hpp>
 
 
 
@@ -20,15 +21,6 @@
 #define DEFAULT_TRANSLATION glm::vec3(0.0f)
 #define DEFAULT_ROTATION glm::mat3x3(1.0f)
 #define DEFAULT_SCALE 1.0f
-
-class Ray
-{
-public:
-    glm::vec3 origin;
-    glm::vec3 direction;
-    Ray(glm::vec3 origin, glm::vec3 direction) : origin(origin), direction(direction) {}
-    ~Ray() {}
-};
 
 class Transform
 {
