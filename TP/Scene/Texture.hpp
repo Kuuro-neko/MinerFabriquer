@@ -87,6 +87,10 @@ private:
     GLuint format = GL_RGB; // could be GL_RGBA
 };
 
+/**
+ * @brief TextureAtlas is a singleton class that loads the texture atlas
+ * 
+ */
 class TextureAtlas {
 private:
     TextureAtlas() {
@@ -100,10 +104,20 @@ public:
         return instance;
     }
 
+    /**
+     * @brief Get the Texture object
+     * 
+     * @return Texture* 
+     */
     Texture* getTexture() {
         return &m_texture;
     }
 
+    /**
+     * @brief Bind the texture atlas to the given GLSL program
+     * 
+     * @param programID 
+     */
     void bind(GLuint programID) {
         m_texture.bind(programID);
     }

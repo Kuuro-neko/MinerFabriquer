@@ -47,49 +47,6 @@ float angle = 0.;
 float zoom = 1.;
 /*******************************************************************************/
 
-void create_plan_textured( int n, int m, glm::vec3 scale, std::vector< glm::vec3 > & vertices , std::vector< unsigned short > & indices, std::vector<glm::vec2> &uvs, Texture &heightMap) {
-    vertices.clear();
-    indices.clear();
-    uvs.clear();
-    float x, y, z, u, v;
-    float ymax = -1000;
-    float ymin = 1000;
-    for( int i = 0 ; i < n ; ++i ) {
-        for( int j = 0 ; j < m ; ++j ) {
-            x = float(i)/n-0.5;
-            z = float(j)/m-0.5;
-            u = float(i)/n;
-            v = 1.f - float(j)/m;
-            y = heightMap.image.data[(u * heightMap.image.w) + (v * heightMap.image.h) * heightMap.image.w].r/255.f*0.5;
-            if (z > ymax) {
-                ymax = z;
-            }
-            if (z < ymin) {
-                ymin = z;
-            }
-            glm::vec3 vertex(
-                x * scale.x,
-                y * scale.y,
-                z * scale.z
-            );
-            vertices.push_back(vertex);
-            uvs.push_back(glm::vec2(u, v));
-            
-            if (i < n-1 && j < m-1) {
-                indices.push_back(i*m+j);
-                indices.push_back((i+1)*m+j+1);
-                indices.push_back((i+1)*m+j);
-
-                indices.push_back(i*m+j);
-                indices.push_back(i*m+j+1);
-                indices.push_back((i+1)*m+j+1);
-            }
-        }
-    }
-    glUniform1f(glGetUniformLocation(1, "ymin"), ymin);
-    glUniform1f(glGetUniformLocation(1, "ymax"), ymax);
-}
-
 void create_sphere_textured(int n, int m, MeshObject &mesh) {
     mesh.vertices.clear();
     mesh.triangles.clear();
@@ -198,18 +155,6 @@ int main( void )
 
     /****************************************/
 
-    MeshObject sphereMesh64 = MeshObject();
-    create_sphere_textured(64, 64, sphereMesh64);
-    sphereMesh64.initializeBuffers();
-
-    MeshObject terrainMesh = MeshObject();
-    Texture heightMap = Texture("../textures/heightmap-rocky.ppm", DONT_INCREMENT_BINDING);
-    create_plan_textured(64, 64, glm::vec3(25, 8, 25), terrainMesh.vertices, terrainMesh.triangles, terrainMesh.uvs, heightMap);
-    terrainMesh.initializeBuffers();
-
-    Texture terrainTexture = Texture("../textures/rock.ppm");
-
-
     SceneNode root;
 
     MeshObject chunkMesh = MeshObject();
@@ -235,62 +180,19 @@ int main( void )
     chunk.generateMesh();
     root.addChild(&chunk);
 
-
+    MeshObject sphereMesh64 = MeshObject();
+    create_sphere_textured(64, 64, sphereMesh64);
+    sphereMesh64.initializeBuffers();
     controllableSphere.m_mesh = &sphereMesh64;
     root.addChild(&controllableSphere);
     camera.setTarget(controllableSphere.getWorldPosition());
 
-    Texture controllableSphereTexture = Texture("../textures/s7.ppm");
-    controllableSphere.m_texture = &controllableSphereTexture;
+    controllableSphere.m_texture = TextureAtlas::getInstance().getTexture();
 
-    SceneNode sunRotationCenter(
-        Transform(
-            glm::vec3(0, 0, 0),
-            DEFAULT_ROTATION,
-            1),
-        nullptr);
-    root.addChild(&sunRotationCenter);
-
-    SceneNode moonRotationCenter(
-        Transform(
-            glm::vec3(0, 0, 0),
-            DEFAULT_ROTATION,
-            1),
-        nullptr);
-    root.addChild(&moonRotationCenter);
-
-
-
-    // ---- SUN
-    SceneNode sun(
-        Transform(
-            glm::vec3(0, 800, 0),
-            DEFAULT_ROTATION,
-            12),
-        &sphereMesh64);
-    sunRotationCenter.addChild(&sun);
-    sun.m_mesh = &sphereMesh64;
-
-    Texture sunTexture = Texture("../textures/s2.ppm");
-    sun.m_texture = &sunTexture;
-    
-    // ---- MOON
-    SceneNode moon(
-        Transform(
-            glm::vec3(0, 150, 0),
-            DEFAULT_ROTATION,
-            5),
-        &sphereMesh64);
-    moonRotationCenter.addChild(&moon);
-
-    Texture rockTexture = Texture("../textures/s6.ppm");
-    moon.m_texture = &rockTexture;
 
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-
-
 
     // For speed computation
     double lastTime = glfwGetTime();
@@ -321,13 +223,6 @@ int main( void )
         glUniformMatrix4fv(viewMatrixId, 1, false, &camera.m_viewMatrix[0][0]);
         GLuint projectionMatrixId = glGetUniformLocation(programID, "ProjectionMatrix");
         glUniformMatrix4fv(projectionMatrixId, 1, false, &camera.m_projectionMatrix[0][0]);
-
-
-        sunRotationCenter.rotate(currentFrame*0.1, AXIS_X);
-        moonRotationCenter.rotate(currentFrame*0.5, glm::vec3(cos(-6.68*M_PI/180), sin(-6.68*M_PI/180), cos(-6.68*M_PI/180)));
-
-        sun.rotate(currentFrame*0.001, AXIS_Y);
-        moon.rotate(currentFrame, glm::vec3(cos(-6.68*M_PI/180), sin(-6.68*M_PI/180), cos(-6.68*M_PI/180)));
 
         root.draw(programID);
 
@@ -372,6 +267,10 @@ void processInput(GLFWwindow *window)
         controllableSphere.translate(cameraRightNoUp * 0.1f);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         controllableSphere.translate(cameraRightNoUp * -0.1f);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        controllableSphere.translate(glm::vec3(0.f, -0.1f, 0.f));
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        controllableSphere.translate(glm::vec3(0.f, 0.1f, 0.f));
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

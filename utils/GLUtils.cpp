@@ -21,10 +21,10 @@ void addQuadToTriangles(std::vector<unsigned short> &triangles, int vertexInsert
 }
 
 void addUvs(std::vector<glm::vec2> &uvs, std::pair<float, float> texCoords) {
-    uvs.push_back(glm::vec2(texCoords.first, texCoords.second));
-    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT, texCoords.second));
     uvs.push_back(glm::vec2(texCoords.first, texCoords.second + TEXTUREATLAS_UNIT));
     uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT, texCoords.second + TEXTUREATLAS_UNIT));
+    uvs.push_back(glm::vec2(texCoords.first, texCoords.second));
+    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT, texCoords.second));
 }
 
 void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset, float y_offset, float z_offset, float size) {
