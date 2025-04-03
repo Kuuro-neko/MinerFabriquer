@@ -1,0 +1,1 @@
+/usr/bin/cc -g -rdynamic CMakeFiles/events.dir/events.c.o CMakeFiles/events.dir/__/deps/getopt.c.o -o events  ../src/libglfw3.a -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -lX11 -lXrandr -lXinerama -lXcursor -lGL -ldl
