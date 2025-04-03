@@ -25,7 +25,7 @@ using namespace glm;
 #include <TP/Camera/Camera.hpp>
 #include <TP/Scene/Scene.hpp>
 
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow *window, float dt);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -36,11 +36,6 @@ Camera camera;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
-
-int terrain_resolution = 32;
-float terrain_scale = 1.0;
-float terrain_height = 1.0;
-
 
 //rotation
 float angle = 0.;
@@ -157,6 +152,7 @@ int main( void )
 
     SceneNode root;
 
+    // Our first chunk :D
     MeshObject chunkMesh = MeshObject();
     VoxelChunk chunk = VoxelChunk(16, 16, 16, Transform(
         glm::vec3(0, 0, 0),
@@ -198,7 +194,6 @@ int main( void )
     double lastTime = glfwGetTime();
     int nbFrames = 0;
     do{
-
         // Measure speed
         // per-frame time logic
         // --------------------
@@ -208,7 +203,7 @@ int main( void )
 
         // input
         // -----
-        processInput(window);
+        processInput(window, deltaTime);
         camera.updateTarget(controllableSphere.getWorldPosition());
         camera.update(deltaTime, window);
 
@@ -247,8 +242,10 @@ int main( void )
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, float dt)
 {
+    float speed = 7.5f;
+
     glm::vec3 cameraFrontNoUp = camera.getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
     cameraFrontNoUp = normalize(cameraFrontNoUp);
@@ -260,17 +257,17 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        controllableSphere.translate(cameraFrontNoUp * 0.1f);
+        controllableSphere.translate(cameraFrontNoUp * dt * speed);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        controllableSphere.translate(cameraFrontNoUp * -0.1f);
+        controllableSphere.translate(cameraFrontNoUp * -dt * speed);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        controllableSphere.translate(cameraRightNoUp * 0.1f);
+        controllableSphere.translate(cameraRightNoUp * dt * speed);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        controllableSphere.translate(cameraRightNoUp * -0.1f);
+        controllableSphere.translate(cameraRightNoUp * -dt * speed);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        controllableSphere.translate(glm::vec3(0.f, -0.1f, 0.f));
+        controllableSphere.translate(glm::vec3(0.f, -dt * speed, 0.f));
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        controllableSphere.translate(glm::vec3(0.f, 0.1f, 0.f));
+        controllableSphere.translate(glm::vec3(0.f, dt * speed, 0.f));
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
