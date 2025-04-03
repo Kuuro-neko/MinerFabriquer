@@ -74,10 +74,13 @@ add_executable(TP1
 	common/imageLoader.cpp
 	TP/Camera/Camera.cpp
 	TP/Camera/Camera_Helper.cpp
-	TP/Scene/Scene.cpp
+	TP/Scene/SceneNode.cpp
 	TP/Scene/BlocTypes.cpp
 	TP/Scene/Texture.cpp
+	TP/Scene/MeshObject.cpp
+	TP/Scene/VoxelChunk.cpp
 	utils/GLUtils.cpp
+	utils/Transform.hpp
 	
 	TP1/vertex_shader.glsl
 	TP1/fragment_shader.glsl

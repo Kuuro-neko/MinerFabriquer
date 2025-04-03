@@ -23,7 +23,8 @@ using namespace glm;
 #include <common/vboindexer.hpp>
 #include <common/imageLoader.h>
 #include <TP/Camera/Camera.hpp>
-#include <TP/Scene/Scene.hpp>
+#include <TP/Scene/SceneNode.hpp>
+#include <TP/Scene/VoxelChunk.hpp>
 
 void processInput(GLFWwindow *window, float dt);
 
