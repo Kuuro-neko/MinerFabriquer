@@ -13,11 +13,11 @@
 #define DEFAULT_POSITION glm::vec3(8.4f, 5.6f,  3.05f)
 #define DEFAULT_EULER_ANGLE glm::vec3(0.537289f, -1.93024f, 0.0f)
 
-#define DEFAULT_TRANSLATION_SPEED 1.5f
+#define DEFAULT_TRANSLATION_SPEED 7.5f
 #define DEFAULT_ROTATION_SPEED 0.1f
 #define DEFAULT_DISTANCE_SPEED 5.0f
 
-#define DEFAULT_ATTACHED true
+#define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
 
 class Camera

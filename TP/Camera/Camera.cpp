@@ -165,10 +165,10 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 		if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
 			m_position -= normalize(m_rotation * VEC_RIGHT) * m_translation_speed * _deltaTime;
 		}
-		if (glfwGetKey(_window, GLFW_KEY_Q) == GLFW_PRESS) {
+		if (glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 			m_position -= normalize(m_rotation * VEC_UP) * m_translation_speed * _deltaTime;
 		}
-		if (glfwGetKey(_window, GLFW_KEY_E) == GLFW_PRESS) {
+		if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 			m_position += normalize(m_rotation * VEC_UP) * m_translation_speed * _deltaTime;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
