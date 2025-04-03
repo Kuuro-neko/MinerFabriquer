@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <GL/glew.h>
-
+#include "BlocTypes.hpp"
 #include <iostream>
 
 #include <common/imageLoader.h>
@@ -87,6 +87,13 @@ public:
      */
     Texture(char* filename);
 
+        /**
+     * @brief Construct a new Texture object, and assigns it the next free binding index
+     * 
+     * @param filename image filename
+     */
+    Texture(const char* filename);
+
     /**
      * @brief Construct a new Texture object
      * 
@@ -120,7 +127,7 @@ public:
         this->samplerName = samplerName;
     }
 private:
-    char* samplerName;
+    char* samplerName = "PlanetTextureSampler";
     GLuint handleIndex;
     GLuint bindingIndex;
     GLuint textureID;
@@ -152,7 +159,7 @@ public:
      * @brief Draw the mesh object
      * 
      */
-    void draw();
+    virtual void draw(GLuint programID);
 
     /**
      * @brief Clean the buffers for the mesh object
@@ -161,6 +168,114 @@ public:
     void cleanupBuffers();
 
     glm::vec3 raycast(Ray ray);
+};
+
+struct Faces {
+    unsigned char front : 1;
+    unsigned char back : 1;
+    unsigned char left : 1;
+    unsigned char right : 1;
+    unsigned char top : 1;
+    unsigned char bottom : 1;
+
+    Faces() {
+        front = back = left = right = top = bottom = 0;
+    }
+};
+
+class Voxel : public MeshObject
+{
+public:
+    int m_bloc;
+    Texture m_texture;
+
+    Voxel(int bloc) {
+        m_bloc = bloc;
+        m_texture = Texture(getTexturePath(bloc, BLOC_SIDE).c_str());
+        createCubeGeometry();
+        initializeBuffers();
+    }
+
+    void draw(GLuint programID) override;
+
+    void createCubeGeometry() {
+        vertices.clear();
+        triangles.clear();
+        uvs.clear();
+        // Front face
+        vertices.push_back(glm::vec3(0.f, 0.f, 0.f));
+        vertices.push_back(glm::vec3(1.f, 0.f, 0.f));
+        vertices.push_back(glm::vec3(1.f, 1.f, 0.f));
+        vertices.push_back(glm::vec3(0.f, 1.f, 0.f));
+        triangles.push_back(0);
+        triangles.push_back(1);
+        triangles.push_back(2);
+        triangles.push_back(0);
+        triangles.push_back(2);
+        triangles.push_back(3);
+        // Left face
+        vertices.push_back(glm::vec3(0.f, 0.f, 0.f));
+        vertices.push_back(glm::vec3(0.f, 0.f, 1.f));
+        vertices.push_back(glm::vec3(0.f, 1.f, 1.f));
+        vertices.push_back(glm::vec3(0.f, 1.f, 0.f));
+        triangles.push_back(4);
+        triangles.push_back(5);
+        triangles.push_back(6);
+        triangles.push_back(4);
+        triangles.push_back(6);
+        triangles.push_back(7);
+        // Back face
+        vertices.push_back(glm::vec3(0.f, 0.f, 1.f));
+        vertices.push_back(glm::vec3(1.f, 0.f, 1.f));
+        vertices.push_back(glm::vec3(1.f, 1.f, 1.f));
+        vertices.push_back(glm::vec3(0.f, 1.f, 1.f));
+        triangles.push_back(8);
+        triangles.push_back(9);
+        triangles.push_back(10);
+        triangles.push_back(8);
+        triangles.push_back(10);
+        triangles.push_back(11);
+        // Right face
+        vertices.push_back(glm::vec3(1.f, 0.f, 0.f));
+        vertices.push_back(glm::vec3(1.f, 0.f, 1.f));
+        vertices.push_back(glm::vec3(1.f, 1.f, 1.f));
+        vertices.push_back(glm::vec3(1.f, 1.f, 0.f));
+        triangles.push_back(12);
+        triangles.push_back(13);
+        triangles.push_back(14);
+        triangles.push_back(12);
+        triangles.push_back(14);
+        triangles.push_back(15);
+        // Top face
+        vertices.push_back(glm::vec3(0.f, 1.f, 0.f));
+        vertices.push_back(glm::vec3(1.f, 1.f, 0.f));
+        vertices.push_back(glm::vec3(1.f, 1.f, 1.f));
+        vertices.push_back(glm::vec3(0.f, 1.f, 1.f));
+        triangles.push_back(16);
+        triangles.push_back(17);
+        triangles.push_back(18);
+        triangles.push_back(16);
+        triangles.push_back(18);
+        triangles.push_back(19);
+        // Bottom face
+        vertices.push_back(glm::vec3(0.f, 0.f, 0.f));
+        vertices.push_back(glm::vec3(1.f, 0.f, 0.f));
+        vertices.push_back(glm::vec3(1.f, 0.f, 1.f));
+        vertices.push_back(glm::vec3(0.f, 0.f, 1.f));
+        triangles.push_back(20);
+        triangles.push_back(21);
+        triangles.push_back(22);
+        triangles.push_back(20);
+        triangles.push_back(22);
+        triangles.push_back(23);
+        // UVs
+        for (int i = 0; i < 6; i++) {
+            uvs.push_back(glm::vec2(0.f, 0.f));
+            uvs.push_back(glm::vec2(1.f, 0.f));
+            uvs.push_back(glm::vec2(1.f, 1.f));
+            uvs.push_back(glm::vec2(0.f, 1.f));
+        }
+    }
 };
 
 class LODManager
@@ -303,4 +418,3 @@ private:
     std::vector<SceneNode*> m_children;
     glm::mat4 ModelMatrix;
 };
-

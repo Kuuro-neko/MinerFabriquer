@@ -74,6 +74,7 @@ add_executable(TP1
 	TP/Camera/Camera.cpp
 	TP/Camera/Camera_Helper.cpp
 	TP/Scene/Scene.cpp
+	TP/Scene/BlocTypes.cpp
 	
 	TP1/vertex_shader.glsl
 	TP1/fragment_shader.glsl

@@ -229,6 +229,26 @@ int main( void )
 
     SceneNode root;
 
+    Voxel stoneVoxel = Voxel(STONE);
+    SceneNode voxelStoneTest (
+        Transform(
+            glm::vec3(0, 0, 0),
+            DEFAULT_ROTATION,
+            1),
+        &stoneVoxel);
+    root.addChild(&voxelStoneTest);
+
+    Voxel dirtVoxel = Voxel(DIRT);
+    SceneNode voxelDirtTest (
+        Transform(
+            glm::vec3(1, 0, 0),
+            DEFAULT_ROTATION,
+            1),
+        &dirtVoxel);
+    root.addChild(&voxelDirtTest);
+    
+
+
     controllableSphere.m_mesh = &sphereMesh64;
     root.addChild(&controllableSphere);
 
@@ -400,4 +420,3 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
-

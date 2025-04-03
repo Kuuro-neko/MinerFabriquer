@@ -9,6 +9,13 @@ Texture::Texture(char* filename) {
     genTexture();
 }
 
+Texture::Texture(const char* filename) {
+    ppmLoader::load_ppm(image, filename);
+    setNextFreeBindingIndex();
+
+    genTexture();
+}
+
 Texture::Texture(char* filename, int bindingIndex) {
     ppmLoader::load_ppm(image, filename);
     this->bindingIndex = bindingIndex;
@@ -47,7 +54,7 @@ void MeshObject::initializeBuffers() {
     glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
 }
 
-void MeshObject::draw() {
+void MeshObject::draw(GLuint programID) {
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -116,6 +123,24 @@ glm::vec3 MeshObject::raycast(Ray ray) {
     return glm::vec3(0.0f);
 }
 
+void Voxel::draw(GLuint programID) {
+    m_texture.bind(programID);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+    glDrawElements(GL_TRIANGLES, triangles.size(), GL_UNSIGNED_SHORT, (void*)0);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+}
+
 // ---- SceneNode ----
 
 void SceneNode::addChild(SceneNode* child) {
@@ -161,7 +186,7 @@ void SceneNode::draw(GLuint programID) {
             m_mesh = m_lodManager->updateLOD(m_transform.m_translation);
         }
         
-        m_mesh->draw();
+        m_mesh->draw(programID);
     }
     for (int i = 0; i < m_children.size(); i++) {
         m_children[i]->draw(programID);
