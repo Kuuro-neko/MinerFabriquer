@@ -37,17 +37,23 @@ public:
     float yTexTop = 0.0f;
     float xTexBottom = 0.0f;
     float yTexBottom = 0.0f;
+    float opaque = 1.0f;
 
     BlockData() = default;
 
-    BlockData(int id, std::string name, int xTexSide, int yTexSide, int xTexTop, int yTexTop, int xTexBottom, int yTexBottom)
+    BlockData(int id, std::string name,
+        int xTexSide, int yTexSide,
+        int xTexTop, int yTexTop,
+        int xTexBottom, int yTexBottom,
+        int opaque)
         : id(id), name(name),
             xTexSide(xTexSide * TEXTUREATLAS_UNIT),
             yTexSide(yTexSide * TEXTUREATLAS_UNIT),
             xTexTop(xTexTop * TEXTUREATLAS_UNIT),
             yTexTop(yTexTop * TEXTUREATLAS_UNIT),
             xTexBottom(xTexBottom * TEXTUREATLAS_UNIT),
-            yTexBottom(yTexBottom * TEXTUREATLAS_UNIT) {}
+            yTexBottom(yTexBottom * TEXTUREATLAS_UNIT),
+            opaque(opaque) {}
     
     ~BlockData() {}
 
@@ -70,14 +76,21 @@ private:
 
     BlocDatabase() {
         std::string database = "../database/Blocs.csv";
-        io::CSVReader<8> in(database);
-        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom");
+        io::CSVReader<9> in(database);
+        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque");
         int id;
         std::string name;
         float xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom;
-        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom)) {
-            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << std::endl;
-            BlockData blockData(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom);
+        int opaque;
+        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque)) {
+            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << std::endl;
+            BlockData blockData(
+                id, name,
+                xTexSide, yTexSide,
+                xTexTop, yTexTop,
+                xTexBottom, yTexBottom,
+                opaque
+            );
             m_blocs[id] = blockData;
         }
     }
