@@ -1,10 +1,4 @@
-/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/ninja/linux/x64/ninja DCMAKE_BUILD_TYPE=Debug -G Ninja -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer -B /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer/Devtools
-CMake Warning:
-  Ignoring extra path from command line:
-
-   "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer/Devtools/DCMAKE_BUILD_TYPE=Debug"
-
-
+/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject -B /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools
 CMake Deprecation Warning at CMakeLists.txt:2 (cmake_minimum_required):
   Compatibility with CMake < 3.5 will be removed from a future version of
   CMake.
@@ -13,18 +7,6 @@ CMake Deprecation Warning at CMakeLists.txt:2 (cmake_minimum_required):
   CMake that the project does not need compatibility with older versions.
 
 
--- The C compiler identification is GNU 11.4.0
--- The CXX compiler identification is GNU 11.4.0
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
 CMake Warning (dev) at /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindOpenGL.cmake:415 (message):
   Policy CMP0072 is not set: FindOpenGL prefers GLVND by default when
   available.  Run "cmake --help-policy CMP0072" for policy details.  Use the
@@ -45,7 +27,6 @@ Call Stack (most recent call first):
   CMakeLists.txt:5 (find_package)
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
--- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so
 CMake Deprecation Warning at external/glfw-3.1.2/CMakeLists.txt:3 (cmake_minimum_required):
   Compatibility with CMake < 3.5 will be removed from a future version of
   CMake.
@@ -64,25 +45,9 @@ CMake Deprecation Warning at external/glfw-3.1.2/CMakeLists.txt:8 (cmake_policy)
   behavior and not rely on setting a policy to OLD.
 
 
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
--- Found Threads: TRUE
 -- Using X11 for window creation
 -- Using GLX for context creation
--- Found X11: /usr/include
--- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so
--- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so - found
--- Looking for gethostbyname
--- Looking for gethostbyname - found
--- Looking for connect
--- Looking for connect - found
--- Looking for remove
--- Looking for remove - found
--- Looking for shmat
--- Looking for shmat - found
--- Looking for IceConnectionNumber in ICE
--- Looking for IceConnectionNumber in ICE - found
-CMake Deprecation Warning at CMakeLists.txt:29 (cmake_policy):
+CMake Deprecation Warning at CMakeLists.txt:27 (cmake_policy):
   The OLD behavior for policy CMP0026 will be removed from a future version
   of CMake.
 
@@ -92,6 +57,6 @@ CMake Deprecation Warning at CMakeLists.txt:29 (cmake_policy):
   behavior and not rely on setting a policy to OLD.
 
 
--- Configuring done (2.0s)
+-- Configuring done (0.3s)
 -- Generating done (0.1s)
--- Build files have been written to: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer/Devtools
+-- Build files have been written to: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools
