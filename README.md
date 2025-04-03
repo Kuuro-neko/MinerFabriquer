@@ -8,7 +8,8 @@
 **Mouse** rotate the camera
 
 # Keys mode (locked on the sphere)
-Don't use it, trust me.\ Use **W** to switch to mouse mode or **C** to switch to free roam mode.
+Don't use it, trust me.\
+Use **W** to switch to mouse mode or **C** to switch to free roam mode.
 
 # Mouse mode (free camera)
 **ZQSD** move the camera along it's front and right axis\
