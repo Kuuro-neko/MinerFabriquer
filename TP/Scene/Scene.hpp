@@ -71,7 +71,7 @@ public:
 
 class Texture{
 public:
-    ppmLoader::ImageRGB image;
+    imageLoader::ImageRGB image;
     /**
      * @brief Construct a new Texture object with empty texture image, and assigns it the next free binding index
      * 

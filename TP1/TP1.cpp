@@ -223,7 +223,7 @@ int main( void )
     create_plan_textured(64, 64, glm::vec3(25, 8, 25), terrainMesh.vertices, terrainMesh.triangles, terrainMesh.uvs, heightMap);
     terrainMesh.initializeBuffers();
 
-    Texture terrainTexture = Texture("../textures/rock.ppm");
+    Texture terrainTexture = Texture("../textures/cat.png");
     terrainTexture.setSamplerName("PlanetTextureSampler");
 
 

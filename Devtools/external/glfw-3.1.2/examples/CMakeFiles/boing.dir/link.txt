@@ -1,0 +1,1 @@
+/usr/bin/cc -g -rdynamic CMakeFiles/boing.dir/boing.c.o -o boing  ../src/libglfw3.a -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -lX11 -lXrandr -lXinerama -lXcursor -lGL -ldl

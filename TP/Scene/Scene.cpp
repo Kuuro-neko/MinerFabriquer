@@ -1,17 +1,23 @@
 #include <TP/Scene/Scene.hpp>
+#include <cstring>
 
 // ---- Texture ----
 
 Texture::Texture(char* filename) {
-    ppmLoader::load_ppm(image, filename);
+    imageLoader::load_ppm(image, filename);
     setNextFreeBindingIndex();
 
     genTexture();
 }
 
 Texture::Texture(char* filename, int bindingIndex) {
-    ppmLoader::load_ppm(image, filename);
-    this->bindingIndex = bindingIndex;
+
+   if (strstr(filename, ".ppm") != nullptr) {
+       imageLoader::load_ppm(image, filename);
+   } else {
+       imageLoader::load_png(image, filename);
+   }
+   this->bindingIndex = bindingIndex;
 }
 
 void Texture::genTexture() {

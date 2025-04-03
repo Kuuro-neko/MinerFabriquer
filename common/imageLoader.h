@@ -10,32 +10,36 @@
 // http://josiahmanson.com/prose/optimize_ppm/
 
 
-namespace ppmLoader{
-using namespace std;
-void eat_comment(ifstream &f);
+namespace imageLoader {
+    using namespace std;
 
-struct RGB
-{
-    unsigned char r, g, b;
-};
+    void eat_comment(ifstream &f);
 
-struct ImageRGB
-{
-    int w, h;
-    vector<RGB> data;
-};
+    struct RGB {
+        unsigned char r, g, b;
+    };
 
-
-void load_ppm(ImageRGB &img, const string &name);
+    struct ImageRGB {
+        int w, h;
+        vector<RGB> data;
+    };
 
 
-enum loadedFormat {
-    rgb,
-    rbg
-};
+    void load_ppm(ImageRGB &img, const string &name);
 
 
-void load_ppm( unsigned char * & pixels , unsigned int & w , unsigned int & h , const string &name , loadedFormat format = rgb);
+    enum loadedFormat {
+        rgb,
+        rbg
+    };
+
+
+    void
+    load_ppm(unsigned char *&pixels, unsigned int &w, unsigned int &h, const string &name, loadedFormat format = rgb);
+
+
+    void load_png(unsigned char *&pixels, unsigned int &w, unsigned int &h, const string &name, loadedFormat format = rgb);
+    void load_png(ImageRGB &img, const string &name);
 }
 
 #endif

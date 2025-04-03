@@ -77,6 +77,7 @@ add_executable(TP1
 	
 	TP1/vertex_shader.glsl
 	TP1/fragment_shader.glsl
+		external/stb_image/stb_image.h
 )
 target_link_libraries(TP1
 	${ALL_LIBS}
