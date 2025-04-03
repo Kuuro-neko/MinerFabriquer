@@ -208,29 +208,32 @@ int main( void )
     terrainMesh.initializeBuffers();
 
     Texture terrainTexture = Texture("../textures/rock.ppm");
-    terrainTexture.setSamplerName("PlanetTextureSampler");
 
 
     SceneNode root;
 
-    Voxel stoneVoxel = Voxel(STONE);
-    SceneNode voxelStoneTest (
-        Transform(
-            glm::vec3(0, 0, 0),
-            DEFAULT_ROTATION,
-            1),
-        &stoneVoxel);
-    root.addChild(&voxelStoneTest);
-
-    Voxel dirtVoxel = Voxel(DIRT);
-    SceneNode voxelDirtTest (
-        Transform(
-            glm::vec3(1, 0, 0),
-            DEFAULT_ROTATION,
-            1),
-        &dirtVoxel);
-    root.addChild(&voxelDirtTest);
-    
+    MeshObject chunkMesh = MeshObject();
+    VoxelChunk chunk = VoxelChunk(16, 16, 16, Transform(
+        glm::vec3(0, 0, 0),
+        DEFAULT_ROTATION,
+        1.f), &chunkMesh);
+    chunk.setBloc(2, 3, 2, LOG_OAK);
+    chunk.setBloc(2, 4, 2, LOG_OAK);
+    chunk.setBloc(2, 5, 2, LOG_OAK);
+    chunk.setBloc(2, 6, 2, LEAVES_OAK);
+    chunk.setBloc(2, 5, 3, LEAVES_OAK);
+    chunk.setBloc(3, 5, 2, LEAVES_OAK);
+    chunk.setBloc(2, 5, 1, LEAVES_OAK);
+    chunk.setBloc(1, 5, 2, LEAVES_OAK);
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            chunk.setBloc(i, 0, j, STONE);
+            chunk.setBloc(i, 1, j, DIRT);
+            chunk.setBloc(i, 2, j, GRASS);
+        }
+    }
+    chunk.generateMesh();
+    root.addChild(&chunk);
 
 
     controllableSphere.m_mesh = &sphereMesh64;
@@ -238,17 +241,7 @@ int main( void )
     camera.setTarget(controllableSphere.getWorldPosition());
 
     Texture controllableSphereTexture = Texture("../textures/s7.ppm");
-    controllableSphereTexture.setSamplerName("PlanetTextureSampler");
     controllableSphere.m_texture = &controllableSphereTexture;
-
-    SceneNode terrain(
-        Transform(
-            glm::vec3(0, 0, 0),
-            DEFAULT_ROTATION,
-            1),
-        &terrainMesh);
-    root.addChild(&terrain);
-    terrain.m_texture = &terrainTexture;
 
     SceneNode sunRotationCenter(
         Transform(
@@ -279,7 +272,6 @@ int main( void )
     sun.m_mesh = &sphereMesh64;
 
     Texture sunTexture = Texture("../textures/s2.ppm");
-    sunTexture.setSamplerName("PlanetTextureSampler");
     sun.m_texture = &sunTexture;
     
     // ---- MOON
@@ -292,7 +284,6 @@ int main( void )
     moonRotationCenter.addChild(&moon);
 
     Texture rockTexture = Texture("../textures/s6.ppm");
-    rockTexture.setSamplerName("PlanetTextureSampler");
     moon.m_texture = &rockTexture;
 
     // Get a handle for our "LightPosition" uniform
@@ -338,8 +329,6 @@ int main( void )
         sun.rotate(currentFrame*0.001, AXIS_Y);
         moon.rotate(currentFrame, glm::vec3(cos(-6.68*M_PI/180), sin(-6.68*M_PI/180), cos(-6.68*M_PI/180)));
 
-        
-        controllableSphere.keepAboveGround(&terrain);
         root.draw(programID);
 
         // Swap buffers

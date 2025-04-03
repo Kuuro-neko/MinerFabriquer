@@ -6,10 +6,12 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include "BlocTypes.hpp"
+#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Scene/Texture.hpp>
 #include <iostream>
+#include <utils/GLUtils.hpp>
 
-#include <common/imageLoader.h>
+
 
 #define AXIS_X glm::vec3(1.0f, 0.0f, 0.0f)
 #define AXIS_Y glm::vec3(0.0f, 1.0f, 0.0f)
@@ -50,88 +52,6 @@ public:
     void scale(float scale) {
         m_scale *= scale;
     }
-};
-
-
-#define DONT_INCREMENT_BINDING 0
-
-class NextFreeIndexBinding {
-private:
-    int index;
-    NextFreeIndexBinding() : index(0) {}
-public:
-    static NextFreeIndexBinding& getInstance() {
-        static NextFreeIndexBinding instance;
-        return instance;
-    }
-    int get_next_free_binding_index() {
-        return index++;
-    }
-};
-
-class Texture{
-public:
-    ppmLoader::ImageRGB image;
-    /**
-     * @brief Construct a new Texture object with empty texture image, and assigns it the next free binding index
-     * 
-     */
-    Texture() {
-        setNextFreeBindingIndex();
-    }
-
-    /**
-     * @brief Construct a new Texture object, and assigns it the next free binding index
-     * 
-     * @param filename image filename
-     */
-    Texture(char* filename);
-
-        /**
-     * @brief Construct a new Texture object, and assigns it the next free binding index
-     * 
-     * @param filename image filename
-     */
-    Texture(const char* filename);
-
-    /**
-     * @brief Construct a new Texture object
-     * 
-     * @param filename image filename
-     * @param bindingIndex binding index of the texture, can be set to DONT_INCREMENT_BINDING to not increment the binding index and use it without a binding index
-     */
-    Texture(char* filename, int bindingIndex);
-
-    /**
-     * @brief Generate texture buffer and set texture parameters
-     * 
-     */
-    void genTexture();
-
-    /**
-     * @brief Binds this texture to the given GLSL program
-     * 
-     * @param programID 
-     */
-    void bind(GLuint programID);
-
-    /**
-     * @brief Set the binding index of this texture to the next free binding index using NextFreeIndexBinding singleton
-     * 
-     */
-    void setNextFreeBindingIndex() {
-        bindingIndex = NextFreeIndexBinding::getInstance().get_next_free_binding_index();
-    }
-
-    void setSamplerName(char* samplerName) {
-        this->samplerName = samplerName;
-    }
-private:
-    char* samplerName = "PlanetTextureSampler";
-    GLuint handleIndex;
-    GLuint bindingIndex;
-    GLuint textureID;
-    GLuint format = GL_RGB; // could be GL_RGBA
 };
 
 class MeshObject
@@ -183,100 +103,29 @@ struct Faces {
     }
 };
 
-class Voxel : public MeshObject
+/*class Voxel : public MeshObject
 {
 public:
     int m_bloc;
-    Texture m_texture;
+    Texture* m_texture_top;
+    Texture* m_texture_side;
 
     Voxel(int bloc) {
         m_bloc = bloc;
-        m_texture = Texture(getTexturePath(bloc, BLOC_SIDE).c_str());
-        createCubeGeometry();
-        initializeBuffers();
+        m_texture_top = BlocTextureDatabase::getInstance().getTexture(m_bloc)->getTexture(BLOC_TOP);
+        m_texture_side = BlocTextureDatabase::getInstance().getTexture(m_bloc)->getTexture(BLOC_LEFT);
     }
 
     void draw(GLuint programID) override;
 
-    void createCubeGeometry() {
+    void createCubeGeometry(unsigned char faces, float x_offset = 0.0f, float y_offset = 0.0f, float z_offset = 0.0f, float size = 1.0f) {
         vertices.clear();
         triangles.clear();
         uvs.clear();
-        // Front face
-        vertices.push_back(glm::vec3(0.f, 0.f, 0.f));
-        vertices.push_back(glm::vec3(1.f, 0.f, 0.f));
-        vertices.push_back(glm::vec3(1.f, 1.f, 0.f));
-        vertices.push_back(glm::vec3(0.f, 1.f, 0.f));
-        triangles.push_back(0);
-        triangles.push_back(1);
-        triangles.push_back(2);
-        triangles.push_back(0);
-        triangles.push_back(2);
-        triangles.push_back(3);
-        // Left face
-        vertices.push_back(glm::vec3(0.f, 0.f, 0.f));
-        vertices.push_back(glm::vec3(0.f, 0.f, 1.f));
-        vertices.push_back(glm::vec3(0.f, 1.f, 1.f));
-        vertices.push_back(glm::vec3(0.f, 1.f, 0.f));
-        triangles.push_back(4);
-        triangles.push_back(5);
-        triangles.push_back(6);
-        triangles.push_back(4);
-        triangles.push_back(6);
-        triangles.push_back(7);
-        // Back face
-        vertices.push_back(glm::vec3(0.f, 0.f, 1.f));
-        vertices.push_back(glm::vec3(1.f, 0.f, 1.f));
-        vertices.push_back(glm::vec3(1.f, 1.f, 1.f));
-        vertices.push_back(glm::vec3(0.f, 1.f, 1.f));
-        triangles.push_back(8);
-        triangles.push_back(9);
-        triangles.push_back(10);
-        triangles.push_back(8);
-        triangles.push_back(10);
-        triangles.push_back(11);
-        // Right face
-        vertices.push_back(glm::vec3(1.f, 0.f, 0.f));
-        vertices.push_back(glm::vec3(1.f, 0.f, 1.f));
-        vertices.push_back(glm::vec3(1.f, 1.f, 1.f));
-        vertices.push_back(glm::vec3(1.f, 1.f, 0.f));
-        triangles.push_back(12);
-        triangles.push_back(13);
-        triangles.push_back(14);
-        triangles.push_back(12);
-        triangles.push_back(14);
-        triangles.push_back(15);
-        // Top face
-        vertices.push_back(glm::vec3(0.f, 1.f, 0.f));
-        vertices.push_back(glm::vec3(1.f, 1.f, 0.f));
-        vertices.push_back(glm::vec3(1.f, 1.f, 1.f));
-        vertices.push_back(glm::vec3(0.f, 1.f, 1.f));
-        triangles.push_back(16);
-        triangles.push_back(17);
-        triangles.push_back(18);
-        triangles.push_back(16);
-        triangles.push_back(18);
-        triangles.push_back(19);
-        // Bottom face
-        vertices.push_back(glm::vec3(0.f, 0.f, 0.f));
-        vertices.push_back(glm::vec3(1.f, 0.f, 0.f));
-        vertices.push_back(glm::vec3(1.f, 0.f, 1.f));
-        vertices.push_back(glm::vec3(0.f, 0.f, 1.f));
-        triangles.push_back(20);
-        triangles.push_back(21);
-        triangles.push_back(22);
-        triangles.push_back(20);
-        triangles.push_back(22);
-        triangles.push_back(23);
-        // UVs
-        for (int i = 0; i < 6; i++) {
-            uvs.push_back(glm::vec2(0.f, 0.f));
-            uvs.push_back(glm::vec2(1.f, 0.f));
-            uvs.push_back(glm::vec2(1.f, 1.f));
-            uvs.push_back(glm::vec2(0.f, 1.f));
-        }
+        addSquareGeometry(vertices, triangles, uvs, faces);
+        initializeBuffers();
     }
-};
+};*/
 
 class SceneNode
 {
@@ -284,7 +133,8 @@ public:
     MeshObject* m_mesh;
     Texture* m_texture;
     Transform m_transform;
-    
+    glm::mat4 ModelMatrix;
+
     SceneNode(
         Transform transform = Transform(),
         MeshObject* mesh = nullptr,
@@ -323,13 +173,13 @@ public:
      * 
      * @param programID 
      */
-    void draw(GLuint programID);
+    virtual void draw(GLuint programID);
 
     /**
      * @brief Clean the buffers of this scene node and all its children recursively
      * 
      */
-    void cleanupBuffers();
+    virtual void cleanupBuffers();
 
     /**
      * @brief Apply a rotation to this scene node around the given axis, and update the model matrix. Also applies the rotation to all children.
@@ -367,5 +217,94 @@ public:
 private:
     SceneNode* m_parent;
     std::vector<SceneNode*> m_children;
-    glm::mat4 ModelMatrix;
+};
+
+class VoxelChunk : public SceneNode
+{
+public:
+    int m_sizeX;
+    int m_sizeY;
+    int m_sizeZ;
+    int*** m_cubes;
+
+    VoxelChunk(int sizeX, int sizeY, int sizeZ, Transform t, MeshObject* m) : SceneNode(t, m, nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
+        m_cubes = new int**[m_sizeX];
+        for (int i = 0; i < m_sizeX; i++) {
+            m_cubes[i] = new int*[m_sizeY];
+            for (int j = 0; j < m_sizeY; j++) {
+                m_cubes[i][j] = new int[m_sizeZ];
+                for (int k = 0; k < m_sizeZ; k++) {
+                    m_cubes[i][j][k] = AIR;
+                }
+            }
+        }
+    }
+    ~VoxelChunk() {
+        for (int i = 0; i < m_sizeX; i++) {
+            for (int j = 0; j < m_sizeY; j++) {
+                delete[] m_cubes[i][j];
+            }
+            delete[] m_cubes[i];
+        }
+        delete[] m_cubes;
+    }
+    void setBloc(int x, int y, int z, int bloc) {
+        m_cubes[x][y][z] = bloc;
+    }
+    int getBloc(int x, int y, int z) {
+        return m_cubes[x][y][z];
+    }
+
+    void generateMesh() {
+        // Clear the mesh
+        m_mesh->vertices.clear();
+        m_mesh->triangles.clear();
+        m_mesh->uvs.clear();
+
+        // Loop through all the cubes in the chunk. If a cube has a face that is not adjacent to another cube, add a face to the mesh
+        for (int x = 0; x < m_sizeX; x++) {
+            for (int y = 0; y < m_sizeY; y++) {
+                for (int z = 0; z < m_sizeZ; z++) {
+                    if (m_cubes[x][y][z] != AIR) {
+                        // Check all the faces of the cube
+                        bool test = false;
+                        if (x == 0 || m_cubes[x - 1][y][z] == AIR || test) {
+                            addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
+                        }
+                        if (x == m_sizeX - 1 || m_cubes[x + 1][y][z] == AIR || test) {
+                            addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
+                        }
+                        if (y == 0 || m_cubes[x][y - 1][z] == AIR || test) {
+                            addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
+                        }
+                        if (y == m_sizeY - 1 || m_cubes[x][y + 1][z] == AIR || test) {
+                            addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
+                        }
+                        if (z == 0 || m_cubes[x][y][z - 1] == AIR || test) {
+                            addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
+                        }
+                        if (z == m_sizeZ - 1 || m_cubes[x][y][z + 1] == AIR || test) {
+                            addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
+                        }
+                    }
+                }
+            }
+        }
+        // Initialize the buffers for the mesh
+        m_mesh->initializeBuffers();
+    }
+
+    void draw(GLuint programID) override {
+        GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
+        glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
+        
+        TextureAtlas::getInstance().bind(programID);
+        m_mesh->draw(programID);
+    }
+
+    void cleanupBuffers() override {
+        m_mesh->cleanupBuffers();
+    }
+private:
+
 };

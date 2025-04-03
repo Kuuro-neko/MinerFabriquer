@@ -1,43 +1,5 @@
 #include <TP/Scene/Scene.hpp>
 
-// ---- Texture ----
-
-Texture::Texture(char* filename) {
-    ppmLoader::load_ppm(image, filename);
-    setNextFreeBindingIndex();
-
-    genTexture();
-}
-
-Texture::Texture(const char* filename) {
-    ppmLoader::load_ppm(image, filename);
-    setNextFreeBindingIndex();
-
-    genTexture();
-}
-
-Texture::Texture(char* filename, int bindingIndex) {
-    ppmLoader::load_ppm(image, filename);
-    this->bindingIndex = bindingIndex;
-}
-
-void Texture::genTexture() {
-    glGenTextures(1, &handleIndex);
-    glBindTexture(GL_TEXTURE_2D, handleIndex);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, image.w, image.h, 0, format, GL_UNSIGNED_BYTE, &image.data[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
-
-void Texture::bind(GLuint programID) {
-    textureID = glGetUniformLocation(programID, samplerName);
-    glActiveTexture(GL_TEXTURE0 + bindingIndex);
-    glBindTexture(GL_TEXTURE_2D, handleIndex);
-    glUniform1i(textureID, bindingIndex);
-}
-
 // ---- MeshObject ----
 
 void MeshObject::initializeBuffers() {
@@ -123,8 +85,8 @@ glm::vec3 MeshObject::raycast(Ray ray) {
     return glm::vec3(0.0f);
 }
 
-void Voxel::draw(GLuint programID) {
-    m_texture.bind(programID);
+/*void Voxel::draw(GLuint programID) {
+    m_texture_top->bind(programID);
 
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
@@ -139,7 +101,7 @@ void Voxel::draw(GLuint programID) {
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
-}
+}*/
 
 // ---- SceneNode ----
 
