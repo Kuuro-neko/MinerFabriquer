@@ -10,7 +10,7 @@
 #include <TP/Camera/Camera_Helper.hpp>
 
 #define DEFAULT_FOV 45.0f
-#define DEFAULT_POSITION glm::vec3(8.4f, 5.6f,  3.05f)
+#define DEFAULT_POSITION glm::vec3(0.0f, 0.0f, 0.0f)
 #define DEFAULT_EULER_ANGLE glm::vec3(0.537289f, -1.93024f, 0.0f)
 
 #define DEFAULT_TRANSLATION_SPEED 7.5f

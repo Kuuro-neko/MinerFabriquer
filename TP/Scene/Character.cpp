@@ -10,6 +10,5 @@ Character::Character(Transform transform, Camera camera, MeshObject *mesh = null
 }
 
 void Character::move(glm::vec3 direction) {
-    this->m_transform.translate(direction*speed);
-
+    translate(direction*speed);
 }
