@@ -1,36 +1,20 @@
-// Include standard headers
 #include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include <iostream>
-
-// Include GLEW
 #include <GL/glew.h>
-
-// Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
-
-// Include GLM
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
-
-using namespace glm;
-
 #include <common/shader.hpp>
-#include <common/objloader.hpp>
-#include <common/vboindexer.hpp>
-#include <common/imageLoader.h>
 #include <TP/Camera/Camera.hpp>
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
+#include <TP/Scene/Character.hpp>
+GLFWwindow* window;
+
+using namespace std;
+using namespace glm;
+
 
 void processInput(GLFWwindow *window, float dt);
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
 
 Camera camera;
 
@@ -81,6 +65,15 @@ SceneNode controllableSphere(
         DEFAULT_ROTATION,
         1),
     nullptr);
+
+Character c = Character(
+    Transform(
+        glm::vec3(0, 5, 0),
+        DEFAULT_ROTATION,
+        1),
+    nullptr,
+    nullptr
+);
 
 int main( void )
 {
@@ -180,14 +173,35 @@ int main( void )
     chunk.generateMesh();
     root.addChild(&chunk);
 
-    MeshObject sphereMesh64 = MeshObject();
-    create_sphere_textured(64, 64, sphereMesh64);
-    sphereMesh64.initializeBuffers();
-    controllableSphere.m_mesh = &sphereMesh64;
-    root.addChild(&controllableSphere);
-    camera.setTarget(controllableSphere.getWorldPosition());
 
-    controllableSphere.m_texture = TextureAtlas::getInstance().getTexture();
+    MeshObject characterMesh = MeshObject();
+    create_sphere_textured(64, 64, characterMesh);
+//    SceneNode controllableSphere(
+//            Transform(
+//                    glm::vec3(0, 5, 0),
+//                    DEFAULT_ROTATION,
+//                    1),
+//            nullptr);
+//    MeshObject sphereMesh64 = MeshObject();
+//    create_sphere_textured(64, 64, sphereMesh64);
+//    sphereMesh64.initializeBuffers();
+//    controllableSphere.m_mesh = &sphereMesh64;
+//    root.addChild(&controllableSphere);
+//    camera.setTarget(controllableSphere.getWorldPosition());
+//
+//    controllableSphere.m_texture = TextureAtlas::getInstance().getTexture();
+
+//    Character c = Character(
+//        Transform(
+//            glm::vec3(0, 5, 0),
+//            DEFAULT_ROTATION,
+//            1),
+//        nullptr,
+//        TextureAtlas::getInstance().getTexture()
+//    );
+//
+//    root.addChild(&c);
+
 
 
     // Get a handle for our "LightPosition" uniform

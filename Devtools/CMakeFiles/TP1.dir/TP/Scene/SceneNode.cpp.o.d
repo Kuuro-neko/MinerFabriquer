@@ -1,7 +1,12 @@
-CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1.cpp \
- /usr/include/stdc-predef.h /usr/include/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o: \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/SceneNode.cpp \
+ /usr/include/stdc-predef.h \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/SceneNode.hpp \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/glm.hpp \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/_fixes.hpp \
+ /usr/include/c++/11/cmath \
+ /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
+ /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/bits/timesize.h \
@@ -9,40 +14,18 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
- /usr/include/x86_64-linux-gnu/bits/types.h \
- /usr/include/x86_64-linux-gnu/bits/typesizes.h \
- /usr/include/x86_64-linux-gnu/bits/time64.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
- /usr/include/x86_64-linux-gnu/bits/floatn.h \
- /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glew-1.13.0/include/GL/glew.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-least.h /usr/include/GL/glu.h \
- /usr/include/GL/gl.h \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/include/GLFW/glfw3.h \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/glm.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/_fixes.hpp \
- /usr/include/c++/11/cmath \
- /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h \
  /usr/include/c++/11/pstl/pstl_config.h \
  /usr/include/c++/11/bits/cpp_type_traits.h \
  /usr/include/c++/11/ext/type_traits.h /usr/include/math.h \
+ /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+ /usr/include/x86_64-linux-gnu/bits/types.h \
+ /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+ /usr/include/x86_64-linux-gnu/bits/time64.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+ /usr/include/x86_64-linux-gnu/bits/floatn.h \
+ /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
@@ -51,6 +34,7 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
  /usr/include/c++/11/bits/std_abs.h /usr/include/stdlib.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
@@ -59,7 +43,8 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/timer_t.h /usr/include/endian.h \
+ /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-intn.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endianness.h \
  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
@@ -124,6 +109,10 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h \
  /usr/include/c++/11/stdlib.h /usr/include/c++/11/cstdlib \
  /usr/include/c++/11/cstdint \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/type_float.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/type_vec.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/precision.hpp \
@@ -194,24 +183,10 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/integer.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/func_integer.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/func_integer.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./common/shader.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Camera.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/matrix_transform.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/../gtc/constants.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/../gtc/constants.inl \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/matrix_transform.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/quaternion.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/quaternion.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/quaternion.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/../gtx/norm.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/../gtx/norm.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/quaternion.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/euler_angles.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/euler_angles.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/compatibility.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/compatibility.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Camera_Helper.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/SceneNode.hpp \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/allocator.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h \
  /usr/include/c++/11/ext/new_allocator.h /usr/include/c++/11/new \
@@ -228,12 +203,18 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/c++/11/bits/hash_bytes.h \
  /usr/include/c++/11/bits/range_access.h \
  /usr/include/c++/11/bits/vector.tcc \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glew-1.13.0/include/GL/glew.h \
+ /usr/include/GL/glu.h /usr/include/GL/gl.h \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/BlocTypes.hpp \
  /usr/include/c++/11/string /usr/include/c++/11/bits/stringfwd.h \
  /usr/include/c++/11/bits/char_traits.h \
  /usr/include/c++/11/bits/postypes.h /usr/include/c++/11/cwchar \
- /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+ /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
+ /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
  /usr/include/c++/11/bits/localefwd.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h \
  /usr/include/c++/11/clocale /usr/include/locale.h \
@@ -261,6 +242,11 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
  /usr/include/c++/11/string_view /usr/include/c++/11/bits/string_view.tcc \
  /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdio \
+ /usr/include/stdio.h /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/c++/11/cerrno /usr/include/errno.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
@@ -334,6 +320,4 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/MeshObject.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/Ray.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/GLUtils.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/Transform.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/VoxelChunk.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/Character.hpp
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/Transform.hpp
