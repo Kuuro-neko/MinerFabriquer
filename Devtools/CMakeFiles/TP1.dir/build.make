@@ -111,52 +111,10 @@ CMakeFiles/TP1.dir/common/controls.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TP1.dir/common/controls.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/controls.cpp -o CMakeFiles/TP1.dir/common/controls.cpp.s
 
-CMakeFiles/TP1.dir/common/texture.cpp.o: CMakeFiles/TP1.dir/flags.make
-CMakeFiles/TP1.dir/common/texture.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/texture.cpp
-CMakeFiles/TP1.dir/common/texture.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/TP1.dir/common/texture.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/common/texture.cpp.o -MF CMakeFiles/TP1.dir/common/texture.cpp.o.d -o CMakeFiles/TP1.dir/common/texture.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/texture.cpp
-
-CMakeFiles/TP1.dir/common/texture.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/TP1.dir/common/texture.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/texture.cpp > CMakeFiles/TP1.dir/common/texture.cpp.i
-
-CMakeFiles/TP1.dir/common/texture.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TP1.dir/common/texture.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/texture.cpp -o CMakeFiles/TP1.dir/common/texture.cpp.s
-
-CMakeFiles/TP1.dir/common/objloader.cpp.o: CMakeFiles/TP1.dir/flags.make
-CMakeFiles/TP1.dir/common/objloader.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/objloader.cpp
-CMakeFiles/TP1.dir/common/objloader.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/TP1.dir/common/objloader.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/common/objloader.cpp.o -MF CMakeFiles/TP1.dir/common/objloader.cpp.o.d -o CMakeFiles/TP1.dir/common/objloader.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/objloader.cpp
-
-CMakeFiles/TP1.dir/common/objloader.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/TP1.dir/common/objloader.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/objloader.cpp > CMakeFiles/TP1.dir/common/objloader.cpp.i
-
-CMakeFiles/TP1.dir/common/objloader.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TP1.dir/common/objloader.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/objloader.cpp -o CMakeFiles/TP1.dir/common/objloader.cpp.s
-
-CMakeFiles/TP1.dir/common/vboindexer.cpp.o: CMakeFiles/TP1.dir/flags.make
-CMakeFiles/TP1.dir/common/vboindexer.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/vboindexer.cpp
-CMakeFiles/TP1.dir/common/vboindexer.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/TP1.dir/common/vboindexer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/common/vboindexer.cpp.o -MF CMakeFiles/TP1.dir/common/vboindexer.cpp.o.d -o CMakeFiles/TP1.dir/common/vboindexer.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/vboindexer.cpp
-
-CMakeFiles/TP1.dir/common/vboindexer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/TP1.dir/common/vboindexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/vboindexer.cpp > CMakeFiles/TP1.dir/common/vboindexer.cpp.i
-
-CMakeFiles/TP1.dir/common/vboindexer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TP1.dir/common/vboindexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/vboindexer.cpp -o CMakeFiles/TP1.dir/common/vboindexer.cpp.s
-
 CMakeFiles/TP1.dir/common/imageLoader.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/common/imageLoader.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/imageLoader.cpp
 CMakeFiles/TP1.dir/common/imageLoader.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/TP1.dir/common/imageLoader.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/TP1.dir/common/imageLoader.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/common/imageLoader.cpp.o -MF CMakeFiles/TP1.dir/common/imageLoader.cpp.o.d -o CMakeFiles/TP1.dir/common/imageLoader.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/imageLoader.cpp
 
 CMakeFiles/TP1.dir/common/imageLoader.cpp.i: cmake_force
@@ -170,7 +128,7 @@ CMakeFiles/TP1.dir/common/imageLoader.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Camera.cpp
 CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o -MF CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o.d -o CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Camera.cpp
 
 CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.i: cmake_force
@@ -184,7 +142,7 @@ CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Camera_Helper.cpp
 CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o -MF CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o.d -o CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Camera_Helper.cpp
 
 CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.i: cmake_force
@@ -198,7 +156,7 @@ CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/SceneNode.cpp
 CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o -MF CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o.d -o CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/SceneNode.cpp
 
 CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.i: cmake_force
@@ -212,7 +170,7 @@ CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/BlocTypes.cpp
 CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o -MF CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o.d -o CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/BlocTypes.cpp
 
 CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.i: cmake_force
@@ -226,7 +184,7 @@ CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Texture.cpp
 CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o -MF CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o.d -o CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Texture.cpp
 
 CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.i: cmake_force
@@ -240,7 +198,7 @@ CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/MeshObject.cpp
 CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o -MF CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o.d -o CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/MeshObject.cpp
 
 CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.i: cmake_force
@@ -254,7 +212,7 @@ CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/VoxelChunk.cpp
 CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o -MF CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o.d -o CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/VoxelChunk.cpp
 
 CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.i: cmake_force
@@ -268,7 +226,7 @@ CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.s: cmake_force
 CMakeFiles/TP1.dir/utils/GLUtils.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/utils/GLUtils.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/utils/GLUtils.cpp
 CMakeFiles/TP1.dir/utils/GLUtils.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/TP1.dir/utils/GLUtils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/TP1.dir/utils/GLUtils.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/utils/GLUtils.cpp.o -MF CMakeFiles/TP1.dir/utils/GLUtils.cpp.o.d -o CMakeFiles/TP1.dir/utils/GLUtils.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/utils/GLUtils.cpp
 
 CMakeFiles/TP1.dir/utils/GLUtils.cpp.i: cmake_force
@@ -282,7 +240,7 @@ CMakeFiles/TP1.dir/utils/GLUtils.cpp.s: cmake_force
 CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o: CMakeFiles/TP1.dir/flags.make
 CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp
 CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o: CMakeFiles/TP1.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o -MF CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o.d -o CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp
 
 CMakeFiles/TP1.dir/TP/Scene/Character.cpp.i: cmake_force
@@ -298,9 +256,6 @@ TP1_OBJECTS = \
 "CMakeFiles/TP1.dir/TP1/TP1.cpp.o" \
 "CMakeFiles/TP1.dir/common/shader.cpp.o" \
 "CMakeFiles/TP1.dir/common/controls.cpp.o" \
-"CMakeFiles/TP1.dir/common/texture.cpp.o" \
-"CMakeFiles/TP1.dir/common/objloader.cpp.o" \
-"CMakeFiles/TP1.dir/common/vboindexer.cpp.o" \
 "CMakeFiles/TP1.dir/common/imageLoader.cpp.o" \
 "CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o" \
 "CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o" \
@@ -318,9 +273,6 @@ TP1_EXTERNAL_OBJECTS =
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/TP1/TP1.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/common/shader.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/common/controls.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/common/texture.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/common/objloader.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/common/vboindexer.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/common/imageLoader.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o
@@ -351,7 +303,7 @@ TP1_EXTERNAL_OBJECTS =
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: /usr/lib/x86_64-linux-gnu/libGL.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: /usr/lib/x86_64-linux-gnu/libGLU.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1: CMakeFiles/TP1.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1"
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/TP1
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/TP1.dir/link.txt --verbose=$(VERBOSE)
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/

@@ -66,7 +66,7 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
-  "CMakeFiles/launch-TP1.sh"
+  "CMakeFiles/launch-MinerFabriquer.sh"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "external/CMakeFiles/CMakeDirectoryInformation.cmake"
   "external/glfw-3.1.2/src/glfw3Config.cmake"
@@ -82,7 +82,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/TP1.dir/DependInfo.cmake"
+  "CMakeFiles/MinerFabriquer.dir/DependInfo.cmake"
   "external/CMakeFiles/GLEW_1130.dir/DependInfo.cmake"
   "external/glfw-3.1.2/CMakeFiles/uninstall.dir/DependInfo.cmake"
   "external/glfw-3.1.2/src/CMakeFiles/glfw.dir/DependInfo.cmake"

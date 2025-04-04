@@ -204,9 +204,9 @@
 				},
 				{
 					"directoryIndex" : 0,
-					"id" : "TP1::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-TP1-Debug-1c2262bf3fa610087abd.json",
-					"name" : "TP1",
+					"id" : "MinerFabriquer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MinerFabriquer-Debug-f44c7a99f7c48532e34a.json",
+					"name" : "MinerFabriquer",
 					"projectIndex" : 0
 				},
 				{

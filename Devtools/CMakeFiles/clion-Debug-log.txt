@@ -57,6 +57,6 @@ CMake Deprecation Warning at CMakeLists.txt:26 (cmake_policy):
   behavior and not rely on setting a policy to OLD.
 
 
--- Configuring done (0.1s)
+-- Configuring done (0.2s)
 -- Generating done (0.1s)
 -- Build files have been written to: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools

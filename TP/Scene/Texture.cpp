@@ -1,6 +1,7 @@
 #include <TP/Scene/Texture.hpp>
 #include <TP/Scene/BlocTypes.hpp>
-#include <common/imageLoader.h>
+#include <external/stb_image/stb_image.h>
+
 
 // ---- Texture ----
 

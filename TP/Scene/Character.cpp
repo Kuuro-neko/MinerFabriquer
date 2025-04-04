@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Character::Character(Transform transform, Camera* camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
+Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
         : SceneNode(transform, mesh, texture), camera(camera) {
     speed = 2.5;
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
@@ -54,6 +54,7 @@ void Character::listenAction(float dt, GLFWwindow *window) {
     }
 
 }
+
 /**
  * \brief fonction qui réalise l'action de casser un bloc
  */
@@ -64,7 +65,7 @@ void Character::breakBlock() {
     rayDirection = normalize(rayDirection); //vecteur normalisé
     glm::vec3 rayEnd = rayOrigin + rayDirection * 10.f; //10m de portée
     //Etape 2 : on teste si le rayon touche un bloc
-    if(rayDirection.x > 0.5f || rayDirection.y > 0.5f || rayDirection.z > 0.5f) {
+    if (rayDirection.x > 0.5f || rayDirection.y > 0.5f || rayDirection.z > 0.5f) {
         std::cout << "rayon touche un bloc" << std::endl;
     } else {
         std::cout << "rayon ne touche pas de bloc" << std::endl;
