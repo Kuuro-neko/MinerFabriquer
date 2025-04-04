@@ -25,6 +25,7 @@ using namespace glm;
 #include <TP/Camera/Camera.hpp>
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
+#include <TP/Scene/Skybox.hpp>
 
 void processInput(GLFWwindow *window, float dt);
 
@@ -188,6 +189,10 @@ int main( void )
     camera.setTarget(controllableSphere.getWorldPosition());
 
     controllableSphere.m_texture = TextureAtlas::getInstance().getTexture();
+
+    Skybox skybox = Skybox();
+    skybox.generateBuffers();
+    root.addChild(&skybox);
 
 
     // Get a handle for our "LightPosition" uniform

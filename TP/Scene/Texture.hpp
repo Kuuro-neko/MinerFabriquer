@@ -7,25 +7,6 @@
 #define TEXTUREATLAS_COORD_UNIT 0.0625f
 
 #define SKYBOX_COORD_UNIT_X 0.25f
-#define SKYBOX_COORD_UNIT_Y 0.33333f
-
-#define SKYBOX_TOP_X 0
-#define SKYBOX_TOP_Y 1
-
-#define SKYBOX_LEFT_X 0
-#define SKYBOX_LEFT_Y 1
-
-#define SKYBOX_FRONT_X 1
-#define SKYBOX_FRONT_Y 1
-
-#define SKYBOX_RIGHT_X 2
-#define SKYBOX_RIGHT_Y 1
-
-#define SKYBOX_BACK_X 3
-#define SKYBOX_BACK_Y 1
-
-#define SKYBOX_BOTTOM_X 1
-#define SKYBOX_BOTTOM_Y 2
 
 #define DONT_INCREMENT_BINDING 0
 
@@ -102,6 +83,10 @@ public:
 
     void setSamplerName(char* samplerName) {
         this->samplerName = samplerName;
+    }
+
+    void setFormat(GLuint format) {
+        this->format = format;
     }
 private:
     char* samplerName = "TextureSampler";

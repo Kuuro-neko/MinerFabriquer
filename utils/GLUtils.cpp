@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <TP/Scene/BlocTypes.hpp>
 
+#include <TP/Scene/Skybox.hpp>
+
 #define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
 
 /**
@@ -118,6 +120,56 @@ void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned sh
     }
 }
 
-void addSkyboxGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, float size = 50.0f) {
+void addSkyboxUvs(std::vector<glm::vec2> &uvs, SkyboxTexCoords &texCoords) {
+    uvs.push_back(glm::vec2(texCoords.front_x + EPSILON, texCoords.front_y + texCoords.unit_y - EPSILON));
+    uvs.push_back(glm::vec2(texCoords.front_x + texCoords.unit_x - EPSILON, texCoords.front_y + texCoords.unit_y - EPSILON));
+    uvs.push_back(glm::vec2(texCoords.front_x + EPSILON, texCoords.front_y + EPSILON));
+    uvs.push_back(glm::vec2(texCoords.front_x + texCoords.unit_x - EPSILON, texCoords.front_y + EPSILON));
+}
+
+void addSkyboxGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, float size) {
+    int vertexInsertIndex = vertices.size();
+    SkyboxTexCoords texCoords = SkyboxTexCoords();    
+    vertices.push_back(glm::vec3(-size, -size, -size));
+    vertices.push_back(glm::vec3(size, -size, -size));
+    vertices.push_back(glm::vec3(-size, size, -size));
+    vertices.push_back(glm::vec3(size, size, -size));
+    addQuadToTriangles(triangles, vertexInsertIndex);
+    addSkyboxUvs(uvs, texCoords);
     
+
+    vertices.push_back(glm::vec3(size, -size, size));
+    vertices.push_back(glm::vec3(-size, -size, size));
+    vertices.push_back(glm::vec3(size, size, size));
+    vertices.push_back(glm::vec3(-size, size, size));
+    addQuadToTriangles(triangles, vertexInsertIndex);
+    addSkyboxUvs(uvs, texCoords);
+
+    vertices.push_back(glm::vec3(-size, -size, size));
+    vertices.push_back(glm::vec3(-size, -size, -size));
+    vertices.push_back(glm::vec3(-size, size, size));
+    vertices.push_back(glm::vec3(-size, size, -size));
+
+    addQuadToTriangles(triangles, vertexInsertIndex);
+    addSkyboxUvs(uvs, texCoords);
+    vertices.push_back(glm::vec3(size, -size, -size));
+    vertices.push_back(glm::vec3(size, -size, size));
+    vertices.push_back(glm::vec3(size, size, -size));
+    vertices.push_back(glm::vec3(size, size, size));
+    addQuadToTriangles(triangles, vertexInsertIndex);
+    addSkyboxUvs(uvs, texCoords);
+
+    vertices.push_back(glm::vec3(-size, size, -size));
+    vertices.push_back(glm::vec3(size, size, -size));
+    vertices.push_back(glm::vec3(-size, size, size));
+    vertices.push_back(glm::vec3(size, size, size));
+    addQuadToTriangles(triangles, vertexInsertIndex);
+    addSkyboxUvs(uvs, texCoords);
+
+    vertices.push_back(glm::vec3(-size, -size, -size));
+    vertices.push_back(glm::vec3(size, -size, -size));
+    vertices.push_back(glm::vec3(-size, -size, size));
+    vertices.push_back(glm::vec3(size, -size, size));
+    addQuadToTriangles(triangles, vertexInsertIndex);
+    addSkyboxUvs(uvs, texCoords);
 }
