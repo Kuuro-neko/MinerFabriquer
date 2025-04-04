@@ -61,21 +61,22 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-p9nT9R"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-p9nT9R"
+      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk"
+      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk"
     cmakeVariables:
       CMAKE_C_FLAGS: ""
     buildResult:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-p9nT9R'
+        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk'
         
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_63599/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_63599.dir/build.make CMakeFiles/cmTC_63599.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-p9nT9R'
-        Building C object CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o
-        /usr/bin/cc   -fdiagnostics-color=always   -v -o CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_89a28/fast
+        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk'
+        /usr/bin/gmake  -f CMakeFiles/cmTC_89a28.dir/build.make CMakeFiles/cmTC_89a28.dir/build
+        gmake[2]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk'
+        Building C object CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o
+        /usr/bin/cc   -v -o CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
@@ -85,8 +86,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) 
-        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_63599.dir/'
-         /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_63599.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fdiagnostics-color=always -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccYwdeE2.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_89a28.dir/'
+         /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_89a28.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccDMFoeT.s
         GNU C17 (Ubuntu 11.4.0-1ubuntu1~22.04) version 11.4.0 (x86_64-linux-gnu)
         	compiled by GNU C version 11.4.0, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.26-GMP
         
@@ -112,15 +113,15 @@ events:
         warning: MPC header version 1.2.1 differs from library version 1.3.1.
         GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
         Compiler executable checksum: 50eaa2331df977b8016186198deb2d18
-        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_63599.dir/'
-         as -v --64 -o CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o /tmp/ccYwdeE2.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_89a28.dir/'
+         as -v --64 -o CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o /tmp/ccDMFoeT.s
         GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.'
-        Linking C executable cmTC_63599
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_63599.dir/link.txt --verbose=1
-        /usr/bin/cc  -v -Wl,-v -rdynamic CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -o cmTC_63599
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.'
+        Linking C executable cmTC_89a28
+        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_89a28.dir/link.txt --verbose=1
+        /usr/bin/cc  -v -Wl,-v -rdynamic CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -o cmTC_89a28
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper
@@ -133,13 +134,14 @@ events:
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_63599' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_63599.'
-         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsG9tQX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_63599 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_89a28' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_89a28.'
+         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8JhwZ8.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_89a28 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         collect2 version 11.4.0
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsG9tQX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_63599 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8JhwZ8.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_89a28 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         GNU ld (GNU Binutils for Ubuntu) 2.38
-        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_63599' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_63599.'
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-p9nT9R'
+        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_89a28' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_89a28.'
+        gmake[2]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk'
+        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk'
         
       exitCode: 0
   -
@@ -174,13 +176,14 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?))("|,| |$)]
-        ignore line: [Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-p9nT9R']
+        ignore line: [Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk']
         ignore line: []
-        ignore line: [Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_63599/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_63599.dir/build.make CMakeFiles/cmTC_63599.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-p9nT9R']
-        ignore line: [Building C object CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o]
-        ignore line: [/usr/bin/cc   -fdiagnostics-color=always   -v -o CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_89a28/fast]
+        ignore line: [gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk']
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_89a28.dir/build.make CMakeFiles/cmTC_89a28.dir/build]
+        ignore line: [gmake[2]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-9G6lxk']
+        ignore line: [Building C object CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
@@ -190,8 +193,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_63599.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_63599.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fdiagnostics-color=always -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccYwdeE2.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_89a28.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_89a28.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccDMFoeT.s]
         ignore line: [GNU C17 (Ubuntu 11.4.0-1ubuntu1~22.04) version 11.4.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 11.4.0  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.26-GMP]
         ignore line: []
@@ -217,15 +220,15 @@ events:
         ignore line: [warning: MPC header version 1.2.1 differs from library version 1.3.1.]
         ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
         ignore line: [Compiler executable checksum: 50eaa2331df977b8016186198deb2d18]
-        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_63599.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o /tmp/ccYwdeE2.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_89a28.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o /tmp/ccDMFoeT.s]
         ignore line: [GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.']
-        ignore line: [Linking C executable cmTC_63599]
-        ignore line: [/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_63599.dir/link.txt --verbose=1]
-        ignore line: [/usr/bin/cc  -v -Wl -v -rdynamic CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -o cmTC_63599]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C executable cmTC_89a28]
+        ignore line: [/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_89a28.dir/link.txt --verbose=1]
+        ignore line: [/usr/bin/cc  -v -Wl -v -rdynamic CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -o cmTC_89a28]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper]
@@ -238,13 +241,13 @@ events:
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_63599' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_63599.']
-        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsG9tQX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_63599 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_89a28' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_89a28.']
+        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8JhwZ8.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_89a28 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccsG9tQX.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/cc8JhwZ8.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -263,7 +266,7 @@ events:
           arg [-znow] ==> ignore
           arg [-zrelro] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_63599] ==> ignore
+          arg [cmTC_89a28] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o]
@@ -276,7 +279,7 @@ events:
           arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
           arg [-L/usr/lib/gcc/x86_64-linux-gnu/11/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/11/../../..]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o] ==> ignore
           arg [-lgcc] ==> lib [gcc]
           arg [--push-state] ==> ignore
           arg [--as-needed] ==> ignore
@@ -291,7 +294,7 @@ events:
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         ignore line: [collect2 version 11.4.0]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccsG9tQX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_63599 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_63599.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8JhwZ8.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_89a28 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_89a28.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         linker tool for 'C': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> [/usr/lib/x86_64-linux-gnu/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> [/usr/lib/x86_64-linux-gnu/crti.o]
@@ -329,8 +332,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-tzHYHn"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-tzHYHn"
+      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij"
+      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
@@ -338,13 +341,14 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-tzHYHn'
+        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij'
         
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_bc060/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_bc060.dir/build.make CMakeFiles/cmTC_bc060.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-tzHYHn'
-        Building CXX object CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -fdiagnostics-color=always   -v -o CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_241fa/fast
+        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij'
+        /usr/bin/gmake  -f CMakeFiles/cmTC_241fa.dir/build.make CMakeFiles/cmTC_241fa.dir/build
+        gmake[2]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij'
+        Building CXX object CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/c++   -v -o CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
@@ -354,8 +358,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) 
-        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc060.dir/'
-         /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_bc060.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fdiagnostics-color=always -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOwghmh.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_241fa.dir/'
+         /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_241fa.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/cc197g4n.s
         GNU C++17 (Ubuntu 11.4.0-1ubuntu1~22.04) version 11.4.0 (x86_64-linux-gnu)
         	compiled by GNU C version 11.4.0, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.26-GMP
         
@@ -385,15 +389,15 @@ events:
         warning: MPC header version 1.2.1 differs from library version 1.3.1.
         GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
         Compiler executable checksum: d591828bb4d392ae8b7b160e5bb0b95f
-        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc060.dir/'
-         as -v --64 -o CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccOwghmh.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_241fa.dir/'
+         as -v --64 -o CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc197g4n.s
         GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.'
-        Linking CXX executable cmTC_bc060
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bc060.dir/link.txt --verbose=1
-        /usr/bin/c++  -v -Wl,-v -rdynamic CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_bc060
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX executable cmTC_241fa
+        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_241fa.dir/link.txt --verbose=1
+        /usr/bin/c++  -v -Wl,-v -rdynamic CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_241fa
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper
@@ -406,13 +410,14 @@ events:
         gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_bc060' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_bc060.'
-         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc44cRhG.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc060 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_241fa' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_241fa.'
+         /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccMvBvnN.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_241fa /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         collect2 version 11.4.0
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc44cRhG.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc060 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccMvBvnN.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_241fa /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o
         GNU ld (GNU Binutils for Ubuntu) 2.38
-        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_bc060' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_bc060.'
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-tzHYHn'
+        COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_241fa' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_241fa.'
+        gmake[2]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij'
+        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij'
         
       exitCode: 0
   -
@@ -453,13 +458,14 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?))("|,| |$)]
-        ignore line: [Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-tzHYHn']
+        ignore line: [Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij']
         ignore line: []
-        ignore line: [Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_bc060/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_bc060.dir/build.make CMakeFiles/cmTC_bc060.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-tzHYHn']
-        ignore line: [Building CXX object CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -fdiagnostics-color=always   -v -o CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_241fa/fast]
+        ignore line: [gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij']
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_241fa.dir/build.make CMakeFiles/cmTC_241fa.dir/build]
+        ignore line: [gmake[2]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-eiJZij']
+        ignore line: [Building CXX object CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -c /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
@@ -469,8 +475,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc060.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_bc060.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fdiagnostics-color=always -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccOwghmh.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_241fa.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/11/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_241fa.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/cc197g4n.s]
         ignore line: [GNU C++17 (Ubuntu 11.4.0-1ubuntu1~22.04) version 11.4.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 11.4.0  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.26-GMP]
         ignore line: []
@@ -500,15 +506,15 @@ events:
         ignore line: [warning: MPC header version 1.2.1 differs from library version 1.3.1.]
         ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
         ignore line: [Compiler executable checksum: d591828bb4d392ae8b7b160e5bb0b95f]
-        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc060.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccOwghmh.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_241fa.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc197g4n.s]
         ignore line: [GNU assembler version 2.38 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.38]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-v' '-o' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [Linking CXX executable cmTC_bc060]
-        ignore line: [/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bc060.dir/link.txt --verbose=1]
-        ignore line: [/usr/bin/c++  -v -Wl -v -rdynamic CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_bc060]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX executable cmTC_241fa]
+        ignore line: [/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_241fa.dir/link.txt --verbose=1]
+        ignore line: [/usr/bin/c++  -v -Wl -v -rdynamic CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_241fa]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper]
@@ -521,13 +527,13 @@ events:
         ignore line: [gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/11/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/11/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_bc060' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_bc060.']
-        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc44cRhG.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc060 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_241fa' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_241fa.']
+        link line: [ /usr/lib/gcc/x86_64-linux-gnu/11/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccMvBvnN.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_241fa /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/cc44cRhG.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccMvBvnN.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -546,7 +552,7 @@ events:
           arg [-znow] ==> ignore
           arg [-zrelro] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_bc060] ==> ignore
+          arg [cmTC_241fa] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o]
@@ -559,7 +565,7 @@ events:
           arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
           arg [-L/usr/lib/gcc/x86_64-linux-gnu/11/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/11/../../..]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -570,7 +576,7 @@ events:
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         ignore line: [collect2 version 11.4.0]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/cc44cRhG.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_bc060 /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_bc060.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-linux-gnu/11/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/11/lto-wrapper -plugin-opt=-fresolution=/tmp/ccMvBvnN.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_241fa /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/11/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/11 -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/11/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/11/../../.. -v CMakeFiles/cmTC_241fa.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/11/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crtn.o]
         linker tool for 'CXX': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/Scrt1.o] ==> [/usr/lib/x86_64-linux-gnu/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/11/../../../x86_64-linux-gnu/crti.o] ==> [/usr/lib/x86_64-linux-gnu/crti.o]
@@ -599,223 +605,4 @@ events:
     message: |
       Running the CXX compiler's linker: "/usr/bin/ld" "-v"
       GNU ld (GNU Binutils for Ubuntu) 2.38
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindThreads.cmake:163 (_threads_check_libc)"
-      - "external/glfw-3.1.2/CMakeLists.txt:95 (find_package)"
-    checks:
-      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
-    directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-MKrl6y"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-MKrl6y"
-    cmakeVariables:
-      CMAKE_C_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/CMake/modules"
-    buildResult:
-      variable: "CMAKE_HAVE_LIBC_PTHREAD"
-      cached: true
-      stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-MKrl6y'
-        
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_c9b36/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_c9b36.dir/build.make CMakeFiles/cmTC_c9b36.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-MKrl6y'
-        Building C object CMakeFiles/cmTC_c9b36.dir/src.c.o
-        /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD  -fdiagnostics-color=always -o CMakeFiles/cmTC_c9b36.dir/src.c.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-MKrl6y/src.c
-        Linking C executable cmTC_c9b36
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c9b36.dir/link.txt --verbose=1
-        /usr/bin/cc -rdynamic CMakeFiles/cmTC_c9b36.dir/src.c.o -o cmTC_c9b36
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-MKrl6y'
-        
-      exitCode: 0
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CheckLibraryExists.cmake:69 (try_compile)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindX11.cmake:693 (check_library_exists)"
-      - "external/glfw-3.1.2/CMakeLists.txt:259 (find_package)"
-    checks:
-      - "Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so"
-    directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-waSAEA"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-waSAEA"
-    cmakeVariables:
-      CMAKE_C_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/CMake/modules"
-    buildResult:
-      variable: "X11_LIB_X11_SOLO"
-      cached: true
-      stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-waSAEA'
-        
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_2260d/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_2260d.dir/build.make CMakeFiles/cmTC_2260d.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-waSAEA'
-        Building C object CMakeFiles/cmTC_2260d.dir/CheckFunctionExists.c.o
-        /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=XOpenDisplay -fdiagnostics-color=always -o CMakeFiles/cmTC_2260d.dir/CheckFunctionExists.c.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-waSAEA/CheckFunctionExists.c
-        Linking C executable cmTC_2260d
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2260d.dir/link.txt --verbose=1
-        /usr/bin/cc  -DCHECK_FUNCTION_EXISTS=XOpenDisplay -rdynamic CMakeFiles/cmTC_2260d.dir/CheckFunctionExists.c.o -o cmTC_2260d  /usr/lib/x86_64-linux-gnu/libX11.so /usr/lib/x86_64-linux-gnu/libXext.so
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-waSAEA'
-        
-      exitCode: 0
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindX11.cmake:708 (check_function_exists)"
-      - "external/glfw-3.1.2/CMakeLists.txt:259 (find_package)"
-    checks:
-      - "Looking for gethostbyname"
-    directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-aEMXzc"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-aEMXzc"
-    cmakeVariables:
-      CMAKE_C_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/CMake/modules"
-    buildResult:
-      variable: "CMAKE_HAVE_GETHOSTBYNAME"
-      cached: true
-      stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-aEMXzc'
-        
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_e22d5/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_e22d5.dir/build.make CMakeFiles/cmTC_e22d5.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-aEMXzc'
-        Building C object CMakeFiles/cmTC_e22d5.dir/CheckFunctionExists.c.o
-        /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=gethostbyname -fdiagnostics-color=always -o CMakeFiles/cmTC_e22d5.dir/CheckFunctionExists.c.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-aEMXzc/CheckFunctionExists.c
-        Linking C executable cmTC_e22d5
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e22d5.dir/link.txt --verbose=1
-        /usr/bin/cc  -DCHECK_FUNCTION_EXISTS=gethostbyname -rdynamic CMakeFiles/cmTC_e22d5.dir/CheckFunctionExists.c.o -o cmTC_e22d5
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-aEMXzc'
-        
-      exitCode: 0
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindX11.cmake:722 (check_function_exists)"
-      - "external/glfw-3.1.2/CMakeLists.txt:259 (find_package)"
-    checks:
-      - "Looking for connect"
-    directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-Xo1yse"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-Xo1yse"
-    cmakeVariables:
-      CMAKE_C_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/CMake/modules"
-    buildResult:
-      variable: "CMAKE_HAVE_CONNECT"
-      cached: true
-      stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-Xo1yse'
-        
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_e9883/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_e9883.dir/build.make CMakeFiles/cmTC_e9883.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-Xo1yse'
-        Building C object CMakeFiles/cmTC_e9883.dir/CheckFunctionExists.c.o
-        /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=connect -fdiagnostics-color=always -o CMakeFiles/cmTC_e9883.dir/CheckFunctionExists.c.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-Xo1yse/CheckFunctionExists.c
-        Linking C executable cmTC_e9883
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e9883.dir/link.txt --verbose=1
-        /usr/bin/cc  -DCHECK_FUNCTION_EXISTS=connect -rdynamic CMakeFiles/cmTC_e9883.dir/CheckFunctionExists.c.o -o cmTC_e9883
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-Xo1yse'
-        
-      exitCode: 0
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindX11.cmake:731 (check_function_exists)"
-      - "external/glfw-3.1.2/CMakeLists.txt:259 (find_package)"
-    checks:
-      - "Looking for remove"
-    directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-WPs0Fv"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-WPs0Fv"
-    cmakeVariables:
-      CMAKE_C_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/CMake/modules"
-    buildResult:
-      variable: "CMAKE_HAVE_REMOVE"
-      cached: true
-      stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-WPs0Fv'
-        
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_65a9c/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_65a9c.dir/build.make CMakeFiles/cmTC_65a9c.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-WPs0Fv'
-        Building C object CMakeFiles/cmTC_65a9c.dir/CheckFunctionExists.c.o
-        /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=remove -fdiagnostics-color=always -o CMakeFiles/cmTC_65a9c.dir/CheckFunctionExists.c.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-WPs0Fv/CheckFunctionExists.c
-        Linking C executable cmTC_65a9c
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_65a9c.dir/link.txt --verbose=1
-        /usr/bin/cc  -DCHECK_FUNCTION_EXISTS=remove -rdynamic CMakeFiles/cmTC_65a9c.dir/CheckFunctionExists.c.o -o cmTC_65a9c
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-WPs0Fv'
-        
-      exitCode: 0
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindX11.cmake:740 (check_function_exists)"
-      - "external/glfw-3.1.2/CMakeLists.txt:259 (find_package)"
-    checks:
-      - "Looking for shmat"
-    directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-gQCLGb"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-gQCLGb"
-    cmakeVariables:
-      CMAKE_C_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/CMake/modules"
-    buildResult:
-      variable: "CMAKE_HAVE_SHMAT"
-      cached: true
-      stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-gQCLGb'
-        
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_0e5c6/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_0e5c6.dir/build.make CMakeFiles/cmTC_0e5c6.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-gQCLGb'
-        Building C object CMakeFiles/cmTC_0e5c6.dir/CheckFunctionExists.c.o
-        /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=shmat -fdiagnostics-color=always -o CMakeFiles/cmTC_0e5c6.dir/CheckFunctionExists.c.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-gQCLGb/CheckFunctionExists.c
-        Linking C executable cmTC_0e5c6
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0e5c6.dir/link.txt --verbose=1
-        /usr/bin/cc  -DCHECK_FUNCTION_EXISTS=shmat -rdynamic CMakeFiles/cmTC_0e5c6.dir/CheckFunctionExists.c.o -o cmTC_0e5c6
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-gQCLGb'
-        
-      exitCode: 0
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/CheckLibraryExists.cmake:69 (try_compile)"
-      - "/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/share/cmake-3.30/Modules/FindX11.cmake:750 (check_library_exists)"
-      - "external/glfw-3.1.2/CMakeLists.txt:259 (find_package)"
-    checks:
-      - "Looking for IceConnectionNumber in ICE"
-    directories:
-      source: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-rueKOY"
-      binary: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-rueKOY"
-    cmakeVariables:
-      CMAKE_C_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/CMake/modules"
-    buildResult:
-      variable: "CMAKE_LIB_ICE_HAS_ICECONNECTIONNUMBER"
-      cached: true
-      stdout: |
-        Change Dir: '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-rueKOY'
-        
-        Run Build Command(s): /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_55a40/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_55a40.dir/build.make CMakeFiles/cmTC_55a40.dir/build
-        gmake[1]: Entering directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-rueKOY'
-        Building C object CMakeFiles/cmTC_55a40.dir/CheckFunctionExists.c.o
-        /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=IceConnectionNumber -fdiagnostics-color=always -o CMakeFiles/cmTC_55a40.dir/CheckFunctionExists.c.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-rueKOY/CheckFunctionExists.c
-        Linking C executable cmTC_55a40
-        /home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_55a40.dir/link.txt --verbose=1
-        /usr/bin/cc  -DCHECK_FUNCTION_EXISTS=IceConnectionNumber -rdynamic CMakeFiles/cmTC_55a40.dir/CheckFunctionExists.c.o -o cmTC_55a40  -lICE
-        gmake[1]: Leaving directory '/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles/CMakeScratch/TryCompile-rueKOY'
-        
-      exitCode: 0
 ...

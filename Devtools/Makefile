@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named TP1
+# Target rules for targets named MinerFabriquer
 
 # Build rule for target.
-TP1: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 TP1
-.PHONY : TP1
+MinerFabriquer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MinerFabriquer
+.PHONY : MinerFabriquer
 
 # fast build rule for target.
-TP1/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/build
-.PHONY : TP1/fast
+MinerFabriquer/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/build
+.PHONY : MinerFabriquer/fast
 
 #=============================================================================
 # Target rules for targets named GLEW_1130
@@ -517,7 +517,7 @@ TP/Camera/Camera.o: TP/Camera/Camera.cpp.o
 
 # target to build an object file
 TP/Camera/Camera.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.o
 .PHONY : TP/Camera/Camera.cpp.o
 
 TP/Camera/Camera.i: TP/Camera/Camera.cpp.i
@@ -525,7 +525,7 @@ TP/Camera/Camera.i: TP/Camera/Camera.cpp.i
 
 # target to preprocess a source file
 TP/Camera/Camera.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.i
 .PHONY : TP/Camera/Camera.cpp.i
 
 TP/Camera/Camera.s: TP/Camera/Camera.cpp.s
@@ -533,7 +533,7 @@ TP/Camera/Camera.s: TP/Camera/Camera.cpp.s
 
 # target to generate assembly for a file
 TP/Camera/Camera.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Camera/Camera.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.s
 .PHONY : TP/Camera/Camera.cpp.s
 
 TP/Camera/Camera_Helper.o: TP/Camera/Camera_Helper.cpp.o
@@ -541,7 +541,7 @@ TP/Camera/Camera_Helper.o: TP/Camera/Camera_Helper.cpp.o
 
 # target to build an object file
 TP/Camera/Camera_Helper.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.o
 .PHONY : TP/Camera/Camera_Helper.cpp.o
 
 TP/Camera/Camera_Helper.i: TP/Camera/Camera_Helper.cpp.i
@@ -549,7 +549,7 @@ TP/Camera/Camera_Helper.i: TP/Camera/Camera_Helper.cpp.i
 
 # target to preprocess a source file
 TP/Camera/Camera_Helper.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.i
 .PHONY : TP/Camera/Camera_Helper.cpp.i
 
 TP/Camera/Camera_Helper.s: TP/Camera/Camera_Helper.cpp.s
@@ -557,7 +557,7 @@ TP/Camera/Camera_Helper.s: TP/Camera/Camera_Helper.cpp.s
 
 # target to generate assembly for a file
 TP/Camera/Camera_Helper.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.s
 .PHONY : TP/Camera/Camera_Helper.cpp.s
 
 TP/Scene/BlocTypes.o: TP/Scene/BlocTypes.cpp.o
@@ -565,7 +565,7 @@ TP/Scene/BlocTypes.o: TP/Scene/BlocTypes.cpp.o
 
 # target to build an object file
 TP/Scene/BlocTypes.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/BlocTypes.cpp.o
 .PHONY : TP/Scene/BlocTypes.cpp.o
 
 TP/Scene/BlocTypes.i: TP/Scene/BlocTypes.cpp.i
@@ -573,7 +573,7 @@ TP/Scene/BlocTypes.i: TP/Scene/BlocTypes.cpp.i
 
 # target to preprocess a source file
 TP/Scene/BlocTypes.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/BlocTypes.cpp.i
 .PHONY : TP/Scene/BlocTypes.cpp.i
 
 TP/Scene/BlocTypes.s: TP/Scene/BlocTypes.cpp.s
@@ -581,7 +581,7 @@ TP/Scene/BlocTypes.s: TP/Scene/BlocTypes.cpp.s
 
 # target to generate assembly for a file
 TP/Scene/BlocTypes.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/BlocTypes.cpp.s
 .PHONY : TP/Scene/BlocTypes.cpp.s
 
 TP/Scene/Character.o: TP/Scene/Character.cpp.o
@@ -589,7 +589,7 @@ TP/Scene/Character.o: TP/Scene/Character.cpp.o
 
 # target to build an object file
 TP/Scene/Character.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o
 .PHONY : TP/Scene/Character.cpp.o
 
 TP/Scene/Character.i: TP/Scene/Character.cpp.i
@@ -597,7 +597,7 @@ TP/Scene/Character.i: TP/Scene/Character.cpp.i
 
 # target to preprocess a source file
 TP/Scene/Character.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Character.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.i
 .PHONY : TP/Scene/Character.cpp.i
 
 TP/Scene/Character.s: TP/Scene/Character.cpp.s
@@ -605,7 +605,7 @@ TP/Scene/Character.s: TP/Scene/Character.cpp.s
 
 # target to generate assembly for a file
 TP/Scene/Character.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Character.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.s
 .PHONY : TP/Scene/Character.cpp.s
 
 TP/Scene/MeshObject.o: TP/Scene/MeshObject.cpp.o
@@ -613,7 +613,7 @@ TP/Scene/MeshObject.o: TP/Scene/MeshObject.cpp.o
 
 # target to build an object file
 TP/Scene/MeshObject.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o
 .PHONY : TP/Scene/MeshObject.cpp.o
 
 TP/Scene/MeshObject.i: TP/Scene/MeshObject.cpp.i
@@ -621,7 +621,7 @@ TP/Scene/MeshObject.i: TP/Scene/MeshObject.cpp.i
 
 # target to preprocess a source file
 TP/Scene/MeshObject.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.i
 .PHONY : TP/Scene/MeshObject.cpp.i
 
 TP/Scene/MeshObject.s: TP/Scene/MeshObject.cpp.s
@@ -629,7 +629,7 @@ TP/Scene/MeshObject.s: TP/Scene/MeshObject.cpp.s
 
 # target to generate assembly for a file
 TP/Scene/MeshObject.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.s
 .PHONY : TP/Scene/MeshObject.cpp.s
 
 TP/Scene/SceneNode.o: TP/Scene/SceneNode.cpp.o
@@ -637,7 +637,7 @@ TP/Scene/SceneNode.o: TP/Scene/SceneNode.cpp.o
 
 # target to build an object file
 TP/Scene/SceneNode.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/SceneNode.cpp.o
 .PHONY : TP/Scene/SceneNode.cpp.o
 
 TP/Scene/SceneNode.i: TP/Scene/SceneNode.cpp.i
@@ -645,7 +645,7 @@ TP/Scene/SceneNode.i: TP/Scene/SceneNode.cpp.i
 
 # target to preprocess a source file
 TP/Scene/SceneNode.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/SceneNode.cpp.i
 .PHONY : TP/Scene/SceneNode.cpp.i
 
 TP/Scene/SceneNode.s: TP/Scene/SceneNode.cpp.s
@@ -653,7 +653,7 @@ TP/Scene/SceneNode.s: TP/Scene/SceneNode.cpp.s
 
 # target to generate assembly for a file
 TP/Scene/SceneNode.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/SceneNode.cpp.s
 .PHONY : TP/Scene/SceneNode.cpp.s
 
 TP/Scene/Texture.o: TP/Scene/Texture.cpp.o
@@ -661,7 +661,7 @@ TP/Scene/Texture.o: TP/Scene/Texture.cpp.o
 
 # target to build an object file
 TP/Scene/Texture.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.o
 .PHONY : TP/Scene/Texture.cpp.o
 
 TP/Scene/Texture.i: TP/Scene/Texture.cpp.i
@@ -669,7 +669,7 @@ TP/Scene/Texture.i: TP/Scene/Texture.cpp.i
 
 # target to preprocess a source file
 TP/Scene/Texture.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.i
 .PHONY : TP/Scene/Texture.cpp.i
 
 TP/Scene/Texture.s: TP/Scene/Texture.cpp.s
@@ -677,7 +677,7 @@ TP/Scene/Texture.s: TP/Scene/Texture.cpp.s
 
 # target to generate assembly for a file
 TP/Scene/Texture.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.s
 .PHONY : TP/Scene/Texture.cpp.s
 
 TP/Scene/VoxelChunk.o: TP/Scene/VoxelChunk.cpp.o
@@ -685,7 +685,7 @@ TP/Scene/VoxelChunk.o: TP/Scene/VoxelChunk.cpp.o
 
 # target to build an object file
 TP/Scene/VoxelChunk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o
 .PHONY : TP/Scene/VoxelChunk.cpp.o
 
 TP/Scene/VoxelChunk.i: TP/Scene/VoxelChunk.cpp.i
@@ -693,7 +693,7 @@ TP/Scene/VoxelChunk.i: TP/Scene/VoxelChunk.cpp.i
 
 # target to preprocess a source file
 TP/Scene/VoxelChunk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.i
 .PHONY : TP/Scene/VoxelChunk.cpp.i
 
 TP/Scene/VoxelChunk.s: TP/Scene/VoxelChunk.cpp.s
@@ -701,63 +701,15 @@ TP/Scene/VoxelChunk.s: TP/Scene/VoxelChunk.cpp.s
 
 # target to generate assembly for a file
 TP/Scene/VoxelChunk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.s
 .PHONY : TP/Scene/VoxelChunk.cpp.s
-
-TP1/TP1.o: TP1/TP1.cpp.o
-.PHONY : TP1/TP1.o
-
-# target to build an object file
-TP1/TP1.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP1/TP1.cpp.o
-.PHONY : TP1/TP1.cpp.o
-
-TP1/TP1.i: TP1/TP1.cpp.i
-.PHONY : TP1/TP1.i
-
-# target to preprocess a source file
-TP1/TP1.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP1/TP1.cpp.i
-.PHONY : TP1/TP1.cpp.i
-
-TP1/TP1.s: TP1/TP1.cpp.s
-.PHONY : TP1/TP1.s
-
-# target to generate assembly for a file
-TP1/TP1.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP1/TP1.cpp.s
-.PHONY : TP1/TP1.cpp.s
-
-common/controls.o: common/controls.cpp.o
-.PHONY : common/controls.o
-
-# target to build an object file
-common/controls.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/controls.cpp.o
-.PHONY : common/controls.cpp.o
-
-common/controls.i: common/controls.cpp.i
-.PHONY : common/controls.i
-
-# target to preprocess a source file
-common/controls.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/controls.cpp.i
-.PHONY : common/controls.cpp.i
-
-common/controls.s: common/controls.cpp.s
-.PHONY : common/controls.s
-
-# target to generate assembly for a file
-common/controls.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/controls.cpp.s
-.PHONY : common/controls.cpp.s
 
 common/imageLoader.o: common/imageLoader.cpp.o
 .PHONY : common/imageLoader.o
 
 # target to build an object file
 common/imageLoader.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/imageLoader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.o
 .PHONY : common/imageLoader.cpp.o
 
 common/imageLoader.i: common/imageLoader.cpp.i
@@ -765,7 +717,7 @@ common/imageLoader.i: common/imageLoader.cpp.i
 
 # target to preprocess a source file
 common/imageLoader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/imageLoader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.i
 .PHONY : common/imageLoader.cpp.i
 
 common/imageLoader.s: common/imageLoader.cpp.s
@@ -773,39 +725,15 @@ common/imageLoader.s: common/imageLoader.cpp.s
 
 # target to generate assembly for a file
 common/imageLoader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/imageLoader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.s
 .PHONY : common/imageLoader.cpp.s
-
-common/objloader.o: common/objloader.cpp.o
-.PHONY : common/objloader.o
-
-# target to build an object file
-common/objloader.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/objloader.cpp.o
-.PHONY : common/objloader.cpp.o
-
-common/objloader.i: common/objloader.cpp.i
-.PHONY : common/objloader.i
-
-# target to preprocess a source file
-common/objloader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/objloader.cpp.i
-.PHONY : common/objloader.cpp.i
-
-common/objloader.s: common/objloader.cpp.s
-.PHONY : common/objloader.s
-
-# target to generate assembly for a file
-common/objloader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/objloader.cpp.s
-.PHONY : common/objloader.cpp.s
 
 common/shader.o: common/shader.cpp.o
 .PHONY : common/shader.o
 
 # target to build an object file
 common/shader.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/shader.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o
 .PHONY : common/shader.cpp.o
 
 common/shader.i: common/shader.cpp.i
@@ -813,7 +741,7 @@ common/shader.i: common/shader.cpp.i
 
 # target to preprocess a source file
 common/shader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/shader.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/common/shader.cpp.i
 .PHONY : common/shader.cpp.i
 
 common/shader.s: common/shader.cpp.s
@@ -821,63 +749,39 @@ common/shader.s: common/shader.cpp.s
 
 # target to generate assembly for a file
 common/shader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/shader.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/common/shader.cpp.s
 .PHONY : common/shader.cpp.s
 
-common/texture.o: common/texture.cpp.o
-.PHONY : common/texture.o
+main/main.o: main/main.cpp.o
+.PHONY : main/main.o
 
 # target to build an object file
-common/texture.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/texture.cpp.o
-.PHONY : common/texture.cpp.o
+main/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/main/main.cpp.o
+.PHONY : main/main.cpp.o
 
-common/texture.i: common/texture.cpp.i
-.PHONY : common/texture.i
-
-# target to preprocess a source file
-common/texture.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/texture.cpp.i
-.PHONY : common/texture.cpp.i
-
-common/texture.s: common/texture.cpp.s
-.PHONY : common/texture.s
-
-# target to generate assembly for a file
-common/texture.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/texture.cpp.s
-.PHONY : common/texture.cpp.s
-
-common/vboindexer.o: common/vboindexer.cpp.o
-.PHONY : common/vboindexer.o
-
-# target to build an object file
-common/vboindexer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/vboindexer.cpp.o
-.PHONY : common/vboindexer.cpp.o
-
-common/vboindexer.i: common/vboindexer.cpp.i
-.PHONY : common/vboindexer.i
+main/main.i: main/main.cpp.i
+.PHONY : main/main.i
 
 # target to preprocess a source file
-common/vboindexer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/vboindexer.cpp.i
-.PHONY : common/vboindexer.cpp.i
+main/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/main/main.cpp.i
+.PHONY : main/main.cpp.i
 
-common/vboindexer.s: common/vboindexer.cpp.s
-.PHONY : common/vboindexer.s
+main/main.s: main/main.cpp.s
+.PHONY : main/main.s
 
 # target to generate assembly for a file
-common/vboindexer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/vboindexer.cpp.s
-.PHONY : common/vboindexer.cpp.s
+main/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/main/main.cpp.s
+.PHONY : main/main.cpp.s
 
 utils/GLUtils.o: utils/GLUtils.cpp.o
 .PHONY : utils/GLUtils.o
 
 # target to build an object file
 utils/GLUtils.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/utils/GLUtils.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o
 .PHONY : utils/GLUtils.cpp.o
 
 utils/GLUtils.i: utils/GLUtils.cpp.i
@@ -885,7 +789,7 @@ utils/GLUtils.i: utils/GLUtils.cpp.i
 
 # target to preprocess a source file
 utils/GLUtils.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/utils/GLUtils.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.i
 .PHONY : utils/GLUtils.cpp.i
 
 utils/GLUtils.s: utils/GLUtils.cpp.s
@@ -893,7 +797,7 @@ utils/GLUtils.s: utils/GLUtils.cpp.s
 
 # target to generate assembly for a file
 utils/GLUtils.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/utils/GLUtils.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.s
 .PHONY : utils/GLUtils.cpp.s
 
 # Help Target
@@ -910,7 +814,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... uninstall"
 	@echo "... GLEW_1130"
-	@echo "... TP1"
+	@echo "... MinerFabriquer"
 	@echo "... boing"
 	@echo "... clipboard"
 	@echo "... cursor"
@@ -959,27 +863,15 @@ help:
 	@echo "... TP/Scene/VoxelChunk.o"
 	@echo "... TP/Scene/VoxelChunk.i"
 	@echo "... TP/Scene/VoxelChunk.s"
-	@echo "... TP1/TP1.o"
-	@echo "... TP1/TP1.i"
-	@echo "... TP1/TP1.s"
-	@echo "... common/controls.o"
-	@echo "... common/controls.i"
-	@echo "... common/controls.s"
 	@echo "... common/imageLoader.o"
 	@echo "... common/imageLoader.i"
 	@echo "... common/imageLoader.s"
-	@echo "... common/objloader.o"
-	@echo "... common/objloader.i"
-	@echo "... common/objloader.s"
 	@echo "... common/shader.o"
 	@echo "... common/shader.i"
 	@echo "... common/shader.s"
-	@echo "... common/texture.o"
-	@echo "... common/texture.i"
-	@echo "... common/texture.s"
-	@echo "... common/vboindexer.o"
-	@echo "... common/vboindexer.i"
-	@echo "... common/vboindexer.s"
+	@echo "... main/main.o"
+	@echo "... main/main.i"
+	@echo "... main/main.s"
 	@echo "... utils/GLUtils.o"
 	@echo "... utils/GLUtils.i"
 	@echo "... utils/GLUtils.s"
