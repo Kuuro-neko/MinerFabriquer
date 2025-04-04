@@ -1,6 +1,7 @@
 #include <TP/Camera/Camera.hpp>
 #include <TP/Camera/Camera_Helper.hpp>
 
+
 #include <stdio.h>
 #include <iostream>
 
@@ -63,6 +64,9 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 	// Attach of detach camera from target when T is pressed
 	if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS) {
 		if (!m_tPressed) {
+			if (m_attached) {
+				setPosition(m_targetPrev + m_targetDeltaPos + CAMERA_POSITION_RELATIVE_TO_PLAYER);
+			}
 			m_attached = !m_attached;
 		}
 		m_tPressed = true;
@@ -72,45 +76,21 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
     }
 
 	if (m_attached) {
-		// Camera mode 1 (arrow keys controlled camera) while attached
-		if (m_mode == 1) {
-			if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
-				m_eulerAngle.y += M_PI / 180 * m_rotation_speed * 10 * invertX;
-			}
-			if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
-				m_eulerAngle.y -= M_PI / 180 * m_rotation_speed * 10 * invertX;
-			}
-			if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
-				m_eulerAngle.x = Camera_Helper::clamp(m_eulerAngle.x - M_PI / 180 * m_rotation_speed * 10 * invertY, -M_PI_2, M_PI_2);
-			}
-			if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
-				m_eulerAngle.x = Camera_Helper::clamp(m_eulerAngle.x + M_PI / 180 * m_rotation_speed * 10 * invertY, -M_PI_2, M_PI_2);
-			}
-			if (glfwGetKey(_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-				m_distance = Camera_Helper::clamp(m_distance + m_distance_speed * _deltaTime, 1.f, 50.f);
-			}
-			if (glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-				m_distance = Camera_Helper::clamp(m_distance - m_distance_speed * _deltaTime, 1.f, 50.f);
-			}
-		// Camera mode 0 (mouse controlled camera) while attached
-		} else if (m_mode == 0) {
-			double mouseX, mouseY;
-			glfwGetCursorPos(_window, &mouseX, &mouseY);
+		double mouseX, mouseY;
+		glfwGetCursorPos(_window, &mouseX, &mouseY);
 
-			double offsetX = mouseX - m_prevMouseX;
-			double offsetY = m_prevMouseY - mouseY;
+		double offsetX = mouseX - m_prevMouseX;
+		double offsetY = m_prevMouseY - mouseY;
 
-			m_prevMouseX = w / 2.0;
-			m_prevMouseY = h / 2.0;
-			glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
-			if (offsetX != 0) {
-				m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
-			}
-			if (offsetY != 0) {
-				m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2, M_PI_2);
-			}
+		m_prevMouseX = w / 2.0;
+		m_prevMouseY = h / 2.0;
+		glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
+		if (offsetX != 0) {
+			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
 		}
-
+		if (offsetY != 0) {
+			m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2, M_PI_2);
+		}
 	// Camera mode 0 (mouse controlled camera) while not attached
 	} else if (m_mode == 0) {
 		double mouseX, mouseY;
@@ -123,7 +103,7 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 		m_prevMouseY = h / 2.0;
 		glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
 
-		if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
+		/*if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
 			m_position += normalize(m_rotation * VEC_FRONT) * m_translation_speed * _deltaTime;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
@@ -140,50 +120,14 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 		}
 		if (glfwGetKey(_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
 			m_position -= normalize(m_rotation * VEC_UP) * m_translation_speed * _deltaTime;
-		}
+		}*/
 		if (offsetX != 0) {
 			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
 		}
 		if (offsetY != 0) {
 			m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2, M_PI_2);
 		}
-
-	// Camera mode 1 (arrow keys controlled camera) while not attached
-	} else if (m_mode == 1) {
-		glm::vec3 forward = normalize(m_rotation * VEC_FRONT);
-		forward.y = 0;
-		forward = normalize(forward);
-		if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
-			m_position += forward * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
-			m_position -= forward * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
-			m_position += normalize(m_rotation * VEC_RIGHT) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
-			m_position -= normalize(m_rotation * VEC_RIGHT) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-			m_position -= normalize(m_rotation * VEC_UP) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			m_position += normalize(m_rotation * VEC_UP) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-			m_eulerAngle.y += M_PI / 180 * m_rotation_speed * 10 * invertX;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-			m_eulerAngle.y -= M_PI / 180 * m_rotation_speed * 10 * invertX;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS) {
-			m_eulerAngle.x = Camera_Helper::clamp(m_eulerAngle.x - M_PI / 180 * m_rotation_speed * 10 * invertY, -M_PI_2, M_PI_2);
-		}
-		if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-			m_eulerAngle.x = Camera_Helper::clamp(m_eulerAngle.x + M_PI / 180 * m_rotation_speed * 10 * invertY, -M_PI_2, M_PI_2);
-		}
-	}
+	} 
 }
 
 

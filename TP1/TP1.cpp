@@ -1,93 +1,80 @@
-// Include standard headers
 #include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include <iostream>
-
-// Include GLEW
 #include <GL/glew.h>
-
-// Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
-
-// Include GLM
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
-
-using namespace glm;
-
 #include <common/shader.hpp>
-#include <common/objloader.hpp>
-#include <common/vboindexer.hpp>
-#include <common/imageLoader.h>
 #include <TP/Camera/Camera.hpp>
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
+#include <TP/Scene/Character.hpp>
+
+GLFWwindow *window;
+
+using namespace std;
+using namespace glm;
+
 
 void processInput(GLFWwindow *window, float dt);
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
 
 Camera camera;
 
 // timing
-float deltaTime = 0.0f;	// time between current frame and last frame
+float deltaTime = 0.0f;    // time between current frame and last frame
 float lastFrame = 0.0f;
 
 //rotation
 float angle = 0.;
 float zoom = 1.;
-/*******************************************************************************/
+
 
 void create_sphere_textured(int n, int m, MeshObject &mesh) {
     mesh.vertices.clear();
     mesh.triangles.clear();
     mesh.uvs.clear();
     float x, y, z, u, v;
-    for( int i = 0 ; i <= n ; ++i ) {
-        for( int j = 0 ; j <= m ; ++j ) {
-            x = cos(2*M_PI*i/n)*cos(M_PI*j/m - M_PI_2);
-            y = sin(2*M_PI*i/n)*cos(M_PI*j/m - M_PI_2);
-            z = sin(M_PI*j/m - M_PI_2);
-            u = float(i)/n;
-            v = 1.f - float(j)/m;
+    for (int i = 0; i <= n; ++i) {
+        for (int j = 0; j <= m; ++j) {
+            x = cos(2 * M_PI * i / n) * cos(M_PI * j / m - M_PI_2);
+            y = sin(2 * M_PI * i / n) * cos(M_PI * j / m - M_PI_2);
+            z = sin(M_PI * j / m - M_PI_2);
+            u = float(i) / n;
+            v = 1.f - float(j) / m;
             glm::vec3 vertex(
-                x,
-                y,
-                z
+                    x,
+                    y,
+                    z
             );
             mesh.vertices.push_back(vertex);
             mesh.uvs.push_back(glm::vec2(u, v));
         }
     }
-    for (int i = 0; i < mesh.vertices.size()-n-1; ++i) {
+    for (int i = 0; i < mesh.vertices.size() - n - 1; ++i) {
         mesh.triangles.push_back(i);
-        mesh.triangles.push_back(i+n);
-        mesh.triangles.push_back(i+n+2);
+        mesh.triangles.push_back(i + n);
+        mesh.triangles.push_back(i + n + 2);
 
         mesh.triangles.push_back(i);
-        mesh.triangles.push_back(i+n+1);
-        mesh.triangles.push_back(i+1);
+        mesh.triangles.push_back(i + n + 1);
+        mesh.triangles.push_back(i + 1);
     }
 }
 
-SceneNode controllableSphere(
-    Transform(
-        glm::vec3(0, 5, 0),
-        DEFAULT_ROTATION,
-        1),
-    nullptr);
 
-int main( void )
-{
+Character character = Character(
+        Transform(
+                glm::vec3(0, 5, 0),
+                DEFAULT_ROTATION,
+                1),
+        &camera,
+        nullptr,
+        nullptr
+);
+
+int main(void) {
     // Initialise GLFW
-    if( !glfwInit() )
-    {
-        fprintf( stderr, "Failed to initialize GLFW\n" );
+    if (!glfwInit()) {
+        fprintf(stderr, "Failed to initialize GLFW\n");
         getchar();
         return -1;
     }
@@ -101,9 +88,10 @@ int main( void )
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow( 1024, 768, "TP1 - GLFW", NULL, NULL);
-    if( window == NULL ){
-        fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+    window = glfwCreateWindow(1024, 768, "TP1 - GLFW", NULL, NULL);
+    if (window == NULL) {
+        fprintf(stderr,
+                "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
         getchar();
         glfwTerminate();
         return -1;
@@ -126,7 +114,7 @@ int main( void )
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
-    glfwSetCursorPos(window, 1024/2, 768/2);
+    glfwSetCursorPos(window, 1024 / 2, 768 / 2);
 
     // Dark blue background
     glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
@@ -147,7 +135,7 @@ int main( void )
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders( "vertex_shader.glsl", "fragment_shader.glsl" );
+    GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
 
     /*****************TODO***********************/
     // Get a handle for our "Model View Projection" matrices uniforms
@@ -159,9 +147,9 @@ int main( void )
     // Our first chunk :D
     MeshObject chunkMesh = MeshObject();
     VoxelChunk chunk = VoxelChunk(16, 16, 16, Transform(
-        glm::vec3(0, 0, 0),
-        DEFAULT_ROTATION,
-        1.f), &chunkMesh);
+            glm::vec3(0, 0, 0),
+            DEFAULT_ROTATION,
+            1.f), &chunkMesh);
     chunk.setBloc(2, 3, 2, LOG_OAK);
     chunk.setBloc(2, 4, 2, LOG_OAK);
     chunk.setBloc(2, 5, 2, LOG_OAK);
@@ -180,14 +168,14 @@ int main( void )
     chunk.generateMesh();
     root.addChild(&chunk);
 
-    MeshObject sphereMesh64 = MeshObject();
-    create_sphere_textured(64, 64, sphereMesh64);
-    sphereMesh64.initializeBuffers();
-    controllableSphere.m_mesh = &sphereMesh64;
-    root.addChild(&controllableSphere);
-    camera.setTarget(controllableSphere.getWorldPosition());
 
-    controllableSphere.m_texture = TextureAtlas::getInstance().getTexture();
+    MeshObject characterMesh = MeshObject();
+    create_sphere_textured(64, 64, characterMesh);
+    characterMesh.initializeBuffers();
+    character.m_mesh = &characterMesh;
+    root.addChild(&character);
+    camera.setTarget(character.getWorldPosition());
+    character.m_texture = TextureAtlas::getInstance().getTexture();
 
 
     // Get a handle for our "LightPosition" uniform
@@ -197,7 +185,7 @@ int main( void )
     // For speed computation
     double lastTime = glfwGetTime();
     int nbFrames = 0;
-    do{
+    do {
         // Measure speed
         // per-frame time logic
         // --------------------
@@ -208,7 +196,8 @@ int main( void )
         // input
         // -----
         processInput(window, deltaTime);
-        camera.updateTarget(controllableSphere.getWorldPosition());
+        character.listenAction(deltaTime, window);
+        camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
 
@@ -230,8 +219,8 @@ int main( void )
         glfwPollEvents();
 
     } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-           glfwWindowShouldClose(window) == 0 );
+    while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+           glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
     root.cleanupBuffers();
@@ -246,38 +235,14 @@ int main( void )
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window, float dt)
-{
-    float speed = 7.5f;
+void processInput(GLFWwindow *window, float dt) {
 
-    glm::vec3 cameraFrontNoUp = camera.getRotation() * VEC_FRONT;
-    cameraFrontNoUp.y = 0.f;
-    cameraFrontNoUp = normalize(cameraFrontNoUp);
 
-    glm::vec3 cameraRightNoUp = camera.getRotation() * VEC_RIGHT;
-    cameraRightNoUp.y = 0.f;
-    cameraRightNoUp = normalize(cameraRightNoUp);
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        controllableSphere.translate(cameraFrontNoUp * dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        controllableSphere.translate(cameraFrontNoUp * -dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        controllableSphere.translate(cameraRightNoUp * dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        controllableSphere.translate(cameraRightNoUp * -dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        controllableSphere.translate(glm::vec3(0.f, -dt * speed, 0.f));
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        controllableSphere.translate(glm::vec3(0.f, dt * speed, 0.f));
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);

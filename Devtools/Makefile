@@ -560,29 +560,149 @@ TP/Camera/Camera_Helper.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Camera/Camera_Helper.cpp.s
 .PHONY : TP/Camera/Camera_Helper.cpp.s
 
-TP/Scene/Scene.o: TP/Scene/Scene.cpp.o
-.PHONY : TP/Scene/Scene.o
+TP/Scene/BlocTypes.o: TP/Scene/BlocTypes.cpp.o
+.PHONY : TP/Scene/BlocTypes.o
 
 # target to build an object file
-TP/Scene/Scene.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Scene.cpp.o
-.PHONY : TP/Scene/Scene.cpp.o
+TP/Scene/BlocTypes.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.o
+.PHONY : TP/Scene/BlocTypes.cpp.o
 
-TP/Scene/Scene.i: TP/Scene/Scene.cpp.i
-.PHONY : TP/Scene/Scene.i
+TP/Scene/BlocTypes.i: TP/Scene/BlocTypes.cpp.i
+.PHONY : TP/Scene/BlocTypes.i
 
 # target to preprocess a source file
-TP/Scene/Scene.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Scene.cpp.i
-.PHONY : TP/Scene/Scene.cpp.i
+TP/Scene/BlocTypes.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.i
+.PHONY : TP/Scene/BlocTypes.cpp.i
 
-TP/Scene/Scene.s: TP/Scene/Scene.cpp.s
-.PHONY : TP/Scene/Scene.s
+TP/Scene/BlocTypes.s: TP/Scene/BlocTypes.cpp.s
+.PHONY : TP/Scene/BlocTypes.s
 
 # target to generate assembly for a file
-TP/Scene/Scene.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Scene.cpp.s
-.PHONY : TP/Scene/Scene.cpp.s
+TP/Scene/BlocTypes.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/BlocTypes.cpp.s
+.PHONY : TP/Scene/BlocTypes.cpp.s
+
+TP/Scene/Character.o: TP/Scene/Character.cpp.o
+.PHONY : TP/Scene/Character.o
+
+# target to build an object file
+TP/Scene/Character.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Character.cpp.o
+.PHONY : TP/Scene/Character.cpp.o
+
+TP/Scene/Character.i: TP/Scene/Character.cpp.i
+.PHONY : TP/Scene/Character.i
+
+# target to preprocess a source file
+TP/Scene/Character.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Character.cpp.i
+.PHONY : TP/Scene/Character.cpp.i
+
+TP/Scene/Character.s: TP/Scene/Character.cpp.s
+.PHONY : TP/Scene/Character.s
+
+# target to generate assembly for a file
+TP/Scene/Character.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Character.cpp.s
+.PHONY : TP/Scene/Character.cpp.s
+
+TP/Scene/MeshObject.o: TP/Scene/MeshObject.cpp.o
+.PHONY : TP/Scene/MeshObject.o
+
+# target to build an object file
+TP/Scene/MeshObject.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o
+.PHONY : TP/Scene/MeshObject.cpp.o
+
+TP/Scene/MeshObject.i: TP/Scene/MeshObject.cpp.i
+.PHONY : TP/Scene/MeshObject.i
+
+# target to preprocess a source file
+TP/Scene/MeshObject.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.i
+.PHONY : TP/Scene/MeshObject.cpp.i
+
+TP/Scene/MeshObject.s: TP/Scene/MeshObject.cpp.s
+.PHONY : TP/Scene/MeshObject.s
+
+# target to generate assembly for a file
+TP/Scene/MeshObject.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.s
+.PHONY : TP/Scene/MeshObject.cpp.s
+
+TP/Scene/SceneNode.o: TP/Scene/SceneNode.cpp.o
+.PHONY : TP/Scene/SceneNode.o
+
+# target to build an object file
+TP/Scene/SceneNode.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.o
+.PHONY : TP/Scene/SceneNode.cpp.o
+
+TP/Scene/SceneNode.i: TP/Scene/SceneNode.cpp.i
+.PHONY : TP/Scene/SceneNode.i
+
+# target to preprocess a source file
+TP/Scene/SceneNode.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.i
+.PHONY : TP/Scene/SceneNode.cpp.i
+
+TP/Scene/SceneNode.s: TP/Scene/SceneNode.cpp.s
+.PHONY : TP/Scene/SceneNode.s
+
+# target to generate assembly for a file
+TP/Scene/SceneNode.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/SceneNode.cpp.s
+.PHONY : TP/Scene/SceneNode.cpp.s
+
+TP/Scene/Texture.o: TP/Scene/Texture.cpp.o
+.PHONY : TP/Scene/Texture.o
+
+# target to build an object file
+TP/Scene/Texture.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.o
+.PHONY : TP/Scene/Texture.cpp.o
+
+TP/Scene/Texture.i: TP/Scene/Texture.cpp.i
+.PHONY : TP/Scene/Texture.i
+
+# target to preprocess a source file
+TP/Scene/Texture.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.i
+.PHONY : TP/Scene/Texture.cpp.i
+
+TP/Scene/Texture.s: TP/Scene/Texture.cpp.s
+.PHONY : TP/Scene/Texture.s
+
+# target to generate assembly for a file
+TP/Scene/Texture.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/Texture.cpp.s
+.PHONY : TP/Scene/Texture.cpp.s
+
+TP/Scene/VoxelChunk.o: TP/Scene/VoxelChunk.cpp.o
+.PHONY : TP/Scene/VoxelChunk.o
+
+# target to build an object file
+TP/Scene/VoxelChunk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.o
+.PHONY : TP/Scene/VoxelChunk.cpp.o
+
+TP/Scene/VoxelChunk.i: TP/Scene/VoxelChunk.cpp.i
+.PHONY : TP/Scene/VoxelChunk.i
+
+# target to preprocess a source file
+TP/Scene/VoxelChunk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.i
+.PHONY : TP/Scene/VoxelChunk.cpp.i
+
+TP/Scene/VoxelChunk.s: TP/Scene/VoxelChunk.cpp.s
+.PHONY : TP/Scene/VoxelChunk.s
+
+# target to generate assembly for a file
+TP/Scene/VoxelChunk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/TP/Scene/VoxelChunk.cpp.s
+.PHONY : TP/Scene/VoxelChunk.cpp.s
 
 TP1/TP1.o: TP1/TP1.cpp.o
 .PHONY : TP1/TP1.o
@@ -752,6 +872,30 @@ common/vboindexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/common/vboindexer.cpp.s
 .PHONY : common/vboindexer.cpp.s
 
+utils/GLUtils.o: utils/GLUtils.cpp.o
+.PHONY : utils/GLUtils.o
+
+# target to build an object file
+utils/GLUtils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/utils/GLUtils.cpp.o
+.PHONY : utils/GLUtils.cpp.o
+
+utils/GLUtils.i: utils/GLUtils.cpp.i
+.PHONY : utils/GLUtils.i
+
+# target to preprocess a source file
+utils/GLUtils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/utils/GLUtils.cpp.i
+.PHONY : utils/GLUtils.cpp.i
+
+utils/GLUtils.s: utils/GLUtils.cpp.s
+.PHONY : utils/GLUtils.s
+
+# target to generate assembly for a file
+utils/GLUtils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TP1.dir/build.make CMakeFiles/TP1.dir/utils/GLUtils.cpp.s
+.PHONY : utils/GLUtils.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -797,9 +941,24 @@ help:
 	@echo "... TP/Camera/Camera_Helper.o"
 	@echo "... TP/Camera/Camera_Helper.i"
 	@echo "... TP/Camera/Camera_Helper.s"
-	@echo "... TP/Scene/Scene.o"
-	@echo "... TP/Scene/Scene.i"
-	@echo "... TP/Scene/Scene.s"
+	@echo "... TP/Scene/BlocTypes.o"
+	@echo "... TP/Scene/BlocTypes.i"
+	@echo "... TP/Scene/BlocTypes.s"
+	@echo "... TP/Scene/Character.o"
+	@echo "... TP/Scene/Character.i"
+	@echo "... TP/Scene/Character.s"
+	@echo "... TP/Scene/MeshObject.o"
+	@echo "... TP/Scene/MeshObject.i"
+	@echo "... TP/Scene/MeshObject.s"
+	@echo "... TP/Scene/SceneNode.o"
+	@echo "... TP/Scene/SceneNode.i"
+	@echo "... TP/Scene/SceneNode.s"
+	@echo "... TP/Scene/Texture.o"
+	@echo "... TP/Scene/Texture.i"
+	@echo "... TP/Scene/Texture.s"
+	@echo "... TP/Scene/VoxelChunk.o"
+	@echo "... TP/Scene/VoxelChunk.i"
+	@echo "... TP/Scene/VoxelChunk.s"
 	@echo "... TP1/TP1.o"
 	@echo "... TP1/TP1.i"
 	@echo "... TP1/TP1.s"
@@ -821,6 +980,9 @@ help:
 	@echo "... common/vboindexer.o"
 	@echo "... common/vboindexer.i"
 	@echo "... common/vboindexer.s"
+	@echo "... utils/GLUtils.o"
+	@echo "... utils/GLUtils.i"
+	@echo "... utils/GLUtils.s"
 .PHONY : help
 
 
