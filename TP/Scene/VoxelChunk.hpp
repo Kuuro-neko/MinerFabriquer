@@ -34,6 +34,13 @@ public:
         return m_cubes[x][y][z];
     }
 
+    int removeBlock(int x, int y, int z) {
+        int id = m_cubes[x][y][z];
+        m_cubes[x][y][z] = AIR;
+        generateMesh();
+        return id;
+    }
+
     /**
      * @brief Generate the mesh for the chunk, need to be called after setting the blocks and editing the chunk during gameplay
      * 
@@ -50,7 +57,7 @@ public:
     void cleanupBuffers() override {
         m_mesh->cleanupBuffers();
     }
-private:
+
     int m_sizeX;
     int m_sizeY;
     int m_sizeZ;
