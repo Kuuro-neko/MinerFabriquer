@@ -1,6 +1,7 @@
 #include <TP/Camera/Camera.hpp>
 #include <TP/Camera/Camera_Helper.hpp>
 
+
 #include <stdio.h>
 #include <iostream>
 
@@ -64,8 +65,7 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 	if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS) {
 		if (!m_tPressed) {
 			if (m_attached) {
-				// translate it towards the target by distance
-				// TO DO
+				setPosition(m_targetPrev + m_targetDeltaPos + CAMERA_POSITION_RELATIVE_TO_PLAYER);
 			}
 			m_attached = !m_attached;
 		}

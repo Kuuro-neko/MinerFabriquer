@@ -66,10 +66,9 @@ Character character = Character(
                 glm::vec3(0, 5, 0),
                 DEFAULT_ROTATION,
                 1),
-        camera,
+        &camera,
         nullptr,
         nullptr
-
 );
 
 int main(void) {
@@ -197,6 +196,7 @@ int main(void) {
         // input
         // -----
         processInput(window, deltaTime);
+        character.listenAction(deltaTime, window);
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
@@ -236,30 +236,7 @@ int main(void) {
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window, float dt) {
-    float speed = 7.5f;
 
-    glm::vec3 cameraFrontNoUp = camera.getRotation() * VEC_FRONT;
-    cameraFrontNoUp.y = 0.f;
-    cameraFrontNoUp = normalize(cameraFrontNoUp);
-
-    glm::vec3 cameraRightNoUp = camera.getRotation() * VEC_RIGHT;
-    cameraRightNoUp.y = 0.f;
-    cameraRightNoUp = normalize(cameraRightNoUp);
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        character.move(cameraFrontNoUp * dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        character.move(cameraFrontNoUp * -dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        character.move(cameraRightNoUp * dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        character.move(cameraRightNoUp * -dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        character.move(glm::vec3(0.f, -dt * speed, 0.f));
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        character.move(glm::vec3(0.f, dt * speed, 0.f));
 
 }
 
