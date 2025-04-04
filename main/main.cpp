@@ -219,6 +219,16 @@ int main(void) {
 
         root.draw(programID);
 
+        /*std::cout << "================" << std::endl;
+        std::cout << "camera position: " << camera.getPosition().x << " " << camera.getPosition().y << " " << camera.getPosition().z
+                  << std::endl;
+        std::cout << "camera euler angle: " << camera.m_eulerAngle.x << " " << camera.m_eulerAngle.y << " " << camera.m_eulerAngle.z
+                  << std::endl;
+        std::cout << "player position: " << character.getWorldPosition().x << " " << character.getWorldPosition().y << " "
+                  << character.getWorldPosition().z
+                  << std::endl;
+        std::cout << "chunk bloc 2,3,2: " << chunk.getBloc(2, 3, 2) << std::endl;*/
+
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();

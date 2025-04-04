@@ -35,18 +35,21 @@ public:
 	void updateTarget(glm::vec3 _target);
 
 	glm::vec3 getPosition() const {return m_position;}
-	void setPosition(glm::vec3 _position) {m_position = _position;}
+	void setPosition(glm::vec3 _position) {
+		m_newPosition = _position;
+		m_needPositionUpdate = true;
+	}
 	glm::quat getRotation() const {return m_rotation;}
 
 	//View
 	glm::mat4 m_viewMatrix;
 	glm::mat4 m_projectionMatrix;
 
+	glm::vec3	m_eulerAngle{ DEFAULT_EULER_ANGLE };
 private:
 	//Camera parameters 
 	float		m_fovDegree{ DEFAULT_FOV };
 	glm::vec3	m_position{ DEFAULT_POSITION };
-	glm::vec3	m_eulerAngle{ DEFAULT_EULER_ANGLE };
 	glm::quat	m_rotation{};
 	float		m_translation_speed = DEFAULT_TRANSLATION_SPEED;
 	float 		m_distance_speed = DEFAULT_DISTANCE_SPEED;
@@ -84,5 +87,6 @@ private:
 	bool m_tPressed = false;
 	float m_distance = 10.0f;
 
-
+	glm::vec3 m_newPosition;
+	bool m_needPositionUpdate = false;
 };
