@@ -41,9 +41,35 @@ void Character::listenAction(float dt, GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         move(glm::vec3(0.f, dt * speed, 0.f));
 
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+//    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 //        std::cout << "inventaire" << std::endl;
+//    }
 
-    //si on a un
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        //on fait un coup de pioche
+        breakBlock();
+    }
+
+}
+/**
+ * \brief fonction qui réalise l'action de casser un bloc
+ */
+void Character::breakBlock() {
+    //Etape 1 : on envoie un rayon depuis le front de la caméra
+    glm::vec3 rayOrigin = camera.getPosition();
+    glm::vec3 rayDirection = camera.getRotation() * VEC_FRONT;
+    rayDirection = normalize(rayDirection); //vecteur normalisé
+    glm::vec3 rayEnd = rayOrigin + rayDirection * 10.f; //10m de portée
+    //Etape 2 : on teste si le rayon touche un bloc
+    if(rayDirection.x > 0.5f || rayDirection.y > 0.5f || rayDirection.z > 0.5f) {
+        std::cout << "rayon touche un bloc" << std::endl;
+    } else {
+        std::cout << "rayon ne touche pas de bloc" << std::endl;
+    }
+
+    //Etape 3 : si oui, on récupère son type
+
+    //Etape 4 : on le détruit
 
 }
