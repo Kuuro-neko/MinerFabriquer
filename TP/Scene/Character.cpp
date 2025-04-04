@@ -19,7 +19,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise l'action en fonction de la touche détectée
  * @param key
  */
-void Character::listenAction(float dt, GLFWwindow *window) {
+void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database) {
 
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -50,7 +50,7 @@ void Character::listenAction(float dt, GLFWwindow *window) {
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         //on fait un coup de pioche
-        breakBlock();
+        breakBlock(chunkActuel, database);
     }
 
 }
@@ -58,19 +58,53 @@ void Character::listenAction(float dt, GLFWwindow *window) {
 /**
  * \brief fonction qui réalise l'action de casser un bloc
  */
-void Character::breakBlock() {
-    //Etape 1 : on envoie un rayon depuis le front de la caméra
-    glm::vec3 rayOrigin = camera->getPosition();
-    glm::vec3 rayDirection = camera->getRotation() * VEC_FRONT;
-    rayDirection = normalize(rayDirection); //vecteur normalisé
-    glm::vec3 rayEnd = rayOrigin + rayDirection * 10.f; //10m de portée
-    //Etape 2 : on teste si le rayon touche un bloc
-    if (rayDirection.x > 0.5f || rayDirection.y > 0.5f || rayDirection.z > 0.5f) {
-        std::cout << "rayon touche un bloc" << std::endl;
-    } else {
-        std::cout << "rayon ne touche pas de bloc" << std::endl;
+void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const {
+    glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
+    Ray rayon(camera->getPosition(), directionNormalized);
+    glm::vec3 rayDirection = normalize(rayon.direction);
+
+    //liste des blocs intersectés
+    std::vector<glm::vec3> blocsIntersectes;
+
+    //ETAPE 1 : on parcourt tous les blocs du chunk actuel
+    for (int x = 0; x < chunkActuel.m_sizeX; x++) {
+        for (int y = 0; y < chunkActuel.m_sizeY; y++) {
+            for (int z = 0; z < chunkActuel.m_sizeZ; z++) {
+                //on récupère l'id du bloc via la database
+                int idBloc = chunkActuel.m_cubes[x][y][z];
+
+                //on récupère la position du bloc -> chunckTransform + position du bloc
+                glm::vec3 blocPosition = chunkActuel.getWorldPosition() + glm::vec3(x, y, z);
+                if (database.isUnbreakable(idBloc)) continue; // si c'est de l'air on skip
+
+
+                //on vérifie si le rayon intersecte le bloc
+                if (rayon.rayIntersectsAABB(rayon, blocPosition, blocPosition + glm::vec3(1.f
+                ), maxInteractionDistance)) {
+                    blocsIntersectes.push_back(blocPosition); // on ajoute le bloc dans la liste des éléments intersecté
+
+                }
+            }
+        }
     }
+    //ETAPE 2 : on casse le bloc le plus proche
 
-    //si on a un
+    // on parcourt la liste des blocs intersectés par le rayon
+    if (blocsIntersectes.size() > 0) {
+        //on récupère le bloc le plus proche
+        glm::vec3 blocPlusProche = blocsIntersectes[0];
+        float distanceMin = glm::distance(camera->getPosition(), blocPlusProche);
+        for (int i = 1; i < blocsIntersectes.size(); i++) {
+            float distance = glm::distance(camera->getPosition(), blocsIntersectes[i]);
+            if (distance < distanceMin) {
+                distanceMin = distance;
+                blocPlusProche = blocsIntersectes[i];
+            }
+        }
+        //on casse le bloc le plus proche -> on remplace le bloc par de l'air
+        // on affiche le type de bloc cassé
+        int idBlocCasse = chunkActuel.removeBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+        std::cout << "Bloc cassé : " << database.getBloc(idBlocCasse)->name << std::endl;
 
+    }
 }

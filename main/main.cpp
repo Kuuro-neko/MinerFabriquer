@@ -196,7 +196,7 @@ int main(void) {
         // input
         // -----
         processInput(window, deltaTime);
-        character.listenAction(deltaTime, window);
+        character.listenAction(deltaTime, window, chunk, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 

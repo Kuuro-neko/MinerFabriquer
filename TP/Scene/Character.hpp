@@ -6,6 +6,7 @@
 #include "Texture.hpp"
 #include "SceneNode.hpp"
 #include "TP/Camera/Camera.hpp"
+#include "VoxelChunk.hpp"
 
 class Character : public SceneNode {
 
@@ -14,15 +15,16 @@ public:
 
     void rotateCharacter(float angle, glm::vec3 axis);
 
-    void listenAction(float key, GLFWwindow *window);
+    void listenAction(float key, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database);
 
     Camera *camera;
 private:
     void move(glm::vec3 direction);
 
-    void breakBlock();
+    void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const;
 
     float speed;
+    float maxInteractionDistance = 6.f;
 };
 
 #endif // CHARACTER_HPP

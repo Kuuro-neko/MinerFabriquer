@@ -89,8 +89,8 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
 		}
 		if (offsetY != 0) {
-			m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2, M_PI_2);
-		}
+            m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
+        }
 	// Camera mode 0 (mouse controlled camera) while not attached
 	} else if (m_mode == 0) {
 		double mouseX, mouseY;
@@ -125,8 +125,8 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
 		}
 		if (offsetY != 0) {
-			m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2, M_PI_2);
-		}
+            m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
+        }
 	} 
 }
 

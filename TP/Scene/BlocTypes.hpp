@@ -121,6 +121,11 @@ public:
      */
     BlockData* getBloc(int id);
 
+    //
+    bool isUnbreakable(int id) {
+        return m_blocs[id].id==0;
+    }
+
     /**
      * @brief Get the Tex Coords object
      * 

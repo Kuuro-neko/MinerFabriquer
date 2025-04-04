@@ -334,4 +334,5 @@ CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o: \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/euler_angles.inl \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/compatibility.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/compatibility.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Camera_Helper.hpp
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Camera_Helper.hpp \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/VoxelChunk.hpp
