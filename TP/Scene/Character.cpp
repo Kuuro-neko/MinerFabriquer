@@ -4,13 +4,15 @@
 
 using namespace std;
 
-Character::Character(Transform transform, Camera camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
+Character::Character(Transform transform, Camera* camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
         : SceneNode(transform, mesh, texture), camera(camera) {
-    speed = 1.0f;
+    speed = 2.5;
+    camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
 }
 
 void Character::move(glm::vec3 direction) {
-    this->m_transform.translate(direction * speed);
+    translate(direction * speed);
+    camera->setPosition(getWorldPosition() + CAMERA_POSITION_RELATIVE_TO_PLAYER);
 }
 
 /**
@@ -19,10 +21,10 @@ void Character::move(glm::vec3 direction) {
  */
 void Character::listenAction(float dt, GLFWwindow *window) {
 
-    glm::vec3 cameraFrontNoUp = camera.getRotation() * VEC_FRONT;
+    glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
     cameraFrontNoUp = normalize(cameraFrontNoUp);
-    glm::vec3 cameraRightNoUp = camera.getRotation() * VEC_RIGHT;
+    glm::vec3 cameraRightNoUp = camera->getRotation() * VEC_RIGHT;
     cameraRightNoUp.y = 0.f;
     cameraRightNoUp = normalize(cameraRightNoUp);
 
@@ -57,8 +59,8 @@ void Character::listenAction(float dt, GLFWwindow *window) {
  */
 void Character::breakBlock() {
     //Etape 1 : on envoie un rayon depuis le front de la caméra
-    glm::vec3 rayOrigin = camera.getPosition();
-    glm::vec3 rayDirection = camera.getRotation() * VEC_FRONT;
+    glm::vec3 rayOrigin = camera->getPosition();
+    glm::vec3 rayDirection = camera->getRotation() * VEC_FRONT;
     rayDirection = normalize(rayDirection); //vecteur normalisé
     glm::vec3 rayEnd = rayOrigin + rayDirection * 10.f; //10m de portée
     //Etape 2 : on teste si le rayon touche un bloc
@@ -68,8 +70,6 @@ void Character::breakBlock() {
         std::cout << "rayon ne touche pas de bloc" << std::endl;
     }
 
-    //Etape 3 : si oui, on récupère son type
-
-    //Etape 4 : on le détruit
+    //si on a un
 
 }

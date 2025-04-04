@@ -66,10 +66,9 @@ Character character = Character(
                 glm::vec3(0, 5, 0),
                 DEFAULT_ROTATION,
                 1),
-        camera,
+        &camera,
         nullptr,
         nullptr
-
 );
 
 int main(void) {
