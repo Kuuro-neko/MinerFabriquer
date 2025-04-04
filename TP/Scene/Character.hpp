@@ -24,7 +24,7 @@ private:
     void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const;
 
     float speed;
-    float maxInteractionDistance = 3.f;
+    float maxInteractionDistance = 6.f;
 };
 
 #endif // CHARACTER_HPP

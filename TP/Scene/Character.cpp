@@ -59,10 +59,9 @@ void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActu
  * \brief fonction qui réalise l'action de casser un bloc
  */
 void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const {
-    Ray rayon(camera->getPosition(), camera->getRotation() * VEC_FRONT);
+    glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
+    Ray rayon(camera->getPosition(), directionNormalized);
     glm::vec3 rayDirection = normalize(rayon.direction);
-    // on lance un rayon de portée max maxInteractionDistance
-    glm::vec3 rayEnd = rayon.origin + rayDirection * maxInteractionDistance;
 
     //liste des blocs intersectés
     std::vector<glm::vec3> blocsIntersectes;
@@ -81,8 +80,7 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) cons
 
                 //on vérifie si le rayon intersecte le bloc
                 if (rayon.rayIntersectsAABB(rayon, blocPosition, blocPosition + glm::vec3(1.f
-                ))) {
-                    cout << "idBloc : " << idBloc << endl;
+                ), maxInteractionDistance)) {
                     blocsIntersectes.push_back(blocPosition); // on ajoute le bloc dans la liste des éléments intersecté
 
                 }

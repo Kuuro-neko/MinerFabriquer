@@ -2,14 +2,16 @@
 
 #include <glm/glm.hpp>
 
-class Ray
-{
+class Ray {
 public:
     glm::vec3 origin;
     glm::vec3 direction;
+
     Ray(glm::vec3 origin, glm::vec3 direction) : origin(origin), direction(direction) {}
+
     ~Ray() {}
-    bool rayIntersectsAABB(const Ray& ray, const glm::vec3& min, const glm::vec3& max) {
+
+    bool rayIntersectsAABB(const Ray &ray, const glm::vec3 &min, const glm::vec3 &max, float maxDistance) {
         float tmin = (min.x - ray.origin.x) / ray.direction.x;
         float tmax = (max.x - ray.origin.x) / ray.direction.x;
 
@@ -37,7 +39,16 @@ public:
         if ((tmin > tzmax) || (tzmin > tmax))
             return false;
 
-        return true;
+        //si la distance entre l'origin du rayon et le point intersecté est supérieur à la distance max, on ne renvoie pas vrai
+        if (tmin < 0) {
+            if (tmax < 0)
+                return false;
+            else
+                return tmax <= maxDistance;
+        } else
+            return tmin <= maxDistance;
+
+
     }
 
 };
