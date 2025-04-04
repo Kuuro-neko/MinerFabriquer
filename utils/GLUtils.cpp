@@ -118,3 +118,6 @@ void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned sh
     }
 }
 
+void addSkyboxGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, float size = 50.0f) {
+    
+}

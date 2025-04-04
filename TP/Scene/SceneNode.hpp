@@ -74,7 +74,7 @@ public:
      * @param angle 
      * @param axis 
      */
-    void rotate(float angle, glm::vec3 axis);
+    virtual void rotate(float angle, glm::vec3 axis);
 
     /**
      * @brief Apply a translation to this scene node, and update the model matrix. Also applies the translation to all children.

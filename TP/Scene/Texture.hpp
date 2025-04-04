@@ -6,6 +6,27 @@
 
 #define TEXTUREATLAS_COORD_UNIT 0.0625f
 
+#define SKYBOX_COORD_UNIT_X 0.25f
+#define SKYBOX_COORD_UNIT_Y 0.33333f
+
+#define SKYBOX_TOP_X 0
+#define SKYBOX_TOP_Y 1
+
+#define SKYBOX_LEFT_X 0
+#define SKYBOX_LEFT_Y 1
+
+#define SKYBOX_FRONT_X 1
+#define SKYBOX_FRONT_Y 1
+
+#define SKYBOX_RIGHT_X 2
+#define SKYBOX_RIGHT_Y 1
+
+#define SKYBOX_BACK_X 3
+#define SKYBOX_BACK_Y 1
+
+#define SKYBOX_BOTTOM_X 1
+#define SKYBOX_BOTTOM_Y 2
+
 #define DONT_INCREMENT_BINDING 0
 
 class NextFreeIndexBinding {
@@ -105,6 +126,38 @@ private:
 public:
     static TextureAtlas& getInstance() {
         static TextureAtlas instance;
+        return instance;
+    }
+
+    /**
+     * @brief Get the Texture object
+     * 
+     * @return Texture* 
+     */
+    Texture* getTexture() {
+        return &m_texture;
+    }
+
+    /**
+     * @brief Bind the texture atlas to the given GLSL program
+     * 
+     * @param programID 
+     */
+    void bind(GLuint programID) {
+        m_texture.bind(programID);
+    }
+};
+
+class TextureSkybox {
+private:
+    TextureSkybox() {
+        m_texture = Texture("../textures/skybox.png");
+        m_texture.genTexture();
+    }
+    Texture m_texture;
+public:
+    static TextureSkybox& getInstance() {
+        static TextureSkybox instance;
         return instance;
     }
 

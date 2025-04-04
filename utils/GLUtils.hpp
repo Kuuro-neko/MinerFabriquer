@@ -18,3 +18,13 @@
  * @param size Default size is 1.0f and should probably not be changed
  */
 void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset = 0.0f, float y_offset = 0.0f, float z_offset = 0.0f, float size = 1.0f);
+
+/**
+ * @brief Create the skybox geometry
+ * 
+ * @param vertices 
+ * @param triangles 
+ * @param uvs 
+ * @param size Default size is 1.0f and should probably not be changed
+ */
+void addSkyboxGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, float size = 50.0f);
