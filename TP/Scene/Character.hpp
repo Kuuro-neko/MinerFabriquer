@@ -14,10 +14,10 @@ public:
     Character(Transform transform,Camera camera, MeshObject* mesh, Texture* texture);
     void move(glm::vec3 direction);
     void rotateCharacter(float angle, glm::vec3 axis);
-
+    void listenAction(float key, GLFWwindow *window);
     Camera camera;
 private:
-
+    
     float speed;
 };
 
