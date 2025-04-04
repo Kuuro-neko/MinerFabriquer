@@ -1,6 +1,10 @@
-CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1.cpp \
- /usr/include/stdc-predef.h /usr/include/stdio.h \
+CMakeFiles/TP1.dir/TP/Scene/MeshObject.cpp.o: \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/MeshObject.cpp \
+ /usr/include/stdc-predef.h \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/MeshObject.hpp \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glew-1.13.0/include/GL/glew.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -9,29 +13,14 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
  /usr/include/x86_64-linux-gnu/bits/time64.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
- /usr/include/x86_64-linux-gnu/bits/floatn.h \
- /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glew-1.13.0/include/GL/glew.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h /usr/include/GL/glu.h \
  /usr/include/GL/gl.h \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/include/GLFW/glfw3.h \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/glm.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/_fixes.hpp \
  /usr/include/c++/11/cmath \
@@ -43,6 +32,8 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/c++/11/ext/type_traits.h /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+ /usr/include/x86_64-linux-gnu/bits/floatn.h \
+ /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
@@ -194,24 +185,10 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/integer.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/func_integer.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/detail/func_integer.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./common/shader.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Camera.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/matrix_transform.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/../gtc/constants.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/../gtc/constants.inl \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/matrix_transform.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/quaternion.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtc/quaternion.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/quaternion.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/../gtx/norm.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/../gtx/norm.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/quaternion.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/euler_angles.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/euler_angles.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/compatibility.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1/glm/gtx/compatibility.inl \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Camera_Helper.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/SceneNode.hpp \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/allocator.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h \
  /usr/include/c++/11/ext/new_allocator.h /usr/include/c++/11/new \
@@ -228,112 +205,4 @@ CMakeFiles/TP1.dir/TP1/TP1.cpp.o: \
  /usr/include/c++/11/bits/hash_bytes.h \
  /usr/include/c++/11/bits/range_access.h \
  /usr/include/c++/11/bits/vector.tcc \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/BlocTypes.hpp \
- /usr/include/c++/11/string /usr/include/c++/11/bits/stringfwd.h \
- /usr/include/c++/11/bits/char_traits.h \
- /usr/include/c++/11/bits/postypes.h /usr/include/c++/11/cwchar \
- /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
- /usr/include/c++/11/bits/localefwd.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h \
- /usr/include/c++/11/clocale /usr/include/locale.h \
- /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/11/iosfwd \
- /usr/include/c++/11/cctype /usr/include/ctype.h \
- /usr/include/c++/11/bits/ostream_insert.h \
- /usr/include/c++/11/bits/cxxabi_forced.h \
- /usr/include/c++/11/bits/stl_function.h \
- /usr/include/c++/11/backward/binders.h \
- /usr/include/c++/11/bits/basic_string.h \
- /usr/include/c++/11/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/gthr-default.h \
- /usr/include/pthread.h /usr/include/sched.h \
- /usr/include/x86_64-linux-gnu/bits/sched.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
- /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/timex.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h \
- /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
- /usr/include/c++/11/string_view /usr/include/c++/11/bits/string_view.tcc \
- /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdio \
- /usr/include/c++/11/cerrno /usr/include/errno.h \
- /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/x86_64-linux-gnu/asm/errno.h \
- /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
- /usr/include/c++/11/bits/charconv.h \
- /usr/include/c++/11/bits/basic_string.tcc /usr/include/c++/11/map \
- /usr/include/c++/11/bits/stl_tree.h \
- /usr/include/c++/11/ext/aligned_buffer.h \
- /usr/include/c++/11/bits/node_handle.h \
- /usr/include/c++/11/bits/stl_map.h /usr/include/c++/11/tuple \
- /usr/include/c++/11/utility /usr/include/c++/11/bits/stl_relops.h \
- /usr/include/c++/11/array /usr/include/c++/11/bits/uses_allocator.h \
- /usr/include/c++/11/bits/invoke.h \
- /usr/include/c++/11/bits/stl_multimap.h \
- /usr/include/c++/11/bits/erase_if.h \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/csv/csv.h \
- /usr/include/c++/11/algorithm /usr/include/c++/11/bits/stl_algo.h \
- /usr/include/c++/11/bits/algorithmfwd.h \
- /usr/include/c++/11/bits/stl_heap.h \
- /usr/include/c++/11/bits/stl_tempbuf.h \
- /usr/include/c++/11/bits/uniform_int_dist.h \
- /usr/include/c++/11/pstl/glue_algorithm_defs.h \
- /usr/include/c++/11/functional /usr/include/c++/11/bits/refwrap.h \
- /usr/include/c++/11/bits/std_function.h /usr/include/c++/11/typeinfo \
- /usr/include/c++/11/unordered_map /usr/include/c++/11/bits/hashtable.h \
- /usr/include/c++/11/bits/hashtable_policy.h \
- /usr/include/c++/11/bits/enable_special_members.h \
- /usr/include/c++/11/bits/unordered_map.h \
- /usr/include/c++/11/pstl/execution_defs.h /usr/include/c++/11/cstring \
- /usr/include/string.h /usr/include/strings.h \
- /usr/include/c++/11/exception /usr/include/c++/11/bits/exception_ptr.h \
- /usr/include/c++/11/bits/cxxabi_init_exception.h \
- /usr/include/c++/11/bits/nested_exception.h \
- /usr/include/c++/11/condition_variable /usr/include/c++/11/chrono \
- /usr/include/c++/11/ratio /usr/include/c++/11/ctime \
- /usr/include/c++/11/bits/parse_numbers.h \
- /usr/include/c++/11/bits/std_mutex.h /usr/include/c++/11/system_error \
- /usr/include/x86_64-linux-gnu/c++/11/bits/error_constants.h \
- /usr/include/c++/11/stdexcept /usr/include/c++/11/bits/unique_lock.h \
- /usr/include/c++/11/bits/shared_ptr.h \
- /usr/include/c++/11/bits/shared_ptr_base.h \
- /usr/include/c++/11/bits/allocated_ptr.h \
- /usr/include/c++/11/bits/unique_ptr.h \
- /usr/include/c++/11/ext/concurrence.h /usr/include/c++/11/mutex \
- /usr/include/c++/11/thread /usr/include/c++/11/bits/std_thread.h \
- /usr/include/c++/11/bits/this_thread_sleep.h /usr/include/c++/11/istream \
- /usr/include/c++/11/ios /usr/include/c++/11/bits/ios_base.h \
- /usr/include/c++/11/bits/locale_classes.h \
- /usr/include/c++/11/bits/locale_classes.tcc \
- /usr/include/c++/11/streambuf /usr/include/c++/11/bits/streambuf.tcc \
- /usr/include/c++/11/bits/basic_ios.h \
- /usr/include/c++/11/bits/locale_facets.h /usr/include/c++/11/cwctype \
- /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_base.h \
- /usr/include/c++/11/bits/streambuf_iterator.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h \
- /usr/include/c++/11/bits/locale_facets.tcc \
- /usr/include/c++/11/bits/basic_ios.tcc /usr/include/c++/11/ostream \
- /usr/include/c++/11/bits/ostream.tcc \
- /usr/include/c++/11/bits/istream.tcc /usr/include/c++/11/memory \
- /usr/include/c++/11/bits/stl_raw_storage_iter.h \
- /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
- /usr/include/c++/11/bits/shared_ptr_atomic.h \
- /usr/include/c++/11/bits/atomic_base.h \
- /usr/include/c++/11/bits/atomic_lockfree_defines.h \
- /usr/include/c++/11/backward/auto_ptr.h \
- /usr/include/c++/11/pstl/glue_memory_defs.h /usr/include/c++/11/iostream \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/Texture.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/stb_image/stb_image.h \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/MeshObject.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/Ray.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/GLUtils.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/Transform.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/VoxelChunk.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/Character.hpp
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./utils/Ray.hpp
