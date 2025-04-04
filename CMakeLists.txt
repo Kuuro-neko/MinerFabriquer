@@ -57,9 +57,9 @@ add_definitions(
         -D_CRT_SECURE_NO_WARNINGS
 )
 
-# TP1
+# main
 add_executable(MinerFabriquer
-        TP1/TP1.cpp
+        main/main.cpp
         common/shader.cpp
         common/shader.hpp
         common/imageLoader.h
@@ -76,15 +76,15 @@ add_executable(MinerFabriquer
         TP/Scene/Character.hpp
         TP/Scene/Character.cpp
 
-        TP1/vertex_shader.glsl
-        TP1/fragment_shader.glsl
+        main/vertex_shader.glsl
+        main/fragment_shader.glsl
 )
 target_link_libraries(MinerFabriquer
         ${ALL_LIBS}
 )
 # Xcode and Visual working directories
-set_target_properties(MinerFabriquer PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/TP1/")
-create_target_launcher(MinerFabriquer WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/TP1/")
+set_target_properties(MinerFabriquer PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/main/")
+create_target_launcher(MinerFabriquer WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/main/")
 
 # Ensure the target directory exists
 add_custom_command(
@@ -99,8 +99,8 @@ SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*/.*shader$")
 if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode")
     add_custom_command(
             TARGET MinerFabriquer POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/TP1/"
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TP1${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_SOURCE_DIR}/TP1/"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/main/"
+            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TP1${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_SOURCE_DIR}/main/"
     )
     add_custom_command(
             TARGET MinerFabriquer POST_BUILD

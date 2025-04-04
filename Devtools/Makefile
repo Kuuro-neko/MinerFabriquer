@@ -704,30 +704,6 @@ TP/Scene/VoxelChunk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.s
 .PHONY : TP/Scene/VoxelChunk.cpp.s
 
-TP1/TP1.o: TP1/TP1.cpp.o
-.PHONY : TP1/TP1.o
-
-# target to build an object file
-TP1/TP1.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o
-.PHONY : TP1/TP1.cpp.o
-
-TP1/TP1.i: TP1/TP1.cpp.i
-.PHONY : TP1/TP1.i
-
-# target to preprocess a source file
-TP1/TP1.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.i
-.PHONY : TP1/TP1.cpp.i
-
-TP1/TP1.s: TP1/TP1.cpp.s
-.PHONY : TP1/TP1.s
-
-# target to generate assembly for a file
-TP1/TP1.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.s
-.PHONY : TP1/TP1.cpp.s
-
 common/imageLoader.o: common/imageLoader.cpp.o
 .PHONY : common/imageLoader.o
 
@@ -775,6 +751,30 @@ common/shader.s: common/shader.cpp.s
 common/shader.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/common/shader.cpp.s
 .PHONY : common/shader.cpp.s
+
+main/main.o: main/main.cpp.o
+.PHONY : main/main.o
+
+# target to build an object file
+main/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/main/main.cpp.o
+.PHONY : main/main.cpp.o
+
+main/main.i: main/main.cpp.i
+.PHONY : main/main.i
+
+# target to preprocess a source file
+main/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/main/main.cpp.i
+.PHONY : main/main.cpp.i
+
+main/main.s: main/main.cpp.s
+.PHONY : main/main.s
+
+# target to generate assembly for a file
+main/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/main/main.cpp.s
+.PHONY : main/main.cpp.s
 
 utils/GLUtils.o: utils/GLUtils.cpp.o
 .PHONY : utils/GLUtils.o
@@ -863,15 +863,15 @@ help:
 	@echo "... TP/Scene/VoxelChunk.o"
 	@echo "... TP/Scene/VoxelChunk.i"
 	@echo "... TP/Scene/VoxelChunk.s"
-	@echo "... TP1/TP1.o"
-	@echo "... TP1/TP1.i"
-	@echo "... TP1/TP1.s"
 	@echo "... common/imageLoader.o"
 	@echo "... common/imageLoader.i"
 	@echo "... common/imageLoader.s"
 	@echo "... common/shader.o"
 	@echo "... common/shader.i"
 	@echo "... common/shader.s"
+	@echo "... main/main.o"
+	@echo "... main/main.i"
+	@echo "... main/main.s"
 	@echo "... utils/GLUtils.o"
 	@echo "... utils/GLUtils.i"
 	@echo "... utils/GLUtils.s"

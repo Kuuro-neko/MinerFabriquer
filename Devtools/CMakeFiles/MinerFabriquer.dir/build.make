@@ -69,19 +69,19 @@ include CMakeFiles/MinerFabriquer.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/MinerFabriquer.dir/flags.make
 
-CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
-CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1.cpp
-CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1.cpp
+CMakeFiles/MinerFabriquer.dir/main/main.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
+CMakeFiles/MinerFabriquer.dir/main/main.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/main.cpp
+CMakeFiles/MinerFabriquer.dir/main/main.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/MinerFabriquer.dir/main/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/main/main.cpp.o -MF CMakeFiles/MinerFabriquer.dir/main/main.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/main/main.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/main.cpp
 
-CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1.cpp > CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.i
+CMakeFiles/MinerFabriquer.dir/main/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MinerFabriquer.dir/main/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/main.cpp > CMakeFiles/MinerFabriquer.dir/main/main.cpp.i
 
-CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/TP1.cpp -o CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.s
+CMakeFiles/MinerFabriquer.dir/main/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/main/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/main.cpp -o CMakeFiles/MinerFabriquer.dir/main/main.cpp.s
 
 CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
 CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/common/shader.cpp
@@ -239,7 +239,7 @@ CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.s: cmake_force
 
 # Object files for target MinerFabriquer
 MinerFabriquer_OBJECTS = \
-"CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o" \
+"CMakeFiles/MinerFabriquer.dir/main/main.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.o" \
@@ -255,47 +255,47 @@ MinerFabriquer_OBJECTS = \
 # External object files for target MinerFabriquer
 MinerFabriquer_EXTERNAL_OBJECTS =
 
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/SceneNode.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/BlocTypes.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/build.make
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: external/glfw-3.1.2/src/libglfw3.a
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: external/libGLEW_1130.a
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/librt.a
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libm.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libX11.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXrandr.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXinerama.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXcursor.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/librt.a
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libm.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libX11.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXrandr.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXinerama.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXcursor.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer"
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/main/main.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/SceneNode.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/BlocTypes.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/build.make
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: external/glfw-3.1.2/src/libglfw3.a
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: external/libGLEW_1130.a
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/librt.a
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libm.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libX11.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXrandr.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXinerama.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXcursor.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/librt.a
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libm.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libX11.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXrandr.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXinerama.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libXcursor.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer"
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/TP1
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/MinerFabriquer.dir/link.txt --verbose=$(VERBOSE)
-	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/
-	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E copy /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/./TP1 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/
+	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/
+	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E copy /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/./TP1 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E copy_if_different /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/database/Blocs.csv /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/database/Blocs.csv
 
 # Rule to build all files generated by this target.
-CMakeFiles/MinerFabriquer.dir/build: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer
+CMakeFiles/MinerFabriquer.dir/build: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer
 .PHONY : CMakeFiles/MinerFabriquer.dir/build
 
 CMakeFiles/MinerFabriquer.dir/clean:

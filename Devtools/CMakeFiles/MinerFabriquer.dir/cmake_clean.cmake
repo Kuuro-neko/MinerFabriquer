@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer"
-  "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP1/MinerFabriquer.pdb"
+  "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer"
+  "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer.pdb"
   "CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.o"
@@ -17,12 +17,12 @@ file(REMOVE_RECURSE
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o.d"
-  "CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o"
-  "CMakeFiles/MinerFabriquer.dir/TP1/TP1.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/common/imageLoader.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/common/shader.cpp.o.d"
+  "CMakeFiles/MinerFabriquer.dir/main/main.cpp.o"
+  "CMakeFiles/MinerFabriquer.dir/main/main.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o.d"
 )
