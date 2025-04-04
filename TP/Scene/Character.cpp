@@ -1,6 +1,15 @@
 #include "Character.hpp"
 
-Character::Character(Transform transform, MeshObject* mesh, Texture* texture)
-        : transform(transform), mesh(mesh), texture(texture) {
-    // Code d'initialisation supplémentaire
+#include <iostream>
+
+using namespace std;
+
+Character::Character(Transform transform, Camera camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
+        : SceneNode(transform, mesh, texture), camera(camera) {
+    speed = 1.0f;
+}
+
+void Character::move(glm::vec3 direction) {
+    this->m_transform.translate(direction*speed);
+
 }

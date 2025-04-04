@@ -4,17 +4,21 @@
 #include "utils/Transform.hpp"
 #include "MeshObject.hpp"
 #include "Texture.hpp"
+#include "SceneNode.hpp"
+#include "TP/Camera/Camera.hpp"
 
 
-class Character {
+class Character  : public SceneNode {
+
 public:
-    Character(Transform transform, MeshObject* mesh, Texture* texture);
-    void move(glm::vec3 direction, float amount);
+    Character(Transform transform,Camera camera, MeshObject* mesh, Texture* texture);
+    void move(glm::vec3 direction);
     void rotateCharacter(float angle, glm::vec3 axis);
+
+    Camera camera;
 private:
-    Transform transform;
-    MeshObject* mesh;
-    Texture* texture;
+
+    float speed;
 };
 
 #endif // CHARACTER_HPP
