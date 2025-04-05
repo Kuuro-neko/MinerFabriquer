@@ -42,6 +42,11 @@ public:
 	glm::mat4 m_viewMatrix;
 	glm::mat4 m_projectionMatrix;
 
+//get matrix
+inline glm::mat4 getViewMatrix() const { return m_viewMatrix; }
+
+    inline glm::mat4 getProjectionMatrix() const { return m_projectionMatrix; }
+
 private:
 	//Camera parameters 
 	float		m_fovDegree{ DEFAULT_FOV };
@@ -83,6 +88,8 @@ private:
 	bool m_attached = DEFAULT_ATTACHED;
 	bool m_tPressed = false;
 	float m_distance = 10.0f;
+
+    inline glm::vec3 getTarget() const { return m_targetPrev; }
 
 
 };

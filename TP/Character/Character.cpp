@@ -114,8 +114,11 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database, bool
         } else {
             cout<<"Bloc survolé : " << database.getBloc(chunkActuel.getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z))->name
                 << endl;
-            renderer->drawWireframeCube(blocPlusProche, glm::vec3(1.f), glm::vec3(0.5f, 0.5f, 0.5f));
-
+            renderer->drawWireframeCube(blocPlusProche,
+                                        glm::vec3(1.f, 1.f, 1.f),
+                                        glm::vec3(0.5f, 0.5f, 0.5f),
+                                        camera->getViewMatrix(),
+                                        camera->getProjectionMatrix());
         }
 
 
