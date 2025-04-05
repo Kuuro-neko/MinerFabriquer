@@ -223,19 +223,19 @@ CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/utils/GLUtils.cpp -o CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.s
 
-CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
-CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp
-CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp
+CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
+CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp
+CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp
 
-CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp > CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.i
+CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp > CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.i
 
-CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp -o CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.s
+CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp -o CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.s
 
 # Object files for target MinerFabriquer
 MinerFabriquer_OBJECTS = \
@@ -250,7 +250,7 @@ MinerFabriquer_OBJECTS = \
 "CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o" \
-"CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o"
+"CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o"
 
 # External object files for target MinerFabriquer
 MinerFabriquer_EXTERNAL_OBJECTS =
@@ -266,7 +266,7 @@ MinerFabriquer_EXTERNAL_OBJECTS =
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o
-/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/build.make
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so

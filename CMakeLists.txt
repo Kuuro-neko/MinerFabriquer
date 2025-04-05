@@ -73,8 +73,8 @@ add_executable(MinerFabriquer
         TP/Scene/VoxelChunk.cpp
         utils/GLUtils.cpp
         utils/Transform.hpp
-        TP/Scene/Character.hpp
-        TP/Scene/Character.cpp
+        TP/Character/Character.hpp
+        TP/Character/Character.cpp
 
         main/vertex_shader.glsl
         main/fragment_shader.glsl

@@ -6,7 +6,7 @@
 #include <TP/Camera/Camera.hpp>
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
-#include <TP/Scene/Character.hpp>
+#include "TP/Character/Character.hpp"
 
 GLFWwindow *window;
 

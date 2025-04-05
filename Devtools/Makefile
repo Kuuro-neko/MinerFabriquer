@@ -560,6 +560,30 @@ TP/Camera/Camera_Helper.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.s
 .PHONY : TP/Camera/Camera_Helper.cpp.s
 
+TP/Character/Character.o: TP/Character/Character.cpp.o
+.PHONY : TP/Character/Character.o
+
+# target to build an object file
+TP/Character/Character.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o
+.PHONY : TP/Character/Character.cpp.o
+
+TP/Character/Character.i: TP/Character/Character.cpp.i
+.PHONY : TP/Character/Character.i
+
+# target to preprocess a source file
+TP/Character/Character.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.i
+.PHONY : TP/Character/Character.cpp.i
+
+TP/Character/Character.s: TP/Character/Character.cpp.s
+.PHONY : TP/Character/Character.s
+
+# target to generate assembly for a file
+TP/Character/Character.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.s
+.PHONY : TP/Character/Character.cpp.s
+
 TP/Scene/BlocTypes.o: TP/Scene/BlocTypes.cpp.o
 .PHONY : TP/Scene/BlocTypes.o
 
@@ -583,30 +607,6 @@ TP/Scene/BlocTypes.s: TP/Scene/BlocTypes.cpp.s
 TP/Scene/BlocTypes.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/BlocTypes.cpp.s
 .PHONY : TP/Scene/BlocTypes.cpp.s
-
-TP/Scene/Character.o: TP/Scene/Character.cpp.o
-.PHONY : TP/Scene/Character.o
-
-# target to build an object file
-TP/Scene/Character.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o
-.PHONY : TP/Scene/Character.cpp.o
-
-TP/Scene/Character.i: TP/Scene/Character.cpp.i
-.PHONY : TP/Scene/Character.i
-
-# target to preprocess a source file
-TP/Scene/Character.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.i
-.PHONY : TP/Scene/Character.cpp.i
-
-TP/Scene/Character.s: TP/Scene/Character.cpp.s
-.PHONY : TP/Scene/Character.s
-
-# target to generate assembly for a file
-TP/Scene/Character.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.s
-.PHONY : TP/Scene/Character.cpp.s
 
 TP/Scene/MeshObject.o: TP/Scene/MeshObject.cpp.o
 .PHONY : TP/Scene/MeshObject.o
@@ -845,12 +845,12 @@ help:
 	@echo "... TP/Camera/Camera_Helper.o"
 	@echo "... TP/Camera/Camera_Helper.i"
 	@echo "... TP/Camera/Camera_Helper.s"
+	@echo "... TP/Character/Character.o"
+	@echo "... TP/Character/Character.i"
+	@echo "... TP/Character/Character.s"
 	@echo "... TP/Scene/BlocTypes.o"
 	@echo "... TP/Scene/BlocTypes.i"
 	@echo "... TP/Scene/BlocTypes.s"
-	@echo "... TP/Scene/Character.o"
-	@echo "... TP/Scene/Character.i"
-	@echo "... TP/Scene/Character.s"
 	@echo "... TP/Scene/MeshObject.o"
 	@echo "... TP/Scene/MeshObject.i"
 	@echo "... TP/Scene/MeshObject.s"
