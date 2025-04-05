@@ -7,6 +7,7 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
+#include "TP/Scene/Renderer.hpp"
 
 GLFWwindow *window;
 
@@ -18,6 +19,7 @@ void processInput(GLFWwindow *window, float dt);
 
 
 Camera camera;
+Renderer renderer;
 
 // timing
 float deltaTime = 0.0f;    // time between current frame and last frame
@@ -136,8 +138,8 @@ int main(void) {
 
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
+    renderer = Renderer(programID);
 
-    /*****************TODO***********************/
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
@@ -174,6 +176,7 @@ int main(void) {
     characterMesh.initializeBuffers();
     character.m_mesh = &characterMesh;
     root.addChild(&character);
+    character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
     character.m_texture = TextureAtlas::getInstance().getTexture();
 

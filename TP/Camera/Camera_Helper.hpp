@@ -8,7 +8,6 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/norm.hpp>
 
-#define M_PI       3.14159265358979323846f   // pi
 
 enum InterPolationType
 {

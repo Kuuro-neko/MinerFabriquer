@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/BlocTypes.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o.d"
+  "CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o"
+  "CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/SceneNode.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/SceneNode.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.o"

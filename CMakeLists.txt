@@ -75,7 +75,8 @@ add_executable(MinerFabriquer
         utils/Transform.hpp
         TP/Character/Character.hpp
         TP/Character/Character.cpp
-
+        TP/Scene/Renderer.cpp
+        TP/Scene/Renderer.hpp
         main/vertex_shader.glsl
         main/fragment_shader.glsl
 )

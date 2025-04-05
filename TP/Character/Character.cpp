@@ -1,10 +1,11 @@
 #include "Character.hpp"
+#include "TP/Scene/Renderer.hpp"
 
 #include <iostream>
 
 using namespace std;
 
-Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr )
+Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
         : SceneNode(transform, mesh, texture), camera(camera) {
     speed = 2.5;
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
@@ -44,22 +45,20 @@ void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActu
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         move(glm::vec3(0.f, dt * speed, 0.f));
 
-//    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-//        std::cout << "inventaire" << std::endl;
-//    }
-
-
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        //on fait un coup de pioche
-        breakBlock(chunkActuel, database);
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        inventory->printInventory();
     }
+    bool isClicking = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+    // si le joueur clique avec le bouton gauche de la souris, on casse sinon on hover
+    breakBlock(chunkActuel, database, isClicking);
+
 
 }
 
 /**
  * \brief fonction qui réalise l'action de casser un bloc
  */
-void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const {
+void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database, bool &isClicking) const {
     glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
     Ray rayon(camera->getPosition(), directionNormalized);
     glm::vec3 rayDirection = normalize(rayon.direction);
@@ -102,15 +101,23 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) cons
                 blocPlusProche = blocsIntersectes[i];
             }
         }
-        //on casse le bloc le plus proche -> on remplace le bloc par de l'air
-        // on affiche le type de bloc cassé
-        int idBlocCasse = chunkActuel.removeBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
-        // on ajoute l'item dans l'inventaire
-        std::cout << "Bloc cassé : " << database.getBloc(idBlocCasse)->name << std::endl;
-        //on ajoute l'item dans l'inventaire
-        ItemStack item = ItemStack(database.getBloc(idBlocCasse)->name, 1);
-        inventory->addItem(item);
-        inventory->printInventory();
+
+        if (isClicking) {
+            //on casse le bloc le plus proche -> on remplace le bloc par de l'air
+            // on affiche le type de bloc cassé
+            int idBlocCasse = chunkActuel.removeBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+            // on ajoute l'item dans l'inventaire
+            std::cout << "Bloc cassé : " << database.getBloc(idBlocCasse)->name << std::endl;
+            //on ajoute l'item dans l'inventaire
+            ItemStack item = ItemStack(database.getBloc(idBlocCasse)->name, 1);
+            inventory->addItem(item);
+        } else {
+            cout<<"Bloc survolé : " << database.getBloc(chunkActuel.getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z))->name
+                << endl;
+            renderer->drawWireframeCube(blocPlusProche, glm::vec3(1.f), glm::vec3(0.5f, 0.5f, 0.5f));
+
+        }
+
 
     }
 }
