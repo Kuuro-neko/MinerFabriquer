@@ -4,10 +4,11 @@
 
 using namespace std;
 
-Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
+Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr )
         : SceneNode(transform, mesh, texture), camera(camera) {
     speed = 2.5;
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
+    inventory = new Inventory();
 }
 
 void Character::move(glm::vec3 direction) {
@@ -104,7 +105,12 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) cons
         //on casse le bloc le plus proche -> on remplace le bloc par de l'air
         // on affiche le type de bloc cassé
         int idBlocCasse = chunkActuel.removeBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+        // on ajoute l'item dans l'inventaire
         std::cout << "Bloc cassé : " << database.getBloc(idBlocCasse)->name << std::endl;
+        //on ajoute l'item dans l'inventaire
+        ItemStack item = ItemStack(database.getBloc(idBlocCasse)->name, 1);
+        inventory->addItem(item);
+        inventory->printInventory();
 
     }
 }

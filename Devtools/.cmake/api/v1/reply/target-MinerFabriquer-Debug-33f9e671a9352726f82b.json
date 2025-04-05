@@ -441,13 +441,13 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "TP/Scene/Character.hpp",
+			"path" : "TP/Character/Character.hpp",
 			"sourceGroupIndex" : 2
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "TP/Scene/Character.cpp",
+			"path" : "TP/Character/Character.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

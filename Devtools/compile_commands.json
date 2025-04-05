@@ -67,9 +67,9 @@
 },
 {
   "directory": "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools",
-  "command": "/usr/bin/c++ -DGLEW_STATIC -DTW_NO_DIRECT3D -DTW_NO_LIB_PRAGMA -DTW_STATIC -D_CRT_SECURE_NO_WARNINGS -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/include -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1 -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glew-1.13.0/include -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/csv -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/stb_image -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/. -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/include -g -fdiagnostics-color=always -o CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp",
-  "file": "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Character.cpp",
-  "output": "CMakeFiles/MinerFabriquer.dir/TP/Scene/Character.cpp.o"
+  "command": "/usr/bin/c++ -DGLEW_STATIC -DTW_NO_DIRECT3D -DTW_NO_LIB_PRAGMA -DTW_STATIC -D_CRT_SECURE_NO_WARNINGS -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/include -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glm-0.9.7.1 -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glew-1.13.0/include -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/csv -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/stb_image -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/. -I/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/include -g -fdiagnostics-color=always -o CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp",
+  "file": "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp",
+  "output": "CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o"
 },
 {
   "directory": "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/external",

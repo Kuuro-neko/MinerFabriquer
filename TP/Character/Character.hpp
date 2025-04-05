@@ -2,12 +2,12 @@
 #define CHARACTER_HPP
 
 #include "utils/Transform.hpp"
-#include "MeshObject.hpp"
-#include "Texture.hpp"
-#include "SceneNode.hpp"
+#include "TP/Scene/MeshObject.hpp"
+#include "TP/Scene/Texture.hpp"
+#include "TP/Scene/SceneNode.hpp"
 #include "TP/Camera/Camera.hpp"
-#include "VoxelChunk.hpp"
-
+#include "TP/Scene/VoxelChunk.hpp"
+#include "Inventory.hpp"
 class Character : public SceneNode {
 
 public:
@@ -18,6 +18,8 @@ public:
     void listenAction(float key, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database);
 
     Camera *camera;
+    Inventory *inventory;
+
 private:
     void move(glm::vec3 direction);
 
