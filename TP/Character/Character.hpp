@@ -38,7 +38,11 @@ private:
 
     void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
     void putBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
-    void pickSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
+    void setSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
+
+    std::vector<glm::vec3> getIntersectedBlocks(VoxelChunk &chunkActuel, BlocDatabase &database);
+    glm::vec3 getClosestBlock(const std::vector<glm::vec3>& blocks);
+    
     void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
