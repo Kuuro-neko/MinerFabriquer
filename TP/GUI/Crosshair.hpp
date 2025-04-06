@@ -20,7 +20,7 @@ public:
             0.0f, -size,
 
             -size, 0.0f,
-            size, 0.0f
+            size , 0.0f
         };
         visible = true;
         
