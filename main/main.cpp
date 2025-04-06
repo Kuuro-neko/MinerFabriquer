@@ -15,6 +15,9 @@ GLFWwindow *window;
 using namespace std;
 using namespace glm;
 
+int windowWidth = 1024;
+int windowHeight = 768;
+
 
 void processInput(GLFWwindow *window, float dt);
 
@@ -90,7 +93,7 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow(1024, 768, "main - GLFW", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
     if (window == NULL) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -116,7 +119,7 @@ int main(void) {
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
-    glfwSetCursorPos(window, 1024 / 2, 768 / 2);
+    glfwSetCursorPos(window, windowWidth / 2, windowHeight / 2);
 
     // Dark blue background
     glClearColor(0.4f, 0.6f, 0.8f, 0.0f);
@@ -137,15 +140,15 @@ int main(void) {
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
-    GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
+    GLuint programID = LoadShaders("../shaders/vertex_shader.glsl", "../shaders/fragment_shader.glsl");
+    GLuint crosshairProgramID = LoadShaders("../shaders/vertex_shader_2D.glsl", "../shaders/fragment_shader_crosshair.glsl");
 
     /*****************TODO***********************/
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
 
-    Crosshair crosshair = Crosshair(crosshairProgramID, 0.03);
+    Crosshair crosshair = Crosshair(crosshairProgramID, 0.03f);
 
     SceneNode root;
 
