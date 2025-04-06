@@ -38,6 +38,7 @@ private:
 
     void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
     void putBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
+    void pickSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
     void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
