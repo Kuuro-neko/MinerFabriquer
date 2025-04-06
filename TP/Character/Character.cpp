@@ -195,10 +195,10 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
             case BLOC_RIGHT:
                 blocPlusProche.x += 1;
                 break;
-            case BLOC_TOP:
+            case BLOC_BOTTOM:
                 blocPlusProche.y += 1;
                 break;
-            case BLOC_BOTTOM:
+            case BLOC_TOP:
                 blocPlusProche.y -= 1;
                 break;
             case BLOC_FRONT:
