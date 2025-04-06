@@ -9,7 +9,7 @@ class Inventory {
 public:
     void addItem(const ItemStack& itemStack) {
         for (auto& stack : items) {
-            if (stack.getItemName() == itemStack.getItemName()) {
+            if (stack.getItemId() == itemStack.getItemId()) {
                 stack.setQuantity(stack.getQuantity() + itemStack.getQuantity());
                 return;
             }
@@ -20,13 +20,13 @@ public:
         }
     }
 
-    void removeItem(const std::string& itemType, int quantity) {
-        for (auto it = items.begin(); it != items.end(); ++it) {
-            if (it->getItemName() == itemType) {
-                if (it->getQuantity() > quantity) {
-                    it->setQuantity(it->getQuantity() - quantity);
+    void removeItem(int itemId, int quantity) {
+        for (auto& stack : items) {
+            if (stack.getItemId() == itemId) {
+                if (stack.getQuantity() > quantity) {
+                    stack.setQuantity(stack.getQuantity() - quantity);
                 } else {
-                    items.erase(it);
+                    items.erase(std::remove(items.begin(), items.end(), stack), items.end());
                 }
                 return;
             }

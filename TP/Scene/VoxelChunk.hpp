@@ -27,18 +27,19 @@ public:
         }
         delete[] m_cubes;
     }
-    void setBloc(int x, int y, int z, int bloc) {
-        std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
+    bool setBloc(int x, int y, int z, int bloc) {
+        //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
         if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-            std::cout << "Error: Out of bounds" << std::endl;
-            return;
+            //std::cout << "Error: Out of bounds" << std::endl;
+            return false;
         }
         if (m_cubes[x][y][z] != AIR) {
-            std::cout << "Error: Block already set" << std::endl;
-            return;
+            //std::cout << "Error: Block already set" << std::endl;
+            return false;
         }
         m_cubes[x][y][z] = bloc;
         generateMesh();
+        return true;
     }
 
     int getBloc(int x, int y, int z) {

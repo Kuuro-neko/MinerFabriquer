@@ -117,7 +117,7 @@ int main(void) {
     glfwSetCursorPos(window, 1024 / 2, 768 / 2);
 
     // Dark blue background
-    glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
+    glClearColor(0.4f, 0.6f, 0.8f, 0.0f);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
