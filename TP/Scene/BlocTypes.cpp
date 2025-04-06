@@ -16,7 +16,7 @@ BlockData* BlocDatabase::getBloc(int id) {
     if (it != m_blocs.end()) {
         return &it->second;
     }
-    return nullptr;
+    return &m_blocs[ERROR_BLOC];
 }
 
 std::pair<float, float> BlocDatabase::getTexCoords(int id, unsigned char side) {
@@ -24,5 +24,5 @@ std::pair<float, float> BlocDatabase::getTexCoords(int id, unsigned char side) {
     if (it != m_blocs.end()) {
         return it->second.getTexCoords(side);
     }
-    return std::make_pair(0.0f, 0.0f);
+    return std::make_pair(m_blocs[ERROR_BLOC].xTexSide, m_blocs[ERROR_BLOC].yTexSide);
 }
