@@ -30,16 +30,16 @@
  */
 class BlockData {
 public:
-    int id = 0;
-    std::string name = "Air";
-    float xTexSide = 0.0f;
-    float yTexSide = 0.0f;
-    float xTexTop = 0.0f;
-    float yTexTop = 0.0f;
-    float xTexBottom = 0.0f;
-    float yTexBottom = 0.0f;
+    int id = 255;
+    std::string name = "Error";
+    float xTexSide = 15.0f * TEXTUREATLAS_UNIT;
+    float yTexSide = 15.0f * TEXTUREATLAS_UNIT;
+    float xTexTop = 15.0f * TEXTUREATLAS_UNIT;
+    float yTexTop = 15.0f * TEXTUREATLAS_UNIT;
+    float xTexBottom = 15.0f * TEXTUREATLAS_UNIT;
+    float yTexBottom = 15.0f * TEXTUREATLAS_UNIT;
     float opaque = 1.0f;
-    bool breakable = true;
+    bool breakable = false;
 
     BlockData() = default;
 
@@ -96,6 +96,7 @@ private:
             );
             m_blocs[id] = blockData;
         }
+        m_blocs[255] = BlockData();
     }
 
     // Prevent copying
