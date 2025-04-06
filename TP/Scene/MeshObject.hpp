@@ -12,6 +12,7 @@ public:
     GLuint vertexbuffer;
     GLuint elementbuffer;
     GLuint uvbuffer;
+    GLuint vao;
     std::vector<glm::vec3> vertices;
     std::vector<unsigned short> triangles;
     std::vector<glm::vec2> uvs;

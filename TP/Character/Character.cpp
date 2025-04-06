@@ -21,7 +21,7 @@ void Character::move(glm::vec3 direction) {
  * @param key
  */
 void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database) {
-
+    update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
     cameraFrontNoUp = normalize(cameraFrontNoUp);
@@ -65,7 +65,10 @@ void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActu
 /**
  * \brief fonction qui réalise l'action de casser un bloc
  */
-void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const {
+void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+    if (breakCooldown < MAX_BREAK_COOLDOWN) {
+        return;
+    }
     glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
     Ray rayon(camera->getPosition(), directionNormalized);
     glm::vec3 rayDirection = normalize(rayon.direction);
@@ -121,19 +124,14 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) cons
         ItemStack item = ItemStack(idBlocCasse, 1);
         inventory->addItem(item);
         inventory->printInventory();
-
+        resetBreakCooldown();
     }
 }
 
-glm::vec3 getBoundingBloc(glm::vec3 position) {
-    return glm::vec3(
-        position.x - fmod(position.x, 1.f),
-        position.y - fmod(position.y, 1.f),
-        position.z - fmod(position.z, 1.f)
-    );
-}
-
-void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const {
+void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+    if (placeCooldown < MAX_PLACE_COOLDOWN) {
+        return;
+    }
     if (inventory->getItems().size() == 0) {
         std::cout << "Inventaire vide" << std::endl;
         return;
@@ -141,6 +139,10 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const 
     ItemStack *item = inventory->getSelectedItem();
     if (item == nullptr) {
         std::cout << "Aucun item sélectionné" << std::endl;
+        return;
+    }
+    if (item->getQuantity() <= 0) {
+        std::cout << "Quantité d'item nulle" << std::endl;
         return;
     }
     glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
@@ -188,26 +190,31 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const 
         }
         switch (facePlusProche) {
             case BLOC_LEFT:
-                chunkActuel.setBloc(blocPlusProche.x - 1, blocPlusProche.y, blocPlusProche.z, item->getItemId());
+                blocPlusProche.x -= 1;
                 break;
             case BLOC_RIGHT:
-                chunkActuel.setBloc(blocPlusProche.x + 1, blocPlusProche.y, blocPlusProche.z, item->getItemId());
+                blocPlusProche.x += 1;
                 break;
             case BLOC_TOP:
-                chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y + 1, blocPlusProche.z, item->getItemId());
+                blocPlusProche.y += 1;
                 break;
             case BLOC_BOTTOM:
-                chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y - 1, blocPlusProche.z, item->getItemId());
+                blocPlusProche.y -= 1;
                 break;
             case BLOC_FRONT:
-                chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z + 1, item->getItemId());
+                blocPlusProche.z += 1;
                 break;
             case BLOC_BACK:
-                chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z - 1, item->getItemId());
+                blocPlusProche.z -= 1;
                 break;
         }
-        chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, item->getItemId());
-        return;
+        
+        if (chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, item->getItemId())) {
+            std::cout << "Bloc placed : " << database.getBloc(item->getItemId())->name << std::endl;
+            inventory->removeItem(item->getItemId(), 1);
+            inventory->printInventory();
+            resetPlaceCooldown();
+        }
     }
 }
 
