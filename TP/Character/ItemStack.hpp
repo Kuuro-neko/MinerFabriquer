@@ -2,17 +2,28 @@
 #pragma once
 
 #include <string>
+#include <TP/Scene/BlocTypes.hpp>
 
 class ItemStack {
 public:
-    ItemStack(const std::string& itemType, int quantity)
-            : itemType(itemType), quantity(quantity) {}
+    ItemStack(int itemId, int quantity) 
+        : quantity(quantity) {
+            itemData = BlocDatabase::getInstance().getBloc(itemId);
+        }
 
-    inline const std::string& getItemType() const { return itemType; }
+    inline const std::string& getItemName() const { return itemData->name; }
+    inline int getItemId() const { return itemData->id; }
     inline int getQuantity() const { return quantity; }
     inline void setQuantity(int newQuantity) { quantity = newQuantity; }
 
+    inline bool operator==(const ItemStack& other) const {
+        if (itemData == nullptr || other.itemData == nullptr) {
+            return false;
+        }
+        return itemData->id == other.itemData->id;
+    }
+
 private:
-    std::string itemType;
+    BlockData* itemData;
     int quantity;
 };

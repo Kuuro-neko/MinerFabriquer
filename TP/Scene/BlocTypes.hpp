@@ -12,6 +12,7 @@
 #define PLANKS_OAK 4
 #define LOG_OAK 5
 #define LEAVES_OAK 6
+#define BEDROCK 7
 
 // Block types, bit mask for each side
 #define BLOC_FRONT 1
@@ -38,6 +39,7 @@ public:
     float xTexBottom = 0.0f;
     float yTexBottom = 0.0f;
     float opaque = 1.0f;
+    bool breakable = true;
 
     BlockData() = default;
 
@@ -45,7 +47,7 @@ public:
         int xTexSide, int yTexSide,
         int xTexTop, int yTexTop,
         int xTexBottom, int yTexBottom,
-        int opaque)
+        int opaque, int breakable)
         : id(id), name(name),
             xTexSide(xTexSide * TEXTUREATLAS_UNIT),
             yTexSide(yTexSide * TEXTUREATLAS_UNIT),
@@ -53,7 +55,8 @@ public:
             yTexTop(yTexTop * TEXTUREATLAS_UNIT),
             xTexBottom(xTexBottom * TEXTUREATLAS_UNIT),
             yTexBottom(yTexBottom * TEXTUREATLAS_UNIT),
-            opaque(opaque) {}
+            opaque(opaque),
+            breakable(breakable) {}
     
     ~BlockData() {}
 
@@ -76,20 +79,20 @@ private:
 
     BlocDatabase() {
         std::string database = "../database/Blocs.csv";
-        io::CSVReader<9> in(database);
-        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque");
+        io::CSVReader<10> in(database);
+        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque", "Breakable");
         int id;
         std::string name;
         float xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom;
-        int opaque;
-        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque)) {
-            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << std::endl;
+        int opaque, breakable;
+        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, breakable)) {
+            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << ", breakable: " << breakable << std::endl;
             BlockData blockData(
                 id, name,
                 xTexSide, yTexSide,
                 xTexTop, yTexTop,
                 xTexBottom, yTexBottom,
-                opaque
+                opaque, breakable
             );
             m_blocs[id] = blockData;
         }
@@ -122,8 +125,12 @@ public:
     BlockData* getBloc(int id);
 
     //
-    bool isUnbreakable(int id) {
+    bool isAir(int id) {
         return m_blocs[id].id==0;
+    }
+
+    bool isUnbreakable(int id) {
+        return m_blocs[id].breakable==0;
     }
 
     /**

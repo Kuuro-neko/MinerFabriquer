@@ -16,6 +16,7 @@ public:
     void rotateCharacter(float angle, glm::vec3 axis);
 
     void listenAction(float key, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database);
+    void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
 
     Camera *camera;
     Inventory *inventory;
@@ -24,6 +25,7 @@ private:
     void move(glm::vec3 direction);
 
     void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const;
+    void putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) const;
 
     float speed;
     float maxInteractionDistance = 6.f;
