@@ -177,6 +177,10 @@ int main(void) {
     camera.setTarget(character.getWorldPosition());
     character.m_texture = TextureAtlas::getInstance().getTexture();
 
+    glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset) {
+        character.scrollCallback(window, xOffset, yOffset);
+    });
+
 
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
