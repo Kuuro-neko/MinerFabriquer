@@ -51,30 +51,48 @@ public:
     }
 
     int rayIntersectsAABBFace(const Ray &ray, const glm::vec3 &min, const glm::vec3 &max, float maxDistance) {
-        // Check for intersection with each face of the AABB
-        glm::vec3 faces[6] = {
-            glm::vec3(1, 0, 0), // Right
-            glm::vec3(-1, 0, 0), // Left
-            glm::vec3(0, 1, 0), // Top
-            glm::vec3(0, -1, 0), // Bottom
-            glm::vec3(0, 0, 1), // Front
-            glm::vec3(0, 0, -1) // Back
-        };
+        float t[6];
 
-        for (int i = 0; i < 6; ++i) {
-            if (rayIntersectsAABB(ray, min + faces[i], max + faces[i], maxDistance)) {
-                switch (i) {
-                    case 0: return BLOC_RIGHT;
-                    case 1: return BLOC_LEFT;
-                    case 2: return BLOC_TOP;
-                    case 3: return BLOC_BOTTOM;
-                    case 4: return BLOC_FRONT;
-                    case 5: return BLOC_BACK;
+        glm::vec3 dirfrac = glm::vec3(1.f) / ray.direction;
+
+        t[0] = (min.x - ray.origin.x) * dirfrac.x;
+        t[1] = (max.x - ray.origin.x) * dirfrac.x;
+        t[2] = (min.y - ray.origin.y) * dirfrac.y;
+        t[3] = (max.y - ray.origin.y) * dirfrac.y;
+        t[4] = (min.z - ray.origin.z) * dirfrac.z;
+        t[5] = (max.z - ray.origin.z) * dirfrac.z;
+
+        float tmin = glm::max(glm::max(glm::min(t[0], t[1]), glm::min(t[2], t[3])), glm::min(t[4], t[5]));
+        float tmax = glm::min(glm::min(glm::max(t[0], t[1]), glm::max(t[2], t[3])), glm::max(t[4], t[5]));
+        if (tmax < 0) return -1;
+        if (tmin > tmax) return -1;
+        if (tmin < 0) {
+            if (tmax < 0)
+                return -1;
+            else {
+                if (tmax <= maxDistance) {
+                    if (t[0] == tmin) return BLOC_LEFT;
+                    if (t[1] == tmin) return BLOC_RIGHT;
+                    if (t[2] == tmin) return BLOC_TOP;
+                    if (t[3] == tmin) return BLOC_BOTTOM;
+                    if (t[4] == tmin) return BLOC_BACK;
+                    if (t[5] == tmin) return BLOC_FRONT;
+                } else {
+                    return -1;
                 }
             }
+        } else {
+            if (tmin <= maxDistance) {
+                if (t[0] == tmin) return BLOC_LEFT;
+                if (t[1] == tmin) return BLOC_RIGHT;
+                if (t[2] == tmin) return BLOC_TOP;
+                if (t[3] == tmin) return BLOC_BOTTOM;
+                if (t[4] == tmin) return BLOC_BACK;
+                if (t[5] == tmin) return BLOC_FRONT;
+            } else
+                return -1;
         }
-
-        return -1; // No intersection with any face
+            
     }
 
 };
