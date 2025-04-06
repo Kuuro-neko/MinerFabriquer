@@ -14,6 +14,8 @@
 #define LEAVES_OAK 6
 #define BEDROCK 7
 
+#define ERROR_BLOC 255
+
 // Block types, bit mask for each side
 #define BLOC_FRONT 1
 #define BLOC_BACK 2
@@ -96,7 +98,7 @@ private:
             );
             m_blocs[id] = blockData;
         }
-        m_blocs[255] = BlockData();
+        m_blocs[ERROR_BLOC] = BlockData();
     }
 
     // Prevent copying
