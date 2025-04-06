@@ -138,8 +138,17 @@ int main(void) {
 
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
-    renderer = Renderer(programID);
+    GLuint programID2 = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
+    renderer = Renderer(programID2);
 
+    GLint success;
+    GLchar infoLog[512];
+    glGetShaderiv(programID, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(programID, 512, NULL, infoLog);
+        std::cerr << "Shader compile error: " << infoLog << std::endl;
+    }
+    
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
@@ -211,12 +220,19 @@ int main(void) {
         glUseProgram(programID);
 
         GLuint viewMatrixId = glGetUniformLocation(programID, "ViewMatrix");
-        glUniformMatrix4fv(viewMatrixId, 1, false, &camera.m_viewMatrix[0][0]);
+        glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         GLuint projectionMatrixId = glGetUniformLocation(programID, "ProjectionMatrix");
-        glUniformMatrix4fv(projectionMatrixId, 1, false, &camera.m_projectionMatrix[0][0]);
+        glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
+        
         root.draw(programID);
 
+        renderer.drawWireframeCube(
+                glm::vec3(1.f, 1.f, 1.f),
+                camera.getViewMatrix(),
+                camera.getProjectionMatrix()
+        );
+        
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
