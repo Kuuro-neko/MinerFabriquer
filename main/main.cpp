@@ -8,6 +8,8 @@
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
 
+#include <TP/GUI/Crosshair.hpp>
+
 GLFWwindow *window;
 
 using namespace std;
@@ -136,11 +138,14 @@ int main(void) {
 
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
+    GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
 
     /*****************TODO***********************/
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
+
+    Crosshair crosshair = Crosshair(crosshairProgramID, 0.03);
 
     SceneNode root;
 
@@ -219,7 +224,14 @@ int main(void) {
         GLuint projectionMatrixId = glGetUniformLocation(programID, "ProjectionMatrix");
         glUniformMatrix4fv(projectionMatrixId, 1, false, &camera.m_projectionMatrix[0][0]);
 
+        // Render the scene
         root.draw(programID);
+        crosshair.render();
+
+        // Restore shader program and matrices for the scene
+        glUseProgram(programID);
+        glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
+        glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -231,7 +243,10 @@ int main(void) {
 
     // Cleanup VBO and shader
     root.cleanupBuffers();
+    crosshair.cleanupBuffers();
+
     glDeleteProgram(programID);
+   // glDeleteProgram(crosshairProgramID);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
