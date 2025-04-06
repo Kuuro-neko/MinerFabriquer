@@ -208,12 +208,12 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
                 blocPlusProche.z -= 1;
                 break;
         }
-        resetPlaceCooldown();
-        bool success = chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, item->getItemId());
-        if (success) {
+        
+        if (chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, item->getItemId())) {
             std::cout << "Bloc placed : " << database.getBloc(item->getItemId())->name << std::endl;
             inventory->removeItem(item->getItemId(), 1);
             inventory->printInventory();
+            resetPlaceCooldown();
         }
     }
 }
