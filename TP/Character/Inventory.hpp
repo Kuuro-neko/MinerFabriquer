@@ -48,6 +48,15 @@ public:
         }
     }
 
+    void tryToSelectItem(int blocId) {
+        for (int i = 0; i < items.size(); ++i) {
+            if (items[i].getItemId() == blocId) {
+                selectedItem = i;
+                return;
+            }
+        }
+    }
+
     const std::vector<ItemStack>& getItems() const { return items; }
 
 
