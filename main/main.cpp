@@ -145,24 +145,27 @@ int main(void) {
     SceneNode root;
 
     // Our first chunk :D
+    int groundLevel = 4;
     MeshObject chunkMesh = MeshObject();
     VoxelChunk chunk = VoxelChunk(16, 16, 16, Transform(
             glm::vec3(0, 0, 0),
             DEFAULT_ROTATION,
             1.f), &chunkMesh);
-    chunk.setBloc(2, 3, 2, LOG_OAK);
-    chunk.setBloc(2, 4, 2, LOG_OAK);
-    chunk.setBloc(2, 5, 2, LOG_OAK);
-    chunk.setBloc(2, 6, 2, LEAVES_OAK);
-    chunk.setBloc(2, 5, 3, LEAVES_OAK);
-    chunk.setBloc(3, 5, 2, LEAVES_OAK);
-    chunk.setBloc(2, 5, 1, LEAVES_OAK);
-    chunk.setBloc(1, 5, 2, LEAVES_OAK);
+    chunk.setBloc(2, groundLevel+1, 2, LOG_OAK);
+    chunk.setBloc(2, groundLevel+2, 2, LOG_OAK);
+    chunk.setBloc(2, groundLevel+3, 2, LOG_OAK);
+    chunk.setBloc(2, groundLevel+4, 2, LEAVES_OAK);
+    chunk.setBloc(2, groundLevel+3, 3, LEAVES_OAK);
+    chunk.setBloc(3, groundLevel+3, 2, LEAVES_OAK);
+    chunk.setBloc(2, groundLevel+3, 1, LEAVES_OAK);
+    chunk.setBloc(1, groundLevel+3, 2, LEAVES_OAK);
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
-            chunk.setBloc(i, 0, j, STONE);
-            chunk.setBloc(i, 1, j, DIRT);
-            chunk.setBloc(i, 2, j, GRASS);
+            chunk.setBloc(i, groundLevel-4, j, BEDROCK);
+            chunk.setBloc(i, groundLevel-3, j, STONE);
+            chunk.setBloc(i, groundLevel-2, j, DIRT);
+            chunk.setBloc(i, groundLevel-1, j, DIRT);
+            chunk.setBloc(i, groundLevel, j, GRASS);
         }
     }
     chunk.generateMesh();
