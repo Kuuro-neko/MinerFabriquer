@@ -24,7 +24,6 @@ void processInput(GLFWwindow *window, float dt);
 
 
 Camera camera;
-Renderer renderer;
 
 // timing
 float deltaTime = 0.0f;    // time between current frame and last frame
@@ -144,7 +143,7 @@ int main(void) {
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
     GLuint programID2 = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
-    renderer = Renderer(programID2);
+    Renderer renderer = Renderer(programID2);
     GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
 
     GLint success;

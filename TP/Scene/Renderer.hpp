@@ -9,11 +9,12 @@ private:
     GLuint programID;
     GLuint vertexbuffer;
     GLuint elementbuffer;
+    GLuint vao;
 
     std::vector<glm::vec3> vertices;
     std::vector<unsigned short> lines;
 
-    glm::vec3 higlight;
+    glm::vec3 highlight;
     bool highlightEnabled = false;
 
     void initializeBuffers();
@@ -24,6 +25,7 @@ public:
     ~Renderer() {
         glDeleteBuffers(1, &vertexbuffer);
         glDeleteBuffers(1, &elementbuffer);
+        glDeleteVertexArrays(1, &vao);
     }
 
     void drawWireframeCube(const glm::vec3& size, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
