@@ -186,6 +186,14 @@ int main(void) {
             chunk.setBloc(i, groundLevel, j, GRASS);
         }
     }
+    chunk.setBloc(8, groundLevel+4, 8, GLOWSTONE);
+    chunk.setBloc(8, groundLevel+4, 9, GLOWSTONE);
+    chunk.setBloc(9, groundLevel+4, 8, GLOWSTONE);
+    chunk.setBloc(9, groundLevel+4, 9, GLOWSTONE);
+    chunk.setBloc(8, groundLevel+5, 8, GLOWSTONE);
+    chunk.setBloc(8, groundLevel+5, 9, GLOWSTONE);
+    chunk.setBloc(9, groundLevel+5, 8, GLOWSTONE);
+    chunk.setBloc(9, groundLevel+5, 9, GLOWSTONE);
     chunk.generateMesh();
     root.addChild(&chunk);
 

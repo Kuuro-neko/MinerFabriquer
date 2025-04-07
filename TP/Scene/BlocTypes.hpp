@@ -13,6 +13,7 @@
 #define LOG_OAK 5
 #define LEAVES_OAK 6
 #define BEDROCK 7
+#define GLOWSTONE 8
 
 #define ERROR_BLOC 255
 
