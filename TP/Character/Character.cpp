@@ -53,14 +53,17 @@ void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActu
 
     updateClosestBlock(chunkActuel, database); //on met à jour le bloc le plus proche
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         breakBlock(chunkActuel, database); //on fait un coup de pioche
+    }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
         putBlock(chunkActuel, database); //on pose un bloc
+    }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
-        setSelectedBlock(chunkActuel, database); //on définit le bloc sélectionné dans l'inventaire
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+        setSelectedBlock(chunkActuel, database); //on sélectionne un bloc
+    }
 }
 
 void Character::updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db) {
@@ -77,11 +80,11 @@ void Character::updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db) {
                 int id = chunk.m_cubes[x][y][z];
                 if (db.isAir(id)) continue;  // si c'est de l'air on skip
 
-                glm::vec3 pos = chunk.getWorldPosition() + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
+                glm::vec3 pos = origin + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
                 
                 // on vérifie si le rayon intersecte le bloc
                 int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
-                if (face = -1) continue; // si pas d'intersection on skip
+                if (face == -1) continue; // si pas d'intersection on skip
                 
                 float dist = glm::distance(camera->getPosition(), pos);
                 if (dist < minDist) { // on vérifie si le bloc est plus proche que le précédent trouvé
