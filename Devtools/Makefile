@@ -632,6 +632,30 @@ TP/Scene/MeshObject.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.s
 .PHONY : TP/Scene/MeshObject.cpp.s
 
+TP/Scene/Renderer.o: TP/Scene/Renderer.cpp.o
+.PHONY : TP/Scene/Renderer.o
+
+# target to build an object file
+TP/Scene/Renderer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o
+.PHONY : TP/Scene/Renderer.cpp.o
+
+TP/Scene/Renderer.i: TP/Scene/Renderer.cpp.i
+.PHONY : TP/Scene/Renderer.i
+
+# target to preprocess a source file
+TP/Scene/Renderer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.i
+.PHONY : TP/Scene/Renderer.cpp.i
+
+TP/Scene/Renderer.s: TP/Scene/Renderer.cpp.s
+.PHONY : TP/Scene/Renderer.s
+
+# target to generate assembly for a file
+TP/Scene/Renderer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.s
+.PHONY : TP/Scene/Renderer.cpp.s
+
 TP/Scene/SceneNode.o: TP/Scene/SceneNode.cpp.o
 .PHONY : TP/Scene/SceneNode.o
 
@@ -854,6 +878,9 @@ help:
 	@echo "... TP/Scene/MeshObject.o"
 	@echo "... TP/Scene/MeshObject.i"
 	@echo "... TP/Scene/MeshObject.s"
+	@echo "... TP/Scene/Renderer.o"
+	@echo "... TP/Scene/Renderer.i"
+	@echo "... TP/Scene/Renderer.s"
 	@echo "... TP/Scene/SceneNode.o"
 	@echo "... TP/Scene/SceneNode.i"
 	@echo "... TP/Scene/SceneNode.s"

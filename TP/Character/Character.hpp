@@ -8,6 +8,7 @@
 #include "TP/Camera/Camera.hpp"
 #include "TP/Scene/VoxelChunk.hpp"
 #include "Inventory.hpp"
+#include "TP/Scene/Renderer.hpp"
 
 #define MAX_BREAK_COOLDOWN 0.1f
 #define MAX_PLACE_COOLDOWN 0.15f
@@ -18,7 +19,7 @@ public:
     Character(Transform transform, Camera *camera, MeshObject *mesh, Texture *texture);
 
     void rotateCharacter(float angle, glm::vec3 axis);
-
+    inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
     void listenAction(float key, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database);
     void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
     void update(float dt) {
@@ -36,6 +37,8 @@ public:
 private:
     void move(glm::vec3 direction);
 
+    Renderer *renderer;
+    void updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db);
     void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
     void putBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
     void setSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
@@ -54,6 +57,10 @@ private:
     float maxInteractionDistance = 6.f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
+
+    glm::vec3 blocPlusProche;
+    int facePlusProche = -1;
+    bool intersection = false;
 };
 
 #endif // CHARACTER_HPP

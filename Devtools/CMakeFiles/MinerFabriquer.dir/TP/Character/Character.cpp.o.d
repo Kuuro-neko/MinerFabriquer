@@ -337,4 +337,5 @@ CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o: \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Camera_Helper.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/VoxelChunk.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Inventory.hpp \
- /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/ItemStack.hpp
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/ItemStack.hpp \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/Renderer.hpp

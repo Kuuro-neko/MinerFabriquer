@@ -32,6 +32,7 @@ void SceneNode::updateModelMatrix() {
 
 void SceneNode::draw(GLuint programID) {
     if (m_mesh) {
+        glUseProgram(programID);
         GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
         glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
         

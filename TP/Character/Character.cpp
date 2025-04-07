@@ -1,10 +1,12 @@
 #include "Character.hpp"
+#include "TP/Scene/Renderer.hpp"
 
 #include <iostream>
+#include <optional>
 
 using namespace std;
 
-Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr )
+Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
         : SceneNode(transform, mesh, texture), camera(camera) {
     speed = 2.5;
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
@@ -49,65 +51,57 @@ void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActu
 //    }
 
 
+    updateClosestBlock(chunkActuel, database); //on met à jour le bloc le plus proche
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         breakBlock(chunkActuel, database); //on fait un coup de pioche
+    }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
         putBlock(chunkActuel, database); //on pose un bloc
+    }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
-        setSelectedBlock(chunkActuel, database); //on définit le bloc sélectionné dans l'inventaire
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+        setSelectedBlock(chunkActuel, database); //on sélectionne un bloc
+    }
 }
 
-/**
- * @brief fonction qui renvoie la liste des blocs intersectés par le rayon partant de la caméra
- * 
- * @param chunkActuel 
- * @param database 
- * @return std::vector<glm::vec3> 
- */
-std::vector<glm::vec3> Character::getIntersectedBlocks(VoxelChunk &chunkActuel, BlocDatabase &database) {
-    std::vector<glm::vec3> intersectedBlocks;
+void Character::updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db) {
+    Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
+    glm::vec3 origin = chunk.getWorldPosition();
 
-    glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
-    Ray rayon(camera->getPosition(), directionNormalized);
+    float minDist = maxInteractionDistance;
+    intersection = false;
 
-    // on parcourt tous les blocs du chunk actuel
-    for (int x = 0; x < chunkActuel.m_sizeX; x++) {
-        for (int y = 0; y < chunkActuel.m_sizeY; y++) {
-            for (int z = 0; z < chunkActuel.m_sizeZ; z++) {
-                int idBloc = chunkActuel.m_cubes[x][y][z];
-                if (database.isAir(idBloc)) continue; // si c'est de l'air on skip
-                glm::vec3 blocPosition = chunkActuel.getWorldPosition() + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
-                if (rayon.rayIntersectsAABB(rayon, blocPosition, blocPosition + glm::vec3(1.f), maxInteractionDistance)) { //on vérifie si le rayon intersecte le bloc
-                    intersectedBlocks.push_back(blocPosition); 
+    // Pour tout bloc du chunk
+    for (int x = 0; x < chunk.m_sizeX; ++x) {
+        for (int y = 0; y < chunk.m_sizeY; ++y) {
+            for (int z = 0; z < chunk.m_sizeZ; ++z) {
+                int id = chunk.m_cubes[x][y][z];
+                if (db.isAir(id)) continue;  // si c'est de l'air on skip
+
+                glm::vec3 pos = origin + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
+                
+                // on vérifie si le rayon intersecte le bloc
+                int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
+                if (face == -1) continue; // si pas d'intersection on skip
+                
+                float dist = glm::distance(camera->getPosition(), pos);
+                if (dist < minDist) { // on vérifie si le bloc est plus proche que le précédent trouvé
+                    intersection = true;
+                    blocPlusProche = pos;
+                    facePlusProche = face;
+                    minDist = dist;
                 }
             }
         }
     }
-    return intersectedBlocks;
-}
-
-/**
- * @brief fonction qui renvoie le bloc le plus proche de la caméra
- * 
- * @param intersectedBlocks 
- * @return glm::vec3 
- */
-glm::vec3 Character::getClosestBlock(const std::vector<glm::vec3>& intersectedBlocks) {
-    glm::vec3 closestBlock = intersectedBlocks[0];
-    float minDistance = glm::distance(camera->getPosition(), closestBlock);
-
-    for (int i = 1; i < intersectedBlocks.size(); i++) {
-        float distance = glm::distance(camera->getPosition(), intersectedBlocks[i]);
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestBlock = intersectedBlocks[i];
-        }
+    if (intersection) {
+        // set highlight
+        renderer->setHighlight(glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z));
+    } else {
+        renderer->disableHighlight();
     }
-
-    return closestBlock;
 }
 
 
@@ -118,36 +112,21 @@ glm::vec3 Character::getClosestBlock(const std::vector<glm::vec3>& intersectedBl
  * @param database 
  */
 void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
-    if (breakCooldown < MAX_BREAK_COOLDOWN) {
+    if (!intersection || breakCooldown < MAX_BREAK_COOLDOWN) return;
+
+    //on casse le bloc le plus proche -> on remplace le bloc par de l'air
+    // on affiche le type de bloc cassé
+    int idBlocCasse = chunkActuel.playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    if (idBlocCasse == -1) {
         return;
     }
-    glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
-    Ray rayon(camera->getPosition(), directionNormalized);
-    glm::vec3 rayDirection = normalize(rayon.direction);
-
-    //ETAPE 1 : liste des blocs intersectés
-    std::vector<glm::vec3> blocsIntersectes = getIntersectedBlocks(chunkActuel, database);
-
-    //ETAPE 2 : on casse le bloc le plus proche
-    // on parcourt la liste des blocs intersectés par le rayon
-    if (blocsIntersectes.size() > 0) {
-        //on récupère le bloc le plus proche
-        glm::vec3 blocPlusProche = getClosestBlock(blocsIntersectes);
-
-        //on casse le bloc le plus proche -> on remplace le bloc par de l'air
-        // on affiche le type de bloc cassé
-        int idBlocCasse = chunkActuel.playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
-        if (idBlocCasse == -1) {
-            return;
-        }
-        // on ajoute l'item dans l'inventaire
-        std::cout << "Bloc cassé : " << database.getBloc(idBlocCasse)->name << std::endl;
-        //on ajoute l'item dans l'inventaire
-        ItemStack item = ItemStack(idBlocCasse, 1);
-        inventory->addItem(item);
-        inventory->printInventory();
-        resetBreakCooldown();
-    }
+    // on ajoute l'item dans l'inventaire
+    std::cout << "Bloc cassé : " << database.getBloc(idBlocCasse)->name << std::endl;
+    //on ajoute l'item dans l'inventaire
+    ItemStack item = ItemStack(idBlocCasse, 1);
+    inventory->addItem(item);
+    inventory->printInventory();
+    resetBreakCooldown();
 }
 
 /**
@@ -157,9 +136,7 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
  * @param database 
  */
 void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
-    if (placeCooldown < MAX_PLACE_COOLDOWN) {
-        return;
-    }
+    if (!intersection || placeCooldown < MAX_PLACE_COOLDOWN) return;
     if (inventory->getItems().size() == 0) {
         std::cout << "Inventaire vide" << std::endl;
         return;
@@ -173,76 +150,33 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
         std::cout << "Quantité d'item nulle" << std::endl;
         return;
     }
-    glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
-    Ray rayon(camera->getPosition(), directionNormalized);
-    glm::vec3 rayDirection = normalize(rayon.direction);
-
-    //liste des blocs intersectés
-    std::vector<glm::vec3> blocsIntersectes;
-    std::vector<int> facesIntersectees;
-
-    //ETAPE 1 : on parcourt tous les blocs du chunk actuel
-    for (int x = 0; x < chunkActuel.m_sizeX; x++) {
-        for (int y = 0; y < chunkActuel.m_sizeY; y++) {
-            for (int z = 0; z < chunkActuel.m_sizeZ; z++) {
-                //on récupère l'id du bloc via la database
-                int idBloc = chunkActuel.m_cubes[x][y][z];
-                if (database.isAir(idBloc)) continue; // si c'est de l'air on skip
-
-                //on récupère la position du bloc -> chunckTransform + position du bloc
-                glm::vec3 blocPosition = chunkActuel.getWorldPosition() + glm::vec3(x, y, z);
-
-
-                //on vérifie si le rayon intersecte le bloc
-                int faceIntersectee = rayon.rayIntersectsAABBFace(rayon, blocPosition, blocPosition + glm::vec3(1.f), maxInteractionDistance);
-                if (faceIntersectee != -1) {
-                    blocsIntersectes.push_back(blocPosition); // on ajoute le bloc dans la liste des éléments intersecté
-                    facesIntersectees.push_back(faceIntersectee); // on ajoute la face intersectée
-                }
-            }
-        }
+    glm::vec3 position = glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    switch (facePlusProche) {
+        case BLOC_LEFT:
+            position.x -= 1;
+            break;
+        case BLOC_RIGHT:
+            position.x += 1;
+            break;
+        case BLOC_BOTTOM:
+            position.y += 1;
+            break;
+        case BLOC_TOP:
+            position.y -= 1;
+            break;
+        case BLOC_FRONT:
+            position.z += 1;
+            break;
+        case BLOC_BACK:
+            position.z -= 1;
+            break;
     }
-    //ETAPE 2: on pose le bloc sur la position adjacente au plus proche
-    if (blocsIntersectes.size() > 0) {
-        //on récupère le bloc le plus proche
-        glm::vec3 blocPlusProche = blocsIntersectes[0];
-        int facePlusProche = facesIntersectees[0];
-        float distanceMin = glm::distance(camera->getPosition(), blocPlusProche);
-        for (int i = 1; i < blocsIntersectes.size(); i++) {
-            float distance = glm::distance(camera->getPosition(), blocsIntersectes[i]);
-            if (distance < distanceMin) {
-                distanceMin = distance;
-                blocPlusProche = blocsIntersectes[i];
-                facePlusProche = facesIntersectees[i];
-            }
-        }
-        switch (facePlusProche) {
-            case BLOC_LEFT:
-                blocPlusProche.x -= 1;
-                break;
-            case BLOC_RIGHT:
-                blocPlusProche.x += 1;
-                break;
-            case BLOC_BOTTOM:
-                blocPlusProche.y += 1;
-                break;
-            case BLOC_TOP:
-                blocPlusProche.y -= 1;
-                break;
-            case BLOC_FRONT:
-                blocPlusProche.z += 1;
-                break;
-            case BLOC_BACK:
-                blocPlusProche.z -= 1;
-                break;
-        }
-        
-        if (chunkActuel.setBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, item->getItemId())) {
-            std::cout << "Bloc placed : " << database.getBloc(item->getItemId())->name << std::endl;
-            inventory->removeItem(item->getItemId(), 1);
-            inventory->printInventory();
-            resetPlaceCooldown();
-        }
+    
+    if (chunkActuel.setBloc(position.x, position.y, position.z, item->getItemId())) {
+        std::cout << "Bloc placed : " << database.getBloc(item->getItemId())->name << std::endl;
+        inventory->removeItem(item->getItemId(), 1);
+        inventory->printInventory();
+        resetPlaceCooldown();
     }
 }
 
@@ -253,29 +187,15 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
  * @param database 
  */
 void Character::setSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
-    glm::vec3 directionNormalized = normalize(camera->getRotation() * VEC_FRONT);
-    Ray rayon(camera->getPosition(), directionNormalized);
-    glm::vec3 rayDirection = normalize(rayon.direction);
-
-    //ETAPE 1 : liste des blocs intersectés
-    std::vector<glm::vec3> blocsIntersectes = getIntersectedBlocks(chunkActuel, database);
-
-    //ETAPE 2 : on ramasse le bloc le plus proche
-    // on parcourt la liste des blocs intersectés par le rayon
-    if (blocsIntersectes.size() > 0) {
-        //on récupère le bloc le plus proche
-        glm::vec3 blocPlusProche = getClosestBlock(blocsIntersectes);
-
-        //on ramasse le bloc le plus proche -> on remplace le bloc par de l'air
-        // on affiche le type de bloc ramassé
-        int idBlocSelectionne = chunkActuel.getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
-        if (idBlocSelectionne == -1) {
-            return;
-        }
-        std::cout << "Bloc sélectionné : " << database.getBloc(idBlocSelectionne)->name << std::endl;
-        inventory->tryToSelectItem(database.getBloc(idBlocSelectionne)->id);
-        inventory->printInventory();
+    if (!intersection) return;
+    // on définit le bloc sélectionné par le joueur dans son inventaire
+    int idBlocSelectionne = chunkActuel.getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    if (idBlocSelectionne == -1) {
+        return;
     }
+    std::cout << "Bloc sélectionné : " << database.getBloc(idBlocSelectionne)->name << std::endl;
+    inventory->tryToSelectItem(database.getBloc(idBlocSelectionne)->id);
+    inventory->printInventory();
 }
 
 

@@ -7,6 +7,7 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
+#include "TP/Scene/Renderer.hpp"
 
 #include <TP/GUI/Crosshair.hpp>
 
@@ -141,9 +142,18 @@ int main(void) {
 
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
+    GLuint programID2 = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
+    Renderer renderer = Renderer(programID2);
     GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
 
-    /*****************TODO***********************/
+    GLint success;
+    GLchar infoLog[512];
+    glGetShaderiv(programID, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(programID, 512, NULL, infoLog);
+        std::cerr << "Shader compile error: " << infoLog << std::endl;
+    }
+    
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
@@ -185,6 +195,7 @@ int main(void) {
     characterMesh.initializeBuffers();
     character.m_mesh = &characterMesh;
     root.addChild(&character);
+    character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
     character.m_texture = TextureAtlas::getInstance().getTexture();
 
@@ -223,18 +234,25 @@ int main(void) {
         glUseProgram(programID);
 
         GLuint viewMatrixId = glGetUniformLocation(programID, "ViewMatrix");
-        glUniformMatrix4fv(viewMatrixId, 1, false, &camera.m_viewMatrix[0][0]);
+        glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         GLuint projectionMatrixId = glGetUniformLocation(programID, "ProjectionMatrix");
-        glUniformMatrix4fv(projectionMatrixId, 1, false, &camera.m_projectionMatrix[0][0]);
+        glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
-        // Render the scene
+        
         root.draw(programID);
+        renderer.drawWireframeCube(
+                glm::vec3(1.f, 1.f, 1.f),
+                camera.getViewMatrix(),
+                camera.getProjectionMatrix()
+        );
+        
         crosshair.render();
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
+        
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
