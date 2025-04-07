@@ -9,10 +9,15 @@
 #include "TP/Character/Character.hpp"
 #include "TP/Scene/Renderer.hpp"
 
+#include <TP/GUI/Crosshair.hpp>
+
 GLFWwindow *window;
 
 using namespace std;
 using namespace glm;
+
+int windowWidth = 1024;
+int windowHeight = 768;
 
 
 void processInput(GLFWwindow *window, float dt);
@@ -90,7 +95,7 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow(1024, 768, "main - GLFW", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
     if (window == NULL) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -116,10 +121,10 @@ int main(void) {
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
-    glfwSetCursorPos(window, 1024 / 2, 768 / 2);
+    glfwSetCursorPos(window, windowWidth / 2, windowHeight / 2);
 
     // Dark blue background
-    glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
+    glClearColor(0.4f, 0.6f, 0.8f, 0.0f);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -140,6 +145,7 @@ int main(void) {
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
     GLuint programID2 = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
     renderer = Renderer(programID2);
+    GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
 
     GLint success;
     GLchar infoLog[512];
@@ -153,27 +159,32 @@ int main(void) {
 
     /****************************************/
 
+    Crosshair crosshair = Crosshair(crosshairProgramID, 0.03f);
+
     SceneNode root;
 
     // Our first chunk :D
+    int groundLevel = 4;
     MeshObject chunkMesh = MeshObject();
     VoxelChunk chunk = VoxelChunk(16, 16, 16, Transform(
             glm::vec3(0, 0, 0),
             DEFAULT_ROTATION,
             1.f), &chunkMesh);
-    chunk.setBloc(2, 3, 2, LOG_OAK);
-    chunk.setBloc(2, 4, 2, LOG_OAK);
-    chunk.setBloc(2, 5, 2, LOG_OAK);
-    chunk.setBloc(2, 6, 2, LEAVES_OAK);
-    chunk.setBloc(2, 5, 3, LEAVES_OAK);
-    chunk.setBloc(3, 5, 2, LEAVES_OAK);
-    chunk.setBloc(2, 5, 1, LEAVES_OAK);
-    chunk.setBloc(1, 5, 2, LEAVES_OAK);
+    chunk.setBloc(2, groundLevel+1, 2, LOG_OAK);
+    chunk.setBloc(2, groundLevel+2, 2, LOG_OAK);
+    chunk.setBloc(2, groundLevel+3, 2, LOG_OAK);
+    chunk.setBloc(2, groundLevel+4, 2, LEAVES_OAK);
+    chunk.setBloc(2, groundLevel+3, 3, LEAVES_OAK);
+    chunk.setBloc(3, groundLevel+3, 2, LEAVES_OAK);
+    chunk.setBloc(2, groundLevel+3, 1, LEAVES_OAK);
+    chunk.setBloc(1, groundLevel+3, 2, LEAVES_OAK);
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
-            chunk.setBloc(i, 0, j, STONE);
-            chunk.setBloc(i, 1, j, DIRT);
-            chunk.setBloc(i, 2, j, GRASS);
+            chunk.setBloc(i, groundLevel-4, j, BEDROCK);
+            chunk.setBloc(i, groundLevel-3, j, STONE);
+            chunk.setBloc(i, groundLevel-2, j, DIRT);
+            chunk.setBloc(i, groundLevel-1, j, DIRT);
+            chunk.setBloc(i, groundLevel, j, GRASS);
         }
     }
     chunk.generateMesh();
@@ -188,6 +199,10 @@ int main(void) {
     character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
     character.m_texture = TextureAtlas::getInstance().getTexture();
+
+    glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset) {
+        character.scrollCallback(window, xOffset, yOffset);
+    });
 
 
     // Get a handle for our "LightPosition" uniform
@@ -226,12 +241,18 @@ int main(void) {
 
         
         root.draw(programID);
-
         renderer.drawWireframeCube(
                 glm::vec3(1.f, 1.f, 1.f),
                 camera.getViewMatrix(),
                 camera.getProjectionMatrix()
         );
+        
+        crosshair.render();
+        // Restore shader program and matrices for the scene
+        glUseProgram(programID);
+        glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
+        glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
+
         
         // Swap buffers
         glfwSwapBuffers(window);
@@ -243,7 +264,10 @@ int main(void) {
 
     // Cleanup VBO and shader
     root.cleanupBuffers();
+    crosshair.cleanupBuffers();
+
     glDeleteProgram(programID);
+   // glDeleteProgram(crosshairProgramID);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();

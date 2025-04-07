@@ -10,6 +10,9 @@
 #include "Inventory.hpp"
 #include "TP/Scene/Renderer.hpp"
 
+#define MAX_BREAK_COOLDOWN 0.1f
+#define MAX_PLACE_COOLDOWN 0.15f
+
 class Character : public SceneNode {
 
 public:
@@ -18,17 +21,46 @@ public:
     void rotateCharacter(float angle, glm::vec3 axis);
     inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
     void listenAction(float key, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database);
+    void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
+    void update(float dt) {
+        if (breakCooldown < MAX_BREAK_COOLDOWN) {
+            breakCooldown += dt;
+        }
+        if (placeCooldown < MAX_PLACE_COOLDOWN) {
+            placeCooldown += dt;
+        }
+    }
+
     Camera *camera;
     Inventory *inventory;
 
 private:
     void move(glm::vec3 direction);
 
-    void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database, bool &isCliking) const;
+    Renderer *renderer;
+    void updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db);
+    void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
+    void putBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
+    void setSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
+
+    std::vector<glm::vec3> getIntersectedBlocks(VoxelChunk &chunkActuel, BlocDatabase &database);
+    glm::vec3 getClosestBlock(const std::vector<glm::vec3>& blocks);
+    
+    void resetBreakCooldown() {
+        breakCooldown = 0.f;
+    }
+    void resetPlaceCooldown() {
+        placeCooldown = 0.f;
+    }
 
     float speed;
     float maxInteractionDistance = 6.f;
-    Renderer *renderer;
+    float breakCooldown = std::numeric_limits<float>::max();
+    float placeCooldown = std::numeric_limits<float>::max();
+
+    glm::vec3 blocPlusProche;
+    int facePlusProche = -1;
+    bool intersection = false;
 };
 
 #endif // CHARACTER_HPP

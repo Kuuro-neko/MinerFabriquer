@@ -12,7 +12,7 @@
 
 #define DEFAULT_FOV 45.0f
 #define DEFAULT_POSITION glm::vec3(0.0f, 0.0f, 0.0f)
-#define DEFAULT_EULER_ANGLE glm::vec3(0.537289f, -1.93024f, 0.0f)
+#define DEFAULT_EULER_ANGLE glm::vec3(0.0f, 0.0, 0.0f)
 #define CAMERA_POSITION_RELATIVE_TO_PLAYER glm::vec3(0.f, 1.5f, 0.f)
 
 #define DEFAULT_TRANSLATION_SPEED 7.5f

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <TP/Scene/BlocTypes.hpp>
 
 class Ray {
 public:
@@ -47,8 +48,51 @@ public:
                 return tmax <= maxDistance;
         } else
             return tmin <= maxDistance;
+    }
 
+    int rayIntersectsAABBFace(const Ray &ray, const glm::vec3 &min, const glm::vec3 &max, float maxDistance) {
+        float t[6];
 
+        glm::vec3 dirfrac = glm::vec3(1.f) / ray.direction;
+
+        t[0] = (min.x - ray.origin.x) * dirfrac.x;
+        t[1] = (max.x - ray.origin.x) * dirfrac.x;
+        t[2] = (min.y - ray.origin.y) * dirfrac.y;
+        t[3] = (max.y - ray.origin.y) * dirfrac.y;
+        t[4] = (min.z - ray.origin.z) * dirfrac.z;
+        t[5] = (max.z - ray.origin.z) * dirfrac.z;
+
+        float tmin = glm::max(glm::max(glm::min(t[0], t[1]), glm::min(t[2], t[3])), glm::min(t[4], t[5]));
+        float tmax = glm::min(glm::min(glm::max(t[0], t[1]), glm::max(t[2], t[3])), glm::max(t[4], t[5]));
+        if (tmax < 0) return -1;
+        if (tmin > tmax) return -1;
+        if (tmin < 0) {
+            if (tmax < 0)
+                return -1;
+            else {
+                if (tmax <= maxDistance) {
+                    if (t[0] == tmin) return BLOC_LEFT;
+                    if (t[1] == tmin) return BLOC_RIGHT;
+                    if (t[2] == tmin) return BLOC_TOP;
+                    if (t[3] == tmin) return BLOC_BOTTOM;
+                    if (t[4] == tmin) return BLOC_BACK;
+                    if (t[5] == tmin) return BLOC_FRONT;
+                } else {
+                    return -1;
+                }
+            }
+        } else {
+            if (tmin <= maxDistance) {
+                if (t[0] == tmin) return BLOC_LEFT;
+                if (t[1] == tmin) return BLOC_RIGHT;
+                if (t[2] == tmin) return BLOC_TOP;
+                if (t[3] == tmin) return BLOC_BOTTOM;
+                if (t[4] == tmin) return BLOC_BACK;
+                if (t[5] == tmin) return BLOC_FRONT;
+            } else
+                return -1;
+        }
+            
     }
 
 };
