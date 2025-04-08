@@ -17,36 +17,37 @@ struct IVec3Hash {
 class World : public SceneNode
 {
 private:
-    std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> chunks;
+    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
 public:
     World() : SceneNode(Transform(), new MeshObject(), nullptr)
     {
-        
+        generation();
     }
     ~World() {
     }
-    void addChunk(int x, int y, int z, VoxelChunk* chunk) {
-        chunks[{x, y, z}] = chunk;
-        chunk->translate(glm::vec3(x * chunk->m_sizeX, y * chunk->m_sizeY, z * chunk->m_sizeZ));
+    void generation();
+    void addChunk(int x, int y, int z, VoxelChunk chunk) {
+        chunks.emplace(std::make_tuple(x, y, z), chunk);
+        chunk.translate(glm::vec3(x * chunk.m_sizeX, y * chunk.m_sizeY, z * chunk.m_sizeZ));
     }
     void removeChunk(int x, int y, int z) {
         auto it = chunks.find({x, y, z});
         if (it != chunks.end()) {
-            delete it->second;
+            it->second.cleanupBuffers();
             chunks.erase(it);
         }
     }
     VoxelChunk* getChunk(int x, int y, int z) {
         auto it = chunks.find({x, y, z});
         if (it != chunks.end()) {
-            return it->second;
+            return &it->second;
         }
         return nullptr;
     }
 
     void draw(GLuint programID) override {
         for (auto& [key, chunk] : chunks) {
-            chunk->draw(programID);
+            chunk.draw(programID);
         }
     }
 
@@ -76,7 +77,7 @@ public:
 
     void cleanupBuffers() override {
         for (auto& [key, chunk] : chunks) {
-            chunk->cleanupBuffers();
+            chunk.cleanupBuffers();
         }
     }
 
@@ -94,7 +95,7 @@ public:
         int zz = z / CHUNK_SIZE;
         auto it = chunks.find({xx, yy, zz});
         if (it != chunks.end()) {
-            return it->second;
+            return &it->second;
         }
         return nullptr;
     }
@@ -109,8 +110,8 @@ public:
     std::vector<VoxelChunk*> getIntersectedChunks(Ray ray, float maxDistance) {
         std::vector<VoxelChunk*> intersectedChunks;
         for (auto& [key, chunk] : chunks) {
-            if (chunk->intersects(ray, maxDistance)) {
-                intersectedChunks.push_back(chunk);
+            if (chunk.intersects(ray, maxDistance)) {
+                intersectedChunks.push_back(&chunk);
             }
         }
         return intersectedChunks;

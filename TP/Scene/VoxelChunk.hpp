@@ -3,6 +3,8 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/BlocTypes.hpp>
 
+#define DEFAULT_CHUNK_SIZE 16
+
 class VoxelChunk : public SceneNode
 {
 public:
@@ -17,6 +19,9 @@ public:
                 }
             }
         }
+    }
+    VoxelChunk() {
+        VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE);
     }
     ~VoxelChunk() {
         for (int i = 0; i < m_sizeX; i++) {
