@@ -8,8 +8,11 @@
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
 #include "TP/Scene/Renderer.hpp"
+#include <TP/Scene/World.hpp>
 
 #include <TP/GUI/Crosshair.hpp>
+
+#define CHUNK_SIZE 16
 
 GLFWwindow *window;
 
@@ -72,9 +75,7 @@ Character character = Character(
                 glm::vec3(0, 5, 0),
                 DEFAULT_ROTATION,
                 1),
-        &camera,
-        nullptr,
-        nullptr
+        &camera
 );
 
 int main(void) {
@@ -162,41 +163,10 @@ int main(void) {
 
     SceneNode root;
 
-    // Our first chunk :D
-    int groundLevel = 4;
-    MeshObject chunkMesh = MeshObject();
-    VoxelChunk chunk = VoxelChunk(16, 16, 16, Transform(
-            glm::vec3(0, 0, 0),
-            DEFAULT_ROTATION,
-            1.f), &chunkMesh);
-    chunk.setBloc(2, groundLevel+1, 2, LOG_OAK);
-    chunk.setBloc(2, groundLevel+2, 2, LOG_OAK);
-    chunk.setBloc(2, groundLevel+3, 2, LOG_OAK);
-    chunk.setBloc(2, groundLevel+4, 2, LEAVES_OAK);
-    chunk.setBloc(2, groundLevel+3, 3, LEAVES_OAK);
-    chunk.setBloc(3, groundLevel+3, 2, LEAVES_OAK);
-    chunk.setBloc(2, groundLevel+3, 1, LEAVES_OAK);
-    chunk.setBloc(1, groundLevel+3, 2, LEAVES_OAK);
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
-            chunk.setBloc(i, groundLevel-4, j, BEDROCK);
-            chunk.setBloc(i, groundLevel-3, j, STONE);
-            chunk.setBloc(i, groundLevel-2, j, DIRT);
-            chunk.setBloc(i, groundLevel-1, j, DIRT);
-            chunk.setBloc(i, groundLevel, j, GRASS);
-        }
-    }
-    chunk.setBloc(8, groundLevel+4, 8, GLOWSTONE);
-    chunk.setBloc(8, groundLevel+4, 9, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+4, 8, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+4, 9, GLOWSTONE);
-    chunk.setBloc(8, groundLevel+5, 8, GLOWSTONE);
-    chunk.setBloc(8, groundLevel+5, 9, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+5, 8, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+5, 9, GLOWSTONE);
-    chunk.generateMesh();
-    root.addChild(&chunk);
-
+    World world = World();
+    root.addChild(&world);
+    
+    character.m_world = &world;
 
     MeshObject characterMesh = MeshObject();
     create_sphere_textured(64, 64, characterMesh);
@@ -230,7 +200,7 @@ int main(void) {
         // input
         // -----
         processInput(window, deltaTime);
-        character.listenAction(deltaTime, window, chunk, BlocDatabase::getInstance());
+        character.listenAction(deltaTime, window, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 

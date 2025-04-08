@@ -1,13 +1,14 @@
 #include "Character.hpp"
 #include "TP/Scene/Renderer.hpp"
+#include <TP/Scene/World.hpp>
 
 #include <iostream>
 #include <optional>
 
 using namespace std;
 
-Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
-        : SceneNode(transform, mesh, texture), camera(camera) {
+Character::Character(Transform transform, Camera *camera, World* world, MeshObject *mesh, Texture *texture)
+        : SceneNode(transform, mesh, texture), camera(camera), m_world(world) {
     speed = 2.5;
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
@@ -22,7 +23,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise l'action en fonction de la touche détectée
  * @param key
  */
-void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -51,47 +52,56 @@ void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActu
 //    }
 
 
-    updateClosestBlock(chunkActuel, database); //on met à jour le bloc le plus proche
+    updateClosestBlock(database); //on met à jour le bloc le plus proche
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        breakBlock(chunkActuel, database); //on fait un coup de pioche
+        breakBlock(database); //on fait un coup de pioche
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-        putBlock(chunkActuel, database); //on pose un bloc
+        putBlock(database); //on pose un bloc
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
-        setSelectedBlock(chunkActuel, database); //on sélectionne un bloc
+        setSelectedBlock(database); //on sélectionne un bloc
     }
 }
 
-void Character::updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db) {
+void Character::updateClosestBlock(BlocDatabase& db) {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
-    glm::vec3 origin = chunk.getWorldPosition();
+    std::vector<VoxelChunk*> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
+    intersection = false;
+    if (chunks.empty()) {
+        renderer->disableHighlight();
+        return;
+    }
+    std::vector<glm::vec3> origins;
+    for (auto& chunk : chunks) {
+        origins.push_back(chunk->getWorldPosition());
+    }
 
     float minDist = maxInteractionDistance;
-    intersection = false;
 
-    // Pour tout bloc du chunk
-    for (int x = 0; x < chunk.m_sizeX; ++x) {
-        for (int y = 0; y < chunk.m_sizeY; ++y) {
-            for (int z = 0; z < chunk.m_sizeZ; ++z) {
-                int id = chunk.m_cubes[x][y][z];
-                if (db.isAir(id)) continue;  // si c'est de l'air on skip
+    // Pour tout bloc des chunks touchés par le rayon
+    for (int x = 0; x < chunks[0]->m_sizeX; ++x) {
+        for (int y = 0; y < chunks[0]->m_sizeY; ++y) {
+            for (int z = 0; z < chunks[0]->m_sizeZ; ++z) {
+                for (int i = 0; i < chunks.size(); ++i) {
+                    int id = chunks[i]->m_cubes[x][y][z];
+                    if (db.isAir(id)) continue;  // si c'est de l'air on skip
+                    glm::vec3 pos = origins[i] + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
 
-                glm::vec3 pos = origin + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
-                
-                // on vérifie si le rayon intersecte le bloc
-                int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
-                if (face == -1) continue; // si pas d'intersection on skip
-                
-                float dist = glm::distance(camera->getPosition(), pos);
-                if (dist < minDist) { // on vérifie si le bloc est plus proche que le précédent trouvé
-                    intersection = true;
-                    blocPlusProche = pos;
-                    facePlusProche = face;
-                    minDist = dist;
+                    // on vérifie si le rayon intersecte le bloc
+                    int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
+                    if (face == -1) continue; // si pas d'intersection on skip
+
+                    float dist = glm::distance(camera->getPosition(), pos);
+                    if (dist < minDist) { // on vérifie si le bloc est plus proche que le précédent trouvé
+                        intersection = true;
+                        blocPlusProche = pos;
+                        facePlusProche = face;
+                        minDist = dist;
+                    }
                 }
             }
         }
@@ -111,12 +121,12 @@ void Character::updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::breakBlock(BlocDatabase &database) {
     if (!intersection || breakCooldown < MAX_BREAK_COOLDOWN) return;
 
     //on casse le bloc le plus proche -> on remplace le bloc par de l'air
     // on affiche le type de bloc cassé
-    int idBlocCasse = chunkActuel.playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
     if (idBlocCasse == -1) {
         return;
     }
@@ -135,7 +145,7 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::putBlock(BlocDatabase &database) {
     if (!intersection || placeCooldown < MAX_PLACE_COOLDOWN) return;
     if (inventory->getItems().size() == 0) {
         std::cout << "Inventaire vide" << std::endl;
@@ -172,7 +182,7 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
             break;
     }
     
-    if (chunkActuel.setBloc(position.x, position.y, position.z, item->getItemId())) {
+    if (m_world->setBloc(position.x, position.y, position.z, item->getItemId())) {
         std::cout << "Bloc placed : " << database.getBloc(item->getItemId())->name << std::endl;
         inventory->removeItem(item->getItemId(), 1);
         inventory->printInventory();
@@ -186,10 +196,10 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::setSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::setSelectedBlock(BlocDatabase &database) {
     if (!intersection) return;
     // on définit le bloc sélectionné par le joueur dans son inventaire
-    int idBlocSelectionne = chunkActuel.getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    int idBlocSelectionne = m_world->getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
     if (idBlocSelectionne == -1) {
         return;
     }
