@@ -2,6 +2,7 @@
 
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
+#include <utils/Ray.hpp>
 
 #include <unordered_map>
 
@@ -108,5 +109,15 @@ public:
         int y = static_cast<int>(position.y);
         int z = static_cast<int>(position.z);
         return getChunkAt(x, y, z);
+    }
+
+    std::vector<VoxelChunk*> getIntersectedChunks(Ray ray, float maxDistance) {
+        std::vector<VoxelChunk*> intersectedChunks;
+        for (auto& [key, chunk] : chunks) {
+            if (chunk->intersects(ray, maxDistance)) {
+                intersectedChunks.push_back(chunk);
+            }
+        }
+        return intersectedChunks;
     }
 };

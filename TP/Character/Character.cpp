@@ -1,6 +1,6 @@
 #include "Character.hpp"
 #include "TP/Scene/Renderer.hpp"
-
+#include <TP/Scene/World.hpp>
 
 #include <iostream>
 #include <optional>
@@ -69,31 +69,39 @@ void Character::listenAction(float dt, GLFWwindow *window, World &chunkActuel, B
 
 void Character::updateClosestBlock(World& world, BlocDatabase& db) {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
-    VoxelChunk* chunk = world.getChunkContaining(camera->getPosition());
-    glm::vec3 origin = chunk->getWorldPosition();
+    std::vector<VoxelChunk*> chunks = world.getIntersectedChunks(ray, maxInteractionDistance);
+    intersection = false;
+    if (chunks.empty()) {
+        renderer->disableHighlight();
+        return;
+    }
+    std::vector<glm::vec3> origins;
+    for (auto& chunk : chunks) {
+        origins.push_back(chunk->getWorldPosition());
+    }
 
     float minDist = maxInteractionDistance;
-    intersection = false;
 
-    // Pour tout bloc du chunk
-    for (int x = 0; x < chunk->m_sizeX; ++x) {
-        for (int y = 0; y < chunk->m_sizeY; ++y) {
-            for (int z = 0; z < chunk->m_sizeZ; ++z) {
-                int id = chunk->m_cubes[x][y][z];
-                if (db.isAir(id)) continue;  // si c'est de l'air on skip
+    // Pour tout bloc des chunks touchés par le rayon
+    for (int x = 0; x < chunks[0]->m_sizeX; ++x) {
+        for (int y = 0; y < chunks[0]->m_sizeY; ++y) {
+            for (int z = 0; z < chunks[0]->m_sizeZ; ++z) {
+                for (int i = 0; i < chunks.size(); ++i) {
+                    int id = chunks[i]->m_cubes[x][y][z];
+                    if (db.isAir(id)) continue;  // si c'est de l'air on skip
+                    glm::vec3 pos = origins[i] + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
 
-                glm::vec3 pos = origin + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
-                
-                // on vérifie si le rayon intersecte le bloc
-                int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
-                if (face == -1) continue; // si pas d'intersection on skip
-                
-                float dist = glm::distance(camera->getPosition(), pos);
-                if (dist < minDist) { // on vérifie si le bloc est plus proche que le précédent trouvé
-                    intersection = true;
-                    blocPlusProche = pos;
-                    facePlusProche = face;
-                    minDist = dist;
+                    // on vérifie si le rayon intersecte le bloc
+                    int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
+                    if (face == -1) continue; // si pas d'intersection on skip
+
+                    float dist = glm::distance(camera->getPosition(), pos);
+                    if (dist < minDist) { // on vérifie si le bloc est plus proche que le précédent trouvé
+                        intersection = true;
+                        blocPlusProche = pos;
+                        facePlusProche = face;
+                        minDist = dist;
+                    }
                 }
             }
         }

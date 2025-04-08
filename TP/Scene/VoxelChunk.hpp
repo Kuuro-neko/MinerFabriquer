@@ -86,6 +86,20 @@ public:
         m_mesh->cleanupBuffers();
     }
 
+    bool contains(glm::vec3 point) {
+        return point.x >= getWorldPosition().x && point.x <= getWorldPosition().x + m_sizeX &&
+               point.y >= getWorldPosition().y && point.y <= getWorldPosition().y + m_sizeY &&
+               point.z >= getWorldPosition().z && point.z <= getWorldPosition().z + m_sizeZ;
+    }
+
+    bool contains(Ray ray) {
+        return contains(ray.origin) || contains(ray.origin + ray.direction);
+    }
+
+    bool intersects(Ray ray, float maxDistance) {
+        return contains(ray) || ray.rayIntersectsAABB(ray, getWorldPosition(), getWorldPosition() + glm::vec3(m_sizeX, m_sizeY, m_sizeZ), maxDistance);
+    }
+
     int m_sizeX;
     int m_sizeY;
     int m_sizeZ;
