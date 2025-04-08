@@ -7,8 +7,8 @@
 
 using namespace std;
 
-Character::Character(Transform transform, Camera *camera, MeshObject *mesh = nullptr, Texture *texture = nullptr)
-        : SceneNode(transform, mesh, texture), camera(camera) {
+Character::Character(Transform transform, Camera *camera, World* world, MeshObject *mesh, Texture *texture)
+        : SceneNode(transform, mesh, texture), camera(camera), m_world(world) {
     speed = 2.5;
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
@@ -23,7 +23,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise l'action en fonction de la touche détectée
  * @param key
  */
-void Character::listenAction(float dt, GLFWwindow *window, World &chunkActuel, BlocDatabase &database) {
+void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -52,24 +52,24 @@ void Character::listenAction(float dt, GLFWwindow *window, World &chunkActuel, B
 //    }
 
 
-    updateClosestBlock(chunkActuel, database); //on met à jour le bloc le plus proche
+    updateClosestBlock(database); //on met à jour le bloc le plus proche
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        breakBlock(chunkActuel, database); //on fait un coup de pioche
+        breakBlock(database); //on fait un coup de pioche
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-        putBlock(chunkActuel, database); //on pose un bloc
+        putBlock(database); //on pose un bloc
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
-        setSelectedBlock(chunkActuel, database); //on sélectionne un bloc
+        setSelectedBlock(database); //on sélectionne un bloc
     }
 }
 
-void Character::updateClosestBlock(World& world, BlocDatabase& db) {
+void Character::updateClosestBlock(BlocDatabase& db) {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
-    std::vector<VoxelChunk*> chunks = world.getIntersectedChunks(ray, maxInteractionDistance);
+    std::vector<VoxelChunk*> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
     intersection = false;
     if (chunks.empty()) {
         renderer->disableHighlight();
@@ -121,12 +121,12 @@ void Character::updateClosestBlock(World& world, BlocDatabase& db) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::breakBlock(World &chunkActuel, BlocDatabase &database) {
+void Character::breakBlock(BlocDatabase &database) {
     if (!intersection || breakCooldown < MAX_BREAK_COOLDOWN) return;
 
     //on casse le bloc le plus proche -> on remplace le bloc par de l'air
     // on affiche le type de bloc cassé
-    int idBlocCasse = chunkActuel.playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
     if (idBlocCasse == -1) {
         return;
     }
@@ -145,7 +145,7 @@ void Character::breakBlock(World &chunkActuel, BlocDatabase &database) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::putBlock(World &chunkActuel, BlocDatabase &database) {
+void Character::putBlock(BlocDatabase &database) {
     if (!intersection || placeCooldown < MAX_PLACE_COOLDOWN) return;
     if (inventory->getItems().size() == 0) {
         std::cout << "Inventaire vide" << std::endl;
@@ -182,7 +182,7 @@ void Character::putBlock(World &chunkActuel, BlocDatabase &database) {
             break;
     }
     
-    if (chunkActuel.setBloc(position.x, position.y, position.z, item->getItemId())) {
+    if (m_world->setBloc(position.x, position.y, position.z, item->getItemId())) {
         std::cout << "Bloc placed : " << database.getBloc(item->getItemId())->name << std::endl;
         inventory->removeItem(item->getItemId(), 1);
         inventory->printInventory();
@@ -196,10 +196,10 @@ void Character::putBlock(World &chunkActuel, BlocDatabase &database) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::setSelectedBlock(World &chunkActuel, BlocDatabase &database) {
+void Character::setSelectedBlock(BlocDatabase &database) {
     if (!intersection) return;
     // on définit le bloc sélectionné par le joueur dans son inventaire
-    int idBlocSelectionne = chunkActuel.getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    int idBlocSelectionne = m_world->getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
     if (idBlocSelectionne == -1) {
         return;
     }

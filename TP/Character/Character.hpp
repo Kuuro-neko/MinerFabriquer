@@ -17,11 +17,11 @@
 class Character : public SceneNode {
 
 public:
-    Character(Transform transform, Camera *camera, MeshObject *mesh, Texture *texture);
+    Character(Transform transform, Camera *camera, World* world = nullptr, MeshObject *mesh = nullptr, Texture *texture = nullptr);
 
     void rotateCharacter(float angle, glm::vec3 axis);
     inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
-    void listenAction(float key, GLFWwindow *window, World &chunkActuel, BlocDatabase &database);
+    void listenAction(float dt, GLFWwindow *window, BlocDatabase &database);
     void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
     void update(float dt) {
         if (breakCooldown < MAX_BREAK_COOLDOWN) {
@@ -31,7 +31,7 @@ public:
             placeCooldown += dt;
         }
     }
-
+    World* m_world;
     Camera *camera;
     Inventory *inventory;
 
@@ -39,13 +39,10 @@ private:
     void move(glm::vec3 direction);
 
     Renderer *renderer;
-    void updateClosestBlock(World& world, BlocDatabase& db);
-    void breakBlock(World &chunkActuel, BlocDatabase &database);
-    void putBlock(World &chunkActuel, BlocDatabase &database);
-    void setSelectedBlock(World &chunkActuel, BlocDatabase &database);
-
-    std::vector<glm::vec3> getIntersectedBlocks(VoxelChunk &chunkActuel, BlocDatabase &database);
-    glm::vec3 getClosestBlock(const std::vector<glm::vec3>& blocks);
+    void updateClosestBlock(BlocDatabase& database);
+    void breakBlock(BlocDatabase &database);
+    void putBlock(BlocDatabase &database);
+    void setSelectedBlock(BlocDatabase &database);
     
     void resetBreakCooldown() {
         breakCooldown = 0.f;
@@ -62,6 +59,8 @@ private:
     glm::vec3 blocPlusProche;
     int facePlusProche = -1;
     bool intersection = false;
+
+    
 };
 
 #endif // CHARACTER_HPP

@@ -75,9 +75,7 @@ Character character = Character(
                 glm::vec3(0, 5, 0),
                 DEFAULT_ROTATION,
                 1),
-        &camera,
-        nullptr,
-        nullptr
+        &camera
 );
 
 int main(void) {
@@ -228,7 +226,7 @@ int main(void) {
     world.addChunk(1, 0, 0, &chunk2);
 
     root.addChild(&world);
-
+    character.m_world = &world;
 
     MeshObject characterMesh = MeshObject();
     create_sphere_textured(64, 64, characterMesh);
@@ -262,7 +260,7 @@ int main(void) {
         // input
         // -----
         processInput(window, deltaTime);
-        character.listenAction(deltaTime, window, world, BlocDatabase::getInstance());
+        character.listenAction(deltaTime, window, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
