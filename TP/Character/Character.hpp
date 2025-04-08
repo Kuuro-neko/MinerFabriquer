@@ -9,6 +9,7 @@
 #include "TP/Scene/VoxelChunk.hpp"
 #include "Inventory.hpp"
 #include "TP/Scene/Renderer.hpp"
+#include <TP/Scene/World.hpp>
 
 #define MAX_BREAK_COOLDOWN 0.1f
 #define MAX_PLACE_COOLDOWN 0.15f
@@ -20,7 +21,7 @@ public:
 
     void rotateCharacter(float angle, glm::vec3 axis);
     inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
-    void listenAction(float key, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database);
+    void listenAction(float key, GLFWwindow *window, World &chunkActuel, BlocDatabase &database);
     void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
     void update(float dt) {
         if (breakCooldown < MAX_BREAK_COOLDOWN) {
@@ -38,10 +39,10 @@ private:
     void move(glm::vec3 direction);
 
     Renderer *renderer;
-    void updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db);
-    void breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
-    void putBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
-    void setSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database);
+    void updateClosestBlock(World& world, BlocDatabase& db);
+    void breakBlock(World &chunkActuel, BlocDatabase &database);
+    void putBlock(World &chunkActuel, BlocDatabase &database);
+    void setSelectedBlock(World &chunkActuel, BlocDatabase &database);
 
     std::vector<glm::vec3> getIntersectedBlocks(VoxelChunk &chunkActuel, BlocDatabase &database);
     glm::vec3 getClosestBlock(const std::vector<glm::vec3>& blocks);

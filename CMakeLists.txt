@@ -71,6 +71,7 @@ add_executable(MinerFabriquer
         TP/Scene/Texture.cpp
         TP/Scene/MeshObject.cpp
         TP/Scene/VoxelChunk.cpp
+        TP/Scene/World.cpp
         utils/GLUtils.cpp
         utils/Transform.hpp
         TP/Character/Character.hpp

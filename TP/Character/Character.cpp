@@ -1,6 +1,7 @@
 #include "Character.hpp"
 #include "TP/Scene/Renderer.hpp"
 
+
 #include <iostream>
 #include <optional>
 
@@ -22,7 +23,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise l'action en fonction de la touche détectée
  * @param key
  */
-void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::listenAction(float dt, GLFWwindow *window, World &chunkActuel, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -66,18 +67,19 @@ void Character::listenAction(float dt, GLFWwindow *window, VoxelChunk &chunkActu
     }
 }
 
-void Character::updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db) {
+void Character::updateClosestBlock(World& world, BlocDatabase& db) {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
-    glm::vec3 origin = chunk.getWorldPosition();
+    VoxelChunk* chunk = world.getChunkContaining(camera->getPosition());
+    glm::vec3 origin = chunk->getWorldPosition();
 
     float minDist = maxInteractionDistance;
     intersection = false;
 
     // Pour tout bloc du chunk
-    for (int x = 0; x < chunk.m_sizeX; ++x) {
-        for (int y = 0; y < chunk.m_sizeY; ++y) {
-            for (int z = 0; z < chunk.m_sizeZ; ++z) {
-                int id = chunk.m_cubes[x][y][z];
+    for (int x = 0; x < chunk->m_sizeX; ++x) {
+        for (int y = 0; y < chunk->m_sizeY; ++y) {
+            for (int z = 0; z < chunk->m_sizeZ; ++z) {
+                int id = chunk->m_cubes[x][y][z];
                 if (db.isAir(id)) continue;  // si c'est de l'air on skip
 
                 glm::vec3 pos = origin + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
@@ -111,7 +113,7 @@ void Character::updateClosestBlock(VoxelChunk& chunk, BlocDatabase& db) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::breakBlock(World &chunkActuel, BlocDatabase &database) {
     if (!intersection || breakCooldown < MAX_BREAK_COOLDOWN) return;
 
     //on casse le bloc le plus proche -> on remplace le bloc par de l'air
@@ -135,7 +137,7 @@ void Character::breakBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::putBlock(World &chunkActuel, BlocDatabase &database) {
     if (!intersection || placeCooldown < MAX_PLACE_COOLDOWN) return;
     if (inventory->getItems().size() == 0) {
         std::cout << "Inventaire vide" << std::endl;
@@ -186,7 +188,7 @@ void Character::putBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
  * @param chunkActuel 
  * @param database 
  */
-void Character::setSelectedBlock(VoxelChunk &chunkActuel, BlocDatabase &database) {
+void Character::setSelectedBlock(World &chunkActuel, BlocDatabase &database) {
     if (!intersection) return;
     // on définit le bloc sélectionné par le joueur dans son inventaire
     int idBlocSelectionne = chunkActuel.getBloc(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);

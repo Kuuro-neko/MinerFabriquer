@@ -6,7 +6,7 @@
 class VoxelChunk : public SceneNode
 {
 public:
-    VoxelChunk(int sizeX, int sizeY, int sizeZ, Transform t, MeshObject* m) : SceneNode(t, m, nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
+    VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), new MeshObject(), nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
         m_cubes = new int**[m_sizeX];
         for (int i = 0; i < m_sizeX; i++) {
             m_cubes[i] = new int*[m_sizeY];
