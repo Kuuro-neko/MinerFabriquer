@@ -8,21 +8,16 @@
 
 #define CHUNK_SIZE 16
 
-struct TupleHash {
-    template <typename T>
-    std::size_t operator()(const T& tuple) const {
-        auto hash1 = std::hash<int>()(std::get<0>(tuple));
-        auto hash2 = std::hash<int>()(std::get<1>(tuple));
-        auto hash3 = std::hash<int>()(std::get<2>(tuple));
-        return hash1 ^ (hash2 << 1) ^ (hash3 << 2); // Combine the hashes
+struct IVec3Hash {
+    std::size_t operator()(const glm::ivec3& vec) const {
+        return std::hash<int>()(vec.x) ^ (std::hash<int>()(vec.y) << 1) ^ (std::hash<int>()(vec.z) << 2);
     }
 };
-
 
 class World : public SceneNode
 {
 private:
-    std::unordered_map<std::tuple<int, int, int>, VoxelChunk*, TupleHash> chunks;
+    std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> chunks;
 public:
     World() : SceneNode(Transform(), new MeshObject(), nullptr)
     {
