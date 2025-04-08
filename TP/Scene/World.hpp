@@ -26,24 +26,53 @@ public:
     ~World() {
     }
     void generation();
-    void addChunk(int x, int y, int z, VoxelChunk chunk) {
-        chunks.emplace(std::make_tuple(x, y, z), chunk);
-        chunk.translate(glm::vec3(x * chunk.m_sizeX, y * chunk.m_sizeY, z * chunk.m_sizeZ));
-    }
-    void removeChunk(int x, int y, int z) {
-        auto it = chunks.find({x, y, z});
-        if (it != chunks.end()) {
-            it->second.cleanupBuffers();
-            chunks.erase(it);
-        }
-    }
-    VoxelChunk* getChunk(int x, int y, int z) {
-        auto it = chunks.find({x, y, z});
-        if (it != chunks.end()) {
-            return &it->second;
-        }
-        return nullptr;
-    }
+    /**
+     * @brief Create an empty chunk at the given CHUNK coordinates.
+     *  
+     * 
+     * @return VoxelChunk* pointer to the created chunk
+     */
+    VoxelChunk* createEmptyChunk(int x, int y, int z);
+
+    /**
+     * @brief Remove a chunk at the given CHUNK coordinates.
+     * 
+     * 
+     */
+    void removeChunk(int x, int y, int z);
+
+    /**
+     * @brief Get a chunk at the given CHUNK coordinates.
+     * 
+     * 
+     * @return VoxelChunk* pointer to the chunk
+     */
+    VoxelChunk* getChunk(int x, int y, int z);
+
+    /**
+     * @brief Get a chunk containing the given WORLD coordinates.
+     * 
+     * 
+     * @return VoxelChunk* pointer to the chunk
+     */
+    VoxelChunk* getChunkAt(int x, int y, int z);
+
+    /**
+     * @brief Get a chunk containing the given WORLD float coordinates.
+     * 
+     * 
+     * @return VoxelChunk* pointer to the chunk
+     */
+    VoxelChunk* getChunkContaining(glm::vec3 position);
+
+    /**
+     * @brief Get all the chunks that intersect with the given ray and max distance.
+     * 
+     * @param ray 
+     * @param maxDistance 
+     * @return std::vector<VoxelChunk*> 
+     */
+    std::vector<VoxelChunk*> getIntersectedChunks(Ray ray, float maxDistance);
 
     void draw(GLuint programID) override {
         for (auto& [key, chunk] : chunks) {
@@ -51,69 +80,41 @@ public:
         }
     }
 
-    int playerRemoveBlock(int x, int y, int z) {
-        VoxelChunk* chunk = getChunkAt(x, y, z);
-        if (chunk) {
-            return chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
-        }
-        return -1;
-    }
+    /**
+     * @brief Remove a block at the given WORLD coordinates. Used by the player.
+     * 
+     * 
+     * @return int Broken block id or -1 if no block was broken
+     */
+    int playerRemoveBlock(int x, int y, int z);
 
-    int removeBlock(int x, int y, int z) {
-        VoxelChunk* chunk = getChunkAt(x, y, z);
-        if (chunk) {
-            return chunk->removeBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
-        }
-        return -1;
-    }
+    /**
+     * @brief Remove a block at the given WORLD coordinates. Don't use it for the player directly.
+     * 
+     * 
+     * @return int Broken block id or -1 if no block was broken
+     */
+    int removeBlock(int x, int y, int z);
 
-    bool setBloc(int x, int y, int z, int bloc) {
-        VoxelChunk* chunk = getChunkAt(x, y, z);
-        if (chunk) {
-            return chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
-        }
-        return false;
-    }
+    /**
+     * @brief Set a block at the given WORLD coordinates.
+     * 
+     * 
+     * @return bool True if the block was set, else false
+     */
+    bool setBloc(int x, int y, int z, int bloc);
+
+    /**
+     * @brief Get a block at the given WORLD coordinates.
+     * 
+     * 
+     * @return int Block id, -1 if no block was found (do not confuse with AIR which is 0)
+     */
+    int getBloc(int x, int y, int z);
 
     void cleanupBuffers() override {
         for (auto& [key, chunk] : chunks) {
             chunk.cleanupBuffers();
         }
-    }
-
-    int getBloc(int x, int y, int z) {
-        VoxelChunk* chunk = getChunkAt(x, y, z);
-        if (chunk) {
-            return chunk->getBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
-        }
-        return -1;
-    }
-
-    VoxelChunk* getChunkAt(int x, int y, int z) {
-        int xx = x / CHUNK_SIZE;
-        int yy = y / CHUNK_SIZE;
-        int zz = z / CHUNK_SIZE;
-        auto it = chunks.find({xx, yy, zz});
-        if (it != chunks.end()) {
-            return &it->second;
-        }
-        return nullptr;
-    }
-
-    VoxelChunk* getChunkContaining(glm::vec3 position) {
-        int x = static_cast<int>(position.x);
-        int y = static_cast<int>(position.y);
-        int z = static_cast<int>(position.z);
-        return getChunkAt(x, y, z);
-    }
-
-    std::vector<VoxelChunk*> getIntersectedChunks(Ray ray, float maxDistance) {
-        std::vector<VoxelChunk*> intersectedChunks;
-        for (auto& [key, chunk] : chunks) {
-            if (chunk.intersects(ray, maxDistance)) {
-                intersectedChunks.push_back(&chunk);
-            }
-        }
-        return intersectedChunks;
     }
 };

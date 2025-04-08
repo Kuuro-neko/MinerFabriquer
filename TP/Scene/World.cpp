@@ -1,63 +1,143 @@
 #include <TP/Scene/World.hpp>
 
+VoxelChunk* World::createEmptyChunk(int x, int y, int z) {
+    chunks.emplace(glm::ivec3(x, y, z), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
+    VoxelChunk* chunk = &chunks.at(glm::ivec3(x, y, z));
+    chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
+    return chunk;
+}
+
+void World::removeChunk(int x, int y, int z) {
+    auto it = chunks.find({x, y, z});
+    if (it != chunks.end()) {
+        it->second.cleanupBuffers();
+        chunks.erase(it);
+    }
+}
+
+VoxelChunk* World::getChunk(int x, int y, int z) {
+    auto it = chunks.find({x, y, z});
+    if (it != chunks.end()) {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+int World::playerRemoveBlock(int x, int y, int z) {
+    VoxelChunk* chunk = getChunkAt(x, y, z);
+    if (chunk) {
+        return chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+    }
+    return -1;
+}
+
+int World::removeBlock(int x, int y, int z) {
+    VoxelChunk* chunk = getChunkAt(x, y, z);
+    if (chunk) {
+        return chunk->removeBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+    }
+    return -1;
+}
+
+bool World::setBloc(int x, int y, int z, int bloc) {
+    VoxelChunk* chunk = getChunkAt(x, y, z);
+    if (chunk) {
+        return chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
+    }
+    return false;
+}
+
+int World::getBloc(int x, int y, int z) {
+    VoxelChunk* chunk = getChunkAt(x, y, z);
+    if (chunk) {
+        return chunk->getBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+    }
+    return -1;
+}
+
+VoxelChunk* World::getChunkAt(int x, int y, int z) {
+    int xx = x / CHUNK_SIZE;
+    int yy = y / CHUNK_SIZE;
+    int zz = z / CHUNK_SIZE;
+    auto it = chunks.find({xx, yy, zz});
+    if (it != chunks.end()) {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+VoxelChunk* World::getChunkContaining(glm::vec3 position) {
+    int x = static_cast<int>(position.x);
+    int y = static_cast<int>(position.y);
+    int z = static_cast<int>(position.z);
+    return getChunkAt(x, y, z);
+}
+
+std::vector<VoxelChunk*> World::getIntersectedChunks(Ray ray, float maxDistance) {
+    std::vector<VoxelChunk*> intersectedChunks;
+    for (auto& [key, chunk] : chunks) {
+        if (chunk.intersects(ray, maxDistance)) {
+            intersectedChunks.push_back(&chunk);
+        }
+    }
+    return intersectedChunks;
+}
+
 void World::generation() {
-
     int groundLevel = 4;
-    chunks.emplace(std::make_tuple(0, 0, 0), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
-    VoxelChunk& chunk = chunks.at(std::make_tuple(0, 0, 0));
-    chunk.setBloc(2, groundLevel+1, 2, LOG_OAK);
-    chunk.setBloc(2, groundLevel+2, 2, LOG_OAK);
-    chunk.setBloc(2, groundLevel+3, 2, LOG_OAK);
-    chunk.setBloc(2, groundLevel+4, 2, LEAVES_OAK);
-    chunk.setBloc(2, groundLevel+3, 3, LEAVES_OAK);
-    chunk.setBloc(3, groundLevel+3, 2, LEAVES_OAK);
-    chunk.setBloc(2, groundLevel+3, 1, LEAVES_OAK);
-    chunk.setBloc(1, groundLevel+3, 2, LEAVES_OAK);
+    VoxelChunk* chunk = createEmptyChunk(0, 0, 0);
+    chunk->setBloc(5, groundLevel+1, 5, LOG_OAK);
+    chunk->setBloc(5, groundLevel+2, 5, LOG_OAK);
+    chunk->setBloc(5, groundLevel+3, 5, LOG_OAK);
+    chunk->setBloc(5, groundLevel+4, 5, LEAVES_OAK);
+    chunk->setBloc(5, groundLevel+3, 6, LEAVES_OAK);
+    chunk->setBloc(6, groundLevel+3, 5, LEAVES_OAK);
+    chunk->setBloc(5, groundLevel+3, 4, LEAVES_OAK);
+    chunk->setBloc(4, groundLevel+3, 5, LEAVES_OAK);
     for (int i = 0; i < CHUNK_SIZE; i++) {
         for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk.setBloc(i, groundLevel-4, j, BEDROCK);
-            chunk.setBloc(i, groundLevel-3, j, STONE);
-            chunk.setBloc(i, groundLevel-2, j, DIRT);
-            chunk.setBloc(i, groundLevel-1, j, DIRT);
-            chunk.setBloc(i, groundLevel, j, GRASS);
+            chunk->setBloc(i, groundLevel-4, j, BEDROCK);
+            chunk->setBloc(i, groundLevel-3, j, STONE);
+            chunk->setBloc(i, groundLevel-2, j, DIRT);
+            chunk->setBloc(i, groundLevel-1, j, DIRT);
+            chunk->setBloc(i, groundLevel, j, GRASS);
         }
     }
-    chunk.setBloc(8, groundLevel+4, 8, GLOWSTONE);
-    chunk.setBloc(8, groundLevel+4, 9, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+4, 8, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+4, 9, GLOWSTONE);
-    chunk.setBloc(8, groundLevel+5, 8, GLOWSTONE);
-    chunk.setBloc(8, groundLevel+5, 9, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+5, 8, GLOWSTONE);
-    chunk.setBloc(9, groundLevel+5, 9, GLOWSTONE);
-    chunk.generateMesh();
+    chunk->setBloc(8, groundLevel+4, 8, GLOWSTONE);
+    chunk->setBloc(8, groundLevel+4, 9, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+4, 8, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+4, 9, GLOWSTONE);
+    chunk->setBloc(8, groundLevel+5, 8, GLOWSTONE);
+    chunk->setBloc(8, groundLevel+5, 9, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+5, 8, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+5, 9, GLOWSTONE);
+    chunk->generateMesh();
 
-    chunks.emplace(std::make_tuple(1, 0, 0), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
-    VoxelChunk& chunk2 = chunks.at(std::make_tuple(1, 0, 0));
-    chunk2.setBloc(2, groundLevel+1, 2, LOG_OAK);
-    chunk2.setBloc(2, groundLevel+2, 2, LOG_OAK);
-    chunk2.setBloc(2, groundLevel+3, 2, LOG_OAK);
-    chunk2.setBloc(2, groundLevel+4, 2, LEAVES_OAK);
-    chunk2.setBloc(2, groundLevel+3, 3, LEAVES_OAK);
-    chunk2.setBloc(3, groundLevel+3, 2, LEAVES_OAK);
-    chunk2.setBloc(2, groundLevel+3, 1, LEAVES_OAK);
-    chunk2.setBloc(1, groundLevel+3, 2, LEAVES_OAK);
+    chunk = createEmptyChunk(1, 0, 0);
+    chunk->setBloc(2, groundLevel+1, 2, LOG_OAK);
+    chunk->setBloc(2, groundLevel+2, 2, LOG_OAK);
+    chunk->setBloc(2, groundLevel+3, 2, LOG_OAK);
+    chunk->setBloc(2, groundLevel+4, 2, LEAVES_OAK);
+    chunk->setBloc(2, groundLevel+3, 3, LEAVES_OAK);
+    chunk->setBloc(3, groundLevel+3, 2, LEAVES_OAK);
+    chunk->setBloc(2, groundLevel+3, 1, LEAVES_OAK);
+    chunk->setBloc(1, groundLevel+3, 2, LEAVES_OAK);
     for (int i = 0; i < CHUNK_SIZE; i++) {
         for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk2.setBloc(i, groundLevel-4, j, BEDROCK);
-            chunk2.setBloc(i, groundLevel-3, j, STONE);
-            chunk2.setBloc(i, groundLevel-2, j, DIRT);
-            chunk2.setBloc(i, groundLevel-1, j, DIRT);
-            chunk2.setBloc(i, groundLevel, j, GRASS);
+            chunk->setBloc(i, groundLevel-4, j, BEDROCK);
+            chunk->setBloc(i, groundLevel-3, j, STONE);
+            chunk->setBloc(i, groundLevel-2, j, DIRT);
+            chunk->setBloc(i, groundLevel-1, j, DIRT);
+            chunk->setBloc(i, groundLevel, j, GRASS);
         }
     }
-    chunk2.setBloc(8, groundLevel+4, 8, GLOWSTONE);
-    chunk2.setBloc(8, groundLevel+4, 9, GLOWSTONE);
-    chunk2.setBloc(9, groundLevel+4, 8, GLOWSTONE);
-    chunk2.setBloc(9, groundLevel+4, 9, GLOWSTONE);
-    chunk2.setBloc(8, groundLevel+5, 8, GLOWSTONE);
-    chunk2.setBloc(8, groundLevel+5, 9, GLOWSTONE);
-    chunk2.setBloc(9, groundLevel+5, 8, GLOWSTONE);
-    chunk2.setBloc(9, groundLevel+5, 9, GLOWSTONE);
-    chunk2.generateMesh();
+    chunk->setBloc(8, groundLevel+4, 8, GLOWSTONE);
+    chunk->setBloc(8, groundLevel+4, 9, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+4, 8, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+4, 9, GLOWSTONE);
+    chunk->setBloc(8, groundLevel+5, 8, GLOWSTONE);
+    chunk->setBloc(8, groundLevel+5, 9, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+5, 8, GLOWSTONE);
+    chunk->setBloc(9, groundLevel+5, 9, GLOWSTONE);
+    chunk->generateMesh();
 }
