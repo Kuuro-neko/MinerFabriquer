@@ -31,6 +31,7 @@ Camera camera;
 // timing
 float deltaTime = 0.0f;    // time between current frame and last frame
 float lastFrame = 0.0f;
+float FPS = 0.0f;
 
 //rotation
 float angle = 0.;
@@ -77,6 +78,22 @@ Character character = Character(
                 1),
         &camera
 );
+
+
+void UpdateFPS() {
+    static double lastTime = glfwGetTime();
+    static unsigned int counter = 0;
+    counter++;
+    double currentTime = glfwGetTime();
+    if ((currentTime - lastTime) >= 1.0) { // 1 second has passed
+        FPS = counter;
+        counter = 0;
+        char FPSstr[128];
+        snprintf(FPSstr, sizeof(FPSstr), "FPS: %.2f", FPS);
+        glfwSetWindowTitle(window, FPSstr);
+        lastTime = currentTime;
+    }
+}
 
 int main(void) {
     // Initialise GLFW
@@ -193,6 +210,7 @@ int main(void) {
         // Measure speed
         // per-frame time logic
         // --------------------
+        UpdateFPS();
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -267,3 +285,4 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
