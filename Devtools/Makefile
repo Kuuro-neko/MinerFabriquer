@@ -584,6 +584,30 @@ TP/Character/Character.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.s
 .PHONY : TP/Character/Character.cpp.s
 
+TP/GUI/Crosshair.o: TP/GUI/Crosshair.cpp.o
+.PHONY : TP/GUI/Crosshair.o
+
+# target to build an object file
+TP/GUI/Crosshair.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o
+.PHONY : TP/GUI/Crosshair.cpp.o
+
+TP/GUI/Crosshair.i: TP/GUI/Crosshair.cpp.i
+.PHONY : TP/GUI/Crosshair.i
+
+# target to preprocess a source file
+TP/GUI/Crosshair.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.i
+.PHONY : TP/GUI/Crosshair.cpp.i
+
+TP/GUI/Crosshair.s: TP/GUI/Crosshair.cpp.s
+.PHONY : TP/GUI/Crosshair.s
+
+# target to generate assembly for a file
+TP/GUI/Crosshair.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.s
+.PHONY : TP/GUI/Crosshair.cpp.s
+
 TP/Scene/BlocTypes.o: TP/Scene/BlocTypes.cpp.o
 .PHONY : TP/Scene/BlocTypes.o
 
@@ -727,6 +751,30 @@ TP/Scene/VoxelChunk.s: TP/Scene/VoxelChunk.cpp.s
 TP/Scene/VoxelChunk.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.s
 .PHONY : TP/Scene/VoxelChunk.cpp.s
+
+TP/Scene/World.o: TP/Scene/World.cpp.o
+.PHONY : TP/Scene/World.o
+
+# target to build an object file
+TP/Scene/World.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o
+.PHONY : TP/Scene/World.cpp.o
+
+TP/Scene/World.i: TP/Scene/World.cpp.i
+.PHONY : TP/Scene/World.i
+
+# target to preprocess a source file
+TP/Scene/World.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.i
+.PHONY : TP/Scene/World.cpp.i
+
+TP/Scene/World.s: TP/Scene/World.cpp.s
+.PHONY : TP/Scene/World.s
+
+# target to generate assembly for a file
+TP/Scene/World.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.s
+.PHONY : TP/Scene/World.cpp.s
 
 common/imageLoader.o: common/imageLoader.cpp.o
 .PHONY : common/imageLoader.o
@@ -872,6 +920,9 @@ help:
 	@echo "... TP/Character/Character.o"
 	@echo "... TP/Character/Character.i"
 	@echo "... TP/Character/Character.s"
+	@echo "... TP/GUI/Crosshair.o"
+	@echo "... TP/GUI/Crosshair.i"
+	@echo "... TP/GUI/Crosshair.s"
 	@echo "... TP/Scene/BlocTypes.o"
 	@echo "... TP/Scene/BlocTypes.i"
 	@echo "... TP/Scene/BlocTypes.s"
@@ -890,6 +941,9 @@ help:
 	@echo "... TP/Scene/VoxelChunk.o"
 	@echo "... TP/Scene/VoxelChunk.i"
 	@echo "... TP/Scene/VoxelChunk.s"
+	@echo "... TP/Scene/World.o"
+	@echo "... TP/Scene/World.i"
+	@echo "... TP/Scene/World.s"
 	@echo "... common/imageLoader.o"
 	@echo "... common/imageLoader.i"
 	@echo "... common/imageLoader.s"

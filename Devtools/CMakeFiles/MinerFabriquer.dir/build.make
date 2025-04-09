@@ -209,10 +209,24 @@ CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/VoxelChunk.cpp -o CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.s
 
+CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
+CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/World.cpp
+CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/World.cpp
+
+CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/World.cpp > CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.i
+
+CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/World.cpp -o CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.s
+
 CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
 CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/utils/GLUtils.cpp
 CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o -MF CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/utils/GLUtils.cpp
 
 CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.i: cmake_force
@@ -226,7 +240,7 @@ CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.s: cmake_force
 CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
 CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp
 CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Character/Character.cpp
 
 CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.i: cmake_force
@@ -240,7 +254,7 @@ CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.s: cmake_force
 CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
 CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Renderer.cpp
 CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Renderer.cpp
 
 CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.i: cmake_force
@@ -250,6 +264,20 @@ CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.i: cmake_force
 CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Scene/Renderer.cpp -o CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.s
+
+CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
+CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/GUI/Crosshair.cpp
+CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/GUI/Crosshair.cpp
+
+CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/GUI/Crosshair.cpp > CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.i
+
+CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/GUI/Crosshair.cpp -o CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.s
 
 # Object files for target MinerFabriquer
 MinerFabriquer_OBJECTS = \
@@ -263,9 +291,11 @@ MinerFabriquer_OBJECTS = \
 "CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o" \
+"CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o" \
-"CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o"
+"CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o" \
+"CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o"
 
 # External object files for target MinerFabriquer
 MinerFabriquer_EXTERNAL_OBJECTS =
@@ -280,9 +310,11 @@ MinerFabriquer_EXTERNAL_OBJECTS =
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Texture.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/MeshObject.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/VoxelChunk.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/World.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/build.make
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
@@ -303,7 +335,7 @@ MinerFabriquer_EXTERNAL_OBJECTS =
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer"
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/TP1
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/MinerFabriquer.dir/link.txt --verbose=$(VERBOSE)
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/
