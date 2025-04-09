@@ -9,15 +9,17 @@
 #include <glm/gtx/norm.hpp>
 #include <TP/Camera/Camera_Helper.hpp>
 
-#define DEFAULT_FOV 45.0f
-#define DEFAULT_POSITION glm::vec3(8.4f, 5.6f,  3.05f)
-#define DEFAULT_EULER_ANGLE glm::vec3(0.537289f, -1.93024f, 0.0f)
 
-#define DEFAULT_TRANSLATION_SPEED 1.5f
+#define DEFAULT_FOV 45.0f
+#define DEFAULT_POSITION glm::vec3(0.0f, 0.0f, 0.0f)
+#define DEFAULT_EULER_ANGLE glm::vec3(0.0f, 0.0, 0.0f)
+#define CAMERA_POSITION_RELATIVE_TO_PLAYER glm::vec3(0.f, 1.5f, 0.f)
+
+#define DEFAULT_TRANSLATION_SPEED 7.5f
 #define DEFAULT_ROTATION_SPEED 0.1f
 #define DEFAULT_DISTANCE_SPEED 5.0f
 
-#define DEFAULT_ATTACHED true
+#define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
 
 class Camera
@@ -33,11 +35,17 @@ public:
 	void updateTarget(glm::vec3 _target);
 
 	glm::vec3 getPosition() const {return m_position;}
+	void setPosition(glm::vec3 _position) {m_position = _position;}
 	glm::quat getRotation() const {return m_rotation;}
 
 	//View
 	glm::mat4 m_viewMatrix;
 	glm::mat4 m_projectionMatrix;
+
+//get matrix
+inline glm::mat4 getViewMatrix() const { return m_viewMatrix; }
+
+    inline glm::mat4 getProjectionMatrix() const { return m_projectionMatrix; }
 
 private:
 	//Camera parameters 
@@ -80,6 +88,8 @@ private:
 	bool m_attached = DEFAULT_ATTACHED;
 	bool m_tPressed = false;
 	float m_distance = 10.0f;
+
+    inline glm::vec3 getTarget() const { return m_targetPrev; }
 
 
 };

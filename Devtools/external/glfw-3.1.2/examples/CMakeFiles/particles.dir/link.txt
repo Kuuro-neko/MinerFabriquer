@@ -1,0 +1,1 @@
+/usr/bin/cc -g -rdynamic CMakeFiles/particles.dir/particles.c.o CMakeFiles/particles.dir/__/deps/tinycthread.c.o CMakeFiles/particles.dir/__/deps/getopt.c.o -o particles  ../src/libglfw3.a -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -lX11 -lXrandr -lXinerama -lXcursor -lGL -ldl -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -lX11 -lXrandr -lXinerama -lXcursor -lGL -ldl

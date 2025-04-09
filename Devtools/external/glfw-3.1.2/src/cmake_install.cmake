@@ -1,4 +1,4 @@
-# Install script for directory: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer/external/glfw-3.1.2/src
+# Install script for directory: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -43,10 +43,10 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer/Devtools/external/glfw-3.1.2/src/libglfw3.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/external/glfw-3.1.2/src/libglfw3.a")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer/Devtools/external/glfw-3.1.2/src/CMakeFiles/glfw.dir/install-cxx-module-bmi-Debug.cmake" OPTIONAL)
+  include("/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/external/glfw-3.1.2/src/CMakeFiles/glfw.dir/install-cxx-module-bmi-Debug.cmake" OPTIONAL)
 endif()
 

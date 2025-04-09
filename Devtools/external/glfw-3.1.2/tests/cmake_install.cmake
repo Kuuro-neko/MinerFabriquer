@@ -1,4 +1,4 @@
-# Install script for directory: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinerFabriquer/external/glfw-3.1.2/tests
+# Install script for directory: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/external/glfw-3.1.2/tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

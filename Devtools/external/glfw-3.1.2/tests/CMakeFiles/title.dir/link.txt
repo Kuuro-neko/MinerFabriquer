@@ -1,0 +1,1 @@
+/usr/bin/cc -g -rdynamic CMakeFiles/title.dir/title.c.o -o title  ../src/libglfw3.a -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -lX11 -lXrandr -lXinerama -lXcursor -lGL -ldl

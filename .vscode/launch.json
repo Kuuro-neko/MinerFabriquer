@@ -2,12 +2,12 @@
     "configurations": [
         
         {
-            "name": "Launch TP1",
+            "name": "Launch MinerFabriquer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/TP1/TP1",
+            "program": "${workspaceFolder}/main/MinerFabriquer",
             "args": [],
-            "cwd": "${workspaceFolder}/TP1/",
+            "cwd": "${workspaceFolder}/main/",
             "preLaunchTask": "Build Project",
             "stopAtEntry": false,
             "MIMode": "gdb",
