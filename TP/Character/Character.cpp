@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Character::Character(Transform transform, Camera *camera, World* world, MeshObject *mesh, Texture *texture)
+Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
         : SceneNode(transform, mesh, texture), camera(camera), m_world(world) {
     speed = 2.5;
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
@@ -23,6 +23,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise l'action en fonction de la touche détectée
  * @param key
  */
+
 void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
@@ -54,11 +55,11 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
 
     updateClosestBlock(database); //on met à jour le bloc le plus proche
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        breakBlock(database); //on fait un coup de pioche
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && breakCooldown >= MAX_BREAK_COOLDOWN) {
+        breakBlock(database); // on fait un coup de pioche
     }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS && placeCooldown >= MAX_PLACE_COOLDOWN) {
         putBlock(database); //on pose un bloc
     }
 
@@ -67,16 +68,16 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
     }
 }
 
-void Character::updateClosestBlock(BlocDatabase& db) {
+void Character::updateClosestBlock(BlocDatabase &db) {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
-    std::vector<VoxelChunk*> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
+    std::vector<VoxelChunk *> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
     intersection = false;
     if (chunks.empty()) {
         renderer->disableHighlight();
         return;
     }
     std::vector<glm::vec3> origins;
-    for (auto& chunk : chunks) {
+    for (auto &chunk: chunks) {
         origins.push_back(chunk->getWorldPosition());
     }
 
@@ -89,7 +90,8 @@ void Character::updateClosestBlock(BlocDatabase& db) {
                 for (int i = 0; i < chunks.size(); ++i) {
                     int id = chunks[i]->m_cubes[x][y][z];
                     if (db.isAir(id)) continue;  // si c'est de l'air on skip
-                    glm::vec3 pos = origins[i] + glm::vec3(x, y, z); //on récupère la position du bloc -> chunckTransform + position du bloc
+                    glm::vec3 pos = origins[i] + glm::vec3(x, y,
+                                                           z); //on récupère la position du bloc -> chunckTransform + position du bloc
 
                     // on vérifie si le rayon intersecte le bloc
                     int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
@@ -181,7 +183,7 @@ void Character::putBlock(BlocDatabase &database) {
             position.z -= 1;
             break;
     }
-    
+
     if (m_world->setBloc(position.x, position.y, position.z, item->getItemId())) {
         std::cout << "Bloc placed : " << database.getBloc(item->getItemId())->name << std::endl;
         inventory->removeItem(item->getItemId(), 1);
@@ -209,7 +211,7 @@ void Character::setSelectedBlock(BlocDatabase &database) {
 }
 
 
-void Character::scrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
+void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {
     // Example: Adjust inventory selection based on scroll
     if (yOffset > 0) {
         std::cout << "Scroll up" << std::endl;

@@ -11,8 +11,8 @@
 #include "TP/Scene/Renderer.hpp"
 #include <TP/Scene/World.hpp>
 
-#define MAX_BREAK_COOLDOWN 0.1f
-#define MAX_PLACE_COOLDOWN 0.15f
+#define MAX_BREAK_COOLDOWN 0.4f
+#define MAX_PLACE_COOLDOWN 0.4f
 
 class Character : public SceneNode {
 
