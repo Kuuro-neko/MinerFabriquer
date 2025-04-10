@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.o.d"
+  "CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o"
+  "CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o"
   "CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o.d"
   "CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o"

@@ -279,6 +279,20 @@ CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/GUI/Crosshair.cpp -o CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.s
 
+CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o: CMakeFiles/MinerFabriquer.dir/flags.make
+CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o: /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Frustrum.cpp
+CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o: CMakeFiles/MinerFabriquer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o -MF CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o.d -o CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o -c /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Frustrum.cpp
+
+CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Frustrum.cpp > CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.i
+
+CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/TP/Camera/Frustrum.cpp -o CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.s
+
 # Object files for target MinerFabriquer
 MinerFabriquer_OBJECTS = \
 "CMakeFiles/MinerFabriquer.dir/main/main.cpp.o" \
@@ -295,7 +309,8 @@ MinerFabriquer_OBJECTS = \
 "CMakeFiles/MinerFabriquer.dir/utils/GLUtils.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o" \
 "CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o" \
-"CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o"
+"CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o" \
+"CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o"
 
 # External object files for target MinerFabriquer
 MinerFabriquer_EXTERNAL_OBJECTS =
@@ -315,6 +330,7 @@ MinerFabriquer_EXTERNAL_OBJECTS =
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Character/Character.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Scene/Renderer.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/GUI/Crosshair.cpp.o
+/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/build.make
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
@@ -335,7 +351,7 @@ MinerFabriquer_EXTERNAL_OBJECTS =
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGL.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: /usr/lib/x86_64-linux-gnu/libGLU.so
 /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer: CMakeFiles/MinerFabriquer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/MinerFabriquer"
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/TP1
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/MinerFabriquer.dir/link.txt --verbose=$(VERBOSE)
 	/home/mathis/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -E make_directory /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/main/

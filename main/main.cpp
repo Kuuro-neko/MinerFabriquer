@@ -7,9 +7,7 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
-#include "TP/Scene/Renderer.hpp"
-#include <TP/Scene/World.hpp>
-
+#include "TP/Camera/Frustrum.hpp"
 #include <TP/GUI/Crosshair.hpp>
 
 #define CHUNK_SIZE 16
@@ -27,7 +25,6 @@ void processInput(GLFWwindow *window, float dt);
 
 
 Camera camera;
-
 // timing
 float deltaTime = 0.0f;    // time between current frame and last frame
 float lastFrame = 0.0f;
@@ -104,6 +101,8 @@ int main(void) {
     }
 
     camera.init();
+    Frustrum frustum(camera, 4.0f / 3.0f, 0.1f, 100.f);
+    frustum.update();
 
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -171,7 +170,7 @@ int main(void) {
         glGetShaderInfoLog(programID, 512, NULL, infoLog);
         std::cerr << "Shader compile error: " << infoLog << std::endl;
     }
-    
+
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
@@ -182,7 +181,7 @@ int main(void) {
 
     World world = World();
     root.addChild(&world);
-    
+
     character.m_world = &world;
 
     MeshObject characterMesh = MeshObject();
@@ -194,7 +193,7 @@ int main(void) {
     camera.setTarget(character.getWorldPosition());
     character.m_texture = TextureAtlas::getInstance().getTexture();
 
-    glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset) {
+    glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
         character.scrollCallback(window, xOffset, yOffset);
     });
 
@@ -203,9 +202,6 @@ int main(void) {
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
-    // For speed computation
-    double lastTime = glfwGetTime();
-    int nbFrames = 0;
     do {
         // Measure speed
         // per-frame time logic
@@ -222,6 +218,11 @@ int main(void) {
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
+        frustum.update();
+        //TEST sur le chhunk 3
+        //On met dans World la liste des chunks présent dans le furstrum dans l'attribute visblechunks, puis on ne dessiner qu'eux
+        world.updateVisibleChunk(frustum);
+
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -234,21 +235,21 @@ int main(void) {
         GLuint projectionMatrixId = glGetUniformLocation(programID, "ProjectionMatrix");
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
-        
+
         root.draw(programID);
         renderer.drawWireframeCube(
                 glm::vec3(1.f, 1.f, 1.f),
                 camera.getViewMatrix(),
                 camera.getProjectionMatrix()
         );
-        
+
         crosshair.render();
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
-        
+
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -262,7 +263,7 @@ int main(void) {
     crosshair.cleanupBuffers();
 
     glDeleteProgram(programID);
-   // glDeleteProgram(crosshairProgramID);
+    // glDeleteProgram(crosshairProgramID);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();

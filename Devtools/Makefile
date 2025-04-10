@@ -560,6 +560,30 @@ TP/Camera/Camera_Helper.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Camera_Helper.cpp.s
 .PHONY : TP/Camera/Camera_Helper.cpp.s
 
+TP/Camera/Frustrum.o: TP/Camera/Frustrum.cpp.o
+.PHONY : TP/Camera/Frustrum.o
+
+# target to build an object file
+TP/Camera/Frustrum.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.o
+.PHONY : TP/Camera/Frustrum.cpp.o
+
+TP/Camera/Frustrum.i: TP/Camera/Frustrum.cpp.i
+.PHONY : TP/Camera/Frustrum.i
+
+# target to preprocess a source file
+TP/Camera/Frustrum.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.i
+.PHONY : TP/Camera/Frustrum.cpp.i
+
+TP/Camera/Frustrum.s: TP/Camera/Frustrum.cpp.s
+.PHONY : TP/Camera/Frustrum.s
+
+# target to generate assembly for a file
+TP/Camera/Frustrum.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MinerFabriquer.dir/build.make CMakeFiles/MinerFabriquer.dir/TP/Camera/Frustrum.cpp.s
+.PHONY : TP/Camera/Frustrum.cpp.s
+
 TP/Character/Character.o: TP/Character/Character.cpp.o
 .PHONY : TP/Character/Character.o
 
@@ -917,6 +941,9 @@ help:
 	@echo "... TP/Camera/Camera_Helper.o"
 	@echo "... TP/Camera/Camera_Helper.i"
 	@echo "... TP/Camera/Camera_Helper.s"
+	@echo "... TP/Camera/Frustrum.o"
+	@echo "... TP/Camera/Frustrum.i"
+	@echo "... TP/Camera/Frustrum.s"
 	@echo "... TP/Character/Character.o"
 	@echo "... TP/Character/Character.i"
 	@echo "... TP/Character/Character.s"
