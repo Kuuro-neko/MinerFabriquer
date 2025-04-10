@@ -220,18 +220,8 @@ int main(void) {
 
         frustum.update();
         //TEST sur le chhunk 3
-        glm::vec3 chunk3Min = world.getChunk(1,0,0)->getWorldPosition();
-        glm::vec3 chunk3Max = world.getChunk(1,0,0)->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
-
-        // Test if the bounding box is inside the frustum
-        bool isInside = frustum.isBoundingBoxInFrustum(chunk3Min, chunk3Max);
-
-        // Print the result
-        if (isInside) {
-            std::cout << "The bounding box is inside the frustum." << std::endl;
-        } else {
-            std::cout << "The bounding box is outside the frustum." << std::endl;
-        }
+        //On met dans World la liste des chunks présent dans le furstrum dans l'attribute visblechunks, puis on ne dessiner qu'eux
+        world.updateVisibleChunk(frustum);
 
 
         // Clear the screen

@@ -5,6 +5,7 @@
 #include <utils/Ray.hpp>
 
 #include <unordered_map>
+#include "TP/Camera/Frustrum.hpp"
 
 #define CHUNK_SIZE 16
 
@@ -18,6 +19,7 @@ class World : public SceneNode
 {
 private:
     std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
+    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> visibleChunks;
 public:
     World() : SceneNode(Transform(), new MeshObject(), nullptr)
     {
@@ -75,7 +77,7 @@ public:
     std::vector<VoxelChunk*> getIntersectedChunks(Ray ray, float maxDistance);
 
     void draw(GLuint programID) override {
-        for (auto& [key, chunk] : chunks) {
+        for (auto& [key, chunk] : visibleChunks) {
             chunk.draw(programID);
         }
     }
@@ -117,4 +119,6 @@ public:
             chunk.cleanupBuffers();
         }
     }
+
+    void updateVisibleChunk(Frustrum& frustum);
 };
