@@ -55,3 +55,16 @@ void Frustrum::update() {
     }
 }
 
+bool Frustrum::isBoundingBoxInFrustum(const glm::vec3& min, const glm::vec3& max) const {
+    for (const auto& plane : m_planes) {
+        // Check if all points of the bounding box are outside the plane
+        if (plane.normal.x * (plane.normal.x > 0 ? max.x : min.x) +
+            plane.normal.y * (plane.normal.y > 0 ? max.y : min.y) +
+            plane.normal.z * (plane.normal.z > 0 ? max.z : min.z) +
+            plane.distance < 0) {
+            return false; // Bounding box is outside this plane
+        }
+    }
+    return true; // Bounding box is inside or intersects the frustum
+}
+

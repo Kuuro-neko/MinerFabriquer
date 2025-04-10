@@ -25,6 +25,7 @@ public:
     }
 
     void update();
+    bool isBoundingBoxInFrustum(const glm::vec3& min, const glm::vec3& max) const;
 
 private:
     Camera &m_camera;

@@ -341,4 +341,5 @@ CMakeFiles/MinerFabriquer.dir/main/main.cpp.o: \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Character/ItemStack.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/Renderer.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Scene/World.hpp \
+ /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/Camera/Frustrum.hpp \
  /home/mathis/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/./TP/GUI/Crosshair.hpp
