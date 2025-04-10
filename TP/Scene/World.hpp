@@ -77,6 +77,8 @@ public:
     std::vector<VoxelChunk*> getIntersectedChunks(Ray ray, float maxDistance);
 
     void draw(GLuint programID) override {
+//        std::cout << "Nombre de chunks visibles : " << visibleChunks.size() << std::endl;
+//        std::cout << "Nombre de chunks non-dessine : " << chunks.size() -  visibleChunks.size()  << std::endl;
         for (auto& [key, chunk] : visibleChunks) {
             chunk.draw(programID);
         }

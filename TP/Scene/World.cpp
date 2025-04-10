@@ -218,14 +218,12 @@ void World::updateVisibleChunk(Frustrum &frustum) {
         if (frustum.isBoundingBoxInFrustum(chunk.getWorldPosition(),
                                            chunk.getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
             visibleChunks[key] = chunk;
-          //  std::cout << "Chunk " << key.x << "," << key.y << "," << key.z << " is visible" << std::endl;
         } else {
             // si le chunk n'est pas visible, on le supprime de la liste des chunks visibles
             auto it = visibleChunks.find(key);
             if (it != visibleChunks.end()) {
                 it->second.cleanupBuffers();
                 visibleChunks.erase(it);
-                std::cout << "Chunk " << key.x << "," << key.y << "," << key.z << " is not visible" << std::endl;
             }
         }
     }
