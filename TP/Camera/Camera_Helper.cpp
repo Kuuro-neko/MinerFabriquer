@@ -96,3 +96,4 @@ double Camera_Helper::interpolation(double _ratio, InterPolationType _type) {
 	}
 	return 0;
 }
+

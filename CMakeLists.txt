@@ -79,6 +79,9 @@ add_executable(MinerFabriquer
         TP/Scene/Renderer.cpp
         TP/Scene/Renderer.hpp
         TP/GUI/Crosshair.cpp
+        TP/Camera/Frustrum.cpp
+        TP/Camera/Frustrum.hpp
+
 
         main/vertex_shader.glsl
         main/fragment_shader.glsl

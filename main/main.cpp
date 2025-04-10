@@ -7,9 +7,6 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
-#include "TP/Scene/Renderer.hpp"
-#include <TP/Scene/World.hpp>
-
 #include <TP/GUI/Crosshair.hpp>
 
 #define CHUNK_SIZE 16
@@ -203,9 +200,6 @@ int main(void) {
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
-    // For speed computation
-    double lastTime = glfwGetTime();
-    int nbFrames = 0;
     do {
         // Measure speed
         // per-frame time logic

@@ -1,7 +1,4 @@
 #include "Character.hpp"
-#include "TP/Scene/Renderer.hpp"
-#include <TP/Scene/World.hpp>
-
 #include <iostream>
 #include <optional>
 
