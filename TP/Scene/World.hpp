@@ -81,21 +81,17 @@ public:
     void draw(GLuint programID) override {
         for (auto &[key, chunk]: visibleChunks) {
 
-            std::cout << this->getChunk(key.x,key.y,key.z)<<std::endl;
 
-            //std::cout << key.x << ", " << key.y << ", " << key.z << std::endl;
+            //si la distance de rendu est depassee, on ne dessine pas le chunk
+            float distance = glm::length(chunk.getWorldPosition() - camera->getPosition());
+            // std::cout << "Distance: " << distance << std::endl;
+            std::cout << "Camera Position: " << camera->getPosition().x << ", " << camera->getPosition().y << ", "
+                      << camera->getPosition().z
+                      << std::endl;
+            if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
+                chunk.draw(programID);
+            }
 
-
-//            //si la distance de rendu est depassee, on ne dessine pas le chunk
-//            float distance = glm::length(chunk.getWorldPosition() - camera->getPosition());
-//            // std::cout << "Distance: " << distance << std::endl;
-//            std::cout << "Camera Position: " << camera->getPosition().x << ", " << camera->getPosition().y << ", "
-//                      << camera->getPosition().z
-//                      << std::endl;
-//            if (distance <= RENDERER_DISTANCE) {
-//                chunk.draw(programID);
-//            }
-            chunk.draw(programID);
         }
     }
 
