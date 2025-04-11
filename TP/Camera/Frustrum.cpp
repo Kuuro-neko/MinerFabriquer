@@ -1,9 +1,4 @@
-//
-// Created by mathis on 10/04/25.
-//
-
 #include "Frustrum.hpp"
-#include <iostream>
 
 
 void Frustrum::update() {

@@ -181,6 +181,7 @@ int main(void) {
 
     World world = World();
     root.addChild(&world);
+    world.setCamera(camera);
 
     character.m_world = &world;
 
