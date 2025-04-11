@@ -1,0 +1,9 @@
+<toolSet name="External Tools">
+  <tool name="Devtoos" showInMainMenu="false" showInEditor="false" showInProject="false" showInSearchPopup="false" disabled="false" useConsole="true" showConsoleOnStdOut="false" showConsoleOnStdErr="false" synchronizeAfterRun="true">
+    <exec>
+      <option name="COMMAND" value="$USER_HOME$/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools/build.sh" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Documents/M1_IMAGINE/MoteurDeJeux/MinecraftProject/Devtools" />
+    </exec>
+  </tool>
+</toolSet>
