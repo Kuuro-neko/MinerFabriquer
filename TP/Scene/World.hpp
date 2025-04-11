@@ -83,7 +83,7 @@ public:
 
             std::cout << this->getChunk(key.x,key.y,key.z)<<std::endl;
 
-            std::cout << key.x << ", " << key.y << ", " << key.z << std::endl;
+            //std::cout << key.x << ", " << key.y << ", " << key.z << std::endl;
 
 
 //            //si la distance de rendu est depassee, on ne dessine pas le chunk
