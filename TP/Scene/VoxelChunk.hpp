@@ -146,6 +146,8 @@ public:
         return *this;
     }
 
+    void drawGPU(GLuint programID);
+
 private:
     void allocateCubes() {
         m_cubes = new int**[m_sizeX];
@@ -173,4 +175,5 @@ private:
         }
         cleanupBuffers();
     }
+
 };

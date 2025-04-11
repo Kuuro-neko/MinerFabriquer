@@ -5,34 +5,38 @@
 #include <utils/Ray.hpp>
 
 #include <unordered_map>
+#include "TP/Camera/Frustrum.hpp"
 
 #define CHUNK_SIZE 16
 
 struct IVec3Hash {
-    std::size_t operator()(const glm::ivec3& vec) const {
+    std::size_t operator()(const glm::ivec3 &vec) const {
         return std::hash<int>()(vec.x) ^ (std::hash<int>()(vec.y) << 1) ^ (std::hash<int>()(vec.z) << 2);
     }
 };
 
-class World : public SceneNode
-{
+class World : public SceneNode {
 private:
     std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
+    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> visibleChunks;
+    Camera *camera;
 public:
-    World() : SceneNode(Transform(), new MeshObject(), nullptr)
-    {
+    World() : SceneNode(Transform(), new MeshObject(), nullptr) {
         generation();
     }
+
     ~World() {
     }
+
     void generation();
+
     /**
      * @brief Create an empty chunk at the given CHUNK coordinates.
      *  
      * 
      * @return VoxelChunk* pointer to the created chunk
      */
-    VoxelChunk* createEmptyChunk(int x, int y, int z);
+    VoxelChunk *createEmptyChunk(int x, int y, int z);
 
     /**
      * @brief Remove a chunk at the given CHUNK coordinates.
@@ -47,7 +51,7 @@ public:
      * 
      * @return VoxelChunk* pointer to the chunk
      */
-    VoxelChunk* getChunk(int x, int y, int z);
+    VoxelChunk *getChunk(int x, int y, int z);
 
     /**
      * @brief Get a chunk containing the given WORLD coordinates.
@@ -55,7 +59,7 @@ public:
      * 
      * @return VoxelChunk* pointer to the chunk
      */
-    VoxelChunk* getChunkAt(int x, int y, int z);
+    VoxelChunk *getChunkAt(int x, int y, int z);
 
     /**
      * @brief Get a chunk containing the given WORLD float coordinates.
@@ -63,7 +67,7 @@ public:
      * 
      * @return VoxelChunk* pointer to the chunk
      */
-    VoxelChunk* getChunkContaining(glm::vec3 position);
+    VoxelChunk *getChunkContaining(glm::vec3 position);
 
     /**
      * @brief Get all the chunks that intersect with the given ray and max distance.
@@ -72,10 +76,25 @@ public:
      * @param maxDistance 
      * @return std::vector<VoxelChunk*> 
      */
-    std::vector<VoxelChunk*> getIntersectedChunks(Ray ray, float maxDistance);
+    std::vector<VoxelChunk *> getIntersectedChunks(Ray ray, float maxDistance);
 
     void draw(GLuint programID) override {
-        for (auto& [key, chunk] : chunks) {
+        for (auto &[key, chunk]: visibleChunks) {
+
+            std::cout << this->getChunk(key.x,key.y,key.z)<<std::endl;
+
+            //std::cout << key.x << ", " << key.y << ", " << key.z << std::endl;
+
+
+//            //si la distance de rendu est depassee, on ne dessine pas le chunk
+//            float distance = glm::length(chunk.getWorldPosition() - camera->getPosition());
+//            // std::cout << "Distance: " << distance << std::endl;
+//            std::cout << "Camera Position: " << camera->getPosition().x << ", " << camera->getPosition().y << ", "
+//                      << camera->getPosition().z
+//                      << std::endl;
+//            if (distance <= RENDERER_DISTANCE) {
+//                chunk.draw(programID);
+//            }
             chunk.draw(programID);
         }
     }
@@ -113,8 +132,14 @@ public:
     int getBloc(int x, int y, int z);
 
     void cleanupBuffers() override {
-        for (auto& [key, chunk] : chunks) {
+        for (auto &[key, chunk]: chunks) {
             chunk.cleanupBuffers();
         }
+    }
+
+    void updateVisibleChunk(Frustrum &frustum);
+
+    inline void setCamera(Camera &camera) {
+        this->camera = &camera;
     }
 };
