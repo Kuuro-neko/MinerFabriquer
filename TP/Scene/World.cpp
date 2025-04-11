@@ -209,6 +209,52 @@ void World::generation() {
         }
     }
     chunk->generateMesh();
+
+   //chunk #4
+   chunk = createEmptyChunk(0, 0, 2);
+   for (int i = 0; i < CHUNK_SIZE; i++) {
+       for (int j = 0; j < CHUNK_SIZE; j++) {
+           if (i == CHUNK_SIZE / 2 && j == CHUNK_SIZE / 2) {
+               // Crée un trou au centre
+               continue;
+           }
+           for (int k = groundLevel - 4; k <= groundLevel; k++) {
+               if (k == groundLevel - 4) {
+                   chunk->setBloc(i, k, j, BEDROCK);
+               } else if (k < groundLevel - 1) {
+                   chunk->setBloc(i, k, j, STONE);
+               } else {
+                   chunk->setBloc(i, k, j, GRASS);
+               }
+           }
+       }
+   }
+   chunk->generateMesh();
+
+   //chunk #5
+   chunk = createEmptyChunk(0, 0, 3);
+   // Crée une maison simple
+   for (int i = 4; i <= 8; i++) {
+       for (int j = 4; j <= 8; j++) {
+           for (int k = groundLevel; k <= groundLevel + 4; k++) {
+               if (k == groundLevel) {
+                   chunk->setBloc(i, k, j, LOG_OAK);
+               } else if (i == 4 || i == 8 || j == 4 || j == 8) {
+                   if (k == groundLevel + 2 && (i == 6 || j == 6)) {
+                       // Laisse des ouvertures pour les fenêtres
+                       continue;
+                   }
+                   chunk->setBloc(i, k, j, LOG_OAK);
+               } else if (k == groundLevel + 4) {
+                   chunk->setBloc(i, k, j, LOG_OAK);
+               }
+           }
+       }
+   }
+   // Ajoute une porte
+   chunk->setBloc(6, groundLevel + 1, 4, AIR);
+   chunk->setBloc(6, groundLevel + 2, 4, AIR);
+   chunk->generateMesh();
 }
 
 void World::updateVisibleChunk(Frustrum &frustum) {
