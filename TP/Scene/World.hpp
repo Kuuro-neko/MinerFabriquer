@@ -8,7 +8,7 @@
 #include "TP/Camera/Frustrum.hpp"
 
 #define CHUNK_SIZE 16
-#define CHUNK_HEIGHT 128
+
 
 struct IVec3Hash {
     std::size_t operator()(const glm::ivec3 &vec) const {

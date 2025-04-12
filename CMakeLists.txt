@@ -83,6 +83,8 @@ add_executable(MinerFabriquer
         TP/Camera/Frustrum.hpp
         main/vertex_shader.glsl
         main/fragment_shader.glsl
+        TP/Scene/WorldGenerator.cpp
+        TP/Scene/WorldGenerator.hpp
 )
 target_link_libraries(MinerFabriquer
         ${ALL_LIBS}
