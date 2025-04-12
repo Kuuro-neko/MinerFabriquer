@@ -1,6 +1,6 @@
 #include <TP/Scene/World.hpp>
 #include <random>
-#include "TP/Camera/Frustrum.hpp"
+#include "WorldGenerator.hpp"
 
 VoxelChunk *World::createEmptyChunk(int x, int y, int z) {
     chunks.emplace(glm::ivec3(x, y, z), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
@@ -86,64 +86,14 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
 }
 
 void World::generation() {
-    FastNoiseLite baseNoise;
-    baseNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    baseNoise.SetFrequency(0.1f);
+    WorldGenerator worldGenerator;
 
-    FastNoiseLite mountainNoise;
-    mountainNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    mountainNoise.SetFrequency(0.05f);
-
-    std::mt19937 rng(std::random_device{}());
-    std::uniform_int_distribution<int> treeChance(0, 100); // 5% chance for a tree
-
-    int groundLevel = 4;
+    // 2x2 chunks for testing
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
-            VoxelChunk *chunk = createEmptyChunk(i, 0, j);
-            for (int x = 0; x < CHUNK_SIZE; x++) {
-                for (int z = 0; z < CHUNK_SIZE; z++) {
-                    int baseHeight = groundLevel + static_cast<int>(baseNoise.GetNoise((float)x + i * CHUNK_SIZE, (float)z + j * CHUNK_SIZE) * 5);
+            VoxelChunk *chunk = createEmptyChunk(i,0,j);
+            worldGenerator.genereteProceduralChunk(chunk, i, j);
 
-                    chunk->setBloc(x, groundLevel - 4, z, BEDROCK);
-
-                    for (int y = groundLevel - 3; y < baseHeight - 2; y++) {
-                        chunk->setBloc(x, y, z, STONE);
-                    }
-
-                    chunk->setBloc(x, baseHeight - 2, z, DIRT);
-                    chunk->setBloc(x, baseHeight - 1, z, GRASS);
-
-                    int mountainHeight = static_cast<int>(mountainNoise.GetNoise((float)x + i * CHUNK_SIZE, (float)z + j * CHUNK_SIZE) * 10);
-                    if (mountainHeight > 0) {
-                        for (int y = baseHeight; y < baseHeight + mountainHeight; y++) {
-                            chunk->setBloc(x, y, z, STONE);
-                        }
-                    }
-
-                    // Add trees
-                    if (treeChance(rng) < 5 && mountainHeight == 0) { // 5% chance, no trees on mountains
-                        int treeHeight = 4 + (treeChance(rng) % 3); // Random tree height between 4 and 6
-                        for (int y = 0; y < treeHeight; y++) {
-                            chunk->setBloc(x, baseHeight + y, z, LOG_OAK);
-                        }
-                        for (int dx = -2; dx <= 2; dx++) {
-                            for (int dz = -2; dz <= 2; dz++) {
-                                if (std::abs(dx) + std::abs(dz) <= 3) { // Simple circular leaf pattern
-                                    chunk->setBloc(x + dx, baseHeight + treeHeight, z + dz, LEAVES_OAK);
-                                }
-                                if (std::abs(dx) + std::abs(dz) <= 2) { // Smaller circular leaf pattern for upper layer
-                                    chunk->setBloc(x + dx, baseHeight + treeHeight + 1, z + dz, LEAVES_OAK);
-                                }
-                                if (std::abs(dx) + std::abs(dz) <= 1) { // Smallest circular leaf pattern for top layer
-                                    chunk->setBloc(x + dx, baseHeight + treeHeight + 2, z + dz, LEAVES_OAK);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            chunk->generateMesh();
         }
     }
 }
