@@ -16,7 +16,7 @@ public:
     ~VoxelChunk() {
         cleanup();
     }
-    bool setBloc(int x, int y, int z, int bloc) {
+    bool setBloc(int x, int y, int z, int bloc, bool genMesh=true) {
         //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
         if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
             //std::cout << "Error: Out of bounds" << std::endl;
@@ -27,7 +27,7 @@ public:
             return false;
         }
         m_cubes[x][y][z] = bloc;
-        generateMesh();
+        if(genMesh) generateMesh();
         return true;
     }
 
