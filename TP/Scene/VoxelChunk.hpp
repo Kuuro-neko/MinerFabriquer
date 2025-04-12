@@ -2,8 +2,9 @@
 
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/BlocTypes.hpp>
-
+#include <common/fastNoiseLit.h>
 #define DEFAULT_CHUNK_SIZE 16
+#define DEFAULT_CHUNK_HEIGHT 128
 
 class VoxelChunk : public SceneNode
 {
@@ -11,7 +12,7 @@ public:
     VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), new MeshObject(), nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
         allocateCubes();
     }
-    VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE) {}
+    VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {}
     ~VoxelChunk() {
         cleanup();
     }

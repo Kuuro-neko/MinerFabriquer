@@ -22,7 +22,7 @@
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
 
-#define RENDERER_DISTANCE 2.0f
+#define RENDERER_DISTANCE 4.0f
 
 
 class Camera {
