@@ -86,175 +86,205 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
 
 void World::generation() {
     int groundLevel = 4;
-    //chunk #0
-    VoxelChunk *chunk = createEmptyChunk(0, 0, 0);
-    chunk->setBloc(5, groundLevel + 1, 5, LOG_OAK);
-    chunk->setBloc(5, groundLevel + 2, 5, LOG_OAK);
-    chunk->setBloc(5, groundLevel + 3, 5, LOG_OAK);
-    chunk->setBloc(5, groundLevel + 4, 5, LEAVES_OAK);
-    chunk->setBloc(5, groundLevel + 3, 6, LEAVES_OAK);
-    chunk->setBloc(6, groundLevel + 3, 5, LEAVES_OAK);
-    chunk->setBloc(5, groundLevel + 3, 4, LEAVES_OAK);
-    chunk->setBloc(4, groundLevel + 3, 5, LEAVES_OAK);
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
-            chunk->setBloc(i, groundLevel - 3, j, STONE);
-            chunk->setBloc(i, groundLevel - 2, j, DIRT);
-            chunk->setBloc(i, groundLevel - 1, j, DIRT);
-            chunk->setBloc(i, groundLevel, j, GRASS);
-        }
-    }
-    chunk->setBloc(8, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 9, GLOWSTONE);
-    chunk->generateMesh();
-
-    //chunk #1
-    chunk = createEmptyChunk(1, 0, 0);
-    chunk->setBloc(2, groundLevel + 1, 2, LOG_OAK);
-    chunk->setBloc(2, groundLevel + 2, 2, LOG_OAK);
-    chunk->setBloc(2, groundLevel + 3, 2, LOG_OAK);
-    chunk->setBloc(2, groundLevel + 4, 2, LEAVES_OAK);
-    chunk->setBloc(2, groundLevel + 3, 3, LEAVES_OAK);
-    chunk->setBloc(3, groundLevel + 3, 2, LEAVES_OAK);
-    chunk->setBloc(2, groundLevel + 3, 1, LEAVES_OAK);
-    chunk->setBloc(1, groundLevel + 3, 2, LEAVES_OAK);
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
-            chunk->setBloc(i, groundLevel - 3, j, STONE);
-            chunk->setBloc(i, groundLevel - 2, j, DIRT);
-            chunk->setBloc(i, groundLevel - 1, j, DIRT);
-            chunk->setBloc(i, groundLevel, j, GRASS);
-        }
-    }
-    chunk->setBloc(8, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 9, GLOWSTONE);
-    chunk->generateMesh();
-
-    //chunk #2
-    chunk = createEmptyChunk(0, 0, 1);
-    // Arbre 1
-    chunk->setBloc(3, groundLevel + 1, 3, LOG_OAK);
-    chunk->setBloc(3, groundLevel + 2, 3, LOG_OAK);
-    chunk->setBloc(3, groundLevel + 3, 3, LOG_OAK);
-    chunk->setBloc(3, groundLevel + 4, 3, LEAVES_OAK);
-    chunk->setBloc(3, groundLevel + 3, 4, LEAVES_OAK);
-    chunk->setBloc(4, groundLevel + 3, 3, LEAVES_OAK);
-    chunk->setBloc(3, groundLevel + 3, 2, LEAVES_OAK);
-    chunk->setBloc(2, groundLevel + 3, 3, LEAVES_OAK);
-
-    // Arbre 2
-    chunk->setBloc(7, groundLevel + 1, 7, LOG_OAK);
-    chunk->setBloc(7, groundLevel + 2, 7, LOG_OAK);
-    chunk->setBloc(7, groundLevel + 3, 7, LOG_OAK);
-    chunk->setBloc(7, groundLevel + 4, 7, LEAVES_OAK);
-    chunk->setBloc(7, groundLevel + 3, 8, LEAVES_OAK);
-    chunk->setBloc(8, groundLevel + 3, 7, LEAVES_OAK);
-    chunk->setBloc(7, groundLevel + 3, 6, LEAVES_OAK);
-    chunk->setBloc(6, groundLevel + 3, 7, LEAVES_OAK);
-
-    // Arbre 3
-    chunk->setBloc(10, groundLevel + 1, 5, LOG_OAK);
-    chunk->setBloc(10, groundLevel + 2, 5, LOG_OAK);
-    chunk->setBloc(10, groundLevel + 3, 5, LOG_OAK);
-    chunk->setBloc(10, groundLevel + 4, 5, LEAVES_OAK);
-    chunk->setBloc(10, groundLevel + 3, 6, LEAVES_OAK);
-    chunk->setBloc(11, groundLevel + 3, 5, LEAVES_OAK);
-    chunk->setBloc(10, groundLevel + 3, 4, LEAVES_OAK);
-    chunk->setBloc(9, groundLevel + 3, 5, LEAVES_OAK);
-
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
-            chunk->setBloc(i, groundLevel - 3, j, STONE);
-            chunk->setBloc(i, groundLevel - 2, j, DIRT);
-            chunk->setBloc(i, groundLevel - 1, j, DIRT);
-            chunk->setBloc(i, groundLevel, j, GRASS);
-        }
-    }
-    chunk->generateMesh();
+    //instance de bruit de Perlin
+    FastNoiseLite noise;
+    noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 
 
-    //chunk #3
-    chunk = createEmptyChunk(1, 0, 1);
-    int peakHeight = groundLevel + 6; // Hauteur maximale de la dune
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            int height =
-                    groundLevel + std::max(0, peakHeight - std::abs(i - CHUNK_SIZE / 2) - std::abs(j - CHUNK_SIZE / 2));
-            for (int k = groundLevel - 4; k <= height; k++) {
-                if (k == groundLevel - 4) {
-                    chunk->setBloc(i, k, j, BEDROCK);
-                } else if (k < height - 2) {
-                    chunk->setBloc(i, k, j, STONE);
-                } else if (k < height) {
-                    chunk->setBloc(i, k, j, DIRT);
-                } else {
-                    chunk->setBloc(i, k, j, GRASS);
+    // TEST GENERATION PROCEDURALE #1
+    //on va faire 5 chunks
+    for(int i=0;i<2;i++){
+        for(int j=0;j<2;j++){
+            VoxelChunk *chunk = createEmptyChunk(i, 0, j);
+            //création d'élément dans le chunk i 0 j
+            for (int x = 0; x < CHUNK_SIZE; x++) {
+                for (int z = 0; z < CHUNK_SIZE; z++) {
+                    //ETAPE 1 : mise en place de la berock
+                    chunk->setBloc(x, groundLevel-4, z, BEDROCK);
+                    //ETAPE 2 : mise en place du sol (stone, minerai,ect...) -> pour l'instant on met de la stone
+                    chunk->setBloc(x, groundLevel-3, z, STONE);
+                    //ETAPE 3 : mise en place du sol (dirt,grass)
+                    chunk->setBloc(x, groundLevel-2, z, DIRT);
+                    chunk->setBloc(x, groundLevel-1, z, GRASS);
+
                 }
             }
+            chunk->generateMesh();
         }
     }
-    chunk->generateMesh();
 
-   //chunk #4
-   chunk = createEmptyChunk(0, 0, 2);
-   for (int i = 0; i < CHUNK_SIZE; i++) {
-       for (int j = 0; j < CHUNK_SIZE; j++) {
-           if (i == CHUNK_SIZE / 2 && j == CHUNK_SIZE / 2) {
-               // Crée un trou au centre
-               continue;
-           }
-           for (int k = groundLevel - 4; k <= groundLevel; k++) {
-               if (k == groundLevel - 4) {
-                   chunk->setBloc(i, k, j, BEDROCK);
-               } else if (k < groundLevel - 1) {
-                   chunk->setBloc(i, k, j, STONE);
-               } else {
-                   chunk->setBloc(i, k, j, GRASS);
-               }
-           }
-       }
-   }
-   chunk->generateMesh();
 
-   //chunk #5
-   chunk = createEmptyChunk(0, 0, 3);
-   // Crée une maison simple
-   for (int i = 4; i <= 8; i++) {
-       for (int j = 4; j <= 8; j++) {
-           for (int k = groundLevel; k <= groundLevel + 4; k++) {
-               if (k == groundLevel) {
-                   chunk->setBloc(i, k, j, LOG_OAK);
-               } else if (i == 4 || i == 8 || j == 4 || j == 8) {
-                   if (k == groundLevel + 2 && (i == 6 || j == 6)) {
-                       // Laisse des ouvertures pour les fenêtres
-                       continue;
-                   }
-                   chunk->setBloc(i, k, j, LOG_OAK);
-               } else if (k == groundLevel + 4) {
-                   chunk->setBloc(i, k, j, LOG_OAK);
-               }
-           }
-       }
-   }
-   // Ajoute une porte
-   chunk->setBloc(6, groundLevel + 1, 4, AIR);
-   chunk->setBloc(6, groundLevel + 2, 4, AIR);
-   chunk->generateMesh();
+// GENERATION MANUELLE
+//    int groundLevel = 4;
+//    //chunk #0
+//    VoxelChunk *chunk = createEmptyChunk(0, 0, 0);
+//    chunk->setBloc(5, groundLevel + 1, 5, LOG_OAK);
+//    chunk->setBloc(5, groundLevel + 2, 5, LOG_OAK);
+//    chunk->setBloc(5, groundLevel + 3, 5, LOG_OAK);
+//    chunk->setBloc(5, groundLevel + 4, 5, LEAVES_OAK);
+//    chunk->setBloc(5, groundLevel + 3, 6, LEAVES_OAK);
+//    chunk->setBloc(6, groundLevel + 3, 5, LEAVES_OAK);
+//    chunk->setBloc(5, groundLevel + 3, 4, LEAVES_OAK);
+//    chunk->setBloc(4, groundLevel + 3, 5, LEAVES_OAK);
+//    for (int i = 0; i < CHUNK_SIZE; i++) {
+//        for (int j = 0; j < CHUNK_SIZE; j++) {
+//            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
+//            chunk->setBloc(i, groundLevel - 3, j, STONE);
+//            chunk->setBloc(i, groundLevel - 2, j, DIRT);
+//            chunk->setBloc(i, groundLevel - 1, j, DIRT);
+//            chunk->setBloc(i, groundLevel, j, GRASS);
+//        }
+//    }
+//    chunk->setBloc(8, groundLevel + 4, 8, GLOWSTONE);
+//    chunk->setBloc(8, groundLevel + 4, 9, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 4, 8, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 4, 9, GLOWSTONE);
+//    chunk->setBloc(8, groundLevel + 5, 8, GLOWSTONE);
+//    chunk->setBloc(8, groundLevel + 5, 9, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 5, 8, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 5, 9, GLOWSTONE);
+//    chunk->generateMesh();
+
+//    //chunk #1
+//    chunk = createEmptyChunk(1, 0, 0);
+//    chunk->setBloc(2, groundLevel + 1, 2, LOG_OAK);
+//    chunk->setBloc(2, groundLevel + 2, 2, LOG_OAK);
+//    chunk->setBloc(2, groundLevel + 3, 2, LOG_OAK);
+//    chunk->setBloc(2, groundLevel + 4, 2, LEAVES_OAK);
+//    chunk->setBloc(2, groundLevel + 3, 3, LEAVES_OAK);
+//    chunk->setBloc(3, groundLevel + 3, 2, LEAVES_OAK);
+//    chunk->setBloc(2, groundLevel + 3, 1, LEAVES_OAK);
+//    chunk->setBloc(1, groundLevel + 3, 2, LEAVES_OAK);
+//    for (int i = 0; i < CHUNK_SIZE; i++) {
+//        for (int j = 0; j < CHUNK_SIZE; j++) {
+//            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
+//            chunk->setBloc(i, groundLevel - 3, j, STONE);
+//            chunk->setBloc(i, groundLevel - 2, j, DIRT);
+//            chunk->setBloc(i, groundLevel - 1, j, DIRT);
+//            chunk->setBloc(i, groundLevel, j, GRASS);
+//        }
+//    }
+//    chunk->setBloc(8, groundLevel + 4, 8, GLOWSTONE);
+//    chunk->setBloc(8, groundLevel + 4, 9, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 4, 8, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 4, 9, GLOWSTONE);
+//    chunk->setBloc(8, groundLevel + 5, 8, GLOWSTONE);
+//    chunk->setBloc(8, groundLevel + 5, 9, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 5, 8, GLOWSTONE);
+//    chunk->setBloc(9, groundLevel + 5, 9, GLOWSTONE);
+//    chunk->generateMesh();
+//
+//    //chunk #2
+//    chunk = createEmptyChunk(0, 0, 1);
+//    // Arbre 1
+//    chunk->setBloc(3, groundLevel + 1, 3, LOG_OAK);
+//    chunk->setBloc(3, groundLevel + 2, 3, LOG_OAK);
+//    chunk->setBloc(3, groundLevel + 3, 3, LOG_OAK);
+//    chunk->setBloc(3, groundLevel + 4, 3, LEAVES_OAK);
+//    chunk->setBloc(3, groundLevel + 3, 4, LEAVES_OAK);
+//    chunk->setBloc(4, groundLevel + 3, 3, LEAVES_OAK);
+//    chunk->setBloc(3, groundLevel + 3, 2, LEAVES_OAK);
+//    chunk->setBloc(2, groundLevel + 3, 3, LEAVES_OAK);
+//
+//    // Arbre 2
+//    chunk->setBloc(7, groundLevel + 1, 7, LOG_OAK);
+//    chunk->setBloc(7, groundLevel + 2, 7, LOG_OAK);
+//    chunk->setBloc(7, groundLevel + 3, 7, LOG_OAK);
+//    chunk->setBloc(7, groundLevel + 4, 7, LEAVES_OAK);
+//    chunk->setBloc(7, groundLevel + 3, 8, LEAVES_OAK);
+//    chunk->setBloc(8, groundLevel + 3, 7, LEAVES_OAK);
+//    chunk->setBloc(7, groundLevel + 3, 6, LEAVES_OAK);
+//    chunk->setBloc(6, groundLevel + 3, 7, LEAVES_OAK);
+//
+//    // Arbre 3
+//    chunk->setBloc(10, groundLevel + 1, 5, LOG_OAK);
+//    chunk->setBloc(10, groundLevel + 2, 5, LOG_OAK);
+//    chunk->setBloc(10, groundLevel + 3, 5, LOG_OAK);
+//    chunk->setBloc(10, groundLevel + 4, 5, LEAVES_OAK);
+//    chunk->setBloc(10, groundLevel + 3, 6, LEAVES_OAK);
+//    chunk->setBloc(11, groundLevel + 3, 5, LEAVES_OAK);
+//    chunk->setBloc(10, groundLevel + 3, 4, LEAVES_OAK);
+//    chunk->setBloc(9, groundLevel + 3, 5, LEAVES_OAK);
+//
+//    for (int i = 0; i < CHUNK_SIZE; i++) {
+//        for (int j = 0; j < CHUNK_SIZE; j++) {
+//            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
+//            chunk->setBloc(i, groundLevel - 3, j, STONE);
+//            chunk->setBloc(i, groundLevel - 2, j, DIRT);
+//            chunk->setBloc(i, groundLevel - 1, j, DIRT);
+//            chunk->setBloc(i, groundLevel, j, GRASS);
+//        }
+//    }
+//    chunk->generateMesh();
+//
+//
+//    //chunk #3
+//    chunk = createEmptyChunk(1, 0, 1);
+//    int peakHeight = groundLevel + 6; // Hauteur maximale de la dune
+//    for (int i = 0; i < CHUNK_SIZE; i++) {
+//        for (int j = 0; j < CHUNK_SIZE; j++) {
+//            int height =
+//                    groundLevel + std::max(0, peakHeight - std::abs(i - CHUNK_SIZE / 2) - std::abs(j - CHUNK_SIZE / 2));
+//            for (int k = groundLevel - 4; k <= height; k++) {
+//                if (k == groundLevel - 4) {
+//                    chunk->setBloc(i, k, j, BEDROCK);
+//                } else if (k < height - 2) {
+//                    chunk->setBloc(i, k, j, STONE);
+//                } else if (k < height) {
+//                    chunk->setBloc(i, k, j, DIRT);
+//                } else {
+//                    chunk->setBloc(i, k, j, GRASS);
+//                }
+//            }
+//        }
+//    }
+//    chunk->generateMesh();
+//
+//   //chunk #4
+//   chunk = createEmptyChunk(0, 0, 2);
+//   for (int i = 0; i < CHUNK_SIZE; i++) {
+//       for (int j = 0; j < CHUNK_SIZE; j++) {
+//           if (i == CHUNK_SIZE / 2 && j == CHUNK_SIZE / 2) {
+//               // Crée un trou au centre
+//               continue;
+//           }
+//           for (int k = groundLevel - 4; k <= groundLevel; k++) {
+//               if (k == groundLevel - 4) {
+//                   chunk->setBloc(i, k, j, BEDROCK);
+//               } else if (k < groundLevel - 1) {
+//                   chunk->setBloc(i, k, j, STONE);
+//               } else {
+//                   chunk->setBloc(i, k, j, GRASS);
+//               }
+//           }
+//       }
+//   }
+//   chunk->generateMesh();
+//
+//   //chunk #5
+//   chunk = createEmptyChunk(0, 0, 3);
+//   // Crée une maison simple
+//   for (int i = 4; i <= 8; i++) {
+//       for (int j = 4; j <= 8; j++) {
+//           for (int k = groundLevel; k <= groundLevel + 4; k++) {
+//               if (k == groundLevel) {
+//                   chunk->setBloc(i, k, j, LOG_OAK);
+//               } else if (i == 4 || i == 8 || j == 4 || j == 8) {
+//                   if (k == groundLevel + 2 && (i == 6 || j == 6)) {
+//                       // Laisse des ouvertures pour les fenêtres
+//                       continue;
+//                   }
+//                   chunk->setBloc(i, k, j, LOG_OAK);
+//               } else if (k == groundLevel + 4) {
+//                   chunk->setBloc(i, k, j, LOG_OAK);
+//               }
+//           }
+//       }
+//   }
+//   // Ajoute une porte
+//   chunk->setBloc(6, groundLevel + 1, 4, AIR);
+//   chunk->setBloc(6, groundLevel + 2, 4, AIR);
+//   chunk->generateMesh();
 }
 
 void World::updateVisibleChunk(Frustrum &frustum) {
