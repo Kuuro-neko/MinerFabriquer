@@ -1,4 +1,13 @@
 #include <TP/Scene/VoxelChunk.hpp>
+#include <TP/Scene/World.hpp>
+
+VoxelChunk::VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), new MeshObject(), nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
+    allocateCubes();
+}
+VoxelChunk::VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {}
+VoxelChunk::~VoxelChunk() {
+    cleanup();
+}
 
 bool VoxelChunk::setBloc(int x, int y, int z, int bloc, bool genMesh) {
     //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;

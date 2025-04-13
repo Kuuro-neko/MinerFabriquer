@@ -22,12 +22,8 @@ private:
     std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> visibleChunks;
     Camera *camera;
 public:
-    World() : SceneNode(Transform(), new MeshObject(), nullptr) {
-        generation();
-    }
-
-    ~World() {
-    }
+    World();
+    ~World();
 
     void generation();
 
@@ -114,7 +110,7 @@ public:
     int getBloc(int x, int y, int z);
 
     void cleanupBuffers() override;
-    
+
     void updateVisibleChunk(Frustrum &frustum);
 
     void setCamera(Camera &camera);

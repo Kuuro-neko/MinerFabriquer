@@ -6,16 +6,14 @@
 #define DEFAULT_CHUNK_SIZE 16
 #define DEFAULT_CHUNK_HEIGHT 128
 
+class World;
+
 class VoxelChunk : public SceneNode
 {
 public:
-    VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), new MeshObject(), nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
-        allocateCubes();
-    }
-    VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {}
-    ~VoxelChunk() {
-        cleanup();
-    }
+    VoxelChunk(int sizeX, int sizeY, int sizeZ);
+    VoxelChunk();
+    ~VoxelChunk();
     /**
      * @brief Set a block in the chunk, used for gameplay
      * 
@@ -72,6 +70,7 @@ public:
     int m_sizeY;
     int m_sizeZ;
     int*** m_cubes;
+    World *m_world;
 
     // Move Constructor
     VoxelChunk(VoxelChunk&& other) noexcept;

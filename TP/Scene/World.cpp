@@ -2,10 +2,18 @@
 #include <random>
 #include "WorldGenerator.hpp"
 
+World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
+    generation();
+}
+
+World::~World() {
+}
+
 VoxelChunk *World::createEmptyChunk(int x, int y, int z) {
     chunks.emplace(glm::ivec3(x, y, z), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
     VoxelChunk *chunk = &chunks.at(glm::ivec3(x, y, z));
     chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
+    chunk->m_world = this;
     return chunk;
 }
 
