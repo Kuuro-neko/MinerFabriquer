@@ -61,6 +61,8 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+        std::cout << "Selected bloc is at " << blocPlusProche.x << ", " << blocPlusProche.y << ", " << blocPlusProche.z
+                  << std::endl;
         setSelectedBlock(database); //on sélectionne un bloc
     }
 }

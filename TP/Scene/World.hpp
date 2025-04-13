@@ -9,6 +9,7 @@
 
 #define CHUNK_SIZE 16
 
+#define OUT_OF_BOUNDS_BLOC -2
 
 struct IVec3Hash {
     std::size_t operator()(const glm::ivec3 &vec) const {
@@ -22,12 +23,8 @@ private:
     std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> visibleChunks;
     Camera *camera;
 public:
-    World() : SceneNode(Transform(), new MeshObject(), nullptr) {
-        generation();
-    }
-
-    ~World() {
-    }
+    World();
+    ~World();
 
     void generation();
 
@@ -79,15 +76,7 @@ public:
      */
     std::vector<VoxelChunk *> getIntersectedChunks(Ray ray, float maxDistance);
 
-    void draw(GLuint programID) override {
-        for (auto &[key, chunk]: visibleChunks) {
-            //si la distance de rendu est depassee, on ne dessine pas le chunk
-            float distance = glm::length(chunk.getWorldPosition() - camera->getPosition());
-            if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
-                chunk.draw(programID);
-            }
-        }
-    }
+    void draw(GLuint programID) override;
 
     /**
      * @brief Remove a block at the given WORLD coordinates. Used by the player.
@@ -121,15 +110,9 @@ public:
      */
     int getBloc(int x, int y, int z);
 
-    void cleanupBuffers() override {
-        for (auto &[key, chunk]: chunks) {
-            chunk.cleanupBuffers();
-        }
-    }
+    void cleanupBuffers() override;
 
     void updateVisibleChunk(Frustrum &frustum);
 
-    inline void setCamera(Camera &camera) {
-        this->camera = &camera;
-    }
+    void setCamera(Camera &camera);
 };

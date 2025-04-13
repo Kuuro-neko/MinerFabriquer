@@ -23,8 +23,7 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int ground
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             int baseHeight = groundLevel + static_cast<int>(
                     baseNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + j * CHUNK_SIZE) * 5);
-            //lastLayer - 4 -> BEDROCK
-            chunk->generationSetBloc(x, groundLevel - 4, z, BEDROCK);
+
 
             //groundLevel - 3  -> STONE
             for (int y = groundLevel - 3; y < baseHeight - 2; y++) {
@@ -48,11 +47,11 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int ground
             }
 
             addTrees(chunk, x, z, baseHeight);
+
+            //lastLayer - 4 -> BEDROCK
+            chunk->generationSetBloc(x, groundLevel - 4, z, BEDROCK);
         }
     }
-
-
-    chunk->generateMesh();
 }
 
 void WorldGenerator::addTrees(VoxelChunk *chunk, int x, int z, int baseHeight) {

@@ -6,16 +6,14 @@
 #define DEFAULT_CHUNK_SIZE 16
 #define DEFAULT_CHUNK_HEIGHT 128
 
+class World;
+
 class VoxelChunk : public SceneNode
 {
 public:
-    VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), new MeshObject(), nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
-        allocateCubes();
-    }
-    VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {}
-    ~VoxelChunk() {
-        cleanup();
-    }
+    VoxelChunk(int sizeX, int sizeY, int sizeZ);
+    VoxelChunk();
+    ~VoxelChunk();
     /**
      * @brief Set a block in the chunk, used for gameplay
      * 
@@ -27,20 +25,8 @@ public:
      * @return true 
      * @return false 
      */
-    bool setBloc(int x, int y, int z, int bloc, bool genMesh=true) {
-        //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
-        if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-            //std::cout << "Error: Out of bounds" << std::endl;
-            return false;
-        }
-        if (m_cubes[x][y][z] != AIR) {
-            //std::cout << "Error: Block already set" << std::endl;
-            return false;
-        }
-        m_cubes[x][y][z] = bloc;
-        if(genMesh) generateMesh();
-        return true;
-    }
+    bool setBloc(int x, int y, int z, int bloc, bool genMesh=true);
+
     /**
      * @brief Set a block in the chunk, used for generation so it bypasses some checks
      * 
@@ -51,41 +37,14 @@ public:
      * @return true 
      * @return false 
      */
-    bool generationSetBloc(int x, int y, int z, int bloc) {
-        if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-            //std::cout << "Error: Out of bounds" << std::endl;
-            return false;
-        }
-        m_cubes[x][y][z] = bloc;
-        return true;
-    }
+    bool generationSetBloc(int x, int y, int z, int bloc);
 
-    int getBloc(int x, int y, int z) {
-        return m_cubes[x][y][z];
-    }
+    int getBloc(int x, int y, int z);
+    int getBlocIncludingNeighbors(int x, int y, int z);
 
-    int playerRemoveBlock(int x, int y, int z) {
-        if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-            std::cout << "Error: Out of bounds" << std::endl;
-            return -1;
-        }
-        if (BlocDatabase::getInstance().isAir(m_cubes[x][y][z])) {
-            std::cout << "Error: Cannot remove air block" << std::endl;
-            return -1;
-        }
-        if (BlocDatabase::getInstance().isUnbreakable(m_cubes[x][y][z])) {
-            std::cout << "Error: Cannot remove unbreakable block" << std::endl;
-            return -1;
-        }
-        return removeBlock(x, y, z);
-    }
+    int playerRemoveBlock(int x, int y, int z);
 
-    int removeBlock(int x, int y, int z) {
-        int id = m_cubes[x][y][z];
-        m_cubes[x][y][z] = AIR;
-        generateMesh();
-        return id;
-    }
+    int removeBlock(int x, int y, int z);
 
     /**
      * @brief Generate the mesh for the chunk, need to be called after setting the blocks and editing the chunk during gameplay
@@ -100,110 +59,37 @@ public:
      */
     void draw(GLuint programID) override;
 
-    void cleanupBuffers() override {
-        m_mesh->cleanupBuffers();
-    }
+    void cleanupBuffers() override;
 
-    bool contains(glm::vec3 point) {
-        return point.x >= getWorldPosition().x && point.x <= getWorldPosition().x + m_sizeX &&
-               point.y >= getWorldPosition().y && point.y <= getWorldPosition().y + m_sizeY &&
-               point.z >= getWorldPosition().z && point.z <= getWorldPosition().z + m_sizeZ;
-    }
+    bool contains(glm::vec3 point);
 
-    bool contains(Ray ray) {
-        return contains(ray.origin) || contains(ray.origin + ray.direction);
-    }
+    bool contains(Ray ray);
 
-    bool intersects(Ray ray, float maxDistance) {
-        return contains(ray) || ray.rayIntersectsAABB(ray, getWorldPosition(), getWorldPosition() + glm::vec3(m_sizeX, m_sizeY, m_sizeZ), maxDistance);
-    }
+    bool intersects(Ray ray, float maxDistance);
 
-    int m_sizeX;
-    int m_sizeY;
-    int m_sizeZ;
+    int m_sizeX = DEFAULT_CHUNK_SIZE;
+    int m_sizeY = DEFAULT_CHUNK_SIZE;
+    int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
     int*** m_cubes;
+    glm::ivec3 m_chunkCoords;
+    World *m_world;
 
     // Move Constructor
-    VoxelChunk(VoxelChunk&& other) noexcept
-        : SceneNode(std::move(other)), m_sizeX(other.m_sizeX), m_sizeY(other.m_sizeY), m_sizeZ(other.m_sizeZ), m_cubes(other.m_cubes) {
-        other.m_cubes = nullptr; // Nullify the source pointer
-    }
+    VoxelChunk(VoxelChunk&& other) noexcept;
 
     // Move Assignment Operator
-    VoxelChunk& operator=(VoxelChunk&& other) noexcept {
-        if (this != &other) {
-            cleanup(); // Free existing resources
-            SceneNode::operator=(std::move(other));
-            m_sizeX = other.m_sizeX;
-            m_sizeY = other.m_sizeY;
-            m_sizeZ = other.m_sizeZ;
-            m_cubes = other.m_cubes;
-            other.m_cubes = nullptr; // Nullify the source pointer
-        }
-        return *this;
-    }
+    VoxelChunk& operator=(VoxelChunk&& other) noexcept;
 
     // Copy Constructor
-    VoxelChunk(const VoxelChunk& other)
-        : SceneNode(other), m_sizeX(other.m_sizeX), m_sizeY(other.m_sizeY), m_sizeZ(other.m_sizeZ) {
-        allocateCubes();
-        for (int x = 0; x < m_sizeX; ++x) {
-            for (int y = 0; y < m_sizeY; ++y) {
-                for (int z = 0; z < m_sizeZ; ++z) {
-                    m_cubes[x][y][z] = other.m_cubes[x][y][z];
-                }
-            }
-        }
-    }
+    VoxelChunk(const VoxelChunk& other);
 
     // Copy Assignment Operator
-    VoxelChunk& operator=(const VoxelChunk& other) {
-        if (this != &other) {
-            cleanup(); // Free existing resources
-            SceneNode::operator=(other);
-            m_sizeX = other.m_sizeX;
-            m_sizeY = other.m_sizeY;
-            m_sizeZ = other.m_sizeZ;
-            allocateCubes();
-            for (int x = 0; x < m_sizeX; ++x) {
-                for (int y = 0; y < m_sizeY; ++y) {
-                    for (int z = 0; z < m_sizeZ; ++z) {
-                        m_cubes[x][y][z] = other.m_cubes[x][y][z];
-                    }
-                }
-            }
-        }
-        return *this;
-    }
+    VoxelChunk& operator=(const VoxelChunk& other);
 
-    void drawGPU(GLuint programID);
 
 private:
-    void allocateCubes() {
-        m_cubes = new int**[m_sizeX];
-        for (int i = 0; i < m_sizeX; ++i) {
-            m_cubes[i] = new int*[m_sizeY];
-            for (int j = 0; j < m_sizeY; ++j) {
-                m_cubes[i][j] = new int[m_sizeZ];
-                for (int k = 0; k < m_sizeZ; ++k) {
-                    m_cubes[i][j][k] = AIR;
-                }
-            }
-        }
-    }
+    void allocateCubes();
 
-    void cleanup() {
-        if (m_cubes) {
-            for (int i = 0; i < m_sizeX; ++i) {
-                for (int j = 0; j < m_sizeY; ++j) {
-                    delete[] m_cubes[i][j];
-                }
-                delete[] m_cubes[i];
-            }
-            delete[] m_cubes;
-            m_cubes = nullptr;
-        }
-        cleanupBuffers();
-    }
+    void cleanup();
 
 };
