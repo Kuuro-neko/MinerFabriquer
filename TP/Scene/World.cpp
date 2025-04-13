@@ -85,6 +85,16 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
     return intersectedChunks;
 }
 
+void World::draw(GLuint programID) {
+    for (auto &[key, chunk]: visibleChunks) {
+        //si la distance de rendu est depassee, on ne dessine pas le chunk
+        float distance = glm::length(chunk.getWorldPosition() - camera->getPosition());
+        if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
+            chunk.draw(programID);
+        }
+    }
+}
+
 void World::generation() {
     WorldGenerator worldGenerator;
 
@@ -98,6 +108,11 @@ void World::generation() {
     }
 }
 
+void World::cleanupBuffers() {
+    for (auto &[key, chunk]: chunks) {
+        chunk.cleanupBuffers();
+    }
+}
 
 void World::updateVisibleChunk(Frustrum &frustum) {
 
@@ -116,4 +131,8 @@ void World::updateVisibleChunk(Frustrum &frustum) {
         }
     }
 
+}
+
+void World::setCamera(Camera &camera) {
+    this->camera = &camera;
 }
