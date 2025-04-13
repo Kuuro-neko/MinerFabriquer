@@ -40,6 +40,7 @@ public:
     bool generationSetBloc(int x, int y, int z, int bloc);
 
     int getBloc(int x, int y, int z);
+    int getBlocIncludingNeighbors(int x, int y, int z);
 
     int playerRemoveBlock(int x, int y, int z);
 
@@ -66,10 +67,11 @@ public:
 
     bool intersects(Ray ray, float maxDistance);
 
-    int m_sizeX;
-    int m_sizeY;
-    int m_sizeZ;
+    int m_sizeX = DEFAULT_CHUNK_SIZE;
+    int m_sizeY = DEFAULT_CHUNK_SIZE;
+    int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
     int*** m_cubes;
+    glm::ivec3 m_chunkCoords;
     World *m_world;
 
     // Move Constructor

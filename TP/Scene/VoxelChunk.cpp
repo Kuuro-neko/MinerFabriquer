@@ -4,7 +4,9 @@
 VoxelChunk::VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), new MeshObject(), nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
     allocateCubes();
 }
-VoxelChunk::VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {}
+VoxelChunk::VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {
+    allocateCubes();
+}
 VoxelChunk::~VoxelChunk() {
     cleanup();
 }
@@ -37,6 +39,15 @@ int VoxelChunk::getBloc(int x, int y, int z) {
     return m_cubes[x][y][z];
 }
 
+int VoxelChunk::getBlocIncludingNeighbors(int x, int y, int z) {
+    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
+        int a = m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+        if(a == AIR) std::cout << "In neighbor found : " << BlocDatabase::getInstance().getBloc(a)->name << " at world position " << x + m_chunkCoords.x * m_sizeX << ", " << y + m_chunkCoords.y * m_sizeY << ", " << z + m_chunkCoords.z * m_sizeZ << std::endl;
+        return a;
+    }
+    return m_cubes[x][y][z];
+}
+
 int VoxelChunk::playerRemoveBlock(int x, int y, int z) {
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         std::cout << "Error: Out of bounds" << std::endl;
@@ -60,10 +71,16 @@ int VoxelChunk::removeBlock(int x, int y, int z) {
     return id;
 }
 
+bool neighborCheck(int neighbor) {
+    return neighbor == AIR || neighbor == LEAVES_OAK; // || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
+}
+
 void VoxelChunk::generateMesh() {
     m_mesh->vertices.clear();
     m_mesh->triangles.clear();
     m_mesh->uvs.clear();
+
+    int neighbor;
 
     // Loop through all the cubes in the chunk. If a cube has a face that is not adjacent to another non opaque cube, add a face to the mesh
     for (int x = 0; x < m_sizeX; x++) {
@@ -71,22 +88,28 @@ void VoxelChunk::generateMesh() {
             for (int z = 0; z < m_sizeZ; z++) {
                 if (m_cubes[x][y][z] != AIR) {
                     // Check all the adjacent cubes to see if they are air or leaves
-                    if (x == 0 || m_cubes[x - 1][y][z] == AIR || m_cubes[x - 1][y][z] == LEAVES_OAK) {
+                    neighbor = getBlocIncludingNeighbors(x - 1, y, z);
+                    if (neighborCheck(neighbor)) {
                         addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
                     }
-                    if (x == m_sizeX - 1 || m_cubes[x + 1][y][z] == AIR || m_cubes[x + 1][y][z] == LEAVES_OAK) {
+                    neighbor = getBlocIncludingNeighbors(x + 1, y, z);
+                    if (neighborCheck(neighbor)) {
                         addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
                     }
-                    if (y == 0 || m_cubes[x][y - 1][z] == AIR || m_cubes[x][y - 1][z] == LEAVES_OAK) {
+                    neighbor = getBlocIncludingNeighbors(x, y - 1, z);
+                    if (neighborCheck(neighbor)) {
                         addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
                     }
-                    if (y == m_sizeY - 1 || m_cubes[x][y + 1][z] == AIR || m_cubes[x][y + 1][z] == LEAVES_OAK) {
+                    neighbor = getBlocIncludingNeighbors(x, y + 1, z);
+                    if (neighborCheck(neighbor)) {
                         addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
                     }
-                    if (z == 0 || m_cubes[x][y][z - 1] == AIR || m_cubes[x][y][z - 1] == LEAVES_OAK) {
+                    neighbor = getBlocIncludingNeighbors(x, y, z - 1);
+                    if (neighborCheck(neighbor)) {
                         addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
                     }
-                    if (z == m_sizeZ - 1 || m_cubes[x][y][z + 1] == AIR || m_cubes[x][y][z + 1] == LEAVES_OAK) {
+                    neighbor = getBlocIncludingNeighbors(x, y, z + 1);
+                    if (neighborCheck(neighbor)) {
                         addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
                     }
                 }

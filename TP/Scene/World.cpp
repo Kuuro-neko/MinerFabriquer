@@ -14,6 +14,7 @@ VoxelChunk *World::createEmptyChunk(int x, int y, int z) {
     VoxelChunk *chunk = &chunks.at(glm::ivec3(x, y, z));
     chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
     chunk->m_world = this;
+    chunk->m_chunkCoords = glm::ivec3(x, y, z);
     return chunk;
 }
 
@@ -61,14 +62,15 @@ int World::getBloc(int x, int y, int z) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {
         return chunk->getBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+    } else {
+        return OUT_OF_BOUNDS_BLOC;
     }
-    return -1;
 }
 
 VoxelChunk *World::getChunkAt(int x, int y, int z) {
-    int xx = x / CHUNK_SIZE;
-    int yy = y / CHUNK_SIZE;
-    int zz = z / CHUNK_SIZE;
+    int xx = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
+    int yy = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
+    int zz = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
     auto it = chunks.find({xx, yy, zz});
     if (it != chunks.end()) {
         return &it->second;
@@ -113,6 +115,11 @@ void World::generation() {
             worldGenerator.genereteProceduralChunk(chunk, i, j);
 
         }
+    }
+
+    // generate all meshes
+    for (auto &[key, chunk]: chunks) {
+        chunk.generateMesh();
     }
 }
 
