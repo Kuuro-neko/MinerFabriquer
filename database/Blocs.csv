@@ -8,3 +8,5 @@ Id,Name,xTexSide,yTexSide,xTexTop,yTexTop,xTexBottom,yTexBottom,Opaque,Breakable
 6,Oak_Leaves,7,0,7,0,7,0,0,1
 7,Bedrock,8,0,8,0,8,0,1,0
 8,Glowstone,9,0,9,0,9,0,1,1
+9,Water,10,0,10,0,10,0,0,1
+10,Sand,11,0,11,0,11,0,1,1

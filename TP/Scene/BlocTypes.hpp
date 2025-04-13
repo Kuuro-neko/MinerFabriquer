@@ -137,6 +137,10 @@ public:
         return m_blocs[id].breakable==0;
     }
 
+    bool isOpaque(int id) {
+        return m_blocs[id].opaque==1;
+    }
+
     /**
      * @brief Get the Tex Coords object
      * 

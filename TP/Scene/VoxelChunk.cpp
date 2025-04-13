@@ -42,7 +42,6 @@ int VoxelChunk::getBloc(int x, int y, int z) {
 int VoxelChunk::getBlocIncludingNeighbors(int x, int y, int z) {
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         int a = m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
-        if(a == AIR) std::cout << "In neighbor found : " << BlocDatabase::getInstance().getBloc(a)->name << " at world position " << x + m_chunkCoords.x * m_sizeX << ", " << y + m_chunkCoords.y * m_sizeY << ", " << z + m_chunkCoords.z * m_sizeZ << std::endl;
         return a;
     }
     return m_cubes[x][y][z];
