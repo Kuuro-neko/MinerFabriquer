@@ -1,6 +1,7 @@
 #include <TP/Scene/World.hpp>
 #include <random>
 #include "WorldGenerator.hpp"
+#include "TP/Character/Character.hpp"
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
     generation();
@@ -109,9 +110,9 @@ void World::generation() {
     WorldGenerator worldGenerator;
 
     // 2x2 chunks for testing
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++) { // POur tester collision on met que 1 chunk
         for (int j = 0; j < 2; j++) {
-            VoxelChunk *chunk = createEmptyChunk(i,0,j);
+            VoxelChunk *chunk = createEmptyChunk(i, 0, j);
             worldGenerator.genereteProceduralChunk(chunk, i, j);
 
         }
@@ -150,4 +151,66 @@ void World::updateVisibleChunk(Frustrum &frustum) {
 
 void World::setCamera(Camera &camera) {
     this->camera = &camera;
+}
+
+void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
+    // Bounding box du personnage
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
+
+    // Position minimale et maximale du bloc intersecté
+    glm::vec3 blockMin = blockPosition;
+    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+
+    // Vérification si la bounding box du personnage intersecte celle du bloc
+    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
+        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
+        maxBB.z > blockMin.z && minBB.z < blockMax.z) {
+
+        // Calcul des overlaps sur chaque axe
+        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
+        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
+        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
+
+        // Détermination de l'axe avec la plus petite profondeur de collision
+        if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
+            if (character.vecteurDirection.x > 0 && character.getWorldPosition().x < blockPosition.x) {
+                character.vecteurDirection.x = 0; // Bloque le mouvement vers la droite
+            } else if (character.vecteurDirection.x < 0 && character.getWorldPosition().x > blockPosition.x) {
+                character.vecteurDirection.x = 0; // Bloque le mouvement vers la gauche
+            }
+        } else if (overlapY < overlapX && overlapY < overlapZ) { // Axe Y
+            if (character.vecteurDirection.y > 0 && character.getWorldPosition().y < blockPosition.y) {
+                character.vecteurDirection.y = 0; // Bloque le mouvement vers le haut
+            } else if (character.vecteurDirection.y < 0 && character.getWorldPosition().y > blockPosition.y) {
+                character.vecteurDirection.y = 0; // Bloque le mouvement vers le bas
+            }
+        } else { // Axe Z
+            if (character.vecteurDirection.z > 0 && character.getWorldPosition().z < blockPosition.z) {
+                character.vecteurDirection.z = 0; // Bloque le mouvement vers l'avant
+            } else if (character.vecteurDirection.z < 0 && character.getWorldPosition().z > blockPosition.z) {
+                character.vecteurDirection.z = 0; // Bloque le mouvement vers l'arrière
+            }
+        }
+    }
+}
+
+void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
+    // Récupération de la bounding box du personnage
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
+
+    // Parcours des blocs proches de la bounding box du personnage (environ 1 bloc autour)
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
+                if (chunk->getBloc(x, y, z) != AIR) { // Bloc solide détecté, on vérifie la collision
+                    resolveCollisionForBlock(character, glm::vec3(x, y, z));
+                }
+            }
+        }
+    }
+
+    // Application du mouvement du personnage en fonction de la direction et de la collision
+    character.move(character.vecteurDirection);
 }
