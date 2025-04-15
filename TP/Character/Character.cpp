@@ -5,8 +5,7 @@
 using namespace std;
 
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
-        : SceneNode(transform, mesh, texture), camera(camera), m_world(world) {
-    speed = 2.5;
+        : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size() , velocity(){
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
 }
@@ -221,3 +220,50 @@ void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffse
     }
     inventory->printInventory();
 }
+
+/**
+ * \brief fonction qui met à jour le personnage et sa physique
+ * @param dt
+ */
+void Character::update(float dt) {
+    if (breakCooldown < MAX_BREAK_COOLDOWN) {
+        breakCooldown += dt;
+    }
+    if (placeCooldown < MAX_PLACE_COOLDOWN) {
+        placeCooldown += dt;
+    }
+
+}
+
+/**
+ * \brief fonction qui met à jour la bounding box du personnage
+ */
+void Character::updateBoundingBox() {
+    boundingBox.clear();
+    glm::vec3 position = getWorldPosition();
+    boundingBox.push_back(position + glm::vec3(-size, -size, -size));
+    boundingBox.push_back(position + glm::vec3(size, -size, -size));
+    boundingBox.push_back(position + glm::vec3(size, -size, size));
+    boundingBox.push_back(position + glm::vec3(-size, -size, size));
+    boundingBox.push_back(position + glm::vec3(-size, size, -size));
+    boundingBox.push_back(position + glm::vec3(size, size, -size));
+    boundingBox.push_back(position + glm::vec3(size, size, size));
+    boundingBox.push_back(position + glm::vec3(-size, size, size));
+}
+
+glm::vec3 Character::getMinBoundingBox() {
+    glm::vec3 min = boundingBox[0];
+    for (int i = 1; i < boundingBox.size(); ++i) {
+        min = glm::min(min, boundingBox[i]);
+    }
+    return min;
+}
+glm::vec3 Character::getMaxBoundingBox() {
+    glm::vec3 max = boundingBox[0];
+    for (int i = 1; i < boundingBox.size(); ++i) {
+        max = glm::max(max, boundingBox[i]);
+    }
+    return max;
+}
+
+

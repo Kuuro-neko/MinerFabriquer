@@ -204,26 +204,21 @@ int main(void) {
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
     do {
-        // Measure speed
-        // per-frame time logic
-        // --------------------
         UpdateFPS();
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         // input
-        // -----
         processInput(window, deltaTime);
         character.listenAction(deltaTime, window, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
         frustum.update();
-        //TEST sur le chhunk 3
-        //On met dans World la liste des chunks présent dans le furstrum dans l'attribute visblechunks, puis on ne dessiner qu'eux
+        //character.applyGravity();
         world.updateVisibleChunk(frustum);
-
+        world.resolveCollisions(character, world.getChunkContaining(character.getWorldPosition()));
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

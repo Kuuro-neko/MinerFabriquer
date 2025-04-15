@@ -6,6 +6,7 @@
 
 #include <unordered_map>
 #include "TP/Camera/Frustrum.hpp"
+#include "TP/Character/Character.hpp"
 
 #define CHUNK_SIZE 16
 
@@ -115,4 +116,7 @@ public:
     void updateVisibleChunk(Frustrum &frustum);
 
     void setCamera(Camera &camera);
+
+    void resolveCollisions(Character &character, VoxelChunk *chunk);
+    static bool checkCollision(Character &character, VoxelChunk *chunk, glm::vec3 offset);
 };

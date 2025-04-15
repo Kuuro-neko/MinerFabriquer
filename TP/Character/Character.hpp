@@ -10,6 +10,7 @@
 #include "Inventory.hpp"
 #include "TP/Scene/Renderer.hpp"
 #include <TP/Scene/World.hpp>
+#include "vector"
 
 #define MAX_BREAK_COOLDOWN 0.4f
 #define MAX_PLACE_COOLDOWN 0.4f
@@ -19,48 +20,70 @@ class Character : public SceneNode {
 public:
     Character(Transform transform, Camera *camera, World* world = nullptr, MeshObject *mesh = nullptr, Texture *texture = nullptr);
 
-    void rotateCharacter(float angle, glm::vec3 axis);
     inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
     void listenAction(float dt, GLFWwindow *window, BlocDatabase &database);
     void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
-    void update(float dt) {
-        if (breakCooldown < MAX_BREAK_COOLDOWN) {
-            breakCooldown += dt;
-        }
-        if (placeCooldown < MAX_PLACE_COOLDOWN) {
-            placeCooldown += dt;
-        }
-    }
+    void update(float dt);
+    void updateBoundingBox();
     World* m_world;
     Camera *camera;
     Inventory *inventory;
 
+    glm::vec3 velocity = glm::vec3(0.f);
+
+    glm::vec3 getMinBoundingBox();
+
+    glm::vec3 getMaxBoundingBox();
+
+    inline void applyGravity() {
+        translate(glm::vec3(0.f, -gravity, 0.f));
+    }
+
 private:
     void move(glm::vec3 direction);
-
-    Renderer *renderer;
     void updateClosestBlock(BlocDatabase& database);
     void breakBlock(BlocDatabase &database);
     void putBlock(BlocDatabase &database);
     void setSelectedBlock(BlocDatabase &database);
-    
-    void resetBreakCooldown() {
+    inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
-    void resetPlaceCooldown() {
+    inline void resetPlaceCooldown() {
         placeCooldown = 0.f;
     }
 
-    float speed;
+    Renderer *renderer;
+    float speed = 2.5f;
     float maxInteractionDistance = 6.f;
+    float gravity = 9.81f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
 
+    std::vector<glm::vec3> boundingBox;
+    float size = 0.5;
+
     glm::vec3 blocPlusProche;
+
     int facePlusProche = -1;
+
     bool intersection = false;
 
-    
+
+
+    glm::vec3 getSize();
+
+
+    //TODO LIST
+
+    //1) récupérer bounding box joueur
+
+    // a chaque tic on met à jour la velocité du joueur
+
+    //2) mettre à jour le bounding box du joueur à chaque tic
+    //3) récupérer dans quel chunk se trouve le joueur
+    //4)
+
+
 };
 
 #endif // CHARACTER_HPP

@@ -151,3 +151,58 @@ void World::updateVisibleChunk(Frustrum &frustum) {
 void World::setCamera(Camera &camera) {
     this->camera = &camera;
 }
+
+/**
+ * @brief Résout les collisions du personnage avec le chunk.
+ * @param character Le personnage à vérifier.
+ * @param chunk Le chunk actuel dans lequel se trouve le personnage.
+ */
+void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
+    glm::vec3 newPosition = character.getWorldPosition() + character.velocity;
+
+    // Phase 1: Vertical (Y-axis) collision resolution
+    if (checkCollision(character, chunk, glm::vec3(0, character.velocity.y, 0))) {
+        character.velocity.y = 0; // Stop vertical movement
+    } else {
+        //character.setPosition(character.getWorldPosition() + glm::vec3(0, character.velocity.y, 0));
+        translate(character.getWorldPosition() + glm::vec3(0, character.velocity.y, 0));
+    }
+
+    // Phase 2: Horizontal (X-axis) collision resolution
+    if (checkCollision(character, chunk, glm::vec3(character.velocity.x, 0, 0))) {
+        character.velocity.x = 0; // Stop horizontal movement along X
+    } else {
+       // character.setPosition(character.getWorldPosition() + glm::vec3(character.velocity.x, 0, 0));
+        translate(character.getWorldPosition()+ glm::vec3(character.velocity.x, 0, 0));
+    }
+
+    // Phase 3: Horizontal (Z-axis) collision resolution
+    if (checkCollision(character, chunk, glm::vec3(0, 0, character.velocity.z))) {
+        character.velocity.z = 0; // Stop horizontal movement along Z
+    } else {
+        //character.setPosition(character.getWorldPosition() + glm::vec3(0, 0, character.velocity.z));
+        translate( character.getWorldPosition() + glm::vec3(0, 0, character.velocity.z));
+    }
+}
+
+/**
+ * @brief Vérifie si le personnage entre en collision avec un bloc dans le chunk.
+ * @param character Le personnage à vérifier.
+ * @param chunk Le chunk actuel dans lequel se trouve le personnage.
+ * @param offset : le décalage à appliquer à la position du personnage pour la vérification de collision.
+ * @return Vrai s'il y a collision, faux sinon.
+ */
+bool World::checkCollision(Character &character, VoxelChunk *chunk, glm::vec3 offset) {
+    glm::vec3 min = character.getMinBoundingBox() + offset;
+    glm::vec3 max = character.getMaxBoundingBox() + offset;
+    for (int x = static_cast<int>(min.x); x <= static_cast<int>(max.x); ++x) {
+        for (int y = static_cast<int>(min.y); y <= static_cast<int>(max.y); ++y) {
+            for (int z = static_cast<int>(min.z); z <= static_cast<int>(max.z); ++z) {
+                if (chunk->getBloc(x, y, z) != AIR) { // Check if the block is solid
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
