@@ -34,43 +34,61 @@ float FPS = 0.0f;
 float angle = 0.;
 float zoom = 1.;
 
-
-void create_sphere_textured(int n, int m, MeshObject &mesh) {
+void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
     mesh.vertices.clear();
     mesh.triangles.clear();
     mesh.uvs.clear();
-    float x, y, z, u, v;
-    for (int i = 0; i <= n; ++i) {
-        for (int j = 0; j <= m; ++j) {
-            x = cos(2 * M_PI * i / n) * cos(M_PI * j / m - M_PI_2);
-            y = sin(2 * M_PI * i / n) * cos(M_PI * j / m - M_PI_2);
-            z = sin(M_PI * j / m - M_PI_2);
-            u = float(i) / n;
-            v = 1.f - float(j) / m;
-            glm::vec3 vertex(
-                    x,
-                    y,
-                    z
-            );
-            mesh.vertices.push_back(vertex);
-            mesh.uvs.push_back(glm::vec2(u, v));
-        }
-    }
-    for (int i = 0; i < mesh.vertices.size() - n - 1; ++i) {
-        mesh.triangles.push_back(i);
-        mesh.triangles.push_back(i + n);
-        mesh.triangles.push_back(i + n + 2);
 
-        mesh.triangles.push_back(i);
-        mesh.triangles.push_back(i + n + 1);
-        mesh.triangles.push_back(i + 1);
+    glm::vec3 p[] = {
+            {-size.x, -size.y, -size.z},
+            { size.x, -size.y, -size.z},
+            { size.x,  size.y, -size.z},
+            {-size.x,  size.y, -size.z},
+            {-size.x, -size.y,  size.z},
+            { size.x, -size.y,  size.z},
+            { size.x,  size.y,  size.z},
+            {-size.x,  size.y,  size.z}
+    };
+
+    // Définir les faces du cube avec 4 sommets par face
+    int face_indices[6][4] = {
+            {0, 1, 2, 3}, // back
+            {5, 4, 7, 6}, // front
+            {4, 0, 3, 7}, // left
+            {1, 5, 6, 2}, // right
+            {3, 2, 6, 7}, // top
+            {4, 5, 1, 0}  // bottom
+    };
+
+    for (int i = 0; i < 6; ++i) {
+        // 4 sommets pour chaque face
+        mesh.vertices.push_back(p[face_indices[i][0]]);
+        mesh.vertices.push_back(p[face_indices[i][1]]);
+        mesh.vertices.push_back(p[face_indices[i][2]]);
+        mesh.vertices.push_back(p[face_indices[i][3]]);
+
+        // UVs correspondants (même pour chaque face)
+        mesh.uvs.push_back({0.0f, 0.0f});
+        mesh.uvs.push_back({1.0f, 0.0f});
+        mesh.uvs.push_back({1.0f, 1.0f});
+        mesh.uvs.push_back({0.0f, 1.0f});
+
+        // 2 triangles pour former la face
+        int start = i * 4;
+        mesh.triangles.push_back(start);
+        mesh.triangles.push_back(start + 1);
+        mesh.triangles.push_back(start + 2);
+
+        mesh.triangles.push_back(start);
+        mesh.triangles.push_back(start + 2);
+        mesh.triangles.push_back(start + 3);
     }
 }
 
 
 Character character = Character(
         Transform(
-                glm::vec3(0, 5, 0),
+                glm::vec3(0, 10, 0),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -189,7 +207,7 @@ int main(void) {
     character.m_world = &world;
 
     MeshObject characterMesh = MeshObject();
-    create_sphere_textured(64, 64, characterMesh);
+    create_cube_textured(character.getSize()/2.f, characterMesh);
     characterMesh.initializeBuffers();
     character.m_mesh = &characterMesh;
     root.addChild(&character);
@@ -246,6 +264,7 @@ int main(void) {
                                                        camera.getViewMatrix(),
                                                        camera.getProjectionMatrix()
         );
+
 
         crosshair.render();
         // Restore shader program and matrices for the scene

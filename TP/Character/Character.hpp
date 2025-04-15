@@ -18,16 +18,23 @@
 class Character : public SceneNode {
 
 public:
-    Character(Transform transform, Camera *camera, World* world = nullptr, MeshObject *mesh = nullptr, Texture *texture = nullptr);
+    Character(Transform transform, Camera *camera, World *world = nullptr, MeshObject *mesh = nullptr,
+              Texture *texture = nullptr);
 
     inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
+
     void listenAction(float dt, GLFWwindow *window, BlocDatabase &database);
-    void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
+
+    void scrollCallback(GLFWwindow *window, double xOffset, double yOffset);
+
     void update(float dt);
+
     void updateBoundingBox();
-    World* m_world;
+
+    World *m_world;
     Camera *camera;
     Inventory *inventory;
+    bool blocked = true;
 
     glm::vec3 velocity = glm::vec3(0.f);
 
@@ -42,18 +49,24 @@ public:
     void drawBoundingBox(GLuint programID);
 
 
-    glm::vec3 getSize();
+    inline glm::vec3 getSize() { return size; }
+
+
+    void move(glm::vec3 direction);
 
 private:
-    void move(glm::vec3 direction);
-    void updateClosestBlock(BlocDatabase& database);
+    void updateClosestBlock(BlocDatabase &database);
+
     void breakBlock(BlocDatabase &database);
+
     void putBlock(BlocDatabase &database);
+
     void setSelectedBlock(BlocDatabase &database);
 
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
+
     inline void resetPlaceCooldown() {
         placeCooldown = 0.f;
     }
@@ -66,29 +79,13 @@ private:
     float placeCooldown = std::numeric_limits<float>::max();
 
     std::vector<glm::vec3> boundingBox;
-    float size =2.0f;
-    // Minecraft AABB width : 5/8 
-    // Minecraft AABB height : 29/32
-    // Minecraft AABB height while sneaking : 1.5
+    glm::vec3 size;
 
     glm::vec3 blocPlusProche;
 
     int facePlusProche = -1;
 
     bool intersection = false;
-
-    GLuint vao;
-
-
-    //TODO LIST
-
-    //1) récupérer bounding box joueur
-
-    // a chaque tic on met à jour la velocité du joueur
-
-    //2) mettre à jour le bounding box du joueur à chaque tic
-    //3) récupérer dans quel chunk se trouve le joueur
-    //4)
 
 
 };

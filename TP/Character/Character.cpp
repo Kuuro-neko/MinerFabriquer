@@ -5,12 +5,15 @@
 using namespace std;
 
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
-        : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size() , velocity(){
+        : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size(), velocity(), blocked() {
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
     updateBoundingBox();
+    // Minecraft AABB width : 5/8
+    // Minecraft AABB height : 29/32
+    // Minecraft AABB height while sneaking : 1.5
+    size = glm::vec3 (5.f/8.f, 29.f/16.f, 5.f/8.f);
     //on setHightlight la bounding box
-    renderer->setHighlight(getMinBoundingBox());
 }
 
 void Character::move(glm::vec3 direction) {
@@ -245,14 +248,14 @@ void Character::update(float dt) {
 void Character::updateBoundingBox() {
     boundingBox.clear();
     glm::vec3 position = getWorldPosition();
-    boundingBox.push_back(position + glm::vec3(-size, -size, -size));
-    boundingBox.push_back(position + glm::vec3(size, -size, -size));
-    boundingBox.push_back(position + glm::vec3(size, -size, size));
-    boundingBox.push_back(position + glm::vec3(-size, -size, size));
-    boundingBox.push_back(position + glm::vec3(-size, size, -size));
-    boundingBox.push_back(position + glm::vec3(size, size, -size));
-    boundingBox.push_back(position + glm::vec3(size, size, size));
-    boundingBox.push_back(position + glm::vec3(-size, size, size));
+boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, -size.z / 2));
+boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, -size.z / 2));
+boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, -size.z / 2));
+boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, -size.z / 2));
+boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, size.z / 2));
+boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, size.z / 2));
+boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, size.z / 2));
+boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, size.z / 2));
 }
 
 glm::vec3 Character::getMinBoundingBox() {
@@ -262,6 +265,7 @@ glm::vec3 Character::getMinBoundingBox() {
     }
     return min;
 }
+
 glm::vec3 Character::getMaxBoundingBox() {
     glm::vec3 max = boundingBox[0];
     for (int i = 1; i < boundingBox.size(); ++i) {
@@ -275,13 +279,11 @@ void Character::drawBoundingBox(GLuint programID) {
 
     glUseProgram(programID);
     renderer->drawWireframeCube(
-            glm::vec3(size, size, size),
+            size,
             camera->getViewMatrix(),
             camera->getProjectionMatrix()
     );
 }
 
-glm::vec3 Character::getSize() {
-    return glm::vec3(size, size, size);
-}
+
 
