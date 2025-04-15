@@ -34,7 +34,7 @@ public:
     World *m_world;
     Camera *camera;
     Inventory *inventory;
-    bool blocked = true;
+
 
     glm::vec3 velocity = glm::vec3(0.f);
 
@@ -54,6 +54,7 @@ public:
 
     void move(glm::vec3 direction);
 
+    glm::vec3 vecteurDirection = glm::vec3(0.f, 0.f, 0.f);
 private:
     void updateClosestBlock(BlocDatabase &database);
 

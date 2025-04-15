@@ -153,79 +153,64 @@ void World::setCamera(Camera &camera) {
     this->camera = &camera;
 }
 
-/**
- * @brief Résout les collisions du personnage avec le chunk.
- * @param character Le personnage à vérifier.
- * @param chunk Le chunk actuel dans lequel se trouve le personnage.
- */
+void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
+    // Bounding box du personnage
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
+
+    // Position minimale et maximale du bloc
+    glm::vec3 blockMin = blockPosition;
+    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+
+    // Vérifiez si la bounding box du personnage intersecte celle du bloc
+    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
+        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
+        maxBB.z > blockMin.z && minBB.z < blockMax.z) {
+
+        // Calcul des overlaps sur chaque axe
+        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
+        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
+        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
+
+        // Déterminez l'axe avec la plus petite profondeur de collision
+        if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
+            if (character.vecteurDirection.x > 0 && character.getWorldPosition().x < blockPosition.x) {
+                character.vecteurDirection.x = 0; // Bloque le mouvement vers la droite
+            } else if (character.vecteurDirection.x < 0 && character.getWorldPosition().x > blockPosition.x) {
+                character.vecteurDirection.x = 0; // Bloque le mouvement vers la gauche
+            }
+        } else if (overlapY < overlapX && overlapY < overlapZ) { // Axe Y
+            if (character.vecteurDirection.y > 0 && character.getWorldPosition().y < blockPosition.y) {
+                character.vecteurDirection.y = 0; // Bloque le mouvement vers le haut
+            } else if (character.vecteurDirection.y < 0 && character.getWorldPosition().y > blockPosition.y) {
+                character.vecteurDirection.y = 0; // Bloque le mouvement vers le bas
+            }
+        } else { // Axe Z
+            if (character.vecteurDirection.z > 0 && character.getWorldPosition().z < blockPosition.z) {
+                character.vecteurDirection.z = 0; // Bloque le mouvement vers l'avant
+            } else if (character.vecteurDirection.z < 0 && character.getWorldPosition().z > blockPosition.z) {
+                character.vecteurDirection.z = 0; // Bloque le mouvement vers l'arrière
+            }
+        }
+    }
+}
+
 void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
     // Récupération de la bounding box du personnage
     glm::vec3 minBB = character.getMinBoundingBox();
     glm::vec3 maxBB = character.getMaxBoundingBox();
-
-
-    // Broad Phase -> on ne parcourt que les blocs proches de la bounding box du personnage
-
-    // Narrow Phase -> on ne parcourt que les blocs solides
 
     // Parcours des blocs proches de la bounding box du personnage
     for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
         for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
             for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
                 if (chunk->getBloc(x, y, z) != AIR) { // Bloc solide détecté
-                    std::cout << "Type de bloc collisioné : " << chunk->getBloc(x, y, z) << std::endl;
-                    // Resolution de la collision pour le bloc solide détecté
                     resolveCollisionForBlock(character, glm::vec3(x, y, z));
                 }
             }
         }
     }
-}
 
-/**
- * @brief Résout la collision entre le personnage et un bloc donné.
- * @param character Le personnage.
- * @param blockPosition La position du bloc solide intersecté
- */
-void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
-    // STRAT GILLES
-
-    // dans le cas où le personnage va aller vers un coin de voxel, actuellemet, on le déplace d'une valeur fixe, ducoup on a un effet de pousse non oushaité
-    // ducoup la stratégie est de faire une projection sur les axes x et z du personnage pour calculer la bonne valeur de repoussement
-    // on va donc faire la projection de son front avec l'axe x , pareil pour z
-
-
-
-
-    // Bounding box du personnage
-    glm::vec3 minBB = character.getMinBoundingBox();
-    glm::vec3 maxBB = character.getMaxBoundingBox();
-
-    // Position minimal du bloc intersecté
-    glm::vec3 blockMin = blockPosition;
-    // Position maximal du bloc intersecté (on rajoute 1 car le bloc est de taille 1x1x1)
-    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
-
-    // si on a une collision entre le personnage et le bloc
-    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
-        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
-        maxBB.z > blockMin.z && minBB.z < blockMax.z) {
-
-        // Calcul de la profondeur de la collision sur chaque axe
-        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
-        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
-        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
-
-        // Déterminer l'axe avec la plus petite profondeur de collision
-        if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
-            float correction = (character.getWorldPosition().x < blockPosition.x) ? -overlapX : overlapX;
-            character.translate(glm::vec3(correction, 0.f, 0.f));
-        } else if (overlapY < overlapX && overlapY < overlapZ) { // Axe Y
-            float correction = (character.getWorldPosition().y < blockPosition.y) ? -overlapY : overlapY;
-            character.translate(glm::vec3(0.f, correction, 0.f));
-        } else { // Axe Z
-            float correction = (character.getWorldPosition().z < blockPosition.z) ? -overlapZ : overlapZ;
-            character.translate(glm::vec3(0.f, 0.f, correction));
-        }
-    }
+    // Appliquez le vecteur de direction mis à jour
+    character.move(character.vecteurDirection);
 }

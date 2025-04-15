@@ -5,14 +5,14 @@
 using namespace std;
 
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
-        : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size(), velocity(), blocked() {
+        : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size(), velocity() {
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
     updateBoundingBox();
     // Minecraft AABB width : 5/8
     // Minecraft AABB height : 29/32
     // Minecraft AABB height while sneaking : 1.5
-    size = glm::vec3 (5.f/8.f, 29.f/16.f, 5.f/8.f);
+    size = glm::vec3(5.f / 8.f, 29.f / 16.f, 5.f / 8.f);
     //on setHightlight la bounding box
 }
 
@@ -34,21 +34,29 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
     glm::vec3 cameraRightNoUp = camera->getRotation() * VEC_RIGHT;
     cameraRightNoUp.y = 0.f;
     cameraRightNoUp = normalize(cameraRightNoUp);
+    vecteurDirection = glm::vec3(0.f);
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        move(cameraFrontNoUp * dt * speed);
+//        move(cameraFrontNoUp * dt * speed);
+        vecteurDirection = cameraFrontNoUp * dt * speed;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        move(cameraFrontNoUp * -dt * speed);
+//        move(cameraFrontNoUp * -dt * speed);
+        vecteurDirection = cameraFrontNoUp * -dt * speed;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        move(cameraRightNoUp * dt * speed);
+//        move(cameraRightNoUp * dt * speed);
+        vecteurDirection = cameraRightNoUp * dt * speed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        move(cameraRightNoUp * -dt * speed);
+//        move(cameraRightNoUp * -dt * speed);
+        vecteurDirection = cameraRightNoUp * -dt * speed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        move(glm::vec3(0.f, -dt * speed, 0.f));
+        //move(glm::vec3(0.f, -dt * speed, 0.f));
+        vecteurDirection = glm::vec3(0.f, -dt * speed, 0.f);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        move(glm::vec3(0.f, dt * speed, 0.f));
+        //move(glm::vec3(0.f, dt * speed, 0.f));
+        vecteurDirection = glm::vec3(0.f, dt * speed, 0.f);
+
 
 //    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 //        std::cout << "inventaire" << std::endl;
@@ -248,14 +256,14 @@ void Character::update(float dt) {
 void Character::updateBoundingBox() {
     boundingBox.clear();
     glm::vec3 position = getWorldPosition();
-boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, -size.z / 2));
-boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, -size.z / 2));
-boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, -size.z / 2));
-boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, -size.z / 2));
-boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, size.z / 2));
-boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, size.z / 2));
-boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, size.z / 2));
-boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, size.z / 2));
 }
 
 glm::vec3 Character::getMinBoundingBox() {
