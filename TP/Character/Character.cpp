@@ -5,10 +5,15 @@
 using namespace std;
 
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
-        : SceneNode(transform, mesh, texture), camera(camera), m_world(world) {
-    speed = 2.5;
+        : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size(), velocity() {
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
+    updateBoundingBox();
+    // Minecraft AABB width : 5/8
+    // Minecraft AABB height : 29/32
+    // Minecraft AABB height while sneaking : 1.5
+    size = glm::vec3(5.f / 8.f, 29.f / 16.f, 5.f / 8.f);
+    //on setHightlight la bounding box
 }
 
 void Character::move(glm::vec3 direction) {
@@ -17,10 +22,9 @@ void Character::move(glm::vec3 direction) {
 }
 
 /**
- * \brief fonction qui réalise l'action en fonction de la touche détectée
+ * \brief fonction qui réalise les actions en fonction de la touche détectée
  * @param key
  */
-
 void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
@@ -29,21 +33,23 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
     glm::vec3 cameraRightNoUp = camera->getRotation() * VEC_RIGHT;
     cameraRightNoUp.y = 0.f;
     cameraRightNoUp = normalize(cameraRightNoUp);
+    vecteurDirection = glm::vec3(0.f);
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        move(cameraFrontNoUp * dt * speed);
+        vecteurDirection = cameraFrontNoUp * dt * speed;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        move(cameraFrontNoUp * -dt * speed);
+        vecteurDirection = cameraFrontNoUp * -dt * speed;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        move(cameraRightNoUp * dt * speed);
+        vecteurDirection = cameraRightNoUp * dt * speed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        move(cameraRightNoUp * -dt * speed);
+        vecteurDirection = cameraRightNoUp * -dt * speed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        move(glm::vec3(0.f, -dt * speed, 0.f));
+        vecteurDirection = glm::vec3(0.f, -dt * speed, 0.f);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        move(glm::vec3(0.f, dt * speed, 0.f));
+        vecteurDirection = glm::vec3(0.f, dt * speed, 0.f);
+
 
 //    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 //        std::cout << "inventaire" << std::endl;
@@ -221,3 +227,64 @@ void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffse
     }
     inventory->printInventory();
 }
+
+/**
+ * \brief fonction qui met à jour le personnage et sa physique
+ * @param dt
+ */
+void Character::update(float dt) {
+    if (breakCooldown < MAX_BREAK_COOLDOWN) {
+        breakCooldown += dt;
+    }
+    if (placeCooldown < MAX_PLACE_COOLDOWN) {
+        placeCooldown += dt;
+    }
+    updateBoundingBox();
+    renderer->setHighlight(getMinBoundingBox());
+}
+
+/**
+ * \brief fonction qui met à jour la bounding box du personnage
+ */
+void Character::updateBoundingBox() {
+    boundingBox.clear();
+    glm::vec3 position = getWorldPosition();
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, size.z / 2));
+}
+
+glm::vec3 Character::getMinBoundingBox() {
+    glm::vec3 min = boundingBox[0];
+    for (int i = 1; i < boundingBox.size(); ++i) {
+        min = glm::min(min, boundingBox[i]);
+    }
+    return min;
+}
+
+glm::vec3 Character::getMaxBoundingBox() {
+    glm::vec3 max = boundingBox[0];
+    for (int i = 1; i < boundingBox.size(); ++i) {
+        max = glm::max(max, boundingBox[i]);
+    }
+    return max;
+}
+
+void Character::drawBoundingBox(GLuint programID) {
+    //use renderer to draw the bounding box
+
+    glUseProgram(programID);
+    renderer->drawWireframeCube(
+            size,
+            camera->getViewMatrix(),
+            camera->getProjectionMatrix()
+    );
+}
+
+
+
