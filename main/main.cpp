@@ -77,6 +77,7 @@ Character character = Character(
 );
 
 
+
 void UpdateFPS() {
     static double lastTime = glfwGetTime();
     static unsigned int counter = 0;
@@ -161,6 +162,8 @@ int main(void) {
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
     GLuint programID2 = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
     Renderer renderer = Renderer(programID2);
+    Renderer rendererCharacterBoundingBox = Renderer(programID2);
+    rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
     GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
 
     GLint success;
@@ -216,8 +219,8 @@ int main(void) {
         camera.update(deltaTime, window);
 
         frustum.update();
-        //character.applyGravity();
         world.updateVisibleChunk(frustum);
+
         world.resolveCollisions(character, world.getChunkContaining(character.getWorldPosition()));
 
         // Clear the screen
@@ -237,6 +240,11 @@ int main(void) {
                 glm::vec3(1.f, 1.f, 1.f),
                 camera.getViewMatrix(),
                 camera.getProjectionMatrix()
+        );
+        rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
+        rendererCharacterBoundingBox.drawWireframeCube(character.getSize(),
+                                                       camera.getViewMatrix(),
+                                                       camera.getProjectionMatrix()
         );
 
         crosshair.render();

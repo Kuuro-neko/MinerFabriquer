@@ -39,12 +39,18 @@ public:
         translate(glm::vec3(0.f, -gravity, 0.f));
     }
 
+    void drawBoundingBox(GLuint programID);
+
+
+    glm::vec3 getSize();
+
 private:
     void move(glm::vec3 direction);
     void updateClosestBlock(BlocDatabase& database);
     void breakBlock(BlocDatabase &database);
     void putBlock(BlocDatabase &database);
     void setSelectedBlock(BlocDatabase &database);
+
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
@@ -60,7 +66,7 @@ private:
     float placeCooldown = std::numeric_limits<float>::max();
 
     std::vector<glm::vec3> boundingBox;
-    float size = 0.5;
+    float size =2.0f;
     // Minecraft AABB width : 5/8 
     // Minecraft AABB height : 29/32
     // Minecraft AABB height while sneaking : 1.5
@@ -71,9 +77,7 @@ private:
 
     bool intersection = false;
 
-
-
-    glm::vec3 getSize();
+    GLuint vao;
 
 
     //TODO LIST

@@ -9,6 +9,8 @@ Character::Character(Transform transform, Camera *camera, World *world, MeshObje
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
     updateBoundingBox();
+    //on setHightlight la bounding box
+    renderer->setHighlight(getMinBoundingBox());
 }
 
 void Character::move(glm::vec3 direction) {
@@ -233,7 +235,8 @@ void Character::update(float dt) {
     if (placeCooldown < MAX_PLACE_COOLDOWN) {
         placeCooldown += dt;
     }
-
+    updateBoundingBox();
+    renderer->setHighlight(getMinBoundingBox());
 }
 
 /**
@@ -267,4 +270,18 @@ glm::vec3 Character::getMaxBoundingBox() {
     return max;
 }
 
+void Character::drawBoundingBox(GLuint programID) {
+    //use renderer to draw the bounding box
+
+    glUseProgram(programID);
+    renderer->drawWireframeCube(
+            glm::vec3(size, size, size),
+            camera->getViewMatrix(),
+            camera->getProjectionMatrix()
+    );
+}
+
+glm::vec3 Character::getSize() {
+    return glm::vec3(size, size, size);
+}
 

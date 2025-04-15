@@ -9,6 +9,7 @@
 
 
 #define CHUNK_SIZE 16
+#define BLOC_SIZE 1
 
 #define OUT_OF_BOUNDS_BLOC -2
 
@@ -27,6 +28,7 @@ private:
     Camera *camera;
 public:
     World();
+
     ~World();
 
     void generation();
@@ -120,5 +122,6 @@ public:
     void setCamera(Camera &camera);
 
     void resolveCollisions(Character &character, VoxelChunk *chunk);
-    static bool checkCollision(Character &character, VoxelChunk *chunk, glm::vec3 offset);
+
+    void resolveCollisionForBlock(Character &character, glm::vec3 blockPosition);
 };

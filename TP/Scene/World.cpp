@@ -159,51 +159,68 @@ void World::setCamera(Camera &camera) {
  * @param chunk Le chunk actuel dans lequel se trouve le personnage.
  */
 void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
-    glm::vec3 newPosition = character.getWorldPosition() + character.velocity;
+    // Récupération de la bounding box du personnage
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
 
-    // Phase 1: Vertical (Y-axis) collision resolution
-    if (checkCollision(character, chunk, glm::vec3(0, character.velocity.y, 0))) {
-        character.velocity.y = 0; // Stop vertical movement
-    } else {
-        //character.setPosition(character.getWorldPosition() + glm::vec3(0, character.velocity.y, 0));
-        translate(character.getWorldPosition() + glm::vec3(0, character.velocity.y, 0));
-    }
 
-    // Phase 2: Horizontal (X-axis) collision resolution
-    if (checkCollision(character, chunk, glm::vec3(character.velocity.x, 0, 0))) {
-        character.velocity.x = 0; // Stop horizontal movement along X
-    } else {
-       // character.setPosition(character.getWorldPosition() + glm::vec3(character.velocity.x, 0, 0));
-        translate(character.getWorldPosition()+ glm::vec3(character.velocity.x, 0, 0));
-    }
+    // Broad Phase -> on ne parcourt que les blocs proches de la bounding box du personnage
 
-    // Phase 3: Horizontal (Z-axis) collision resolution
-    if (checkCollision(character, chunk, glm::vec3(0, 0, character.velocity.z))) {
-        character.velocity.z = 0; // Stop horizontal movement along Z
-    } else {
-        //character.setPosition(character.getWorldPosition() + glm::vec3(0, 0, character.velocity.z));
-        translate( character.getWorldPosition() + glm::vec3(0, 0, character.velocity.z));
-    }
-}
+    // Narrow Phase -> on ne parcourt que les blocs solides
 
-/**
- * @brief Vérifie si le personnage entre en collision avec un bloc dans le chunk.
- * @param character Le personnage à vérifier.
- * @param chunk Le chunk actuel dans lequel se trouve le personnage.
- * @param offset : le décalage à appliquer à la position du personnage pour la vérification de collision.
- * @return Vrai s'il y a collision, faux sinon.
- */
-bool World::checkCollision(Character &character, VoxelChunk *chunk, glm::vec3 offset) {
-    glm::vec3 min = character.getMinBoundingBox() + offset;
-    glm::vec3 max = character.getMaxBoundingBox() + offset;
-    for (int x = static_cast<int>(min.x); x <= static_cast<int>(max.x); ++x) {
-        for (int y = static_cast<int>(min.y); y <= static_cast<int>(max.y); ++y) {
-            for (int z = static_cast<int>(min.z); z <= static_cast<int>(max.z); ++z) {
-                if (chunk->getBloc(x, y, z) != AIR) { // Check if the block is solid
-                    return true;
+    // Parcours des blocs proches de la bounding box du personnage
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
+                if (chunk->getBloc(x, y, z) != AIR) { // Bloc solide détecté
+                    std::cout << "Bloc solide détecté à : " << x << ", " << y << ", " << z << std::endl;
+                    std::cout << "Type de bloc : " << chunk->getBloc(x, y, z) << std::endl;
+                    // Resolution de la collision pour le bloc solide détecté
+                    resolveCollisionForBlock(character, glm::vec3(x, y, z));
                 }
             }
         }
     }
-    return false;
+}
+
+/**
+ * @brief Résout la collision entre le personnage et un bloc donné.
+ * @param character Le personnage.
+ * @param blockPosition La position du bloc solide.
+ */
+void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
+
+    // Calcul des distances de pénétration sur chaque axe
+    float overlapX = std::min(maxBB.x, blockPosition.x + 1.0f) - std::max(minBB.x, blockPosition.x);
+    float overlapY = std::min(maxBB.y, blockPosition.y + 1.0f) - std::max(minBB.y, blockPosition.y);
+    float overlapZ = std::min(maxBB.z, blockPosition.z + 1.0f) - std::max(minBB.z, blockPosition.z);
+
+    // Trouver l'axe avec la plus petite pénétration
+    if (overlapX < overlapY && overlapX < overlapZ) {
+        // Résolution sur l'axe X
+        if (character.getWorldPosition().x < blockPosition.x) {
+            std::cout << "overlapX: " << overlapX << std::endl;
+            character.translate(glm::vec3(-overlapX, 0, 0));
+        } else {
+            character.translate(glm::vec3(overlapX, 0, 0));
+        }
+    } else if (overlapY < overlapZ) {
+        // Résolution sur l'axe Y
+        if (character.getWorldPosition().y < blockPosition.y) {
+            std::cout << "overlapY: " << overlapY << std::endl;
+            character.translate(glm::vec3(0, -overlapY, 0));
+        } else {
+            character.translate(glm::vec3(0, overlapY, 0));
+        }
+    } else {
+        // Résolution sur l'axe Z
+        if (character.getWorldPosition().z < blockPosition.z) {
+            std::cout << "overlapZ: " << overlapZ << std::endl;
+            character.translate(glm::vec3(0, 0, -overlapZ));
+        } else {
+            character.translate(glm::vec3(0, 0, overlapZ));
+        }
+    }
 }
