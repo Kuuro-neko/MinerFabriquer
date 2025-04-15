@@ -61,6 +61,9 @@ private:
 
     std::vector<glm::vec3> boundingBox;
     float size = 0.5;
+    // Minecraft AABB width : 5/8 
+    // Minecraft AABB height : 29/32
+    // Minecraft AABB height while sneaking : 1.5
 
     glm::vec3 blocPlusProche;
 
