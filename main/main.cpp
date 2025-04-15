@@ -70,7 +70,7 @@ void create_sphere_textured(int n, int m, MeshObject &mesh) {
 
 Character character = Character(
         Transform(
-                glm::vec3(0, 5, 0),
+                glm::vec3(0, 0, 0),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -193,6 +193,10 @@ int main(void) {
     character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
     character.m_texture = TextureAtlas::getInstance().getTexture();
+
+    //tentative de créé une tête 
+    MeshObject headMesh = MeshObject();
+    
 
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
         character.scrollCallback(window, xOffset, yOffset);
