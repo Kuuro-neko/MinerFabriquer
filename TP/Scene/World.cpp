@@ -188,41 +188,44 @@ void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
  * @param blockPosition La position du bloc solide intersecté
  */
 void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
-    // Récupération de la position du personnage
-    glm::vec3 characterPosition = character.getWorldPosition();
+    // STRAT GILLES
 
-    // Calcul de la distance entre le personnage et le bloc
-    float distanceX = std::abs(characterPosition.x - blockPosition.x);
-    float distanceY = std::abs(characterPosition.y - blockPosition.y);
-    float distanceZ = std::abs(characterPosition.z - blockPosition.z);
+    // dans le cas où le personnage va aller vers un coin de voxel, actuellemet, on le déplace d'une valeur fixe, ducoup on a un effet de pousse non oushaité
+    // ducoup la stratégie est de faire une projection sur les axes x et z du personnage pour calculer la bonne valeur de repoussement
+    // on va donc faire la projection de son front avec l'axe x , pareil pour z
 
-    // Vérification des collisions sur chaque axe
-    if (distanceX < 1.f && distanceY < 1.f && distanceZ < 1.f) {
-        // Collision détectée, on déplace le personnage en fonction de la direction de la collision
-        if (distanceX < distanceY && distanceX < distanceZ) {
-            if (characterPosition.x < blockPosition.x) {
-                character.translate(glm::vec3(-0.1f, 0.f, 0.f));
-            } else {
-                character.translate(glm::vec3(0.1f, 0.f, 0.f));
-            }
-        }
-        if (distanceY < distanceX && distanceY < distanceZ) {
-            if (characterPosition.y < blockPosition.y) {
-                character.translate(glm::vec3(0.f, -0.1f, 0.f));
-            } else {
-                character.translate(glm::vec3(0.f, 0.1f, 0.f));
-            }
-        }
-        if(distanceZ < distanceX && distanceZ < distanceY) {
-            if (characterPosition.z < blockPosition.z) {
-                character.translate(glm::vec3(0.f, 0.f, -0.1f));
-            } else {
-                character.translate(glm::vec3(0.f, 0.f, 0.1f));
-            }
-        }
-        
 
+
+
+    // Bounding box du personnage
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
+
+    // Position minimal du bloc intersecté
+    glm::vec3 blockMin = blockPosition;
+    // Position maximal du bloc intersecté (on rajoute 1 car le bloc est de taille 1x1x1)
+    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+
+    // si on a une collision entre le personnage et le bloc
+    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
+        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
+        maxBB.z > blockMin.z && minBB.z < blockMax.z) {
+
+        // Calcul de la profondeur de la collision sur chaque axe
+        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
+        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
+        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
+
+        // Déterminer l'axe avec la plus petite profondeur de collision
+        if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
+            float correction = (character.getWorldPosition().x < blockPosition.x) ? -overlapX : overlapX;
+            character.translate(glm::vec3(correction, 0.f, 0.f));
+        } else if (overlapY < overlapX && overlapY < overlapZ) { // Axe Y
+            float correction = (character.getWorldPosition().y < blockPosition.y) ? -overlapY : overlapY;
+            character.translate(glm::vec3(0.f, correction, 0.f));
+        } else { // Axe Z
+            float correction = (character.getWorldPosition().z < blockPosition.z) ? -overlapZ : overlapZ;
+            character.translate(glm::vec3(0.f, 0.f, correction));
+        }
     }
-
-
 }

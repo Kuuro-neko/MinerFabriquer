@@ -232,13 +232,16 @@ int main(void) {
 
         // input
         processInput(window, deltaTime);
+        // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
         character.listenAction(deltaTime, window, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
         frustum.update();
         world.updateVisibleChunk(frustum);
-
+        // on a un pb, quand on est a la limite , ça plante
+        // ce qu'on fait c'est alors resolve la collision avec touts les chunks conteant au moins 1 point de la bounding box world.getChunksContraining (retourne un set de chunk)
+        // deuxieme changement, on recupere le vecteur donne  par listenAction et si y'a collision, on n'avance pas sinon on autorise le mouvement
         world.resolveCollisions(character, world.getChunkContaining(character.getWorldPosition()));
 
         // Clear the screen
