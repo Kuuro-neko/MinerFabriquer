@@ -158,11 +158,11 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
     glm::vec3 minBB = character.getMinBoundingBox();
     glm::vec3 maxBB = character.getMaxBoundingBox();
 
-    // Position minimale et maximale du bloc
+    // Position minimale et maximale du bloc intersecté
     glm::vec3 blockMin = blockPosition;
     glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
 
-    // Vérifiez si la bounding box du personnage intersecte celle du bloc
+    // Vérification si la bounding box du personnage intersecte celle du bloc
     if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
         maxBB.y > blockMin.y && minBB.y < blockMax.y &&
         maxBB.z > blockMin.z && minBB.z < blockMax.z) {
@@ -172,7 +172,7 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
         float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
         float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
 
-        // Déterminez l'axe avec la plus petite profondeur de collision
+        // Détermination de l'axe avec la plus petite profondeur de collision
         if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
             if (character.vecteurDirection.x > 0 && character.getWorldPosition().x < blockPosition.x) {
                 character.vecteurDirection.x = 0; // Bloque le mouvement vers la droite
@@ -200,17 +200,17 @@ void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
     glm::vec3 minBB = character.getMinBoundingBox();
     glm::vec3 maxBB = character.getMaxBoundingBox();
 
-    // Parcours des blocs proches de la bounding box du personnage
+    // Parcours des blocs proches de la bounding box du personnage (environ 1 bloc autour)
     for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
         for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
             for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
-                if (chunk->getBloc(x, y, z) != AIR) { // Bloc solide détecté
+                if (chunk->getBloc(x, y, z) != AIR) { // Bloc solide détecté, on vérifie la collision
                     resolveCollisionForBlock(character, glm::vec3(x, y, z));
                 }
             }
         }
     }
 
-    // Appliquez le vecteur de direction mis à jour
+    // Application du mouvement du personnage en fonction de la direction et de la collision
     character.move(character.vecteurDirection);
 }

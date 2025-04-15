@@ -22,10 +22,9 @@ void Character::move(glm::vec3 direction) {
 }
 
 /**
- * \brief fonction qui réalise l'action en fonction de la touche détectée
+ * \brief fonction qui réalise les actions en fonction de la touche détectée
  * @param key
  */
-
 void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
@@ -39,22 +38,16 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-//        move(cameraFrontNoUp * dt * speed);
         vecteurDirection = cameraFrontNoUp * dt * speed;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-//        move(cameraFrontNoUp * -dt * speed);
         vecteurDirection = cameraFrontNoUp * -dt * speed;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-//        move(cameraRightNoUp * dt * speed);
         vecteurDirection = cameraRightNoUp * dt * speed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-//        move(cameraRightNoUp * -dt * speed);
         vecteurDirection = cameraRightNoUp * -dt * speed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        //move(glm::vec3(0.f, -dt * speed, 0.f));
         vecteurDirection = glm::vec3(0.f, -dt * speed, 0.f);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        //move(glm::vec3(0.f, dt * speed, 0.f));
         vecteurDirection = glm::vec3(0.f, dt * speed, 0.f);
 
 
