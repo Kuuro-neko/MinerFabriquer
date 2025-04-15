@@ -6,11 +6,13 @@
 
 #include <unordered_map>
 #include "TP/Camera/Frustrum.hpp"
-#include "TP/Character/Character.hpp"
+
 
 #define CHUNK_SIZE 16
 
 #define OUT_OF_BOUNDS_BLOC -2
+
+class Character;
 
 struct IVec3Hash {
     std::size_t operator()(const glm::ivec3 &vec) const {

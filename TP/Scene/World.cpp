@@ -1,6 +1,7 @@
 #include <TP/Scene/World.hpp>
 #include <random>
 #include "WorldGenerator.hpp"
+#include "TP/Character/Character.hpp"
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
     generation();

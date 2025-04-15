@@ -8,6 +8,7 @@ Character::Character(Transform transform, Camera *camera, World *world, MeshObje
         : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size() , velocity(){
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
+    updateBoundingBox();
 }
 
 void Character::move(glm::vec3 direction) {

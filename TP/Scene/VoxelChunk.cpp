@@ -36,6 +36,11 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
 }
 
 int VoxelChunk::getBloc(int x, int y, int z) {
+    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
+        // POUR MATHIS : QUAND ON SORT DU CHUNK CETTE FONCTION CASSE
+        // On devrait peut etre ajouter des exceptions ? xD et enlever mes vieux return -1, -2
+        return -1;
+    }
     return m_cubes[x][y][z];
 }
 
