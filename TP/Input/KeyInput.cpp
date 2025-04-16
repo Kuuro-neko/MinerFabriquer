@@ -89,17 +89,24 @@ bool KeyInput::isKeybindReleased(const std::vector<int> &keybind)
 {
     if (!_isEnabled || keybind.empty()) return false;
 
+    bool anyJustReleased = false;
+
     for (int key : keybind)
     {
         auto it = _keys.find(key);
         if (it == _keys.end()) return false; // Key not tracked
 
         int status = it->second;
-        if (status != KEY_RELEASED) {
-            return false; // One key not released
+        if (status != KEY_RELEASED && status != KEY_UNPRESSED) {
+            return false; // One key not released at all
+        }
+
+        if (status == KEY_RELEASED) {
+            anyJustReleased = true; // At least one was just released
         }
     }
-    return true; // All keys released
+    
+    return anyJustReleased;
 }
 
 bool KeyInput::isKeyReleased(int key)
