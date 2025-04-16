@@ -8,6 +8,8 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/norm.hpp>
 #include <TP/Camera/Camera_Helper.hpp>
+#include <TP/Input/KeyInput.hpp>
+#include <TP/Input/KeyBinds.hpp>
 
 
 #define DEFAULT_FOV 45.0f
@@ -18,6 +20,7 @@
 #define DEFAULT_TRANSLATION_SPEED 7.5f
 #define DEFAULT_ROTATION_SPEED 0.1f
 #define DEFAULT_DISTANCE_SPEED 5.0f
+#define KEYS_ROTATION_SPEED_CORRECTION 2.5f
 
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
@@ -55,6 +58,8 @@ public:
 
     inline glm::mat4 getProjectionMatrix() const { return m_projectionMatrix; }
 
+    inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
+
 private:
     //Camera parameters
     float m_fovDegree{DEFAULT_FOV};
@@ -64,6 +69,7 @@ private:
     float m_translation_speed = DEFAULT_TRANSLATION_SPEED;
     float m_distance_speed = DEFAULT_DISTANCE_SPEED;
     float m_rotation_speed = DEFAULT_ROTATION_SPEED;
+    float m_rotationSpeedKeysCorrection = KEYS_ROTATION_SPEED_CORRECTION;
 
 
     bool m_invertY = false;
@@ -74,7 +80,6 @@ private:
 
     //Camera mode
     int m_mode = DEFAULT_MODE;
-    bool m_zPressed = false;
     double m_prevMouseX = 0.0, m_prevMouseY = 0.0;
 
     //Reset animation
@@ -94,9 +99,10 @@ private:
     glm::vec3 m_targetDeltaPos;
     glm::vec3 m_targetPrev;
     bool m_attached = DEFAULT_ATTACHED;
-    bool m_tPressed = false;
     float m_distance = 10.0f;
 
     inline glm::vec3 getTarget() const { return m_targetPrev; }
 
+    KeyInput *keyInput;
+    Keybinds *keybinds = &Keybinds::getInstance();
 };

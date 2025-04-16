@@ -36,8 +36,6 @@ public:
     World *m_world;
     Camera *camera;
     Inventory *inventory;
-    KeyInput *keyInput;
-    Keybinds *keybinds = &Keybinds::getInstance();
 
 
     glm::vec3 velocity = glm::vec3(0.f);
@@ -54,6 +52,8 @@ public:
 
 
     inline glm::vec3 getSize() { return size; }
+
+    inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
 
 
     void move(glm::vec3 direction);
@@ -77,6 +77,8 @@ private:
     }
 
     Renderer *renderer;
+    KeyInput *keyInput;
+    Keybinds *keybinds = &Keybinds::getInstance();
     float speed = 2.5f;
     float maxInteractionDistance = 6.f;
     float gravity = 9.81f;
