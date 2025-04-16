@@ -9,6 +9,8 @@
 #include "TP/Character/Character.hpp"
 #include "TP/Camera/Frustrum.hpp"
 #include <TP/GUI/Crosshair.hpp>
+#include <TP/Input/KeyInput.hpp>
+#include <TP/Input/KeyBinds.hpp>
 
 #define CHUNK_SIZE 16
 
@@ -19,10 +21,6 @@ using namespace glm;
 
 int windowWidth = 1024;
 int windowHeight = 768;
-
-
-void processInput(GLFWwindow *window, float dt);
-
 
 Camera camera;
 // timing
@@ -96,6 +94,7 @@ Character character = Character(
 
 
 
+
 void UpdateFPS() {
     static double lastTime = glfwGetTime();
     static unsigned int counter = 0;
@@ -131,6 +130,12 @@ int main(void) {
 
     // Open a window and create its OpenGL context
     window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
+    KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
+    KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
+    menuInputManager.setIsEnabled(false);
+    KeyInput::setupKeyInputs(*window);
+    character.keyInput = &characterInputManager;
+
     if (window == NULL) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -219,7 +224,6 @@ int main(void) {
         character.scrollCallback(window, xOffset, yOffset);
     });
 
-
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
@@ -230,10 +234,11 @@ int main(void) {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // input
-        processInput(window, deltaTime);
+        // Poll inputs
+        glfwPollEvents();
+
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
-        character.listenAction(deltaTime, window, BlocDatabase::getInstance());
+        character.listenAction(deltaTime, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
@@ -268,8 +273,8 @@ int main(void) {
                                                        camera.getProjectionMatrix()
         );
 
-
         crosshair.render();
+        
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
@@ -278,8 +283,10 @@ int main(void) {
 
         // Swap buffers
         glfwSwapBuffers(window);
-        glfwPollEvents();
-
+        
+        // Update the input managers
+        characterInputManager.update();
+        menuInputManager.update();
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(window) == 0);
@@ -297,13 +304,6 @@ int main(void) {
     return 0;
 }
 
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window, float dt) {
-
-
-}
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------

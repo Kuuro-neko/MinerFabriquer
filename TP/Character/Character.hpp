@@ -10,10 +10,12 @@
 #include "Inventory.hpp"
 #include "TP/Scene/Renderer.hpp"
 #include <TP/Scene/World.hpp>
+#include <TP/Input/KeyInput.hpp>
+#include <TP/Input/KeyBinds.hpp>
 #include "vector"
 
-#define MAX_BREAK_COOLDOWN 0.4f
-#define MAX_PLACE_COOLDOWN 0.4f
+#define MAX_BREAK_COOLDOWN 0.3f
+#define MAX_PLACE_COOLDOWN 0.3f
 
 class Character : public SceneNode {
 
@@ -23,7 +25,7 @@ public:
 
     inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
 
-    void listenAction(float dt, GLFWwindow *window, BlocDatabase &database);
+    void listenAction(float dt, BlocDatabase &database);
 
     void scrollCallback(GLFWwindow *window, double xOffset, double yOffset);
 
@@ -34,6 +36,8 @@ public:
     World *m_world;
     Camera *camera;
     Inventory *inventory;
+    KeyInput *keyInput;
+    Keybinds *keybinds = &Keybinds::getInstance();
 
 
     glm::vec3 velocity = glm::vec3(0.f);
@@ -87,6 +91,9 @@ private:
     int facePlusProche = -1;
 
     bool intersection = false;
+
+    // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
+    bool shouldToggleDebug = true;
 
 
 };
