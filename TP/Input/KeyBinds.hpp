@@ -11,6 +11,10 @@ Keybinds() = default;
     Keybinds(const Keybinds&) = delete;
     Keybinds& operator=(const Keybinds&) = delete;
 
+    // Rebindable keys -> private
+    int toggleDebug = GLFW_KEY_F3;
+    int escape = GLFW_KEY_ESCAPE;
+
 public:
     // Singleton instance accessor
     static Keybinds& getInstance() {
@@ -33,7 +37,7 @@ public:
     std::vector<int> toggleHUD = {GLFW_KEY_F1};
     std::vector<int> takeScreenshot = {GLFW_KEY_F2};
 
-    int toggleDebug = GLFW_KEY_F3;
+    
     std::vector<int> toggleBoudingBoxes = {toggleDebug, GLFW_KEY_B};
     std::vector<int> toggleWireframe = {toggleDebug, GLFW_KEY_W};
     std::vector<int> toggleChunkBorders = {toggleDebug, GLFW_KEY_G};
@@ -43,11 +47,10 @@ public:
     std::vector<int> togglePerpective = {GLFW_KEY_F5};
     std::vector<int> toggleFullscreen = {GLFW_KEY_F11};
 
-private:
-    // Not rebinding -> private
-    int escape = GLFW_KEY_ESCAPE;
 
 public:
+    int getToggleDebug() const { return toggleDebug; }
+    int getEscape() const { return escape; }
     std::vector<int> getKeysToMonitorForCharacter();
     std::vector<int> getKeysToMonitorForMenu();
 };

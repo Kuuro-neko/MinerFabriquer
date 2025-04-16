@@ -4,6 +4,15 @@
 #include <map>
 #include <vector>
 
+#define PRESSED    1
+#define HELD       2
+#define RELEASED   3
+
+struct KeyStatus
+{
+
+};
+
 class KeyInput
 {
     // Main KeyInput functionality

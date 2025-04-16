@@ -97,8 +97,7 @@ Character character = Character(
 );
 
 
-KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
-KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
+
 
 void UpdateFPS() {
     static double lastTime = glfwGetTime();
@@ -135,6 +134,10 @@ int main(void) {
 
     // Open a window and create its OpenGL context
     window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
+    KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
+    KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
+    KeyInput::setupKeyInputs(*window);
+
     if (window == NULL) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -232,7 +235,6 @@ int main(void) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        inputManager.processInput();
         // input
         processInput(window, deltaTime);
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
@@ -270,6 +272,10 @@ int main(void) {
                                                        camera.getViewMatrix(),
                                                        camera.getProjectionMatrix()
         );
+
+        if (characterInputManager.getIsKeyDown(GLFW_KEY_F3)) {
+            std::cout << "F3 pressed" << std::endl;
+        }
 
 
         crosshair.render();

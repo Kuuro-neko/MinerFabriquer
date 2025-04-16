@@ -88,6 +88,7 @@ add_executable(MinerFabriquer
         TP/Input/KeyInput.cpp
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
+        TP/Input/KeyBinds.cpp
 )
 target_link_libraries(MinerFabriquer
         ${ALL_LIBS}

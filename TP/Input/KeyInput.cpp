@@ -1,5 +1,6 @@
 #include "KeyInput.hpp"
 #include <algorithm>
+#include <iostream>
 
 std::vector<KeyInput *> KeyInput::_instances;
 
@@ -48,10 +49,13 @@ void KeyInput::setupKeyInputs(GLFWwindow &window)
 }
 
 void KeyInput::callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+
 {
+    std::cout << "Key: " << key << " Action: " << action << std::endl;
     // Send key event to all KeyInput instances
     for (KeyInput *keyInput : _instances)
     {
         keyInput->setIsKeyDown(key, action != GLFW_RELEASE);
+        std::cout << "Key sent to KeyInput: " << key << std::endl;
     }
 }
