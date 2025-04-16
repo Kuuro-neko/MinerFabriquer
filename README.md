@@ -12,17 +12,17 @@
 
 <img src="assets/e.png" alt="E" height="20 " style="image-rendering: pixelated;"/> Open inventory
 
-LMB Break block
+<img src="assets/lmb.png" alt="LMB" height="20 " style="image-rendering: pixelated;"/> Break block
 
-RMB Place block
+<img src="assets/rmb.png" alt="RMB" height="20 " style="image-rendering: pixelated;"/> Place block
 
-MMB Select block from environment
+<img src="assets/mmb.png" alt="MMB" height="20 " style="image-rendering: pixelated;"/> Select block from environment
 
 ## Camera
 
 <img src="assets/w.png" alt="W" width="20 " style="image-rendering: pixelated;"/> Toggle mouse focus
 
-mouse Rotate the camera (mouse focused)
+<img src="assets/mouse.png" alt="mouse" height="20 " style="image-rendering: pixelated;"/> Rotate the camera (mouse focused)
 
 <img src="assets/arrows.png" alt="Arrow keys" width="60" style="image-rendering: pixelated;"/> Rotate the camera (mouse unfocused)
 
