@@ -9,6 +9,8 @@
 #include "TP/Character/Character.hpp"
 #include "TP/Camera/Frustrum.hpp"
 #include <TP/GUI/Crosshair.hpp>
+#include <TP/Input/KeyInput.hpp>
+#include <TP/Input/KeyBinds.hpp>
 
 #define CHUNK_SIZE 16
 
@@ -95,6 +97,8 @@ Character character = Character(
 );
 
 
+KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
+KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
 
 void UpdateFPS() {
     static double lastTime = glfwGetTime();
@@ -219,7 +223,6 @@ int main(void) {
         character.scrollCallback(window, xOffset, yOffset);
     });
 
-
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
@@ -229,7 +232,7 @@ int main(void) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
+        inputManager.processInput();
         // input
         processInput(window, deltaTime);
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
