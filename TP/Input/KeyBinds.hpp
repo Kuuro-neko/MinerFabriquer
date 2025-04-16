@@ -37,6 +37,10 @@ public:
     std::vector<int> toggleHUD = {GLFW_KEY_F1};
     std::vector<int> takeScreenshot = {GLFW_KEY_F2};
 
+    std::vector<int> keyCameraLeft = {GLFW_KEY_LEFT};
+    std::vector<int> keyCameraRight = {GLFW_KEY_RIGHT};
+    std::vector<int> keyCameraUp = {GLFW_KEY_UP};
+    std::vector<int> keyCameraDown = {GLFW_KEY_DOWN};
     
     std::vector<int> toggleBoudingBoxes = {toggleDebug, GLFW_KEY_B};
     std::vector<int> toggleWireframe = {toggleDebug, GLFW_KEY_W};
@@ -44,8 +48,12 @@ public:
     std::vector<int> toggleSpectator = {toggleDebug, GLFW_KEY_N};
     std::vector<int> reloadChunkMeshes = {toggleDebug, GLFW_KEY_Q};
 
-    std::vector<int> togglePerpective = {GLFW_KEY_F5};
+    std::vector<int> togglePerspectiveAlternative = {GLFW_KEY_C};
+    std::vector<int> togglePerspective = {GLFW_KEY_F5};
     std::vector<int> toggleFullscreen = {GLFW_KEY_F11};
+
+    // Remove when the menu on ESCAPE is working, or the inventory on E is working :D 
+    std::vector<int> toggleFocus = {GLFW_KEY_Z};
 
 
 public:

@@ -134,7 +134,8 @@ int main(void) {
     KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
     menuInputManager.setIsEnabled(false);
     KeyInput::setupKeyInputs(*window);
-    character.keyInput = &characterInputManager;
+    character.setKeyInput(&characterInputManager);
+    camera.setKeyInput(&characterInputManager);
 
     if (window == NULL) {
         fprintf(stderr,
@@ -274,7 +275,7 @@ int main(void) {
         );
 
         crosshair.render();
-        
+
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);

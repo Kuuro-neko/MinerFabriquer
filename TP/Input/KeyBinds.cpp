@@ -15,15 +15,22 @@ std::vector<int> Keybinds::getKeysToMonitorForCharacter() {
     keys.insert(keys.end(), selectBlock.begin(), selectBlock.end());
     keys.insert(keys.end(), toggleHUD.begin(), toggleHUD.end());
     keys.insert(keys.end(), takeScreenshot.begin(), takeScreenshot.end());
+    keys.insert(keys.end(), keyCameraLeft.begin(), keyCameraLeft.end());
+    keys.insert(keys.end(), keyCameraRight.begin(), keyCameraRight.end());
+    keys.insert(keys.end(), keyCameraUp.begin(), keyCameraUp.end());
+    keys.insert(keys.end(), keyCameraDown.begin(), keyCameraDown.end());
     keys.insert(keys.end(), toggleDebug);
     keys.insert(keys.end(), toggleBoudingBoxes.begin(), toggleBoudingBoxes.end());
     keys.insert(keys.end(), toggleWireframe.begin(), toggleWireframe.end());
     keys.insert(keys.end(), toggleChunkBorders.begin(), toggleChunkBorders.end());
     keys.insert(keys.end(), toggleSpectator.begin(), toggleSpectator.end());
     keys.insert(keys.end(), reloadChunkMeshes.begin(), reloadChunkMeshes.end());
-    keys.insert(keys.end(), togglePerpective.begin(), togglePerpective.end());
+    keys.insert(keys.end(), togglePerspectiveAlternative.begin(), togglePerspectiveAlternative.end());
+    keys.insert(keys.end(), togglePerspective.begin(), togglePerspective.end());
     keys.insert(keys.end(), toggleFullscreen.begin(), toggleFullscreen.end());
     keys.insert(keys.end(), escape);
+    // Remove when the menu on ESCAPE is working, or the inventory on E is working :D 
+    keys.insert(keys.end(), toggleFocus.begin(), toggleFocus.end());
 
     // remove duplicates 
     std::sort(keys.begin(), keys.end());
