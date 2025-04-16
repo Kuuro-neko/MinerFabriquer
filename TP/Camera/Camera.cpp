@@ -34,63 +34,66 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 	glfwGetWindowSize(_window, &w, &h);
 
 	// On key R, reset the camera
-	if (glfwGetKey(_window, GLFW_KEY_R) == GLFW_PRESS) {
-		reset();
-		return;
-	}
+	// if (glfwGetKey(_window, GLFW_KEY_R) == GLFW_PRESS) {
+	// 	reset();
+	// 	return;
+	// }
 
 	// Handle control mode changes when W is pressed
-	if (glfwGetKey(_window, GLFW_KEY_Z) == GLFW_PRESS) {
-		if (!m_zPressed) {
-			m_mode = (m_mode+1) % 2;
-			if (m_mode == 0) {
-                glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                m_prevMouseX = w / 2.0;
-                m_prevMouseY = h / 2.0;
-                glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
-            } else {
-                glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-				m_prevMouseX = w / 2.0;
-                m_prevMouseY = h / 2.0;
-				glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
-            }
+	if (keyInput->isKeybindPressed(keybinds->toggleFocus)) {
+		m_mode = (m_mode+1) % 2;
+		if (m_mode == 0) {
+			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			m_prevMouseX = w / 2.0;
+			m_prevMouseY = h / 2.0;
+			glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
+		} else {
+			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			m_prevMouseX = w / 2.0;
+			m_prevMouseY = h / 2.0;
+			glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
 		}
-		m_zPressed = true;
-    }
-	if (glfwGetKey(_window, GLFW_KEY_Z) == GLFW_RELEASE) {
-        m_zPressed = false;
     }
 
-	// Attach of detach camera from target when T is pressed
-	if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS) {
-		if (!m_tPressed) {
-			if (m_attached) {
-				setPosition(m_targetPrev + m_targetDeltaPos + CAMERA_POSITION_RELATIVE_TO_PLAYER);
-			}
-			m_attached = !m_attached;
+	// Attach of detach camera from target when togglePerspective key is pressed
+	if (keyInput->isKeybindPressed(keybinds->togglePerspective) || keyInput->isKeybindPressed(keybinds->togglePerspectiveAlternative)) {
+		if (m_attached) {
+			setPosition(m_targetPrev + m_targetDeltaPos + CAMERA_POSITION_RELATIVE_TO_PLAYER);
 		}
-		m_tPressed = true;
-    }
-	if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_RELEASE) {
-        m_tPressed = false;
+		m_attached = !m_attached;
     }
 
 	if (m_attached) {
-		double mouseX, mouseY;
-		glfwGetCursorPos(_window, &mouseX, &mouseY);
-
-		double offsetX = mouseX - m_prevMouseX;
-		double offsetY = m_prevMouseY - mouseY;
-
-		m_prevMouseX = w / 2.0;
-		m_prevMouseY = h / 2.0;
-		glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
-		if (offsetX != 0) {
-			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
+		if (m_mode == 0) {
+			double mouseX, mouseY;
+			glfwGetCursorPos(_window, &mouseX, &mouseY);
+	
+			double offsetX = mouseX - m_prevMouseX;
+			double offsetY = m_prevMouseY - mouseY;
+	
+			m_prevMouseX = w / 2.0;
+			m_prevMouseY = h / 2.0;
+			glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
+			if (offsetX != 0) {
+				m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
+			}
+			if (offsetY != 0) {
+				m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
+			}
+		} else {
+			if (keyInput->isKeybindHeld(keybinds->keyCameraLeft)) {
+				m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y + m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection);
+			}
+			if (keyInput->isKeybindHeld(keybinds->keyCameraRight)) {
+				m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection);
+			}
+			if (keyInput->isKeybindHeld(keybinds->keyCameraUp)) {
+				m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
+			}
+			if (keyInput->isKeybindHeld(keybinds->keyCameraDown)) {
+				m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x + m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
+			}
 		}
-		if (offsetY != 0) {
-            m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
-        }
 	// Camera mode 0 (mouse controlled camera) while not attached
 	} else if (m_mode == 0) {
 		double mouseX, mouseY;
@@ -103,31 +106,26 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 		m_prevMouseY = h / 2.0;
 		glfwSetCursorPos(_window, m_prevMouseX, m_prevMouseY);
 
-		/*if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS) {
-			m_position += normalize(m_rotation * VEC_FRONT) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS) {
-			m_position -= normalize(m_rotation * VEC_FRONT) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS) {
-			m_position += normalize(m_rotation * VEC_RIGHT) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS) {
-			m_position -= normalize(m_rotation * VEC_RIGHT) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			m_position += normalize(m_rotation * VEC_UP) * m_translation_speed * _deltaTime;
-		}
-		if (glfwGetKey(_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-			m_position -= normalize(m_rotation * VEC_UP) * m_translation_speed * _deltaTime;
-		}*/
 		if (offsetX != 0) {
 			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - offsetX * M_PI / 180 * m_rotation_speed * invertX);
 		}
 		if (offsetY != 0) {
             m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - offsetY * M_PI / 180 * m_rotation_speed * invertY), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
         }
-	} 
+	} else {
+		if (keyInput->isKeybindHeld(keybinds->keyCameraLeft)) {
+			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y + m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection);
+		}
+		if (keyInput->isKeybindHeld(keybinds->keyCameraRight)) {
+			m_eulerAngle.y = Camera_Helper::clipAnglePI(m_eulerAngle.y - m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection);
+		}
+		if (keyInput->isKeybindHeld(keybinds->keyCameraUp)) {
+			m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x - m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
+		}
+		if (keyInput->isKeybindHeld(keybinds->keyCameraDown)) {
+			m_eulerAngle.x = Camera_Helper::clamp(Camera_Helper::clipAnglePI(m_eulerAngle.x + m_rotation_speed * M_PI / 180 * m_rotationSpeedKeysCorrection), -M_PI_2 + 0.1f, M_PI_2 - 0.1f);
+		}
+	}
 }
 
 

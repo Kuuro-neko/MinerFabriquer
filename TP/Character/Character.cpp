@@ -2,6 +2,8 @@
 #include <iostream>
 #include <optional>
 
+
+
 using namespace std;
 
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
@@ -25,7 +27,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise les actions en fonction de la touche détectée
  * @param key
  */
-void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &database) {
+void Character::listenAction(float dt, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -35,41 +37,82 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
     cameraRightNoUp = normalize(cameraRightNoUp);
     vecteurDirection = glm::vec3(0.f);
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        vecteurDirection = cameraFrontNoUp * dt * speed;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        vecteurDirection = cameraFrontNoUp * -dt * speed;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        vecteurDirection = cameraRightNoUp * dt * speed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        vecteurDirection = cameraRightNoUp * -dt * speed;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        vecteurDirection = glm::vec3(0.f, -dt * speed, 0.f);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        vecteurDirection = glm::vec3(0.f, dt * speed, 0.f);
+    // ==== Movement binds ====
+    if (keyInput->isKeybindHeld(keybinds->forward))
+        vecteurDirection += cameraFrontNoUp;
+    if (keyInput->isKeybindHeld(keybinds->backward))
+        vecteurDirection -= cameraFrontNoUp;
+    if (keyInput->isKeybindHeld(keybinds->left))
+        vecteurDirection += cameraRightNoUp;
+    if (keyInput->isKeybindHeld(keybinds->right))
+        vecteurDirection -= cameraRightNoUp;
+    if (keyInput->isKeybindHeld(keybinds->sneak))
+        vecteurDirection -= VEC_UP;
+    if (keyInput->isKeybindHeld(keybinds->jump))
+        vecteurDirection += VEC_UP;
+
+    if (glm::length(vecteurDirection) > 0.01f) {
+        vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
+    }
+    vecteurDirection *= speed * dt;
 
 
-//    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-//        std::cout << "inventaire" << std::endl;
-//    }
+    if (keyInput->isKeybindPressed(keybinds->openInventory)) {
+        std::cout << "[Character] Inventaire" << std::endl;
+    }
+
+    // if (keyInput->isKeybindHeld(keybinds->sprint)) {
+    //     std::cout << "[Character] Sprint" << std::endl;
+    // }
 
 
     updateClosestBlock(database); //on met à jour le bloc le plus proche
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && breakCooldown >= MAX_BREAK_COOLDOWN) {
+    // ==== Bloc interaction binds ====
+    if (keyInput->isKeybindHeld(keybinds->breakBlock) && breakCooldown >= MAX_BREAK_COOLDOWN) {
         breakBlock(database); // on fait un coup de pioche
     }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS && placeCooldown >= MAX_PLACE_COOLDOWN) {
+    if (keyInput->isKeybindHeld(keybinds->placeBlock) && placeCooldown >= MAX_PLACE_COOLDOWN) {
         putBlock(database); //on pose un bloc
     }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
-        std::cout << "Selected bloc is at " << blocPlusProche.x << ", " << blocPlusProche.y << ", " << blocPlusProche.z
-                  << std::endl;
+    if (keyInput->isKeybindHeld(keybinds->selectBlock)) {
         setSelectedBlock(database); //on sélectionne un bloc
+    }
+
+    // ==== Debug binds ====
+    if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes)) {
+        std::cout << "[Character] Toggle bounding boxes (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleChunkBorders)) {
+        std::cout << "[Character] Toggle chunk borders (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleWireframe)) {
+        std::cout << "[Character] Toggle wireframe (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleSpectator)) {
+        std::cout << "[Character] Toggle spectator mode (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->reloadChunkMeshes)) {
+        std::cout << "[Character] Reload chunk meshes (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeyReleased(keybinds->getToggleDebug())) {
+        if (shouldToggleDebug) {
+            std::cout << "[Character] Toggle debug mode (not implemented)" << std::endl;
+        } else {
+            shouldToggleDebug = true;
+        }
     }
 }
 
