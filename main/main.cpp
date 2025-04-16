@@ -216,23 +216,14 @@ int main(void) {
 
     character.m_world = &world;
 
-    MeshObject characterMesh = MeshObject();
-    create_cube_textured(character.getSize()/2.f, characterMesh);
-    characterMesh.initializeBuffers();
-    character.m_mesh = &characterMesh;
+    Entity* characterModel = new Entity();
+    characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
+    Texture* playerTexture = new Texture("../textures/steve.png");
+    characterModel->setTexture(playerTexture);
+    character.addChild(characterModel);
     root.addChild(&character);
     character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
-    character.m_texture = TextureAtlas::getInstance().getTexture();
-
-
-    //créé un Entity 
-    Entity entity = Entity();
-    entity.generateHumanoidMesh(11.f);
-    Texture texture = Texture("../textures/steve.png");
-    entity.setTexture(&texture);
-    root.addChild(&entity);
-
 
     
 
