@@ -4,14 +4,11 @@
 #include <map>
 #include <vector>
 
-#define PRESSED    1
-#define HELD       2
-#define RELEASED   3
-
-struct KeyStatus
-{
-
-};
+#define KEY_PRESSED    1
+#define KEY_HELD       2
+#define KEY_RELEASED   3
+#define KEY_UNPRESSED  4
+#define KEY_UNDEFINED  5
 
 class KeyInput
 {
@@ -22,16 +19,20 @@ public:
     ~KeyInput();
     // If this KeyInput is enabled and the given key is monitored,
     // returns pressed state.  Else returns false.
-    bool getIsKeyDown(int key);
+    bool isKeyDown(int key);
+    bool isKeyReleased(int key);
+    int getKeyStatus(int key);
     // See _isEnabled for details
     bool getIsEnabled() { return _isEnabled; }
     void setIsEnabled(bool value) { _isEnabled = value; }
+    // Updates the state of all keys 
+    void update();
 
 private:
     // Used internally to update key states.  Called by the GLFW callback.
-    void setIsKeyDown(int key, bool isDown);
+    void setKeyStatus(int key, int action);
     // Map from monitored keyes to their pressed states
-    std::map<int, bool> _keys;
+    std::map<int, char> _keys;
     // If disabled, KeyInput.getIsKeyDown always returns false
     bool _isEnabled;
 

@@ -136,6 +136,7 @@ int main(void) {
     window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
     KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
     KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
+    menuInputManager.setIsEnabled(false);
     KeyInput::setupKeyInputs(*window);
 
     if (window == NULL) {
@@ -237,6 +238,7 @@ int main(void) {
         lastFrame = currentFrame;
         // input
         processInput(window, deltaTime);
+
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
         character.listenAction(deltaTime, window, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
@@ -273,8 +275,12 @@ int main(void) {
                                                        camera.getProjectionMatrix()
         );
 
-        if (characterInputManager.getIsKeyDown(GLFW_KEY_F3)) {
-            std::cout << "F3 pressed" << std::endl;
+        if (characterInputManager.isKeyReleased(GLFW_KEY_F3)) {  
+            std::cout << "Toggle debug mode" << std::endl;
+        }
+
+        if (characterInputManager.isKeyDown(GLFW_KEY_W)) {  
+            std::cout << "W Down" << std::endl;
         }
 
 
@@ -287,6 +293,8 @@ int main(void) {
 
         // Swap buffers
         glfwSwapBuffers(window);
+        characterInputManager.update();
+        menuInputManager.update();
         glfwPollEvents();
 
     } // Check if the ESC key was pressed or the window was closed
