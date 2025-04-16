@@ -320,7 +320,7 @@ void Entity::generateHumanoidMesh(float baseHeight) {
 
     
     //TP body to position we want
-    translate(glm::vec3(10.f, baseHeight, 5.f));
+    translate(glm::vec3(0.f, baseHeight, 5.f));
 }
 
 

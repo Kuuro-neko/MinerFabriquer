@@ -217,25 +217,6 @@ int main(void) {
     character.m_texture = TextureAtlas::getInstance().getTexture();
 
 
-
-    // //metre un bloc normale pour référenciel a coter de la tete
-    // MeshObject blockMesh = MeshObject();
-    // create_cube_textured(glm::vec3(1.f, 1.f, 1.f)/2.f, blockMesh);
-    // blockMesh.initializeBuffers();
-    // SceneNode blockNode = SceneNode();
-    // blockNode.m_mesh = &blockMesh;
-    // root.addChild(&blockNode);
-    // blockNode.translate(glm::vec3(1.f, 12.f, 5.f));
-
-    // //un autre bloc jsute de sous le premier 
-    // MeshObject blockMesh2 = MeshObject();
-    // create_cube_textured(glm::vec3(1.f, 1.f, 1.f)/2.f, blockMesh2);
-    // blockMesh2.initializeBuffers();
-    // SceneNode blockNode2 = SceneNode();
-    // blockNode2.m_mesh = &blockMesh2;
-    // root.addChild(&blockNode2);
-    // blockNode2.translate(glm::vec3(1.f, 11.f, 5.f));
-
     //créé un Entity 
     Entity entity = Entity();
     entity.generateHumanoidMesh(11.f);
