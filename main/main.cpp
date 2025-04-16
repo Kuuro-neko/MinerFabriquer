@@ -22,10 +22,6 @@ using namespace glm;
 int windowWidth = 1024;
 int windowHeight = 768;
 
-
-void processInput(GLFWwindow *window, float dt);
-
-
 Camera camera;
 // timing
 float deltaTime = 0.0f;    // time between current frame and last frame
@@ -237,8 +233,8 @@ int main(void) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        // input
-        processInput(window, deltaTime);
+
+        // Poll inputs
         glfwPollEvents();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
@@ -278,6 +274,7 @@ int main(void) {
         );
 
         crosshair.render();
+        
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
@@ -287,9 +284,9 @@ int main(void) {
         // Swap buffers
         glfwSwapBuffers(window);
         
+        // Update the input managers
         characterInputManager.update();
         menuInputManager.update();
-
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(window) == 0);
@@ -307,12 +304,6 @@ int main(void) {
     return 0;
 }
 
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window, float dt) {
-
-}
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
