@@ -138,6 +138,7 @@ int main(void) {
     KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
     menuInputManager.setIsEnabled(false);
     KeyInput::setupKeyInputs(*window);
+    character.keyInput = &characterInputManager;
 
     if (window == NULL) {
         fprintf(stderr,
@@ -238,9 +239,10 @@ int main(void) {
         lastFrame = currentFrame;
         // input
         processInput(window, deltaTime);
+        glfwPollEvents();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
-        character.listenAction(deltaTime, window, BlocDatabase::getInstance());
+        character.listenAction(deltaTime, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
@@ -275,15 +277,6 @@ int main(void) {
                                                        camera.getProjectionMatrix()
         );
 
-        if (characterInputManager.isKeyReleased(GLFW_KEY_F3)) {  
-            std::cout << "Toggle debug mode" << std::endl;
-        }
-
-        if (characterInputManager.isKeyDown(GLFW_KEY_W)) {  
-            std::cout << "W Down" << std::endl;
-        }
-
-
         crosshair.render();
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
@@ -293,9 +286,9 @@ int main(void) {
 
         // Swap buffers
         glfwSwapBuffers(window);
+        
         characterInputManager.update();
         menuInputManager.update();
-        glfwPollEvents();
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
@@ -318,7 +311,6 @@ int main(void) {
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window, float dt) {
-
 
 }
 

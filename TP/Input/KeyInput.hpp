@@ -19,8 +19,14 @@ public:
     ~KeyInput();
     // If this KeyInput is enabled and the given key is monitored,
     // returns pressed state.  Else returns false.
-    bool isKeyDown(int key);
+    bool isKeyHeld(int key);
     bool isKeyReleased(int key);
+    bool isKeyPressed(int key);
+
+    bool isKeybindHeld(const std::vector<int>& keybind);
+    bool isKeybindPressed(const std::vector<int>& keybind);
+    bool isKeybindReleased(const std::vector<int>& keybind);
+    
     int getKeyStatus(int key);
     // See _isEnabled for details
     bool getIsEnabled() { return _isEnabled; }
@@ -43,8 +49,10 @@ public:
 
 private:
     // The GLFW callback for key events.  Sends events to all KeyInput instances
-    static void callback(
+    static void keysCallback(
         GLFWwindow *window, int key, int scancode, int action, int mods);
+    
+    static void mouseCallback(GLFWwindow *window, int button, int action, int mods);
     // Keep a list of all KeyInput instances and notify them all of key events
     static std::vector<KeyInput *> _instances;
 };

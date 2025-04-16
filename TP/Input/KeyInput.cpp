@@ -1,6 +1,7 @@
 #include "KeyInput.hpp"
 #include <algorithm>
 #include <iostream>
+#include <TP/Input/KeyBinds.hpp>
 
 std::vector<KeyInput *> KeyInput::_instances;
 
@@ -20,23 +21,97 @@ KeyInput::~KeyInput()
     _instances.erase(std::remove(_instances.begin(), _instances.end(), this), _instances.end());
 }
 
-bool KeyInput::isKeyDown(int key)
+bool KeyInput::isKeyHeld(int key)
 {
+    if (!_isEnabled) return false;
+
     bool result = false;
-    if (_isEnabled)
+    
+    std::map<int, char>::iterator it = _keys.find(key);
+    if (it != _keys.end())
     {
-        std::map<int, char>::iterator it = _keys.find(key);
-        if (it != _keys.end())
-        {
-            result = (_keys[key] == KEY_PRESSED || _keys[key] == KEY_HELD);
-        }
+        result = (_keys[key] == KEY_PRESSED || _keys[key] == KEY_HELD);
     }
     return result;
 }
 
+bool KeyInput::isKeybindHeld(const std::vector<int>& keybind)
+{
+    if (!_isEnabled || keybind.empty()) return false;
+
+    for (int key : keybind)
+    {
+        if (_keys.find(key) == _keys.end() || _keys[key] != KEY_PRESSED && _keys[key] != KEY_HELD)
+        {
+            return false;
+        }
+    }
+    return true;
+
+}
+
+bool KeyInput::isKeyPressed(int key)
+{
+    if (!_isEnabled) return false;
+    bool result = false;
+
+    std::map<int, char>::iterator it = _keys.find(key);
+    if (it != _keys.end())
+    {
+        result = (_keys[key] == KEY_PRESSED);
+    }
+    return result;
+}
+
+bool KeyInput::isKeybindPressed(const std::vector<int>& keybind) {
+    if (!_isEnabled || keybind.empty()) return false;
+
+    bool anyJustPressed = false;
+
+    for (int key : keybind) {
+        auto it = _keys.find(key);
+        if (it == _keys.end()) return false; // Key not tracked
+
+        int status = it->second;
+        if (status != KEY_PRESSED && status != KEY_HELD) {
+            return false; // One key not pressed at all
+        }
+
+        if (status == KEY_PRESSED) {
+            anyJustPressed = true; // At least one was just pressed
+        }
+    }
+
+    return anyJustPressed;
+}
+
+bool KeyInput::isKeybindReleased(const std::vector<int> &keybind)
+{
+    if (!_isEnabled || keybind.empty()) return false;
+
+    for (int key : keybind)
+    {
+        auto it = _keys.find(key);
+        if (it == _keys.end()) return false; // Key not tracked
+
+        int status = it->second;
+        if (status != KEY_RELEASED) {
+            return false; // One key not released
+        }
+    }
+    return true; // All keys released
+}
+
 bool KeyInput::isKeyReleased(int key)
 {
-    return (_isEnabled && _keys[key] == KEY_RELEASED);
+    if (!_isEnabled) return false;
+    bool result = false;
+    std::map<int, char>::iterator it = _keys.find(key);
+    if (it != _keys.end())
+    {
+        result = (_keys[key] == KEY_RELEASED);
+    }
+    return result;
 }
 
 int KeyInput::getKeyStatus(int key)
@@ -56,7 +131,14 @@ void KeyInput::setKeyStatus(int key, int action)
     {
         switch (action) {
             case GLFW_PRESS:
-                _keys[key] = KEY_PRESSED;
+                if (_keys[key] == KEY_UNPRESSED)
+                {
+                    _keys[key] = KEY_PRESSED;
+                }
+                else
+                {
+                    _keys[key] = KEY_HELD;
+                }
                 break;
             case GLFW_REPEAT:
                 _keys[key] = KEY_HELD;
@@ -73,16 +155,26 @@ void KeyInput::setKeyStatus(int key, int action)
 
 void KeyInput::setupKeyInputs(GLFWwindow &window)
 {
-    glfwSetKeyCallback(&window, KeyInput::callback);
+    glfwSetKeyCallback(&window, KeyInput::keysCallback);
+    glfwSetMouseButtonCallback(&window, KeyInput::mouseCallback);
 }
 
-void KeyInput::callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+void KeyInput::keysCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 
 {
     // Send key event to all KeyInput instances
     for (KeyInput *keyInput : _instances)
     {
         keyInput->setKeyStatus(key, action);
+    }
+}
+
+void KeyInput::mouseCallback(GLFWwindow *window, int button, int action, int mods)
+{
+    // Send mouse event to all KeyInput instances
+    for (KeyInput *keyInput : _instances)
+    {
+        keyInput->setKeyStatus(button, action);
     }
 }
 

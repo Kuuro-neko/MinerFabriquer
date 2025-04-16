@@ -11,7 +11,7 @@ Keybinds() = default;
     Keybinds(const Keybinds&) = delete;
     Keybinds& operator=(const Keybinds&) = delete;
 
-    // Rebindable keys -> private
+    // Not rebindable keys -> private
     int toggleDebug = GLFW_KEY_F3;
     int escape = GLFW_KEY_ESCAPE;
 
@@ -28,8 +28,8 @@ public:
     std::vector<int> left = {GLFW_KEY_A};
     std::vector<int> right = {GLFW_KEY_D};
     std::vector<int> jump = {GLFW_KEY_SPACE};
-    std::vector<int> sneak = {GLFW_KEY_LEFT_CONTROL};
-    std::vector<int> sprint = {GLFW_KEY_LEFT_SHIFT};
+    std::vector<int> sneak = {GLFW_KEY_LEFT_SHIFT};
+    std::vector<int> sprint = {GLFW_KEY_Q};
     std::vector<int> openInventory = {GLFW_KEY_E};
     std::vector<int> breakBlock = {GLFW_MOUSE_BUTTON_LEFT};
     std::vector<int> placeBlock = {GLFW_MOUSE_BUTTON_RIGHT};
@@ -42,7 +42,7 @@ public:
     std::vector<int> toggleWireframe = {toggleDebug, GLFW_KEY_W};
     std::vector<int> toggleChunkBorders = {toggleDebug, GLFW_KEY_G};
     std::vector<int> toggleSpectator = {toggleDebug, GLFW_KEY_N};
-    std::vector<int> reloadChunkMeshes = {toggleDebug, GLFW_KEY_A};
+    std::vector<int> reloadChunkMeshes = {toggleDebug, GLFW_KEY_Q};
 
     std::vector<int> togglePerpective = {GLFW_KEY_F5};
     std::vector<int> toggleFullscreen = {GLFW_KEY_F11};
