@@ -23,13 +23,15 @@ void main(){
         gl_Position =  ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(vertices_position_modelspace,1);
         UV = vertexUV;
         
-        vNormal = vertexNormal_modelspace;
+        vNormal = mat3(transpose(inverse(ModelMatrix))) * vertexNormal_modelspace;
+
 
         pos = vec3(ModelMatrix * vec4(vertices_position_modelspace,1));
         //pos = vec3(1.f);
 
 
-        camPos = vec3(ViewMatrix * vec4(0,0,0,1));
+        camPos = vec3(ViewMatrix * vec4(0, 0, 0, 1));
+
         //camPos = vec3(0.f, 0.f, 0.f);
 }
 

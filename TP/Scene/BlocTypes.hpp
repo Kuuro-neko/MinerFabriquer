@@ -16,6 +16,7 @@
 #define GLOWSTONE 8
 #define WATER 9
 #define SAND 10
+#define IRON_ORE 11
 
 #define ERROR_BLOC 255
 
