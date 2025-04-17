@@ -2,6 +2,7 @@
 #include <random>
 #include "WorldGenerator.hpp"
 #include "TP/Character/Character.hpp"
+#include <algorithm>
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
     generation();
@@ -196,21 +197,76 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 }
 
 void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
-    // Récupération de la bounding box du personnage
+    // Récupération de la position du personnage
+    glm::vec3 characterPosition = character.getWorldPosition();
+    glm::vec3 ijkActual = chunk->getChunkCoords();
+
+    std::cout << " ijkActual " << ijkActual.x
+              << ijkActual.y << ijkActual.z;
+
+//    VoxelChunk *chunkGauche = getChunkAt(xLeft, ijkActual.y, ijkActual.z);
+//    VoxelChunk *chunkDroite = getChunkAt(xRight, ijkActual.y, ijkActual.z);
+//    VoxelChunk *chunkHaut = getChunkAt(ijkActual.x, ijkActual.y, zTop);
+//    VoxelChunk *chunkBas = getChunkAt(ijkActual.x, ijkActual.y, zBottom);
+//
+//    std::cout << "chunk gauche : " << (chunkGauche ? chunkGauche->getChunkCoords().x : -1) << ", "
+//              << (chunkGauche ? chunkGauche->getChunkCoords().y : -1) << ", "
+//              << (chunkGauche ? chunkGauche->getChunkCoords().z : -1) << std::endl;
+//    std::cout << "chunk droite : " << (chunkDroite ? chunkDroite->getChunkCoords().x : -1) << ", "
+//              << (chunkDroite ? chunkDroite->getChunkCoords().y : -1) << ", "
+//              << (chunkDroite ? chunkDroite->getChunkCoords().z : -1) << std::endl;
+//    std::cout << "chunk haut : " << (chunkHaut ? chunkHaut->getChunkCoords().x : -1) << ", "
+//              << (chunkHaut ? chunkHaut->getChunkCoords().y : -1) << ", "
+//              << (chunkHaut ? chunkHaut->getChunkCoords().z : -1) << std::endl;
+//    std::cout << "chunk bas : " << (chunkBas ? chunkBas->getChunkCoords().x : -1) << ", "
+//              << (chunkBas ? chunkBas->getChunkCoords().y : -1) << ", "
+//              << (chunkBas ? chunkBas->getChunkCoords().z : -1) << std::endl;
+//
+//    // Calcul des distances uniquement si les chunks existent
+//    float distanceGauche = chunkGauche ? glm::length(characterPosition - chunkGauche->getWorldPosition()) : FLT_MAX;
+//    float distanceDroite = chunkDroite ? glm::length(characterPosition - chunkDroite->getWorldPosition()) : FLT_MAX;
+//    float distanceHaut = chunkHaut ? glm::length(characterPosition - chunkHaut->getWorldPosition()) : FLT_MAX;
+//    float distanceBas = chunkBas ? glm::length(characterPosition - chunkBas->getWorldPosition()) : FLT_MAX;
+//
+//// Récupération de la distance minimale
+//    float minDistance = std::min({distanceGauche, distanceDroite, distanceHaut, distanceBas});
+//    VoxelChunk *chunkProche = chunk; // Initialisation avec le chunk actuel
+//    if (minDistance == distanceGauche && chunkGauche) {
+//        chunkProche = chunkGauche;
+//    } else if (minDistance == distanceDroite && chunkDroite) {
+//        chunkProche = chunkDroite;
+//    } else if (minDistance == distanceHaut && chunkHaut) {
+//        chunkProche = chunkHaut;
+//    } else if (minDistance == distanceBas && chunkBas) {
+//        chunkProche = chunkBas;
+//    }
+//
+//    //affichage des coordonnées du chunk proche
+//    std::cout << "Chunk proche : " << chunkProche->getChunkCoords().x << ", " << chunkProche->getChunkCoords().y
+//              << ", " << chunkProche->getChunkCoords().z << std::endl;
+
+// Récupération de la bounding box du personnage
     glm::vec3 minBB = character.getMinBoundingBox();
     glm::vec3 maxBB = character.getMaxBoundingBox();
 
-    // Parcours des blocs proches de la bounding box du personnage (environ 1 bloc autour)
+// Parcours des blocs proches de la bounding box du personnage
     for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
         for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
             for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
-                if (chunk->getBloc(x, y, z) != AIR) { // Bloc solide détecté, on vérifie la collision
+                // Vérification des blocs dans le chunk actuel et le chunk proche
+                if ((chunk && chunk->getBloc(x, y, z) != AIR)
+//                ||
+                    //      (chunkProche
+                    // && chunkProche->getBloc(x, y, z) != AIR)
+                        )
+                {
+//                    std::cout << "colision avec un bloc de type " << chunkProche->getBloc(x, y, z) << std::endl;
                     resolveCollisionForBlock(character, glm::vec3(x, y, z));
                 }
             }
         }
     }
 
-    // Application du mouvement du personnage en fonction de la direction et de la collision
+// Application du mouvement du personnage
     character.move(character.vecteurDirection);
 }
