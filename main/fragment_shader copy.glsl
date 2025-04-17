@@ -18,11 +18,17 @@ float PI = 3.14159265358979323846;
 vec3 lightOffset = vec3(30.0, 50.0, 30.0);
 vec3 light_pos = pos + lightOffset;
 
+// https://learnopengl.com/PBR/Lighting
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
     return max(F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0), 0.0);
 }
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}   
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
@@ -95,9 +101,14 @@ void main(){
                 frag_color = vec4(N * 0.5 + 0.5, 1.0);
         } else {
                 vec3 lightdir = normalize(light_pos - pos);
-                vec3 light_color = vec3(23.47, 21.31, 20.79);
+                vec3 light_color = vec3(1.0, 1.0, 1.0);
 
-                vec3 albedo = pow(texture(TextureSampler, UV).xyz, vec3(2.2));
+                vec4 albedoTex = texture(TextureSampler, UV);
+                vec3 albedo = pow(albedoTex.rgb, vec3(2.2));
+                if (albedoTex.a < 0.1) {
+                    frag_color = vec4(0.0, 0.0, 0.0, 0.0);
+                    return;
+                }
                 float roughness = texture(RoughnessSampler, UV).r;
                 float metalness = texture(MetalnessSampler, UV).r;
                 
@@ -114,48 +125,27 @@ void main(){
                 
                 int steps = 100;
                 vec3 Lo = vec3(0.0);
-                float dW = 1.0 / float(steps);
-                
-                for (int i = 0; i < steps; i++) {
-                        vec2 randomSeed = vec2(float(i) / float(steps), float(i) / float(steps));
-                        vec3 Wi = randomHemisphereDirection(N, randomSeed);
-                        L = normalize(2.0 * dot(V, H) * H - V);
-                        H = normalize(V + L);   
-                    
-                         // Cook-Torrance BRDF
-                        vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
-                        float NDF = DistributionGGX(N, H, roughness);
-                        float G = GeometrySmith(N, V, L, roughness);
-
-                        vec3 numerator = NDF * G * F;
-                        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
-                        vec3 specular = numerator/denominator;
-
-                        vec3 kS = F;
-                        vec3 kD = vec3(metalness) - kS;
-                        kD *= 1.0 - metalness;
-                        float NdotL = max(dot(N, L), 0.0);
-                        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
-                }
+                float kd = 0.6;
 
                 // vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
-                // float NDF = DistributionGGX(N, H, roughness);
-                // float G = GeometrySmith(N, V, L, roughness);
+                vec3 F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);
+                float NDF = DistributionGGX(N, H, roughness);
+                float G = GeometrySmith(N, V, L, roughness);
 
-                // vec3 numerator = NDF * G * F;
-                // float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
-                // vec3 specular = numerator/denominator; 
+                vec3 numerator = NDF * G * F;
+                float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
+                vec3 specular = numerator/denominator; 
 
-                // vec3 kS = F;
-                // vec3 kD = vec3(1.0) - kS;
+                vec3 kS = F;
+                vec3 kD = vec3(1.0) - kS;
 
-                // kD *= 1.0 - metalness;
+                kD *= 1.0 - metalness;
 
-                // float NdotL = max(dot(N, L), 0.0);
+                float NdotL = max(dot(N, L), 0.0);
 
-                // Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+                Lo += (kD * albedo / PI + specular) * radiance * NdotL;
 
-                vec3 ambient = vec3(0.6) * albedo;
+                vec3 ambient = vec3(0.4) * albedo * kD;
                 vec3 color = ambient + Lo;
 
 
