@@ -140,7 +140,7 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "Miner-Fabriquer", NULL, NULL);
     KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
     KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
     menuInputManager.setIsEnabled(false);
@@ -224,6 +224,7 @@ int main(void) {
     character.m_world = &world;
 
     Entity* characterModel = new Entity();
+    characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
     Texture* playerTexture = new Texture("../textures/steve.png");
     characterModel->setTexture(playerTexture);

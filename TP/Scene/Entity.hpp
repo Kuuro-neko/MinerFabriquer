@@ -23,12 +23,12 @@ class Entity : public SceneNode {
     void setRightArmMesh(MeshObject* mesh);
     void setLeftLegMesh(MeshObject* mesh);
     void setRightLegMesh(MeshObject* mesh);
-    
     void setTexture(Texture* texture);
-    
     void draw(GLuint programID) override;
-    
     void cleanupBuffers() override;
+
+    inline void setIsFPS(bool* FPSActive) { this->FPSActive = FPSActive; }
+
 
     //you are already in the the torso
     SceneNode* m_head;
@@ -44,5 +44,12 @@ class Entity : public SceneNode {
     MeshObject *m_leftLegMesh;
     MeshObject *m_rightLegMesh;
 
+    bool *FPSActive = nullptr;
     void generateHumanoidMesh(float ground);
+
+    void setFPSActive(bool *attached);
+
+
+
+    bool isFPSActive();
 };
