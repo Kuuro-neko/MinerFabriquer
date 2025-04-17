@@ -50,6 +50,7 @@ vec3 FresnelSchlick(vec3 w0, vec3 wh)
 {
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, texture(TextureSampler, UV).xyz, texture(MetalnessSampler, UV).x);
+    
     return F0 + (1.0 - F0) * pow(1.0 - dot(w0, wh), 5.0);
 }
 
@@ -68,14 +69,15 @@ vec3 F_cooktorrance(vec3 w0, vec3 wi, vec3 n, float a) {
 }
 
 vec3 F_r(vec3 pos, vec3 n, vec3 w0, vec3 wi, vec3 albedo, float ks) {
-        vec3 ret = vec3(1.0);
+        vec3 ret = vec3(0.0);
+        float a = texture(RoughnessSampler, UV).x;
         ret += albedo * F_lambert() * ks;
-        ret += F_cooktorrance(w0, wi, n, 0.5) * (1.0 - ks);
+        ret += F_cooktorrance(w0, wi, n, a) * (1.0 - ks);
         return ret;
 }
 
 float L(vec3 pos, vec3 wi) {
-        vec3 lightpos = pos + vec3(0.0, 2.0, 0.0);
+        vec3 lightpos = pos + vec3(3.0, 20.0, 5.0);
         float angle = dot(normalize(lightpos - pos), wi);
         return max(angle, 0.0);
        //return 1.0;
