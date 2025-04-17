@@ -9,8 +9,12 @@
 #include "TP/Character/Character.hpp"
 #include "TP/Camera/Frustrum.hpp"
 #include <TP/GUI/Crosshair.hpp>
+
+#include <TP/Scene/Entity.hpp>
+
 #include <TP/Input/KeyInput.hpp>
 #include <TP/Input/KeyBinds.hpp>
+
 
 #define CHUNK_SIZE 16
 
@@ -212,14 +216,42 @@ int main(void) {
 
     character.m_world = &world;
 
-    MeshObject characterMesh = MeshObject();
-    create_cube_textured(character.getSize()/2.f, characterMesh);
-    characterMesh.initializeBuffers();
-    character.m_mesh = &characterMesh;
+    Entity* characterModel = new Entity();
+    characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
+    Texture* playerTexture = new Texture("../textures/steve.png");
+    characterModel->setTexture(playerTexture);
+    character.addChild(characterModel);
     root.addChild(&character);
     character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
-    character.m_texture = TextureAtlas::getInstance().getTexture();
+
+/*     Entity* Mr_Vincell = new Entity();
+    Mr_Vincell->generateHumanoidMesh(0.0f);
+    Texture* playerTexture2 = new Texture("../textures/Mr_Vincell.png");
+    Mr_Vincell->setTexture(playerTexture2);
+    Mr_Vincell->translate(glm::vec3(8, 11, 10));
+    Mr_Vincell->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(Mr_Vincell);
+
+    Entity* Kuurpo = new Entity();
+    Kuurpo->generateHumanoidMesh(0.0f);
+    Texture* playerTexture3 = new Texture("../textures/Kuurpo.png");
+    Kuurpo->setTexture(playerTexture3);
+    Kuurpo->translate(glm::vec3(9, 11, 10));
+    Kuurpo->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(Kuurpo);
+
+    Entity* Akkuun = new Entity();
+    Akkuun->generateHumanoidMesh(0.0f);
+    Texture* playerTexture4 = new Texture("../textures/Akkuun.png");
+    Akkuun->setTexture(playerTexture4);
+    Akkuun->translate(glm::vec3(7, 11, 10));
+    Akkuun->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(Akkuun); */
+
+
+    
+
 
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
         character.scrollCallback(window, xOffset, yOffset);
