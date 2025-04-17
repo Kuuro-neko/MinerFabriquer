@@ -36,6 +36,8 @@ float FPS = 0.0f;
 float angle = 0.;
 float zoom = 1.;
 
+int displayNormals = 0;
+
 void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
     mesh.vertices.clear();
     mesh.triangles.clear();
@@ -84,7 +86,16 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
         mesh.triangles.push_back(start);
         mesh.triangles.push_back(start + 2);
         mesh.triangles.push_back(start + 3);
+
+        
     }
+
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
 }
 
 
@@ -292,6 +303,8 @@ int main(void) {
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         GLuint projectionMatrixId = glGetUniformLocation(programID, "ProjectionMatrix");
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
+        GLuint displayNormalId = glGetUniformLocation(programID, "displayNormals");
+        glUniform1i(displayNormalId, displayNormals);
 
 
         root.draw(programID);
@@ -312,6 +325,10 @@ int main(void) {
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
+
+        if (characterInputManager.isKeyPressed(Keybinds::getInstance().getToggleDebug())) {
+            displayNormals = displayNormals == 0 ? 1 : 0;
+        }
 
 
         // Swap buffers

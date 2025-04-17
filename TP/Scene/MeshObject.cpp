@@ -20,6 +20,13 @@ void MeshObject::initializeBuffers() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
+    // Normal buffer
+    glGenBuffers(1, &normalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
     // Element buffer
     glGenBuffers(1, &elementbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
@@ -49,6 +56,10 @@ void MeshObject::cleanupBuffers() {
     if (uvbuffer) {
         glDeleteBuffers(1, &uvbuffer);
         uvbuffer = 0;
+    }
+    if (normalbuffer) {
+        glDeleteBuffers(1, &normalbuffer);
+        normalbuffer = 0;
     }
 }
 

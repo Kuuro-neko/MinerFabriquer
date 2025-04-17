@@ -9,6 +9,7 @@ void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
     mesh.vertices.clear();
     mesh.triangles.clear();
     mesh.uvs.clear();
+    mesh.normals.clear();
 
     glm::vec3 p[] = {
         {-size.x, -size.y, -size.z},
@@ -65,6 +66,14 @@ void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
         mesh.triangles.push_back(start + 2);
         mesh.triangles.push_back(start + 3);
     }
+
+    // Normals for each face
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, -1)); // South
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, 1));  // North
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(-1, 0, 0)); // West
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(1, 0, 0));  // East
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 1, 0));  // Up
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, -1, 0)); // Down
 }
 
 Entity::Entity() {
