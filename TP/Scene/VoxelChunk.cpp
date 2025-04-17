@@ -36,6 +36,7 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
 }
 
 int VoxelChunk::getBloc(int x, int y, int z) {
+    //quand on sort du chunk, on renvoie -1
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         // POUR MATHIS : QUAND ON SORT DU CHUNK CETTE FONCTION CASSE
         // On devrait peut etre ajouter des exceptions ? xD et enlever mes vieux return -1, -2
