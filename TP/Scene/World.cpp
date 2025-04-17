@@ -197,7 +197,9 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 }
 
 void World::resolveCollisions(Character &character, World *world) {
-    // Récupération de la position du personnage
+    //TODO au lieu de faire la vérification dans world, on fait un broadphase -> on vérifie quel chunk
+    // sont intersecté par le personnage et on fait la recherche dans ces deux chunks
+    // On peut aussi ajouter un octree pour optimiser la recherche
     glm::vec3 characterPosition = character.getWorldPosition();
 
 
@@ -217,6 +219,7 @@ void World::resolveCollisions(Character &character, World *world) {
         }
     }
 
-// Application du mouvement du personnage
+
+    // Application du mouvement du personnage
     character.move(character.vecteurDirection);
 }

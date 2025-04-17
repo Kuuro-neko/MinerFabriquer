@@ -7,13 +7,9 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
-#include "TP/Camera/Frustrum.hpp"
 #include <TP/GUI/Crosshair.hpp>
-
 #include <TP/Scene/Entity.hpp>
 
-#include <TP/Input/KeyInput.hpp>
-#include <TP/Input/KeyBinds.hpp>
 
 
 #define CHUNK_SIZE 16
@@ -101,7 +97,7 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
 Character character = Character(
         Transform(
-                glm::vec3(0, 10, 0),
+                glm::vec3(10, 10, 3),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -288,10 +284,9 @@ int main(void) {
 
         frustum.update();
         world.updateVisibleChunk(frustum);
-        // on a un pb, quand on est a la limite , ça plante
-        // ce qu'on fait c'est alors resolve la collision avec touts les chunks conteant au moins 1 point de la bounding box world.getChunksContraining (retourne un set de chunk)
-        // deuxieme changement, on recupere le vecteur donne  par listenAction et si y'a collision, on n'avance pas sinon on autorise le mouvement
+
         world.resolveCollisions(character, &world);
+        character.resolveGravity(deltaTime);
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
