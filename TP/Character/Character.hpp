@@ -50,6 +50,8 @@ public:
 
     void drawBoundingBox(GLuint programID);
 
+    void draw(GLuint programID) override;
+
 
     inline glm::vec3 getSize() { return size; }
 

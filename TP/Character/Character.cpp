@@ -329,5 +329,7 @@ void Character::drawBoundingBox(GLuint programID) {
     );
 }
 
-
-
+void Character::draw(GLuint programID) {
+    return;
+    SceneNode::draw(programID);
+}

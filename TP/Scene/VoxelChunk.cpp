@@ -128,7 +128,8 @@ void VoxelChunk::draw(GLuint programID) {
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
     
-    TextureAtlas::getInstance().bind(programID);
+    //TextureAtlas::getInstance().bind(programID);
+    PBRTextureAtlas::getInstance().bind(programID);
     m_mesh->draw(programID);
 }
 
