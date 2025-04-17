@@ -13,23 +13,29 @@ in vec3 camPos;
 
 uniform int displayNormals;
 
+float Fs()
 
+float Fr(vec3 pos, vec3 w0, vec3 wi) {
+        vec3 wh = normalize(w0 + wi);
+        
+        return 0;
+}
 
 
 void main(){
+        vec3 normal = normalize(vNormal);
+        vec3 normalMapValue = texture(NormalsSampler, UV).xyz;
+        normal.x = normal.x * normalMapValue.x;
+        normal.y = normal.y * normalMapValue.y;
+        normal.z = normal.z * normalMapValue.z;
+        
         if (displayNormals == 1) {
-                color = vec4(vNormal * 0.5 + 0.5, 1.0);
+                color = vec4(normal * 0.5 + 0.5, 1.0);
         } else {
                 vec3 lightpos = pos + vec3(20.0, 60.0, 30.0);
                 vec3 lightdir = normalize(lightpos - pos);
-                vec3 normal = vNormal;
-                // perturb the normal by the normal map
-                vec3 normalMapValue = texture(NormalsSampler, UV).xyz;
-                normalMapValue = normalMapValue * 2.0 - 1.0;
-                normalMapValue = normalize(normalMapValue);
-                vec3 normal = vNormal.x * normalMapValue.x + vNormal.y * normalMapValue.y + vNormal.z * normalMapValue.z;
-                normal = normalize(normal);
-                /*vec3 roughness = texture(RoughnessSampler, UV).xyz;
+                
+                vec3 roughness = texture(RoughnessSampler, UV).xyz;
                 vec3 metalness = texture(MetalnessSampler, UV).xyz;
                 
                 vec3 w0 = normalize(camPos - pos);
@@ -41,7 +47,7 @@ void main(){
                 for (int i = 0; i < steps; i++) {
                         vec3 wi = normalize(mix(w0, w1, float(i) * dw));
                         sum += Fr(pos, w0, wi) * L(pos, wi) * dot(normal, wi) * dw;
-                }*/
+                }
 
 
 
