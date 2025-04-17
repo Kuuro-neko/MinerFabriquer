@@ -60,9 +60,15 @@ public:
 
     inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
 
+    inline float getFOV() const { return m_fovDegree; }
+    inline float getNearPlane() const { return m_nearPlane; }   
+    inline float getFarPlane() const { return m_farPlane; }
+
 private:
     //Camera parameters
     float m_fovDegree{DEFAULT_FOV};
+    float m_nearPlane{0.1f};
+    float m_farPlane{100.f};
     glm::vec3 m_position{DEFAULT_POSITION};
     glm::vec3 m_eulerAngle{DEFAULT_EULER_ANGLE};
     glm::quat m_rotation{};

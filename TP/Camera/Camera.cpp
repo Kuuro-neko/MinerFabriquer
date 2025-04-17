@@ -155,7 +155,7 @@ void Camera::update(float _deltaTime, GLFWwindow* _window)
 	} else {
 		m_rotation = glm::quat(m_eulerAngle);
 	}
-	Camera_Helper::computeFinalView(m_projectionMatrix, m_viewMatrix, m_position, m_rotation, m_fovDegree);
+	Camera_Helper::computeFinalView(m_projectionMatrix, m_viewMatrix, m_position, m_rotation, m_fovDegree, m_nearPlane, m_farPlane);
 }
 
 void Camera::setTarget(glm::vec3 _target)

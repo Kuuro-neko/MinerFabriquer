@@ -77,7 +77,7 @@ int VoxelChunk::removeBlock(int x, int y, int z) {
 }
 
 bool neighborCheck(int neighbor) {
-    return neighbor == AIR || neighbor == LEAVES_OAK; // || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
+    return neighbor == AIR || neighbor == LEAVES_OAK || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
 void VoxelChunk::generateMesh() {

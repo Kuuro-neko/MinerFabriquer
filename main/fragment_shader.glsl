@@ -68,25 +68,38 @@ vec3 F_cooktorrance(vec3 w0, vec3 wi, vec3 n, float a) {
 }
 
 vec3 F_r(vec3 pos, vec3 n, vec3 w0, vec3 wi, float albedo, float ks) {
-        vec3 ret = vec3(0.0);
+        vec3 ret = vec3(1.0);
         //ret += albedo * F_lambert() * ks;
-        ret += F_cooktorrance(w0, wi, n, 0.5) * (1.0 - ks);
+        //ret += F_cooktorrance(w0, wi, n, 0.5) * (1.0 - ks);
         return ret;
 }
 
 float L(vec3 pos, vec3 wi) {
-        vec3 lightpos = pos + vec3(20.0, 2.0, 30.0);
+        vec3 lightpos = pos + vec3(0.0, 2.0, 0.0);
         float angle = dot(normalize(lightpos - pos), wi);
         return max(angle, 0.0);
        //return 1.0;
 }
 
+vec3 getTangent(vec3 n) {
+    // Choose an arbitrary vector that is not parallel to n
+    vec3 up = abs(n.y) < 0.999 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
+    return normalize(cross(up, n));
+}
+
+mat3 computeTBN(vec3 n) {
+    vec3 t = getTangent(n);
+    vec3 b = normalize(cross(n, t));
+    return mat3(t, b, n);
+}
+
+
 void main(){
         vec3 normal = normalize(vNormal);
         vec3 normalMapValue = texture(NormalsSampler, UV).xyz;
-        normal.x = normal.x * normalMapValue.x;
-        normal.y = normal.y * normalMapValue.y;
-        normal.z = normal.z * normalMapValue.z;
+        mat3 TBN = computeTBN(normal);
+        normal = normalize(TBN * (normalMapValue * 2.0 - 1.0));
+        
         color = vec4(normal * 0.5 + 0.5, 1.0);
         if (displayNormals == 1) {
                 color = vec4(normal * 0.5 + 0.5, 1.0);
@@ -110,7 +123,10 @@ void main(){
                 for (int i = 0; i < steps; i++) {
                         vec3 wi = normalize(lightdir + vec3(float(i) * dw, float(i) * dw, float(i) * dw));
                         vec3 f = vec3(1.0); 
-                      // f *= F_r(pos, normal, w0, wi, albedo, ks); //* L(pos, wi) * dot(wi, normal) * dw;
+                        // vec3 Fr = F_r(pos, normal, w0, wi, albedo, ks); //* L(pos, wi) * dot(wi, normal) * dw;
+                        // f.x = Fr.x;
+                        // f.y = Fr.y;
+                        // f.z = Fr.z;
                         f *= L(pos, wi);
                         f *= dot(wi, normal) * dw;
                         l += f;
