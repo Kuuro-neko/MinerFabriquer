@@ -107,7 +107,7 @@ void main(){
         vec3 normalMapValue = texture(NormalsSampler, UV).xyz;
         mat3 TBN = computeTBN(normal);
         normal = normalize(TBN * (normalMapValue * 2.0 - 1.0));
-
+        
         color = vec4(normal * 0.5 + 0.5, 1.0);
         if (displayNormals == 1) {
                 color = vec4(normal * 0.5 + 0.5, 1.0);

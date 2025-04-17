@@ -101,7 +101,7 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
 Character character = Character(
         Transform(
-                glm::vec3(0, 10, 0),
+                glm::vec3(10, 10, 10),
                 DEFAULT_ROTATION,
                 1),
         &camera
