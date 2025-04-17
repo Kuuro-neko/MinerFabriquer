@@ -24,54 +24,37 @@ public:
               Texture *texture = nullptr);
 
     inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
+    inline void applyGravity() {translate(glm::vec3(0.f, -gravity, 0.f));}
+    inline glm::vec3 getSize() { return size; }
+    inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
+
 
     void listenAction(float dt, BlocDatabase &database);
-
     void scrollCallback(GLFWwindow *window, double xOffset, double yOffset);
-
     void update(float dt);
-
     void updateBoundingBox();
+    void move(glm::vec3 direction);
+    void drawBoundingBox(GLuint programID);
+
+
+    glm::vec3 getMinBoundingBox();
+    glm::vec3 getMaxBoundingBox();
 
     World *m_world;
     Camera *camera;
     Inventory *inventory;
-
-
     glm::vec3 velocity = glm::vec3(0.f);
-
-    glm::vec3 getMinBoundingBox();
-
-    glm::vec3 getMaxBoundingBox();
-
-    inline void applyGravity() {
-        translate(glm::vec3(0.f, -gravity, 0.f));
-    }
-
-    void drawBoundingBox(GLuint programID);
-
-
-    inline glm::vec3 getSize() { return size; }
-
-    inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
-
-
-    void move(glm::vec3 direction);
-
     glm::vec3 vecteurDirection = glm::vec3(0.f, 0.f, 0.f);
 private:
+
     void updateClosestBlock(BlocDatabase &database);
-
     void breakBlock(BlocDatabase &database);
-
     void putBlock(BlocDatabase &database);
-
     void setSelectedBlock(BlocDatabase &database);
 
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
-
     inline void resetPlaceCooldown() {
         placeCooldown = 0.f;
     }
@@ -79,25 +62,20 @@ private:
     Renderer *renderer;
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
+
     float speed = 2.5f;
     float maxInteractionDistance = 6.f;
-    float gravity = 9.81f;
+    float gravity = -9.81f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
 
     std::vector<glm::vec3> boundingBox;
     glm::vec3 size;
-
     glm::vec3 blocPlusProche;
 
     int facePlusProche = -1;
-
     bool intersection = false;
-
-    // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
-    bool shouldToggleDebug = true;
-
-
+    bool shouldToggleDebug = true; // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
 };
 
 #endif // CHARACTER_HPP

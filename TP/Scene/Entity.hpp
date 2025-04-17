@@ -43,8 +43,6 @@ class Entity : public SceneNode {
     MeshObject *m_rightArmMesh;
     MeshObject *m_leftLegMesh;
     MeshObject *m_rightLegMesh;
-    
-
 
     void generateHumanoidMesh(float ground);
 };
