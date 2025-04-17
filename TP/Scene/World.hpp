@@ -24,7 +24,7 @@ struct IVec3Hash {
 class World : public SceneNode {
 private:
     std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
-    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> visibleChunks;
+    std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> visibleChunks;
     Camera *camera;
 public:
     World();

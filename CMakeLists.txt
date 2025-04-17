@@ -85,6 +85,13 @@ add_executable(MinerFabriquer
         main/fragment_shader.glsl
         TP/Scene/WorldGenerator.cpp
         TP/Scene/WorldGenerator.hpp
+        TP/Scene/Entity.hpp
+        TP/Scene/Entity.cpp
+        TP/Input/KeyInput.cpp
+        TP/Input/KeyInput.hpp
+        TP/Input/KeyBinds.hpp
+        TP/Input/KeyBinds.cpp
+
 )
 target_link_libraries(MinerFabriquer
         ${ALL_LIBS}

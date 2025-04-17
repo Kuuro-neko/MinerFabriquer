@@ -10,6 +10,12 @@
 #include "TP/Camera/Frustrum.hpp"
 #include <TP/GUI/Crosshair.hpp>
 
+#include <TP/Scene/Entity.hpp>
+
+#include <TP/Input/KeyInput.hpp>
+#include <TP/Input/KeyBinds.hpp>
+
+
 #define CHUNK_SIZE 16
 
 GLFWwindow *window;
@@ -20,10 +26,6 @@ using namespace glm;
 int windowWidth = 1024;
 int windowHeight = 768;
 
-
-void processInput(GLFWwindow *window, float dt);
-
-
 Camera camera;
 // timing
 float deltaTime = 0.0f;    // time between current frame and last frame
@@ -33,6 +35,8 @@ float FPS = 0.0f;
 //rotation
 float angle = 0.;
 float zoom = 1.;
+
+int displayNormals = 0;
 
 void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
     mesh.vertices.clear();
@@ -82,7 +86,16 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
         mesh.triangles.push_back(start);
         mesh.triangles.push_back(start + 2);
         mesh.triangles.push_back(start + 3);
+
+        
     }
+
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
+    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
 }
 
 
@@ -93,6 +106,7 @@ Character character = Character(
                 1),
         &camera
 );
+
 
 
 
@@ -131,6 +145,13 @@ int main(void) {
 
     // Open a window and create its OpenGL context
     window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
+    KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
+    KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
+    menuInputManager.setIsEnabled(false);
+    KeyInput::setupKeyInputs(*window);
+    character.setKeyInput(&characterInputManager);
+    camera.setKeyInput(&characterInputManager);
+
     if (window == NULL) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -206,19 +227,46 @@ int main(void) {
 
     character.m_world = &world;
 
-    MeshObject characterMesh = MeshObject();
-    create_cube_textured(character.getSize()/2.f, characterMesh);
-    characterMesh.initializeBuffers();
-    character.m_mesh = &characterMesh;
+    Entity* characterModel = new Entity();
+    characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
+    Texture* playerTexture = new Texture("../textures/steve.png");
+    characterModel->setTexture(playerTexture);
+    character.addChild(characterModel);
     root.addChild(&character);
     character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
-    character.m_texture = TextureAtlas::getInstance().getTexture();
+
+/*     Entity* Mr_Vincell = new Entity();
+    Mr_Vincell->generateHumanoidMesh(0.0f);
+    Texture* playerTexture2 = new Texture("../textures/Mr_Vincell.png");
+    Mr_Vincell->setTexture(playerTexture2);
+    Mr_Vincell->translate(glm::vec3(8, 11, 10));
+    Mr_Vincell->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(Mr_Vincell);
+
+    Entity* Kuurpo = new Entity();
+    Kuurpo->generateHumanoidMesh(0.0f);
+    Texture* playerTexture3 = new Texture("../textures/Kuurpo.png");
+    Kuurpo->setTexture(playerTexture3);
+    Kuurpo->translate(glm::vec3(9, 11, 10));
+    Kuurpo->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(Kuurpo);
+
+    Entity* Akkuun = new Entity();
+    Akkuun->generateHumanoidMesh(0.0f);
+    Texture* playerTexture4 = new Texture("../textures/Akkuun.png");
+    Akkuun->setTexture(playerTexture4);
+    Akkuun->translate(glm::vec3(7, 11, 10));
+    Akkuun->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(Akkuun); */
+
+
+    
+
 
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
         character.scrollCallback(window, xOffset, yOffset);
     });
-
 
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
@@ -230,10 +278,11 @@ int main(void) {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // input
-        processInput(window, deltaTime);
+        // Poll inputs
+        glfwPollEvents();
+
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
-        character.listenAction(deltaTime, window, BlocDatabase::getInstance());
+        character.listenAction(deltaTime, BlocDatabase::getInstance());
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
@@ -254,6 +303,8 @@ int main(void) {
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         GLuint projectionMatrixId = glGetUniformLocation(programID, "ProjectionMatrix");
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
+        GLuint displayNormalId = glGetUniformLocation(programID, "displayNormals");
+        glUniform1i(displayNormalId, displayNormals);
 
 
         root.draw(programID);
@@ -268,18 +319,24 @@ int main(void) {
                                                        camera.getProjectionMatrix()
         );
 
-
         crosshair.render();
+
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
+        if (characterInputManager.isKeyPressed(Keybinds::getInstance().getToggleDebug())) {
+            displayNormals = displayNormals == 0 ? 1 : 0;
+        }
+
 
         // Swap buffers
         glfwSwapBuffers(window);
-        glfwPollEvents();
-
+        
+        // Update the input managers
+        characterInputManager.update();
+        menuInputManager.update();
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(window) == 0);
@@ -297,13 +354,6 @@ int main(void) {
     return 0;
 }
 
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window, float dt) {
-
-
-}
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------

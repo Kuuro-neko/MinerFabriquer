@@ -17,4 +17,4 @@
  * @param z_offset offset on the z axis relative to the chunk's position
  * @param size Default size is 1.0f and should probably not be changed
  */
-void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset = 0.0f, float y_offset = 0.0f, float z_offset = 0.0f, float size = 1.0f);
+void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset = 0.0f, float y_offset = 0.0f, float z_offset = 0.0f, float size = 1.0f);

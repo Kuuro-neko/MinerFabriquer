@@ -84,6 +84,7 @@ void VoxelChunk::generateMesh() {
     m_mesh->vertices.clear();
     m_mesh->triangles.clear();
     m_mesh->uvs.clear();
+    m_mesh->normals.clear();
 
     int neighbor;
 
@@ -95,27 +96,27 @@ void VoxelChunk::generateMesh() {
                     // Check all the adjacent cubes to see if they are air or leaves
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
                     if (neighborCheck(neighbor)) {
-                        addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
+                        addSquareGeometry(m_mesh->vertices, m_mesh->normals, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (neighborCheck(neighbor)) {
-                        addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
+                        addSquareGeometry(m_mesh->vertices, m_mesh->normals, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (neighborCheck(neighbor)) {
-                        addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
+                        addSquareGeometry(m_mesh->vertices, m_mesh->normals, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (neighborCheck(neighbor)) {
-                        addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
+                        addSquareGeometry(m_mesh->vertices, m_mesh->normals, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (neighborCheck(neighbor)) {
-                        addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
+                        addSquareGeometry(m_mesh->vertices, m_mesh->normals, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (neighborCheck(neighbor)) {
-                        addSquareGeometry(m_mesh->vertices, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
+                        addSquareGeometry(m_mesh->vertices, m_mesh->normals, m_mesh->triangles, m_mesh->uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
                     }
                 }
             }

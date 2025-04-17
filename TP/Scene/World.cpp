@@ -100,9 +100,9 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
 void World::draw(GLuint programID) {
     for (auto &[key, chunk]: visibleChunks) {
         //si la distance de rendu est depassee, on ne dessine pas le chunk
-        float distance = glm::length(chunk.getWorldPosition() - camera->getPosition());
+        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
         if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
-            chunk.draw(programID);
+            chunk->draw(programID);
         }
     }
 }
@@ -137,12 +137,12 @@ void World::updateVisibleChunk(Frustrum &frustum) {
     for (auto &[key, chunk]: chunks) {
         if (frustum.isBoundingBoxInFrustum(chunk.getWorldPosition(),
                                            chunk.getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
-            visibleChunks[key] = chunk;
+            visibleChunks[key] = &chunk;
         } else {
             // si le chunk n'est pas visible, on le supprime de la liste des chunks visibles
             auto it = visibleChunks.find(key);
             if (it != visibleChunks.end()) {
-                it->second.cleanupBuffers();
+                it->second->cleanupBuffers();
                 visibleChunks.erase(it);
             }
         }
