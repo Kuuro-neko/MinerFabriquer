@@ -15,6 +15,9 @@ uniform int displayNormals;
 
 float PI = 3.14159265358979323846;
 
+vec3 lightOffset = vec3(30.0, 50.0, 30.0);
+vec3 lightpos = pos + lightOffset;
+
 float DistributionGGX(vec3 N, vec3 H, float a)
 {
     float a2     = a*a;
@@ -65,22 +68,25 @@ vec3 F_cooktorrance(vec3 w0, vec3 wi, vec3 n, float a) {
         vec3 F = FresnelSchlick(w0, wh);
         // return (D * G * F) / (4.0 * max(dot(n, w0), 0.0) * max(dot(n, wi), 0.0));
         //return 0.0;
-        return (D * G * F) / (4.0 * max(dot(n, w0), 0.0) * max(dot(n, wi), 0.0));
+        return (D * G * F) / (4.0 * (dot(n, w0)) * (dot(n, wi)));
 }
 
-vec3 F_r(vec3 pos, vec3 n, vec3 w0, vec3 wi, vec3 albedo, float ks) {
+vec3 F_r(vec3 pos, vec3 n, vec3 w0, vec3 wi, vec3 albedo, float kd) {
         vec3 ret = vec3(0.0);
         float a = texture(RoughnessSampler, UV).x;
-        ret += albedo * F_lambert() * ks;
-        ret += F_cooktorrance(w0, wi, n, a) * (1.0 - ks);
+        ret += albedo * F_lambert() * kd;
+        ret += F_cooktorrance(w0, wi, n, a);
         return ret;
 }
 
 float L(vec3 pos, vec3 wi) {
-        vec3 lightpos = pos + vec3(3.0, 20.0, 5.0);
-        float angle = dot(normalize(lightpos - pos), wi);
-        return max(angle, 0.0);
+        
+        // float angle = dot(normalize(lightpos - pos), wi);
+        // return max(angle, 0.0);
        //return 1.0;
+        vec3 lightdir = normalize(lightpos - pos);
+        float angle = dot(lightdir, wi);
+        return max(angle, 0.0);
 }
 
 vec3 getTangent(vec3 n) {
@@ -106,7 +112,6 @@ void main(){
         if (displayNormals == 1) {
                 color = vec4(normal * 0.5 + 0.5, 1.0);
         } else {
-                vec3 lightpos = pos + vec3(20.0, 60.0, 30.0);
                 vec3 lightdir = normalize(lightpos - pos);
 
                 vec3 albedo = texture(TextureSampler, UV).xyz;
@@ -118,14 +123,14 @@ void main(){
                 
                 int steps = 100;
                 vec3 l = vec3(0.0); // + emitted light if we add it
-                float ks = 0.5;
+                float kd = 0.6;
                 
 
                 float dw = 1.0 / float(steps);
                 for (int i = 0; i < steps; i++) {
                         vec3 wi = normalize(lightdir + vec3(float(i) * dw, float(i) * dw, float(i) * dw));
                         vec3 f = vec3(1.0); 
-                        vec3 Fr = F_r(pos, normal, w0, wi, albedo, ks); //* L(pos, wi) * dot(wi, normal) * dw;
+                        vec3 Fr = F_r(pos, normal, w0, wi, albedo, kd); //* L(pos, wi) * dot(wi, normal) * dw;
                         f.x = Fr.x;
                         f.y = Fr.y;
                         f.z = Fr.z;
@@ -133,6 +138,8 @@ void main(){
                         f *= dot(wi, normal) * dw;
                         l += f;
                 }
+                vec3 ambient = vec3(0.01);
+                l += ambient;
                 //color = texture(TextureSampler, UV);
                 color = vec4(l, 1.0);
         }
