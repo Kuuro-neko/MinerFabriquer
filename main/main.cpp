@@ -225,7 +225,7 @@ int main(void) {
     character.setRenderer(&renderer);
     camera.setTarget(character.getWorldPosition());
 
-    Entity* Mr_Vincell = new Entity();
+/*     Entity* Mr_Vincell = new Entity();
     Mr_Vincell->generateHumanoidMesh(0.0f);
     Texture* playerTexture2 = new Texture("../textures/Mr_Vincell.png");
     Mr_Vincell->setTexture(playerTexture2);
@@ -247,7 +247,7 @@ int main(void) {
     Akkuun->setTexture(playerTexture4);
     Akkuun->translate(glm::vec3(7, 11, 10));
     Akkuun->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
-    root.addChild(Akkuun);
+    root.addChild(Akkuun); */
 
 
     
