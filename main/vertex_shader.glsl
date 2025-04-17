@@ -10,13 +10,16 @@ uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
 
 layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 vertexNormal_modelspace;
 
 out vec2 UV;
+out vec3 vNormal;
 
 void main(){
 
         // TODO : Output position of the vertex, in clip space : MVP * position
         gl_Position =  ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(vertices_position_modelspace,1);
         UV = vertexUV;
+        vNormal = vertexNormal_modelspace;
 }
 
