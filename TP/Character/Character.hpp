@@ -45,6 +45,9 @@ public:
     Inventory *inventory;
     glm::vec3 velocity = glm::vec3(0.f);
     glm::vec3 vecteurDirection = glm::vec3(0.f, 0.f, 0.f);
+
+    void resolveGravity(float &deltaTime);
+
 private:
 
     void updateClosestBlock(BlocDatabase &database);
@@ -65,9 +68,10 @@ private:
 
     float speed = 2.5f;
     float maxInteractionDistance = 6.f;
-    float gravity = -9.81f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
+
+    const float gravity = -9.81f;
 
     std::vector<glm::vec3> boundingBox;
     glm::vec3 size;

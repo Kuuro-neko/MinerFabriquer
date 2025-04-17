@@ -219,7 +219,7 @@ void World::resolveCollisions(Character &character, World *world) {
         }
     }
 
-    
+
     // Application du mouvement du personnage
     character.move(character.vecteurDirection);
 }
