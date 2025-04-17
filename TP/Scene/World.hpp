@@ -121,7 +121,7 @@ public:
 
     void setCamera(Camera &camera);
 
-    void resolveCollisions(Character &character, VoxelChunk *chunk);
+    void resolveCollisions(Character &character, World *world);
 
     void resolveCollisionForBlock(Character &character, glm::vec3 blockPosition);
 };

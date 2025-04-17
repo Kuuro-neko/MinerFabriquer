@@ -2,6 +2,7 @@
 #include <random>
 #include "WorldGenerator.hpp"
 #include "TP/Character/Character.hpp"
+#include <algorithm>
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
     generation();
@@ -195,22 +196,27 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
     }
 }
 
-void World::resolveCollisions(Character &character, VoxelChunk *chunk) {
-    // Récupération de la bounding box du personnage
+void World::resolveCollisions(Character &character, World *world) {
+    // Récupération de la position du personnage
+    glm::vec3 characterPosition = character.getWorldPosition();
+
+
+// Récupération de la bounding box du personnage
     glm::vec3 minBB = character.getMinBoundingBox();
     glm::vec3 maxBB = character.getMaxBoundingBox();
 
-    // Parcours des blocs proches de la bounding box du personnage (environ 1 bloc autour)
+// Parcours des blocs proches de la bounding box du personnage
     for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
         for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
             for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
-                if (chunk->getBloc(x, y, z) != AIR) { // Bloc solide détecté, on vérifie la collision
+                // Vérification des blocs dans le chunk actuel et le chunk proche
+                if(world->getBloc(x, y, z) != AIR) {
                     resolveCollisionForBlock(character, glm::vec3(x, y, z));
                 }
             }
         }
     }
 
-    // Application du mouvement du personnage en fonction de la direction et de la collision
+// Application du mouvement du personnage
     character.move(character.vecteurDirection);
 }

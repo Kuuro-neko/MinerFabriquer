@@ -67,6 +67,10 @@ public:
 
     bool intersects(Ray ray, float maxDistance);
 
+    inline glm::vec3 getChunkCoords() const {
+        return glm::vec3(m_chunkCoords.x * m_sizeX, m_chunkCoords.y * m_sizeY, m_chunkCoords.z * m_sizeZ);
+    }
+
     int m_sizeX = DEFAULT_CHUNK_SIZE;
     int m_sizeY = DEFAULT_CHUNK_SIZE;
     int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
@@ -85,6 +89,7 @@ public:
 
     // Copy Assignment Operator
     VoxelChunk& operator=(const VoxelChunk& other);
+
 
 
 private:
