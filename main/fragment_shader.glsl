@@ -15,7 +15,7 @@ uniform int displayNormals;
 
 float PI = 3.14159265358979323846;
 
-vec3 lightOffset = vec3(30.0, 50.0, 30.0);
+vec3 lightOffset = vec3(30.0, 50.0, 20.0);
 vec3 light_pos = pos + lightOffset;
 
 
@@ -84,11 +84,27 @@ vec3 randomHemisphereDirection(vec3 normal, vec2 randomSeed) {
     return normalize(TBN * tangentDir);
 }
 
+vec3 getNormalFromNormalMap()
+{
+    vec3 tangentNormal = texture(NormalsSampler, UV).xyz * 2.0 - 1.0;
+
+    vec3 Q1  = dFdx(pos);
+    vec3 Q2  = dFdy(pos);
+
+    vec2 st1 = dFdx(UV);
+    vec2 st2 = dFdy(UV);
+
+    vec3 N   = normalize(vNormal);
+    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+    vec3 B  = -normalize(cross(N, T));
+
+    mat3 TBN = mat3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
+}
+
 void main(){
-        vec3 N = normalize(vNormal);
-        vec3 normalMapValue = texture(NormalsSampler, UV).xyz;
-        mat3 TBN = computeTBN(N);
-        N = normalize(TBN * (normalMapValue * 2.0 - 1.0));
+        vec3 N = getNormalFromNormalMap();
         
         frag_color = vec4(N * 0.5 + 0.5, 1.0);
         if (displayNormals == 1) {
@@ -114,29 +130,19 @@ void main(){
                 
                 int steps = 100;
                 vec3 Lo = vec3(0.0);
-                float dW = 1.0 / float(steps);
+
+                vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
+                float NDF = DistributionGGX(N, H, roughness);
+                float G = GeometrySmith(N, V, L, roughness);
+
+                vec3 numerator = NDF * G * F;
+                float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
+                vec3 specular = numerator/denominator;
+
+                vec3 kS = F;
+                vec3 kD = vec3(1.0) - kS;
+                kD *= 1.0 - metalness;
                 
-                for (int i = 0; i < steps; i++) {
-                        vec2 randomSeed = vec2(float(i) / float(steps), float(i) / float(steps));
-                        vec3 Wi = randomHemisphereDirection(N, randomSeed);
-                        L = normalize(2.0 * dot(V, H) * H - V);
-                        H = normalize(V + L);   
-                    
-                         // Cook-Torrance BRDF
-                        vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
-                        float NDF = DistributionGGX(N, H, roughness);
-                        float G = GeometrySmith(N, V, L, roughness);
-
-                        vec3 numerator = NDF * G * F;
-                        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
-                        vec3 specular = numerator/denominator;
-
-                        vec3 kS = F;
-                        vec3 kD = vec3(metalness) - kS;
-                        kD *= 1.0 - metalness;
-                        float NdotL = max(dot(N, L), 0.0);
-                        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
-                }
 
                 // vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
                 // float NDF = DistributionGGX(N, H, roughness);
@@ -151,9 +157,9 @@ void main(){
 
                 // kD *= 1.0 - metalness;
 
-                // float NdotL = max(dot(N, L), 0.0);
+                float NdotL = max(dot(N, L), 0.0);
 
-                // Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+                Lo += (kD * albedo / PI + specular) * radiance * NdotL;
 
                 vec3 ambient = vec3(0.6) * albedo;
                 vec3 color = ambient + Lo;
