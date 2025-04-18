@@ -9,14 +9,14 @@ in vec2 UV;
 out vec4 frag_color;
 in vec3 vNormal;
 in vec3 pos;
-in vec3 camPos;
 
 uniform int displayNormals;
+uniform vec3 camPos;
 
 float PI = 3.14159265358979323846;
 
-vec3 lightOffset = vec3(30.0, 50.0, 20.0);
-vec3 light_pos = pos + lightOffset;
+vec3 lightOffset = vec3(10.0, 10.0, 10.0);
+vec3 light_pos = vec3(30.0, 16.0, 30.0);
 
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
@@ -108,13 +108,13 @@ void main(){
         
         frag_color = vec4(N * 0.5 + 0.5, 1.0);
         if (displayNormals == 1) {
-                frag_color = vec4(N * 0.5 + 0.5, 1.0);
+                frag_color = vec4(vec3(texture(RoughnessSampler, UV).x), 1.0);    
         } else {
                 vec3 lightdir = normalize(light_pos - pos);
                 vec3 light_color = vec3(23.47, 21.31, 20.79);
 
                 vec3 albedo = pow(texture(TextureSampler, UV).xyz, vec3(2.2));
-                float roughness = texture(RoughnessSampler, UV).r;
+                float roughness = 1.0-texture(RoughnessSampler, UV).r;
                 float metalness = texture(MetalnessSampler, UV).r;
                 
                 vec3 V = normalize(camPos - pos);

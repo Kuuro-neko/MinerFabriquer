@@ -305,6 +305,8 @@ int main(void) {
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
         GLuint displayNormalId = glGetUniformLocation(programID, "displayNormals");
         glUniform1i(displayNormalId, displayNormals);
+        GLuint camPos = glGetUniformLocation(programID, "camPos");
+        glUniform3f(camPos, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
 
         root.draw(programID);

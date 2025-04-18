@@ -10,3 +10,4 @@ Id,Name,xTexSide,yTexSide,xTexTop,yTexTop,xTexBottom,yTexBottom,Opaque,Breakable
 8,Glowstone,9,0,9,0,9,0,1,1
 10,Sand,11,0,11,0,11,0,1,1
 11,Iron_Ore,12,0,12,0,12,0,1,1
+12,Iron_block,13,0,13,0,13,0,1,1
