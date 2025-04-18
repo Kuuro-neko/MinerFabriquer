@@ -5,6 +5,9 @@ uniform sampler2D NormalsSampler;
 uniform sampler2D RoughnessSampler;
 uniform sampler2D MetalnessSampler;
 
+uniform sampler2D LightmapSampler;
+
+
 in vec2 UV;
 out vec4 frag_color;
 in vec3 vNormal;
@@ -12,8 +15,10 @@ in vec3 pos;
 
 uniform int displayNormals;
 uniform vec3 camPos;
+uniform float time;
 
 float PI = 3.14159265358979323846;
+float halfDayDuration = 12.0;
 
 vec3 lightOffset = vec3(10.0, 10.0, 10.0);
 vec3 light_pos = vec3(30.0, 16.0, 30.0);
@@ -71,19 +76,6 @@ mat3 computeTBN(vec3 n) {
     return mat3(t, b, n);
 }
 
-vec3 randomHemisphereDirection(vec3 normal, vec2 randomSeed) {
-    float phi = 2.0 * PI * randomSeed.x;
-    float cosTheta = sqrt(1.0 - randomSeed.y);
-    float sinTheta = sqrt(randomSeed.y);
-
-    // Tangent space direction
-    vec3 tangentDir = vec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
-
-    // Transform to world space using TBN
-    mat3 TBN = computeTBN(normal);
-    return normalize(TBN * tangentDir);
-}
-
 vec3 getNormalFromNormalMap()
 {
     vec3 tangentNormal = texture(NormalsSampler, UV).xyz * 2.0 - 1.0;
@@ -103,17 +95,28 @@ vec3 getNormalFromNormalMap()
     return normalize(TBN * tangentNormal);
 }
 
+float dayNightCycle(float time, float halfDayTime) {
+    float cycle = mod(time, 2.0 * halfDayTime) / (2.0 * halfDayTime);
+    return 0.5 * (1.0 - cos(2.0 * PI * cycle));
+}
+
 void main(){
         vec3 N = getNormalFromNormalMap();
         
-        frag_color = vec4(N * 0.5 + 0.5, 1.0);
         if (displayNormals == 1) {
-                frag_color = vec4(vec3(texture(RoughnessSampler, UV).x), 1.0);    
+                frag_color = vec4(N * 0.5 + 0.5, 1.0);   
         } else {
                 vec3 lightdir = normalize(light_pos - pos);
-                vec3 light_color = vec3(23.47, 21.31, 20.79);
+                float lightX = dayNightCycle(time, halfDayDuration);
+                vec2 lightUV = vec2(lightX*14.5/16.0, 15.0/16.0);
+                vec3 light_color = texture(LightmapSampler, lightUV).xyz;
+                //vec3 light_color = vec3(23.47, 21.31, 20.79);
 
-                vec3 albedo = pow(texture(TextureSampler, UV).xyz, vec3(2.2));
+                light_color *= vec3(1000.0);
+                //light_color *= 25.0 * (lightX * lightX);
+
+                vec4 albedoTex = texture(TextureSampler, UV);
+                vec3 albedo = pow(albedoTex.rgb, vec3(2.2));
                 float roughness = 1.0-texture(RoughnessSampler, UV).r;
                 float metalness = texture(MetalnessSampler, UV).r;
                 
@@ -161,7 +164,7 @@ void main(){
 
                 Lo += (kD * albedo / PI + specular) * radiance * NdotL;
 
-                vec3 ambient = vec3(0.6) * albedo;
+                vec3 ambient = texture(LightmapSampler, lightUV).xyz * albedo;
                 vec3 color = ambient + Lo;
 
 
@@ -170,7 +173,7 @@ void main(){
                 //gamma
                 color = pow(color, vec3(1.0/2.2));
 
-                frag_color = vec4(color, 1.0);
+                frag_color = vec4(color, albedoTex.a);
            
         }
 }

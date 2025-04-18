@@ -23,8 +23,12 @@ GLFWwindow *window;
 using namespace std;
 using namespace glm;
 
-int windowWidth = 1024;
-int windowHeight = 768;
+// Defaut
+int windowWidth = 1280;
+int windowHeight = 720;
+
+// int windowWidth = 2560;
+// int windowHeight = 1440;
 
 Camera camera;
 // timing
@@ -110,6 +114,7 @@ Character character = Character(
 
 
 
+
 void UpdateFPS() {
     static double lastTime = glfwGetTime();
     static unsigned int counter = 0;
@@ -151,6 +156,8 @@ int main(void) {
     KeyInput::setupKeyInputs(*window);
     character.setKeyInput(&characterInputManager);
     camera.setKeyInput(&characterInputManager);
+
+
 
     if (window == NULL) {
         fprintf(stderr,
@@ -213,17 +220,23 @@ int main(void) {
         std::cerr << "Shader compile error: " << infoLog << std::endl;
     }
 
+    Texture lightMap = Texture("../textures/lightmap.png");
+    lightMap.setSamplerName("LightmapSampler");
+    lightMap.genTexture(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
+    lightMap.bind(programID);
+
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
 
-    Crosshair crosshair = Crosshair(crosshairProgramID, 0.03f);
+    Crosshair crosshair = Crosshair(crosshairProgramID, 0.02f);
 
     SceneNode root;
 
     World world = World();
     root.addChild(&world);
     world.setCamera(camera);
+    world.setDoDaylightCycle(false);
 
     character.m_world = &world;
 
@@ -277,6 +290,7 @@ int main(void) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        world.update(deltaTime);
 
         // Poll inputs
         glfwPollEvents();
@@ -307,7 +321,10 @@ int main(void) {
         glUniform1i(displayNormalId, displayNormals);
         GLuint camPos = glGetUniformLocation(programID, "camPos");
         glUniform3f(camPos, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+        GLuint time = glGetUniformLocation(programID, "time");
+        glUniform1f(time, world.getTime());
 
+        lightMap.bind(programID);
 
         root.draw(programID);
         renderer.drawWireframeCube(

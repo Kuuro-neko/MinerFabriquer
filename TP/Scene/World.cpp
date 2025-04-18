@@ -3,6 +3,7 @@
 #include "WorldGenerator.hpp"
 #include "TP/Character/Character.hpp"
 #include <algorithm>
+#include "World.hpp"
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
     generation();
@@ -196,7 +197,11 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
     }
 }
 
-void World::resolveCollisions(Character &character, World *world) {
+void World::update(float deltaTime) {
+    if (doDaylightCycle) time += deltaTime;
+}
+void World::resolveCollisions(Character &character, World *world)
+{
     // Récupération de la position du personnage
     glm::vec3 characterPosition = character.getWorldPosition();
 
