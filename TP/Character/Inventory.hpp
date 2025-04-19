@@ -7,6 +7,19 @@
 
 class Inventory {
 public:
+
+    const void printInventory() const {
+        std::cout << "Inventory:" << std::endl;
+        for (int i = 0; i < items.size(); ++i) {
+            if (i == selectedItem) {
+                std::cout << "-> ";
+            } else {
+                std::cout << "   ";
+            }
+            std::cout << "Item " << i << ": " << items[i].getItemName() << " (ID: " << items[i].getItemId() << ", Quantity: " << items[i].getQuantity() << ")" << std::endl;
+        }
+    }
+
     void addItem(const ItemStack& itemStack) {
         for (auto& stack : items) {
             if (stack.getItemId() == itemStack.getItemId()) {
@@ -19,7 +32,6 @@ public:
             selectedItem = 0;
         }
     }
-
     void removeItem(int itemId, int quantity) {
         for (auto& stack : items) {
             if (stack.getItemId() == itemId) {
@@ -32,11 +44,6 @@ public:
             }
         }
     }
-
-    ItemStack* getSelectedItem() {
-        return (selectedItem >= 0 && selectedItem < items.size()) ? &items[selectedItem] : nullptr;
-    }
-
     void scrollSelectedItem(int direction) {
         if (items.empty()) return;
 
@@ -47,7 +54,6 @@ public:
             selectedItem = 0;
         }
     }
-
     void tryToSelectItem(int blocId) {
         for (int i = 0; i < items.size(); ++i) {
             if (items[i].getItemId() == blocId) {
@@ -59,17 +65,8 @@ public:
 
     const std::vector<ItemStack>& getItems() const { return items; }
 
-
-    const void printInventory() const {
-        std::cout << "Inventory:" << std::endl;
-        for (int i = 0; i < items.size(); ++i) {
-            if (i == selectedItem) {
-                std::cout << "-> ";
-            } else {
-                std::cout << "   ";
-            }
-            std::cout << "Item " << i << ": " << items[i].getItemName() << " (ID: " << items[i].getItemId() << ", Quantity: " << items[i].getQuantity() << ")" << std::endl;
-        }
+    ItemStack* getSelectedItem() {
+        return (selectedItem >= 0 && selectedItem < items.size()) ? &items[selectedItem] : nullptr;
     }
 
 private:

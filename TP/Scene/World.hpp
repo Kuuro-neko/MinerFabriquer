@@ -7,7 +7,13 @@
 #include <unordered_map>
 #include "TP/Camera/Frustrum.hpp"
 
+
 #define CHUNK_SIZE 16
+#define BLOC_SIZE 1
+
+#define OUT_OF_BOUNDS_BLOC -2
+
+class Character;
 
 struct IVec3Hash {
     std::size_t operator()(const glm::ivec3 &vec) const {
@@ -18,15 +24,14 @@ struct IVec3Hash {
 class World : public SceneNode {
 private:
     std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
-    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> visibleChunks;
+    std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> visibleChunks;
     Camera *camera;
+    float time = 12.0f;
+    bool doDaylightCycle = true;
 public:
-    World() : SceneNode(Transform(), new MeshObject(), nullptr) {
-        generation();
-    }
+    World();
 
-    ~World() {
-    }
+    ~World();
 
     void generation();
 
@@ -78,26 +83,7 @@ public:
      */
     std::vector<VoxelChunk *> getIntersectedChunks(Ray ray, float maxDistance);
 
-    void draw(GLuint programID) override {
-        for (auto &[key, chunk]: visibleChunks) {
-
-            std::cout << this->getChunk(key.x,key.y,key.z)<<std::endl;
-
-            //std::cout << key.x << ", " << key.y << ", " << key.z << std::endl;
-
-
-//            //si la distance de rendu est depassee, on ne dessine pas le chunk
-//            float distance = glm::length(chunk.getWorldPosition() - camera->getPosition());
-//            // std::cout << "Distance: " << distance << std::endl;
-//            std::cout << "Camera Position: " << camera->getPosition().x << ", " << camera->getPosition().y << ", "
-//                      << camera->getPosition().z
-//                      << std::endl;
-//            if (distance <= RENDERER_DISTANCE) {
-//                chunk.draw(programID);
-//            }
-            chunk.draw(programID);
-        }
-    }
+    void draw(GLuint programID) override;
 
     /**
      * @brief Remove a block at the given WORLD coordinates. Used by the player.
@@ -105,7 +91,7 @@ public:
      * 
      * @return int Broken block id or -1 if no block was broken
      */
-    int playerRemoveBlock(int x, int y, int z);
+    int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
     /**
      * @brief Remove a block at the given WORLD coordinates. Don't use it for the player directly.
@@ -131,15 +117,27 @@ public:
      */
     int getBloc(int x, int y, int z);
 
-    void cleanupBuffers() override {
-        for (auto &[key, chunk]: chunks) {
-            chunk.cleanupBuffers();
-        }
-    }
+    void cleanupBuffers() override;
 
     void updateVisibleChunk(Frustrum &frustum);
 
-    inline void setCamera(Camera &camera) {
-        this->camera = &camera;
+    void setCamera(Camera &camera);
+
+    void resolveCollisions(Character &character, World *world);
+
+    void resolveCollisionForBlock(Character &character, glm::vec3 blockPosition);
+
+    void update(float deltaTime);
+
+    inline void setDoDaylightCycle(bool timeRunning) {
+        this->doDaylightCycle = timeRunning;
+    }
+
+    inline void setTime(float time) {
+        this->time = time;
+    }
+
+    inline float getTime() {
+        return time;
     }
 };

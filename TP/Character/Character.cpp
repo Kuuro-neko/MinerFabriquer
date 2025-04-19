@@ -2,13 +2,33 @@
 #include <iostream>
 #include <optional>
 
+
+
 using namespace std;
 
+std::string gamemodeString(int gamemode) {
+    switch (gamemode) {
+        case GAMEMODE_CREATIVE:
+            return "GAMEMODE_CREATIVE";
+        case GAMEMODE_SURVIVAL:
+            return "GAMEMODE_SURVIVAL";
+        case GAMEMODE_SPECTATOR:
+            return "GAMEMODE_SPECTATOR";
+        default:
+            return "UNKNOWN_GAMEMODE";
+    }
+}
+
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
-        : SceneNode(transform, mesh, texture), camera(camera), m_world(world) {
-    speed = 2.5;
+        : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size(), velocity() {
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
     inventory = new Inventory();
+    updateBoundingBox();
+    // Minecraft AABB width : 5/8
+    // Minecraft AABB height : 29/32
+    // Minecraft AABB height while sneaking : 1.5
+    size = glm::vec3(5.f / 8.f, 29.f / 16.f, 5.f / 8.f);
+    //on setHightlight la bounding box
 }
 
 void Character::move(glm::vec3 direction) {
@@ -17,11 +37,10 @@ void Character::move(glm::vec3 direction) {
 }
 
 /**
- * \brief fonction qui réalise l'action en fonction de la touche détectée
+ * \brief fonction qui réalise les actions en fonction de la touche détectée
  * @param key
  */
-
-void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &database) {
+void Character::listenAction(float dt, BlocDatabase &database) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -29,39 +48,106 @@ void Character::listenAction(float dt, GLFWwindow *window, BlocDatabase &databas
     glm::vec3 cameraRightNoUp = camera->getRotation() * VEC_RIGHT;
     cameraRightNoUp.y = 0.f;
     cameraRightNoUp = normalize(cameraRightNoUp);
+    vecteurDirection = glm::vec3(0.f);
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        move(cameraFrontNoUp * dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        move(cameraFrontNoUp * -dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        move(cameraRightNoUp * dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        move(cameraRightNoUp * -dt * speed);
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        move(glm::vec3(0.f, -dt * speed, 0.f));
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        move(glm::vec3(0.f, dt * speed, 0.f));
+    // ==== Movement binds ====
+    if (keyInput->isKeybindHeld(keybinds->forward))
+        vecteurDirection += cameraFrontNoUp;
+    if (keyInput->isKeybindHeld(keybinds->backward))
+        vecteurDirection -= cameraFrontNoUp;
+    if (keyInput->isKeybindHeld(keybinds->left))
+        vecteurDirection += cameraRightNoUp;
+    if (keyInput->isKeybindHeld(keybinds->right))
+        vecteurDirection -= cameraRightNoUp;
+    if (keyInput->isKeybindHeld(keybinds->sneak))
+        vecteurDirection -= VEC_UP;
+    if (keyInput->isKeybindHeld(keybinds->jump))
+        vecteurDirection += VEC_UP;
 
-//    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-//        std::cout << "inventaire" << std::endl;
-//    }
+    if (glm::length(vecteurDirection) > 0.01f) {
+        vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
+    }
+    vecteurDirection *= speed * dt;
+
+
+    if (keyInput->isKeybindPressed(keybinds->openInventory)) {
+        std::cout << "[Character] Inventaire" << std::endl;
+    }
+
+    // if (keyInput->isKeybindHeld(keybinds->sprint)) {
+    //     std::cout << "[Character] Sprint" << std::endl;
+    // }
 
 
     updateClosestBlock(database); //on met à jour le bloc le plus proche
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && breakCooldown >= MAX_BREAK_COOLDOWN) {
+    // ==== Bloc interaction binds ====
+    if (keyInput->isKeybindHeld(keybinds->breakBlock) && breakCooldown >= MAX_BREAK_COOLDOWN) {
         breakBlock(database); // on fait un coup de pioche
     }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS && placeCooldown >= MAX_PLACE_COOLDOWN) {
+    if (keyInput->isKeybindHeld(keybinds->placeBlock) && placeCooldown >= MAX_PLACE_COOLDOWN) {
         putBlock(database); //on pose un bloc
     }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+    if (keyInput->isKeybindHeld(keybinds->selectBlock)) {
         setSelectedBlock(database); //on sélectionne un bloc
+    }
+
+    // ==== Debug binds ====
+    if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes)) {
+        std::cout << "[Character] Toggle bounding boxes" << std::endl;
+        displayAABB = !displayAABB;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleChunkBorders)) {
+        std::cout << "[Character] Toggle chunk borders (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleWireframe)) {
+        std::cout << "[Character] Toggle wireframe (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleSpectator)) {
+        std::cout << "[Character] Toggle spectator mode" << std::endl;
+        if (gamemode == GAMEMODE_SPECTATOR) {
+            gamemode = prevGamemode;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
+        } else {
+            prevGamemode = gamemode;
+            gamemode = GAMEMODE_SPECTATOR;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
+        }
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleCreative)) {
+        std::cout << "[Character] Toggle creative mode" << std::endl;
+        if (gamemode == GAMEMODE_CREATIVE) {
+            gamemode = prevGamemode;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
+        } else {
+            prevGamemode = gamemode;
+            gamemode = GAMEMODE_CREATIVE;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
+        }
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->reloadChunkMeshes)) {
+        std::cout << "[Character] Reload chunk meshes (not implemented)" << std::endl;
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeyReleased(keybinds->getToggleDebug())) {
+        if (shouldToggleDebug) {
+            std::cout << "[Character] Toggle debug mode (not implemented)" << std::endl;
+        } else {
+            shouldToggleDebug = true;
+        }
     }
 }
 
@@ -70,7 +156,7 @@ void Character::updateClosestBlock(BlocDatabase &db) {
     std::vector<VoxelChunk *> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
     intersection = false;
     if (chunks.empty()) {
-        renderer->disableHighlight();
+        targetCubeRenderer->disableHighlight();
         return;
     }
     std::vector<glm::vec3> origins;
@@ -107,9 +193,9 @@ void Character::updateClosestBlock(BlocDatabase &db) {
     }
     if (intersection) {
         // set highlight
-        renderer->setHighlight(glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z));
+        targetCubeRenderer->setHighlight(glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z));
     } else {
-        renderer->disableHighlight();
+        targetCubeRenderer->disableHighlight();
     }
 }
 
@@ -125,7 +211,7 @@ void Character::breakBlock(BlocDatabase &database) {
 
     //on casse le bloc le plus proche -> on remplace le bloc par de l'air
     // on affiche le type de bloc cassé
-    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, getGamemode());
     if (idBlocCasse == -1) {
         return;
     }
@@ -219,3 +305,116 @@ void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffse
     }
     inventory->printInventory();
 }
+
+/**
+ * \brief fonction qui met à jour le personnage et sa physique
+ * @param dt
+ */
+void Character::update(float dt) {
+    if (breakCooldown < MAX_BREAK_COOLDOWN) {
+        breakCooldown += dt;
+    }
+    if (placeCooldown < MAX_PLACE_COOLDOWN) {
+        placeCooldown += dt;
+    }
+    updateBoundingBox();
+    AABBRenderer->setHighlight(getMinBoundingBox());
+}
+
+/**
+ * \brief fonction qui met à jour la bounding box du personnage
+ */
+void Character::updateBoundingBox() {
+    boundingBox.clear();
+    glm::vec3 position = getWorldPosition();
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, -size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, -size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, -size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(size.x / 2, size.y / 2, size.z / 2));
+    boundingBox.push_back(position + glm::vec3(-size.x / 2, size.y / 2, size.z / 2));
+}
+
+glm::vec3 Character::getMinBoundingBox() {
+    glm::vec3 min = boundingBox[0];
+    for (int i = 1; i < boundingBox.size(); ++i) {
+        min = glm::min(min, boundingBox[i]);
+    }
+    return min;
+}
+
+glm::vec3 Character::getMaxBoundingBox() {
+    glm::vec3 max = boundingBox[0];
+    for (int i = 1; i < boundingBox.size(); ++i) {
+        max = glm::max(max, boundingBox[i]);
+    }
+    return max;
+}
+
+void Character::drawBoundingBox() {
+    if (!displayAABB) return;
+    AABBRenderer->drawWireframeCube(
+            size,
+            camera->getViewMatrix(),
+            camera->getProjectionMatrix()
+    );
+}
+
+void Character::draw(GLuint programID) {
+    SceneNode::draw(programID);
+    targetCubeRenderer->drawWireframeCube(
+            glm::vec3(1.f, 1.f, 1.f),
+            camera->getViewMatrix(),
+            camera->getProjectionMatrix()
+    );
+}
+/**
+ * \brief fonction qui gère la gravité du personnage
+ * @param deltaTime
+ */
+void Character::resolveGravity(float &deltaTime) {
+    if (gamemode == GAMEMODE_CREATIVE || gamemode == GAMEMODE_SPECTATOR) {
+        return;
+    }
+    // Apply gravity to the velocity
+    velocity += glm::vec3(0.f, gravity * deltaTime, 0.f); // Gravity acceleration
+
+    // Predict the next position based on velocity
+    glm::vec3 nextPosition = getWorldPosition() + velocity * deltaTime;
+
+    // Check for collisions with the ground
+    glm::vec3 minBB = getMinBoundingBox();
+    glm::vec3 maxBB = getMaxBoundingBox();
+
+    // Adjust the bounding box for the next position
+    minBB.y += velocity.y * deltaTime;
+    maxBB.y += velocity.y * deltaTime;
+
+    bool isGrounded = false;
+
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
+                if (m_world->getBloc(x, y, z) != AIR) { // Check for solid blocks
+                    isGrounded = true;
+                    velocity.y = 0; // Stop downward movement
+                    break;
+                }
+            }
+            if (isGrounded) break;
+        }
+        if (isGrounded) break;
+    }
+
+    // Apply the remaining velocity if not grounded AND
+    if(!isGrounded  && !keyInput->isKeybindReleased(keybinds->jump)) {
+        translate(velocity * deltaTime);
+    } else {
+        velocity.y = 0; // Reset vertical velocity when grounded
+    }
+}
+
+
+

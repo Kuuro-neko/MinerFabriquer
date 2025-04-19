@@ -1,10 +1,23 @@
 #include <TP/Scene/World.hpp>
-#include "TP/Camera/Frustrum.hpp"
+#include <random>
+#include "WorldGenerator.hpp"
+#include "TP/Character/Character.hpp"
+#include <algorithm>
+#include "World.hpp"
+
+World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
+    generation();
+}
+
+World::~World() {
+}
 
 VoxelChunk *World::createEmptyChunk(int x, int y, int z) {
     chunks.emplace(glm::ivec3(x, y, z), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
     VoxelChunk *chunk = &chunks.at(glm::ivec3(x, y, z));
     chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
+    chunk->m_world = this;
+    chunk->m_chunkCoords = glm::ivec3(x, y, z);
     return chunk;
 }
 
@@ -24,10 +37,10 @@ VoxelChunk *World::getChunk(int x, int y, int z) {
     return nullptr;
 }
 
-int World::playerRemoveBlock(int x, int y, int z) {
+int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {
-        return chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+        return chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, gamemode);
     }
     return -1;
 }
@@ -52,14 +65,15 @@ int World::getBloc(int x, int y, int z) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {
         return chunk->getBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+    } else {
+        return OUT_OF_BOUNDS_BLOC;
     }
-    return -1;
 }
 
 VoxelChunk *World::getChunkAt(int x, int y, int z) {
-    int xx = x / CHUNK_SIZE;
-    int yy = y / CHUNK_SIZE;
-    int zz = z / CHUNK_SIZE;
+    int xx = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
+    int yy = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
+    int zz = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
     auto it = chunks.find({xx, yy, zz});
     if (it != chunks.end()) {
         return &it->second;
@@ -84,177 +98,38 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
     return intersectedChunks;
 }
 
+void World::draw(GLuint programID) {
+    for (auto &[key, chunk]: visibleChunks) {
+        //si la distance de rendu est depassee, on ne dessine pas le chunk
+        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
+        if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
+            chunk->draw(programID);
+        }
+    }
+}
+
 void World::generation() {
-    int groundLevel = 4;
-    //chunk #0
-    VoxelChunk *chunk = createEmptyChunk(0, 0, 0);
-    chunk->setBloc(5, groundLevel + 1, 5, LOG_OAK);
-    chunk->setBloc(5, groundLevel + 2, 5, LOG_OAK);
-    chunk->setBloc(5, groundLevel + 3, 5, LOG_OAK);
-    chunk->setBloc(5, groundLevel + 4, 5, LEAVES_OAK);
-    chunk->setBloc(5, groundLevel + 3, 6, LEAVES_OAK);
-    chunk->setBloc(6, groundLevel + 3, 5, LEAVES_OAK);
-    chunk->setBloc(5, groundLevel + 3, 4, LEAVES_OAK);
-    chunk->setBloc(4, groundLevel + 3, 5, LEAVES_OAK);
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
-            chunk->setBloc(i, groundLevel - 3, j, STONE);
-            chunk->setBloc(i, groundLevel - 2, j, DIRT);
-            chunk->setBloc(i, groundLevel - 1, j, DIRT);
-            chunk->setBloc(i, groundLevel, j, GRASS);
+    WorldGenerator worldGenerator;
+
+    // 2x2 chunks for testing
+    for (int i = 0; i < 2; i++) { // POur tester collision on met que 1 chunk
+        for (int j = 0; j < 2; j++) {
+            VoxelChunk *chunk = createEmptyChunk(i, 0, j);
+            worldGenerator.genereteProceduralChunk(chunk, i, j);
+
         }
     }
-    chunk->setBloc(8, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 9, GLOWSTONE);
-    chunk->generateMesh();
 
-    //chunk #1
-    chunk = createEmptyChunk(1, 0, 0);
-    chunk->setBloc(2, groundLevel + 1, 2, LOG_OAK);
-    chunk->setBloc(2, groundLevel + 2, 2, LOG_OAK);
-    chunk->setBloc(2, groundLevel + 3, 2, LOG_OAK);
-    chunk->setBloc(2, groundLevel + 4, 2, LEAVES_OAK);
-    chunk->setBloc(2, groundLevel + 3, 3, LEAVES_OAK);
-    chunk->setBloc(3, groundLevel + 3, 2, LEAVES_OAK);
-    chunk->setBloc(2, groundLevel + 3, 1, LEAVES_OAK);
-    chunk->setBloc(1, groundLevel + 3, 2, LEAVES_OAK);
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
-            chunk->setBloc(i, groundLevel - 3, j, STONE);
-            chunk->setBloc(i, groundLevel - 2, j, DIRT);
-            chunk->setBloc(i, groundLevel - 1, j, DIRT);
-            chunk->setBloc(i, groundLevel, j, GRASS);
-        }
+    // generate all meshes
+    for (auto &[key, chunk]: chunks) {
+        chunk.generateMesh();
     }
-    chunk->setBloc(8, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 4, 9, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(8, groundLevel + 5, 9, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 8, GLOWSTONE);
-    chunk->setBloc(9, groundLevel + 5, 9, GLOWSTONE);
-    chunk->generateMesh();
+}
 
-    //chunk #2
-    chunk = createEmptyChunk(0, 0, 1);
-    // Arbre 1
-    chunk->setBloc(3, groundLevel + 1, 3, LOG_OAK);
-    chunk->setBloc(3, groundLevel + 2, 3, LOG_OAK);
-    chunk->setBloc(3, groundLevel + 3, 3, LOG_OAK);
-    chunk->setBloc(3, groundLevel + 4, 3, LEAVES_OAK);
-    chunk->setBloc(3, groundLevel + 3, 4, LEAVES_OAK);
-    chunk->setBloc(4, groundLevel + 3, 3, LEAVES_OAK);
-    chunk->setBloc(3, groundLevel + 3, 2, LEAVES_OAK);
-    chunk->setBloc(2, groundLevel + 3, 3, LEAVES_OAK);
-
-    // Arbre 2
-    chunk->setBloc(7, groundLevel + 1, 7, LOG_OAK);
-    chunk->setBloc(7, groundLevel + 2, 7, LOG_OAK);
-    chunk->setBloc(7, groundLevel + 3, 7, LOG_OAK);
-    chunk->setBloc(7, groundLevel + 4, 7, LEAVES_OAK);
-    chunk->setBloc(7, groundLevel + 3, 8, LEAVES_OAK);
-    chunk->setBloc(8, groundLevel + 3, 7, LEAVES_OAK);
-    chunk->setBloc(7, groundLevel + 3, 6, LEAVES_OAK);
-    chunk->setBloc(6, groundLevel + 3, 7, LEAVES_OAK);
-
-    // Arbre 3
-    chunk->setBloc(10, groundLevel + 1, 5, LOG_OAK);
-    chunk->setBloc(10, groundLevel + 2, 5, LOG_OAK);
-    chunk->setBloc(10, groundLevel + 3, 5, LOG_OAK);
-    chunk->setBloc(10, groundLevel + 4, 5, LEAVES_OAK);
-    chunk->setBloc(10, groundLevel + 3, 6, LEAVES_OAK);
-    chunk->setBloc(11, groundLevel + 3, 5, LEAVES_OAK);
-    chunk->setBloc(10, groundLevel + 3, 4, LEAVES_OAK);
-    chunk->setBloc(9, groundLevel + 3, 5, LEAVES_OAK);
-
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            chunk->setBloc(i, groundLevel - 4, j, BEDROCK);
-            chunk->setBloc(i, groundLevel - 3, j, STONE);
-            chunk->setBloc(i, groundLevel - 2, j, DIRT);
-            chunk->setBloc(i, groundLevel - 1, j, DIRT);
-            chunk->setBloc(i, groundLevel, j, GRASS);
-        }
+void World::cleanupBuffers() {
+    for (auto &[key, chunk]: chunks) {
+        chunk.cleanupBuffers();
     }
-    chunk->generateMesh();
-
-
-    //chunk #3
-    chunk = createEmptyChunk(1, 0, 1);
-    int peakHeight = groundLevel + 6; // Hauteur maximale de la dune
-    for (int i = 0; i < CHUNK_SIZE; i++) {
-        for (int j = 0; j < CHUNK_SIZE; j++) {
-            int height =
-                    groundLevel + std::max(0, peakHeight - std::abs(i - CHUNK_SIZE / 2) - std::abs(j - CHUNK_SIZE / 2));
-            for (int k = groundLevel - 4; k <= height; k++) {
-                if (k == groundLevel - 4) {
-                    chunk->setBloc(i, k, j, BEDROCK);
-                } else if (k < height - 2) {
-                    chunk->setBloc(i, k, j, STONE);
-                } else if (k < height) {
-                    chunk->setBloc(i, k, j, DIRT);
-                } else {
-                    chunk->setBloc(i, k, j, GRASS);
-                }
-            }
-        }
-    }
-    chunk->generateMesh();
-
-   //chunk #4
-   chunk = createEmptyChunk(0, 0, 2);
-   for (int i = 0; i < CHUNK_SIZE; i++) {
-       for (int j = 0; j < CHUNK_SIZE; j++) {
-           if (i == CHUNK_SIZE / 2 && j == CHUNK_SIZE / 2) {
-               // Crée un trou au centre
-               continue;
-           }
-           for (int k = groundLevel - 4; k <= groundLevel; k++) {
-               if (k == groundLevel - 4) {
-                   chunk->setBloc(i, k, j, BEDROCK);
-               } else if (k < groundLevel - 1) {
-                   chunk->setBloc(i, k, j, STONE);
-               } else {
-                   chunk->setBloc(i, k, j, GRASS);
-               }
-           }
-       }
-   }
-   chunk->generateMesh();
-
-   //chunk #5
-   chunk = createEmptyChunk(0, 0, 3);
-   // Crée une maison simple
-   for (int i = 4; i <= 8; i++) {
-       for (int j = 4; j <= 8; j++) {
-           for (int k = groundLevel; k <= groundLevel + 4; k++) {
-               if (k == groundLevel) {
-                   chunk->setBloc(i, k, j, LOG_OAK);
-               } else if (i == 4 || i == 8 || j == 4 || j == 8) {
-                   if (k == groundLevel + 2 && (i == 6 || j == 6)) {
-                       // Laisse des ouvertures pour les fenêtres
-                       continue;
-                   }
-                   chunk->setBloc(i, k, j, LOG_OAK);
-               } else if (k == groundLevel + 4) {
-                   chunk->setBloc(i, k, j, LOG_OAK);
-               }
-           }
-       }
-   }
-   // Ajoute une porte
-   chunk->setBloc(6, groundLevel + 1, 4, AIR);
-   chunk->setBloc(6, groundLevel + 2, 4, AIR);
-   chunk->generateMesh();
 }
 
 void World::updateVisibleChunk(Frustrum &frustum) {
@@ -263,15 +138,97 @@ void World::updateVisibleChunk(Frustrum &frustum) {
     for (auto &[key, chunk]: chunks) {
         if (frustum.isBoundingBoxInFrustum(chunk.getWorldPosition(),
                                            chunk.getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
-            visibleChunks[key] = chunk;
+            visibleChunks[key] = &chunk;
         } else {
             // si le chunk n'est pas visible, on le supprime de la liste des chunks visibles
             auto it = visibleChunks.find(key);
             if (it != visibleChunks.end()) {
-                it->second.cleanupBuffers();
+                it->second->cleanupBuffers();
                 visibleChunks.erase(it);
             }
         }
     }
 
+}
+
+void World::setCamera(Camera &camera) {
+    this->camera = &camera;
+}
+
+void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
+    // Bounding box du personnage
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
+
+    // Position minimale et maximale du bloc intersecté
+    glm::vec3 blockMin = blockPosition;
+    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+
+    // Vérification si la bounding box du personnage intersecte celle du bloc
+    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
+        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
+        maxBB.z > blockMin.z && minBB.z < blockMax.z) {
+
+        // Calcul des overlaps sur chaque axe
+        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
+        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
+        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
+
+        // Détermination de l'axe avec la plus petite profondeur de collision
+        if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
+            if (character.vecteurDirection.x > 0 && character.getWorldPosition().x < blockPosition.x) {
+                character.vecteurDirection.x = 0; // Bloque le mouvement vers la droite
+            } else if (character.vecteurDirection.x < 0 && character.getWorldPosition().x > blockPosition.x) {
+                character.vecteurDirection.x = 0; // Bloque le mouvement vers la gauche
+            }
+        } else if (overlapY < overlapX && overlapY < overlapZ) { // Axe Y
+            if (character.vecteurDirection.y > 0 && character.getWorldPosition().y < blockPosition.y) {
+                character.vecteurDirection.y = 0; // Bloque le mouvement vers le haut
+            } else if (character.vecteurDirection.y < 0 && character.getWorldPosition().y > blockPosition.y) {
+                character.vecteurDirection.y = 0; // Bloque le mouvement vers le bas
+            }
+        } else { // Axe Z
+            if (character.vecteurDirection.z > 0 && character.getWorldPosition().z < blockPosition.z) {
+                character.vecteurDirection.z = 0; // Bloque le mouvement vers l'avant
+            } else if (character.vecteurDirection.z < 0 && character.getWorldPosition().z > blockPosition.z) {
+                character.vecteurDirection.z = 0; // Bloque le mouvement vers l'arrière
+            }
+        }
+    }
+}
+
+void World::update(float deltaTime) {
+    if (doDaylightCycle) time += deltaTime;
+}
+    // Récupération de la position du personnage
+void World::resolveCollisions(Character &character, World *world) {
+    if (character.getGamemode() == GAMEMODE_SPECTATOR) {
+        character.move(character.vecteurDirection);
+        return;
+    }
+    //TODO au lieu de faire la vérification dans world, on fait un broadphase -> on vérifie quel chunk
+    // sont intersecté par le personnage et on fait la recherche dans ces deux chunks
+    // On peut aussi ajouter un octree pour optimiser la recherche
+    glm::vec3 characterPosition = character.getWorldPosition();
+
+
+// Récupération de la bounding box du personnage
+    glm::vec3 minBB = character.getMinBoundingBox();
+    glm::vec3 maxBB = character.getMaxBoundingBox();
+
+// Parcours des blocs proches de la bounding box du personnage
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
+                // Vérification des blocs dans le chunk actuel et le chunk proche
+                if(world->getBloc(x, y, z) != AIR) {
+                    resolveCollisionForBlock(character, glm::vec3(x, y, z));
+                }
+            }
+        }
+    }
+
+
+    // Application du mouvement du personnage
+    character.move(character.vecteurDirection);
 }

@@ -23,7 +23,7 @@ class Camera_Helper
 {
 public: 
 	static glm::vec3 quatToEuler(glm::quat _quat);
-	static void computeFinalView(glm::mat4& _outProjectionMatrix, glm::mat4& _outviewMatrix, glm::vec3& _position, glm::quat _rotation, float _fovDegree);
+	static void computeFinalView(glm::mat4& _outProjectionMatrix, glm::mat4& _outviewMatrix, glm::vec3& _position, glm::quat _rotation, float _fovDegree, float near, float far);
 	static glm::vec3 projectVectorOnPlan(glm::vec3 _vector, glm::vec3 _normal);
 	static double clipAnglePI(double _angle);
 	static double clamp(double _value, double _min, double _max);
