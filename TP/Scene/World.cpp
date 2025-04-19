@@ -106,6 +106,17 @@ void World::draw(GLuint programID) {
             chunk->draw(programID);
         }
     }
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    for (auto &[key, chunk]: visibleChunks) {
+        //si la distance de rendu est depassee, on ne dessine pas le chunk
+        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
+        if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
+            chunk->drawTransparent(programID);
+        }
+    }
+    glDisable(GL_BLEND);
+    
 }
 
 void World::generation() {
