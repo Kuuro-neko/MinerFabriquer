@@ -58,6 +58,7 @@ public:
      * @param programID 
      */
     void draw(GLuint programID) override;
+    void drawTransparent(GLuint programID);
 
     void cleanupBuffers() override;
 
@@ -77,6 +78,8 @@ public:
     int*** m_cubes;
     glm::ivec3 m_chunkCoords;
     World *m_world;
+    MeshObject m_opaqueMesh;
+    MeshObject m_transparentMesh;
 
     // Move Constructor
     VoxelChunk(VoxelChunk&& other) noexcept;
@@ -85,10 +88,10 @@ public:
     VoxelChunk& operator=(VoxelChunk&& other) noexcept;
 
     // Copy Constructor
-    VoxelChunk(const VoxelChunk& other);
+    VoxelChunk(const VoxelChunk& other) = delete;
 
     // Copy Assignment Operator
-    VoxelChunk& operator=(const VoxelChunk& other);
+    VoxelChunk& operator=(const VoxelChunk& other) = delete;
 
 
 

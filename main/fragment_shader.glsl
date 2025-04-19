@@ -112,7 +112,7 @@ void main(){
                 vec3 light_color = texture(LightmapSampler, lightUV).xyz;
                 //vec3 light_color = vec3(23.47, 21.31, 20.79);
 
-                light_color *= vec3(1000.0);
+                light_color *= vec3(1500.0);
                 //light_color *= 25.0 * (lightX * lightX);
 
                 vec4 albedoTex = texture(TextureSampler, UV);

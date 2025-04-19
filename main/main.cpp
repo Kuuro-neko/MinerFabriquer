@@ -305,9 +305,9 @@ int main(void) {
 
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
-
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        cubemapTexture.draw(camera);
 
         // Use our shader
         glUseProgram(programID);
@@ -339,7 +339,7 @@ int main(void) {
         }
 
 
-        cubemapTexture.draw(camera);
+        
 
         character.drawBoundingBox();
         
