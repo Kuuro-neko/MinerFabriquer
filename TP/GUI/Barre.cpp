@@ -19,15 +19,26 @@ Barre::~Barre() {
 
 void Barre::initSlots() {
     slots.clear();
-    float totalWidth = 9 * 64 + 8 * 8; //TODO : use m_windowWidth and m_windowHeight 
-    float startX = (m_windowWidth - totalWidth) / 2.0f;
-    float y = 20.0f;
 
-    for (int i = 0; i < 9; ++i) {
-        glm::vec2 slot = { startX + i * (64 + 8), y };
+    const int slotCount = 9;
+    const float slotSize = 64.0f;
+    const float spacing = 8.0f;
+
+    // Calcul de la largeur totale occupée par les slots et les espaces entre eux
+    float totalWidth = slotCount * slotSize + (slotCount - 1) * spacing;
+
+    // Centrer horizontalement
+    float startX = (m_windowWidth - totalWidth) / 2.0f;
+
+    // Espace de 20 pixels du bas de la fenêtre a la barre
+    float y = m_windowHeight - slotSize - 20.0f;
+
+    for (int i = 0; i < slotCount; ++i) {
+        glm::vec2 slot = { startX + i * (slotSize + spacing), y };
         slots.push_back(slot);
     }
 }
+
 
 void Barre::initBuffers() {
     float slotVertices[] = {
