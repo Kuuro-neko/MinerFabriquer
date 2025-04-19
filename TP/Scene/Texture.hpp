@@ -3,6 +3,7 @@
 #include <stb_image.h>
 #include <GL/glew.h>
 #include <TP/Scene/BlocTypes.hpp>
+#include <TP/Camera/Camera.hpp>
 
 #define TEXTUREATLAS_COORD_UNIT 0.0625f
 
@@ -188,4 +189,19 @@ public:
         m_roughness.bind(programID);
         m_metallic.bind(programID);
     }
+};
+
+class CubemapTexture {
+private:
+    
+    GLuint textureID, VAO, VBO;
+    float skyboxVertices[108];
+    int programID;
+public:
+    CubemapTexture(int programID);
+    inline void setProgramID(int programID) {
+        this->programID = programID;
+    }
+    void draw(Camera &camera);
+    void cleanupBuffers();
 };

@@ -211,6 +211,7 @@ int main(void) {
     Renderer rendererCharacterBoundingBox = Renderer(programID2);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
     GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
+    GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
 
     GLint success;
     GLchar infoLog[512];
@@ -224,6 +225,8 @@ int main(void) {
     lightMap.setSamplerName("LightmapSampler");
     lightMap.genTexture(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
     lightMap.bind(programID);
+
+    CubemapTexture cubemapTexture = CubemapTexture(cubemapProgramID);
 
     // Get a handle for our "Model View Projection" matrices uniforms
 
@@ -350,6 +353,8 @@ int main(void) {
         }
 
 
+        cubemapTexture.draw(camera);
+
         // Swap buffers
         glfwSwapBuffers(window);
         
@@ -363,6 +368,7 @@ int main(void) {
     // Cleanup VBO and shader
     root.cleanupBuffers();
     crosshair.cleanupBuffers();
+    cubemapTexture.cleanupBuffers();
 
     glDeleteProgram(programID);
     // glDeleteProgram(crosshairProgramID);
