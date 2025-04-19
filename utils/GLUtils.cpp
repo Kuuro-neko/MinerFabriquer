@@ -29,11 +29,11 @@ void addOffsetToLast4Vertices(std::vector<glm::vec3> &vertices, float x_offset, 
  */
 void addQuadToTriangles(std::vector<unsigned short> &triangles, int vertexInsertIndex) {
     triangles.push_back(vertexInsertIndex);
-    triangles.push_back(vertexInsertIndex + 1);
     triangles.push_back(vertexInsertIndex + 2);
     triangles.push_back(vertexInsertIndex + 1);
+    triangles.push_back(vertexInsertIndex + 1);
+    triangles.push_back(vertexInsertIndex + 2);
     triangles.push_back(vertexInsertIndex + 3);
-    triangles.push_back(vertexInsertIndex + 2);
 }
 
 /**
@@ -133,10 +133,10 @@ void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<glm::vec3> 
         addNormals(normals, BLOC_TOP);
     }
     if (face & BLOC_BOTTOM) {
-        vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+        vertices.push_back(glm::vec3(size, 0.0f, size));
         vertices.push_back(glm::vec3(size, 0.0f, 0.0f));
         vertices.push_back(glm::vec3(0.0f, 0.0f, size));
-        vertices.push_back(glm::vec3(size, 0.0f, size));
+        vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 
         addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
         addQuadToTriangles(triangles, vertexInsertIndex);

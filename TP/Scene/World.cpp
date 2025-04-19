@@ -99,6 +99,7 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
 }
 
 void World::draw(GLuint programID) {
+    glEnable(GL_CULL_FACE);
     for (auto &[key, chunk]: visibleChunks) {
         //si la distance de rendu est depassee, on ne dessine pas le chunk
         float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
@@ -106,6 +107,7 @@ void World::draw(GLuint programID) {
             chunk->draw(programID);
         }
     }
+    glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     for (auto &[key, chunk]: visibleChunks) {
