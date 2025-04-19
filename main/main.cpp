@@ -7,13 +7,9 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
-#include "TP/Camera/Frustrum.hpp"
 #include <TP/GUI/Crosshair.hpp>
-
 #include <TP/Scene/Entity.hpp>
 
-#include <TP/Input/KeyInput.hpp>
-#include <TP/Input/KeyBinds.hpp>
 
 
 #define CHUNK_SIZE 16
@@ -149,7 +145,7 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow(windowWidth, windowHeight, "main - GLFW", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "Miner-Fabriquer", NULL, NULL);
     KeyInput characterInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForCharacter());
     KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
     menuInputManager.setIsEnabled(false);
@@ -244,6 +240,7 @@ int main(void) {
     character.m_world = &world;
 
     Entity* characterModel = new Entity();
+    characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
     Texture* playerTexture = new Texture("../textures/steve.png");
     characterModel->setTexture(playerTexture);
@@ -305,10 +302,9 @@ int main(void) {
 
         frustum.update();
         world.updateVisibleChunk(frustum);
-        // on a un pb, quand on est a la limite , ça plante
-        // ce qu'on fait c'est alors resolve la collision avec touts les chunks conteant au moins 1 point de la bounding box world.getChunksContraining (retourne un set de chunk)
-        // deuxieme changement, on recupere le vecteur donne  par listenAction et si y'a collision, on n'avance pas sinon on autorise le mouvement
+
         world.resolveCollisions(character, &world);
+        character.resolveGravity(deltaTime);
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

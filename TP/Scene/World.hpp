@@ -91,7 +91,7 @@ public:
      * 
      * @return int Broken block id or -1 if no block was broken
      */
-    int playerRemoveBlock(int x, int y, int z);
+    int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
     /**
      * @brief Remove a block at the given WORLD coordinates. Don't use it for the player directly.

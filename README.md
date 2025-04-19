@@ -40,6 +40,8 @@
 
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/n.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle spectator mode
 
+<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/j.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle creative mode
+
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/z.png" alt="Z" width="20 " style="image-rendering: pixelated;"/> Toggle wireframe mode
 
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/g.png" alt="G" width="20 " style="image-rendering: pixelated;"/> Show chunk borders

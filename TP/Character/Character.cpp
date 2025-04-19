@@ -6,6 +6,19 @@
 
 using namespace std;
 
+std::string gamemodeString(int gamemode) {
+    switch (gamemode) {
+        case GAMEMODE_CREATIVE:
+            return "GAMEMODE_CREATIVE";
+        case GAMEMODE_SURVIVAL:
+            return "GAMEMODE_SURVIVAL";
+        case GAMEMODE_SPECTATOR:
+            return "GAMEMODE_SPECTATOR";
+        default:
+            return "UNKNOWN_GAMEMODE";
+    }
+}
+
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
         : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size(), velocity() {
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
@@ -99,7 +112,28 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     }
 
     if (keyInput->isKeybindPressed(keybinds->toggleSpectator)) {
-        std::cout << "[Character] Toggle spectator mode (not implemented)" << std::endl;
+        std::cout << "[Character] Toggle spectator mode" << std::endl;
+        if (gamemode == GAMEMODE_SPECTATOR) {
+            gamemode = prevGamemode;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
+        } else {
+            prevGamemode = gamemode;
+            gamemode = GAMEMODE_SPECTATOR;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
+        }
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleCreative)) {
+        std::cout << "[Character] Toggle creative mode" << std::endl;
+        if (gamemode == GAMEMODE_CREATIVE) {
+            gamemode = prevGamemode;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
+        } else {
+            prevGamemode = gamemode;
+            gamemode = GAMEMODE_CREATIVE;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
+        }
         shouldToggleDebug = false;
     }
 
@@ -177,7 +211,7 @@ void Character::breakBlock(BlocDatabase &database) {
 
     //on casse le bloc le plus proche -> on remplace le bloc par de l'air
     // on affiche le type de bloc cassé
-    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, getGamemode());
     if (idBlocCasse == -1) {
         return;
     }
@@ -336,3 +370,51 @@ void Character::draw(GLuint programID) {
             camera->getProjectionMatrix()
     );
 }
+/**
+ * \brief fonction qui gère la gravité du personnage
+ * @param deltaTime
+ */
+void Character::resolveGravity(float &deltaTime) {
+    if (gamemode == GAMEMODE_CREATIVE || gamemode == GAMEMODE_SPECTATOR) {
+        return;
+    }
+    // Apply gravity to the velocity
+    velocity += glm::vec3(0.f, gravity * deltaTime, 0.f); // Gravity acceleration
+
+    // Predict the next position based on velocity
+    glm::vec3 nextPosition = getWorldPosition() + velocity * deltaTime;
+
+    // Check for collisions with the ground
+    glm::vec3 minBB = getMinBoundingBox();
+    glm::vec3 maxBB = getMaxBoundingBox();
+
+    // Adjust the bounding box for the next position
+    minBB.y += velocity.y * deltaTime;
+    maxBB.y += velocity.y * deltaTime;
+
+    bool isGrounded = false;
+
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
+                if (m_world->getBloc(x, y, z) != AIR) { // Check for solid blocks
+                    isGrounded = true;
+                    velocity.y = 0; // Stop downward movement
+                    break;
+                }
+            }
+            if (isGrounded) break;
+        }
+        if (isGrounded) break;
+    }
+
+    // Apply the remaining velocity if not grounded AND
+    if(!isGrounded  && !keyInput->isKeybindReleased(keybinds->jump)) {
+        translate(velocity * deltaTime);
+    } else {
+        velocity.y = 0; // Reset vertical velocity when grounded
+    }
+}
+
+
+

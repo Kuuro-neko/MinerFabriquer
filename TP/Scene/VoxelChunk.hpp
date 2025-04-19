@@ -42,7 +42,7 @@ public:
     int getBloc(int x, int y, int z);
     int getBlocIncludingNeighbors(int x, int y, int z);
 
-    int playerRemoveBlock(int x, int y, int z);
+    int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
     int removeBlock(int x, int y, int z);
 

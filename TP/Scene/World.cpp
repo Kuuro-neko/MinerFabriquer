@@ -37,10 +37,10 @@ VoxelChunk *World::getChunk(int x, int y, int z) {
     return nullptr;
 }
 
-int World::playerRemoveBlock(int x, int y, int z) {
+int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {
-        return chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+        return chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, gamemode);
     }
     return -1;
 }
@@ -200,9 +200,15 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 void World::update(float deltaTime) {
     if (doDaylightCycle) time += deltaTime;
 }
-void World::resolveCollisions(Character &character, World *world)
-{
     // Récupération de la position du personnage
+void World::resolveCollisions(Character &character, World *world) {
+    if (character.getGamemode() == GAMEMODE_SPECTATOR) {
+        character.move(character.vecteurDirection);
+        return;
+    }
+    //TODO au lieu de faire la vérification dans world, on fait un broadphase -> on vérifie quel chunk
+    // sont intersecté par le personnage et on fait la recherche dans ces deux chunks
+    // On peut aussi ajouter un octree pour optimiser la recherche
     glm::vec3 characterPosition = character.getWorldPosition();
 
 
@@ -222,6 +228,7 @@ void World::resolveCollisions(Character &character, World *world)
         }
     }
 
-// Application du mouvement du personnage
+
+    // Application du mouvement du personnage
     character.move(character.vecteurDirection);
 }

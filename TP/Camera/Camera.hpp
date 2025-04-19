@@ -32,16 +32,13 @@ class Camera {
 public:
 
     void reset();
-
     void init();
-
     void update(float _deltaTime, GLFWwindow *_window);
-
     void updateFreeInput(float _deltaTime, GLFWwindow *_window);
-
     void setTarget(glm::vec3 _target);
-
     void updateTarget(glm::vec3 _target);
+
+    inline bool isFPS() const { return !m_attached; }
 
     glm::vec3 getPosition() const { return m_position; }
 
@@ -64,6 +61,7 @@ public:
     inline float getNearPlane() const { return m_nearPlane; }   
     inline float getFarPlane() const { return m_farPlane; }
 
+    bool m_attached = DEFAULT_ATTACHED;
 private:
     //Camera parameters
     float m_fovDegree{DEFAULT_FOV};
@@ -104,7 +102,6 @@ private:
     //Camera Third
     glm::vec3 m_targetDeltaPos;
     glm::vec3 m_targetPrev;
-    bool m_attached = DEFAULT_ATTACHED;
     float m_distance = 10.0f;
 
     inline glm::vec3 getTarget() const { return m_targetPrev; }

@@ -17,6 +17,10 @@
 #define MAX_BREAK_COOLDOWN 0.3f
 #define MAX_PLACE_COOLDOWN 0.3f
 
+#define GAMEMODE_CREATIVE 0
+#define GAMEMODE_SURVIVAL 1
+#define GAMEMODE_SPECTATOR 2
+
 class Character : public SceneNode {
 
 public:
@@ -27,56 +31,42 @@ public:
         this->targetCubeRenderer = new Renderer(wireframeProgramID);
         this->AABBRenderer = new Renderer(wireframeProgramID);
     }
+    inline void applyGravity() {translate(glm::vec3(0.f, -gravity, 0.f));}
+    inline glm::vec3 getSize() { return size; }
+    inline unsigned char getGamemode() { return gamemode; }
+    inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
+    void draw(GLuint programID) override;
+
 
     void listenAction(float dt, BlocDatabase &database);
-
     void scrollCallback(GLFWwindow *window, double xOffset, double yOffset);
-
     void update(float dt);
-
     void updateBoundingBox();
+    void move(glm::vec3 direction);
+    void drawBoundingBox();
+
+
+    glm::vec3 getMinBoundingBox();
+    glm::vec3 getMaxBoundingBox();
 
     World *m_world;
     Camera *camera;
     Inventory *inventory;
-
-
     glm::vec3 velocity = glm::vec3(0.f);
-
-    glm::vec3 getMinBoundingBox();
-
-    glm::vec3 getMaxBoundingBox();
-
-    inline void applyGravity() {
-        translate(glm::vec3(0.f, -gravity, 0.f));
-    }
-
-    void drawBoundingBox();
-
-    void draw(GLuint programID) override;
-
-
-    inline glm::vec3 getSize() { return size; }
-
-    inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
-
-
-    void move(glm::vec3 direction);
-
     glm::vec3 vecteurDirection = glm::vec3(0.f, 0.f, 0.f);
+
+    void resolveGravity(float &deltaTime);
+
 private:
+
     void updateClosestBlock(BlocDatabase &database);
-
     void breakBlock(BlocDatabase &database);
-
     void putBlock(BlocDatabase &database);
-
     void setSelectedBlock(BlocDatabase &database);
 
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
-
     inline void resetPlaceCooldown() {
         placeCooldown = 0.f;
     }
@@ -85,25 +75,26 @@ private:
     Renderer *AABBRenderer = nullptr;
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
+
     float speed = 2.5f;
     float maxInteractionDistance = 6.f;
-    float gravity = 9.81f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
 
+    const float gravity = -9.81f;
+
     std::vector<glm::vec3> boundingBox;
     glm::vec3 size;
-
     glm::vec3 blocPlusProche;
 
     int facePlusProche = -1;
-
     bool intersection = false;
 
     // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
     bool shouldToggleDebug = true;
     bool displayAABB = false;
-
+    unsigned char gamemode = GAMEMODE_SURVIVAL;
+    unsigned char prevGamemode = GAMEMODE_SURVIVAL;
 };
 
 #endif // CHARACTER_HPP

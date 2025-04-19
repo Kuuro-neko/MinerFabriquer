@@ -24,6 +24,7 @@ std::vector<int> Keybinds::getKeysToMonitorForCharacter() {
     keys.insert(keys.end(), toggleWireframe.begin(), toggleWireframe.end());
     keys.insert(keys.end(), toggleChunkBorders.begin(), toggleChunkBorders.end());
     keys.insert(keys.end(), toggleSpectator.begin(), toggleSpectator.end());
+    keys.insert(keys.end(), toggleCreative.begin(), toggleCreative.end());
     keys.insert(keys.end(), reloadChunkMeshes.begin(), reloadChunkMeshes.end());
     keys.insert(keys.end(), togglePerspectiveAlternative.begin(), togglePerspectiveAlternative.end());
     keys.insert(keys.end(), togglePerspective.begin(), togglePerspective.end());

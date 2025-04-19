@@ -1,5 +1,5 @@
 #include "Entity.hpp"
-void create_cube_textured2(glm::vec3 size, MeshObject &mesh, 
+void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
     glm::vec4 uvNorth = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
     glm::vec4 uvSouth = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
     glm::vec4 uvWest = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
@@ -90,7 +90,7 @@ Entity::Entity() {
     m_leftLegMesh = new MeshObject();
     m_rightLegMesh = new MeshObject();
 
-    
+
     this->addChild(m_head);
     this->addChild(m_leftArm);
     this->addChild(m_rightArm);
@@ -106,7 +106,7 @@ void Entity::cleanupBuffers() {
     if (m_rightArmMesh) m_rightArmMesh->cleanupBuffers();
     if (m_leftLegMesh) m_leftLegMesh->cleanupBuffers();
     if (m_rightLegMesh) m_rightLegMesh->cleanupBuffers();
-    
+
     // Call parent class implementation
     SceneNode::cleanupBuffers();
 }
@@ -116,7 +116,8 @@ Entity::~Entity() {
 }
 
 void Entity::draw(GLuint programID) {
-    SceneNode::draw(programID);
+    if(isFPSActive()) SceneNode::draw(programID);
+    else return;
 }
 
 void Entity::setHeadMesh(MeshObject* mesh) {
@@ -141,6 +142,18 @@ void Entity::setLeftLegMesh(MeshObject* mesh) {
 
 void Entity::setRightLegMesh(MeshObject* mesh) {
     m_rightLeg->m_mesh = mesh;
+}
+
+void Entity::setFPSActive(bool *attached) {
+    FPSActive = attached;
+}
+
+bool Entity::isFPSActive() {
+    if (FPSActive && *FPSActive) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -176,8 +189,8 @@ glm::vec4 pixelCoordsToUV(int imageWidth, int imageHeight, int startX, int start
 
 
 
-    
-    
+
+
     if (flipY) {
         // In OpenGL, V=0 is at the bottom, but in most image formats, Y=0 is at the top
         vStart = static_cast<float>(endY) / static_cast<float>(imageHeight);
@@ -193,7 +206,7 @@ glm::vec4 pixelCoordsToUV(int imageWidth, int imageHeight, int startX, int start
 
 
 
-    
+
     // Return in format expected by create_cube_textured2: (uStart, vStart, uEnd, vEnd)
     return glm::vec4(uStart, vStart, uEnd, vEnd);
 }
@@ -202,11 +215,11 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     float membre_Y = 0.703125f;
     float membre_Z = 0.234375f;
     float membre_X = 0.234375f;
-    
+
     float torse_Y = 0.703125f;
     float torse_Z = 0.234375f;
     float torse_X = 0.46875f;
-    
+
     float head = 0.46875f;
 
     /*glm::vec4 headNorth = glm::vec4(0.1f, 0.12f, 0.3f, 0.4f);
@@ -237,7 +250,7 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     glm::vec4 headEast = pixelCoordsToUV(64,32,0,8,7,15);   // East
     glm::vec4 headUp = pixelCoordsToUV(64,32,8,0,15,7);      // Up
     glm::vec4 headDown = pixelCoordsToUV(64,32,16,0,23,7);   // Down
-    
+
     //Torso UVs
     glm::vec4 torsoNorth = pixelCoordsToUV(64,32,20,20,27,31);  // North
     glm::vec4 torsoSouth = pixelCoordsToUV(64,32,32,20,39,31);    // South
@@ -245,7 +258,7 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     glm::vec4 torsoEast = pixelCoordsToUV(64,32,28,20,31,31);   // East
     glm::vec4 torsoUp = pixelCoordsToUV(64,32,20,16,27,19);    // Up
     glm::vec4 torsoDown = pixelCoordsToUV(64,32,28,16,35,19);  // Down
-    
+
     //Left Arm UVs
     glm::vec4 leftArmNorth = pixelCoordsToUV(64,32,44,20,47,31,true,false);  // North
     glm::vec4 leftArmSouth = pixelCoordsToUV(64,32,52,20,55,31, true,false);   // South
@@ -253,7 +266,7 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     glm::vec4 leftArmEast = pixelCoordsToUV(64,32,48,20,51,31,true, false);  // East
     glm::vec4 leftArmUp = pixelCoordsToUV(64,32,44,16,47,19,false,true);    // Up
     glm::vec4 leftArmDown = pixelCoordsToUV(64,32,48,16,51,19); // Down
-    
+
     //Right Arm UVs
     glm::vec4 rightArmNorth = pixelCoordsToUV(64,32,44,20,47,31);  // North
     glm::vec4 rightArmSouth = pixelCoordsToUV(64,32,52,20,55,31);   // South
@@ -261,7 +274,7 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     glm::vec4 rightArmEast = pixelCoordsToUV(64,32,40,20,43,31); // East
     glm::vec4 rightArmUp = pixelCoordsToUV(64,32,44,16,47,19, true, true);   // Up
     glm::vec4 rightArmDown = pixelCoordsToUV(64,32,48,16,51,19,true,false); // Down
-    
+
     //Left Leg UVs
     glm::vec4 leftLegNorth = pixelCoordsToUV(64,32,4,20,7,31);  // North
     glm::vec4 leftLegSouth = pixelCoordsToUV(64,32,12,20,15,31,true,false);    // South
@@ -269,7 +282,7 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     glm::vec4 leftLegEast = pixelCoordsToUV(64,32,8,20,11,31,true,false);  // East
     glm::vec4 leftLegUp = pixelCoordsToUV(64,32,4,16,7,19);   // Up
     glm::vec4 leftLegDown = pixelCoordsToUV(64,32,8,16,11,19); // Down
-    
+
     //Right Leg UVs
     glm::vec4 rightLegNorth = pixelCoordsToUV(64,32,4,20,7,31);  // North
     glm::vec4 rightLegSouth = pixelCoordsToUV(64,32,12,20,15,31);  // South
@@ -285,41 +298,41 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     m_torsoMesh->initializeBuffers();
     this->m_mesh = m_torsoMesh;
     this->translate(glm::vec3(0.f, torse_Y-0.15f, 0.f));
-    
+
     //create legs
     create_cube_textured2(glm::vec3(membre_X, membre_Y, membre_Z)*0.5f, *m_leftLegMesh,
                         leftLegNorth, leftLegSouth, leftLegWest, leftLegEast, leftLegUp, leftLegDown);
     m_leftLegMesh->initializeBuffers();
     m_leftLeg->m_mesh = m_leftLegMesh;
-    
+
     create_cube_textured2(glm::vec3(membre_X, membre_Y, membre_Z)*0.5f, *m_rightLegMesh,
                         rightLegNorth, rightLegSouth, rightLegWest, rightLegEast, rightLegUp, rightLegDown);
     m_rightLegMesh->initializeBuffers();
     m_rightLeg->m_mesh = m_rightLegMesh;
-    
+
     //position legs
     m_leftLeg->translate(glm::vec3(membre_X*0.5f, -membre_Y, 0.f));
     m_rightLeg->translate(glm::vec3(-membre_X*0.5f, -membre_Y, 0.f));
 
-    
-    
+
+
     //create arms
     create_cube_textured2(glm::vec3(membre_X, membre_Y, membre_Z)*0.5f, *m_leftArmMesh,
                         leftArmNorth, leftArmSouth, leftArmWest, leftArmEast, leftArmUp, leftArmDown);
     m_leftArmMesh->initializeBuffers();
     m_leftArm->m_mesh = m_leftArmMesh;
-    
+
     create_cube_textured2(glm::vec3(membre_X, membre_Y, membre_Z)*0.5f, *m_rightArmMesh,
                         rightArmNorth, rightArmSouth, rightArmWest, rightArmEast, rightArmUp, rightArmDown);
     m_rightArmMesh->initializeBuffers();
     m_rightArm->m_mesh = m_rightArmMesh;
-    
+
     //position arms relative to torso
     m_leftArm->translate(glm::vec3(membre_X*1.5f, 0.f, 0.f));
     m_rightArm->translate(glm::vec3(-membre_X*1.5f, 0.f, 0.f));
 
 
-    
+
     //create head and position relative to torso
     create_cube_textured2(glm::vec3(head, head, head)*0.5f, *m_headMesh,
                         headNorth, headSouth, headWest, headEast, headUp, headDown);
@@ -327,10 +340,11 @@ void Entity::generateHumanoidMesh(float baseHeight) {
     m_head->m_mesh = m_headMesh;
     m_head->translate(glm::vec3(0.f, head*1.25f, 0.f));
 
-    
+
     //TP body to position we want
     translate(glm::vec3(0.f, baseHeight, 0.f));
 }
+
 
 
 void Entity::setTexture(Texture* texture) {
