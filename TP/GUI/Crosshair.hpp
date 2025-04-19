@@ -16,11 +16,11 @@ public:
     void initializeBuffers();
     Crosshair(int programID, float size) : programID(programID) {
         vertices = {
-            0.0f, size,
-            0.0f, -size,
+            0.0f, size*16.0f/9.0f,
+            0.0f, -size*16.0f/9.0f,
 
             -size, 0.0f,
-            size , 0.0f
+            size, 0.0f
         };
         visible = true;
         

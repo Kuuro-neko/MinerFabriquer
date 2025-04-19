@@ -17,16 +17,25 @@
 #define MAX_BREAK_COOLDOWN 0.3f
 #define MAX_PLACE_COOLDOWN 0.3f
 
+#define GAMEMODE_CREATIVE 0
+#define GAMEMODE_SURVIVAL 1
+#define GAMEMODE_SPECTATOR 2
+
 class Character : public SceneNode {
 
 public:
     Character(Transform transform, Camera *camera, World *world = nullptr, MeshObject *mesh = nullptr,
               Texture *texture = nullptr);
 
-    inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
+    inline void setWireframeRenderers(GLuint wireframeProgramID) {
+        this->targetCubeRenderer = new Renderer(wireframeProgramID);
+        this->AABBRenderer = new Renderer(wireframeProgramID);
+    }
     inline void applyGravity() {translate(glm::vec3(0.f, -gravity, 0.f));}
     inline glm::vec3 getSize() { return size; }
+    inline unsigned char getGamemode() { return gamemode; }
     inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
+    void draw(GLuint programID) override;
 
 
     void listenAction(float dt, BlocDatabase &database);
@@ -34,7 +43,7 @@ public:
     void update(float dt);
     void updateBoundingBox();
     void move(glm::vec3 direction);
-    void drawBoundingBox(GLuint programID);
+    void drawBoundingBox();
 
 
     glm::vec3 getMinBoundingBox();
@@ -62,7 +71,8 @@ private:
         placeCooldown = 0.f;
     }
 
-    Renderer *renderer;
+    Renderer *targetCubeRenderer = nullptr;
+    Renderer *AABBRenderer = nullptr;
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
 
@@ -79,7 +89,12 @@ private:
 
     int facePlusProche = -1;
     bool intersection = false;
-    bool shouldToggleDebug = true; // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
+
+    // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
+    bool shouldToggleDebug = true;
+    bool displayAABB = false;
+    unsigned char gamemode = GAMEMODE_SURVIVAL;
+    unsigned char prevGamemode = GAMEMODE_SURVIVAL;
 };
 
 #endif // CHARACTER_HPP

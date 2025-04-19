@@ -6,6 +6,19 @@
 
 using namespace std;
 
+std::string gamemodeString(int gamemode) {
+    switch (gamemode) {
+        case GAMEMODE_CREATIVE:
+            return "GAMEMODE_CREATIVE";
+        case GAMEMODE_SURVIVAL:
+            return "GAMEMODE_SURVIVAL";
+        case GAMEMODE_SPECTATOR:
+            return "GAMEMODE_SPECTATOR";
+        default:
+            return "UNKNOWN_GAMEMODE";
+    }
+}
+
 Character::Character(Transform transform, Camera *camera, World *world, MeshObject *mesh, Texture *texture)
         : SceneNode(transform, mesh, texture), camera(camera), m_world(world), size(), velocity() {
     camera->setPosition(transform.m_translation + CAMERA_POSITION_RELATIVE_TO_PLAYER);
@@ -83,7 +96,8 @@ void Character::listenAction(float dt, BlocDatabase &database) {
 
     // ==== Debug binds ====
     if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes)) {
-        std::cout << "[Character] Toggle bounding boxes (not implemented)" << std::endl;
+        std::cout << "[Character] Toggle bounding boxes" << std::endl;
+        displayAABB = !displayAABB;
         shouldToggleDebug = false;
     }
 
@@ -98,7 +112,28 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     }
 
     if (keyInput->isKeybindPressed(keybinds->toggleSpectator)) {
-        std::cout << "[Character] Toggle spectator mode (not implemented)" << std::endl;
+        std::cout << "[Character] Toggle spectator mode" << std::endl;
+        if (gamemode == GAMEMODE_SPECTATOR) {
+            gamemode = prevGamemode;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
+        } else {
+            prevGamemode = gamemode;
+            gamemode = GAMEMODE_SPECTATOR;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
+        }
+        shouldToggleDebug = false;
+    }
+
+    if (keyInput->isKeybindPressed(keybinds->toggleCreative)) {
+        std::cout << "[Character] Toggle creative mode" << std::endl;
+        if (gamemode == GAMEMODE_CREATIVE) {
+            gamemode = prevGamemode;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
+        } else {
+            prevGamemode = gamemode;
+            gamemode = GAMEMODE_CREATIVE;
+            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
+        }
         shouldToggleDebug = false;
     }
 
@@ -121,7 +156,7 @@ void Character::updateClosestBlock(BlocDatabase &db) {
     std::vector<VoxelChunk *> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
     intersection = false;
     if (chunks.empty()) {
-        renderer->disableHighlight();
+        targetCubeRenderer->disableHighlight();
         return;
     }
     std::vector<glm::vec3> origins;
@@ -158,9 +193,9 @@ void Character::updateClosestBlock(BlocDatabase &db) {
     }
     if (intersection) {
         // set highlight
-        renderer->setHighlight(glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z));
+        targetCubeRenderer->setHighlight(glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z));
     } else {
-        renderer->disableHighlight();
+        targetCubeRenderer->disableHighlight();
     }
 }
 
@@ -176,7 +211,7 @@ void Character::breakBlock(BlocDatabase &database) {
 
     //on casse le bloc le plus proche -> on remplace le bloc par de l'air
     // on affiche le type de bloc cassé
-    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
+    int idBlocCasse = m_world->playerRemoveBlock(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z, getGamemode());
     if (idBlocCasse == -1) {
         return;
     }
@@ -283,7 +318,7 @@ void Character::update(float dt) {
         placeCooldown += dt;
     }
     updateBoundingBox();
-    renderer->setHighlight(getMinBoundingBox());
+    AABBRenderer->setHighlight(getMinBoundingBox());
 }
 
 /**
@@ -318,22 +353,31 @@ glm::vec3 Character::getMaxBoundingBox() {
     return max;
 }
 
-void Character::drawBoundingBox(GLuint programID) {
-    //use renderer to draw the bounding box
-
-    glUseProgram(programID);
-    renderer->drawWireframeCube(
+void Character::drawBoundingBox() {
+    if (!displayAABB) return;
+    AABBRenderer->drawWireframeCube(
             size,
             camera->getViewMatrix(),
             camera->getProjectionMatrix()
     );
 }
 
+void Character::draw(GLuint programID) {
+    SceneNode::draw(programID);
+    targetCubeRenderer->drawWireframeCube(
+            glm::vec3(1.f, 1.f, 1.f),
+            camera->getViewMatrix(),
+            camera->getProjectionMatrix()
+    );
+}
 /**
  * \brief fonction qui gère la gravité du personnage
  * @param deltaTime
  */
 void Character::resolveGravity(float &deltaTime) {
+    if (gamemode == GAMEMODE_CREATIVE || gamemode == GAMEMODE_SPECTATOR) {
+        return;
+    }
     // Apply gravity to the velocity
     velocity += glm::vec3(0.f, gravity * deltaTime, 0.f); // Gravity acceleration
 

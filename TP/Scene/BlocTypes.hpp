@@ -16,6 +16,8 @@
 #define GLOWSTONE 8
 #define WATER 9
 #define SAND 10
+#define IRON_ORE 11
+#define IRON_BLOCK 12
 
 #define ERROR_BLOC 255
 
@@ -27,7 +29,7 @@
 #define BLOC_TOP 16
 #define BLOC_BOTTOM 32
 
-#define TEXTUREATLAS_UNIT 0.0625f
+#define TEXTUREATLAS_UNIT 0.06250f
 
 /**
  * @brief Class representing a block data

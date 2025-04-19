@@ -1,5 +1,6 @@
 #include <TP/Scene/VoxelChunk.hpp>
 #include <TP/Scene/World.hpp>
+#include <TP/Character/Character.hpp>
 
 VoxelChunk::VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), new MeshObject(), nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
     allocateCubes();
@@ -53,7 +54,7 @@ int VoxelChunk::getBlocIncludingNeighbors(int x, int y, int z) {
     return m_cubes[x][y][z];
 }
 
-int VoxelChunk::playerRemoveBlock(int x, int y, int z) {
+int VoxelChunk::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         std::cout << "Error: Out of bounds" << std::endl;
         return -1;
@@ -62,7 +63,7 @@ int VoxelChunk::playerRemoveBlock(int x, int y, int z) {
         std::cout << "Error: Cannot remove air block" << std::endl;
         return -1;
     }
-    if (BlocDatabase::getInstance().isUnbreakable(m_cubes[x][y][z])) {
+    if (BlocDatabase::getInstance().isUnbreakable(m_cubes[x][y][z]) && gamemode != GAMEMODE_CREATIVE) {
         std::cout << "Error: Cannot remove unbreakable block" << std::endl;
         return -1;
     }
@@ -77,7 +78,7 @@ int VoxelChunk::removeBlock(int x, int y, int z) {
 }
 
 bool neighborCheck(int neighbor) {
-    return neighbor == AIR || neighbor == LEAVES_OAK; // || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
+    return neighbor == AIR || !BlocDatabase::getInstance().isOpaque(neighbor) || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
 void VoxelChunk::generateMesh() {
@@ -129,7 +130,8 @@ void VoxelChunk::draw(GLuint programID) {
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
     
-    TextureAtlas::getInstance().bind(programID);
+    //TextureAtlas::getInstance().bind(programID);
+    PBRTextureAtlas::getInstance().bind(programID);
     m_mesh->draw(programID);
 }
 

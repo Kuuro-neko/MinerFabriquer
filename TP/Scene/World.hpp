@@ -26,6 +26,8 @@ private:
     std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
     std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> visibleChunks;
     Camera *camera;
+    float time = 12.0f;
+    bool doDaylightCycle = true;
 public:
     World();
 
@@ -89,7 +91,7 @@ public:
      * 
      * @return int Broken block id or -1 if no block was broken
      */
-    int playerRemoveBlock(int x, int y, int z);
+    int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
     /**
      * @brief Remove a block at the given WORLD coordinates. Don't use it for the player directly.
@@ -124,4 +126,18 @@ public:
     void resolveCollisions(Character &character, World *world);
 
     void resolveCollisionForBlock(Character &character, glm::vec3 blockPosition);
+
+    void update(float deltaTime);
+
+    inline void setDoDaylightCycle(bool timeRunning) {
+        this->doDaylightCycle = timeRunning;
+    }
+
+    inline void setTime(float time) {
+        this->time = time;
+    }
+
+    inline float getTime() {
+        return time;
+    }
 };

@@ -19,8 +19,12 @@ GLFWwindow *window;
 using namespace std;
 using namespace glm;
 
-int windowWidth = 1024;
-int windowHeight = 768;
+// Defaut
+int windowWidth = 1280;
+int windowHeight = 720;
+
+// int windowWidth = 2560;
+// int windowHeight = 1440;
 
 Camera camera;
 // timing
@@ -97,11 +101,12 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
 Character character = Character(
         Transform(
-                glm::vec3(10, 10, 3),
+                glm::vec3(10, 10, 10),
                 DEFAULT_ROTATION,
                 1),
         &camera
 );
+
 
 
 
@@ -147,6 +152,8 @@ int main(void) {
     KeyInput::setupKeyInputs(*window);
     character.setKeyInput(&characterInputManager);
     camera.setKeyInput(&characterInputManager);
+
+
 
     if (window == NULL) {
         fprintf(stderr,
@@ -195,11 +202,12 @@ int main(void) {
 
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
-    GLuint programID2 = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
-    Renderer renderer = Renderer(programID2);
-    Renderer rendererCharacterBoundingBox = Renderer(programID2);
+    GLuint wireframeProgramID = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
+    Renderer renderer = Renderer(wireframeProgramID);
+    Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
     GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
+    GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
 
     GLint success;
     GLchar infoLog[512];
@@ -209,17 +217,25 @@ int main(void) {
         std::cerr << "Shader compile error: " << infoLog << std::endl;
     }
 
+    Texture lightMap = Texture("../textures/lightmap.png");
+    lightMap.setSamplerName("LightmapSampler");
+    lightMap.genTexture(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
+    lightMap.bind(programID);
+
+    CubemapTexture cubemapTexture = CubemapTexture(cubemapProgramID);
+
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
 
-    Crosshair crosshair = Crosshair(crosshairProgramID, 0.03f);
+    Crosshair crosshair = Crosshair(crosshairProgramID, 0.02f);
 
     SceneNode root;
 
     World world = World();
     root.addChild(&world);
     world.setCamera(camera);
+    world.setDoDaylightCycle(false);
 
     character.m_world = &world;
 
@@ -230,7 +246,7 @@ int main(void) {
     characterModel->setTexture(playerTexture);
     character.addChild(characterModel);
     root.addChild(&character);
-    character.setRenderer(&renderer);
+    character.setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character.getWorldPosition());
 
 /*     Entity* Mr_Vincell = new Entity();
@@ -274,6 +290,7 @@ int main(void) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        world.update(deltaTime);
 
         // Poll inputs
         glfwPollEvents();
@@ -301,31 +318,32 @@ int main(void) {
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
         GLuint displayNormalId = glGetUniformLocation(programID, "displayNormals");
         glUniform1i(displayNormalId, displayNormals);
+        GLuint camPos = glGetUniformLocation(programID, "camPos");
+        glUniform3f(camPos, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+        GLuint time = glGetUniformLocation(programID, "time");
+        glUniform1f(time, world.getTime());
 
+        lightMap.bind(programID);
 
         root.draw(programID);
-        renderer.drawWireframeCube(
-                glm::vec3(1.f, 1.f, 1.f),
-                camera.getViewMatrix(),
-                camera.getProjectionMatrix()
-        );
-        rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
-        rendererCharacterBoundingBox.drawWireframeCube(character.getSize(),
-                                                       camera.getViewMatrix(),
-                                                       camera.getProjectionMatrix()
-        );
 
-        crosshair.render();
+        
 
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
-        if (characterInputManager.isKeyPressed(Keybinds::getInstance().getToggleDebug())) {
+        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders)) {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
 
+
+        cubemapTexture.draw(camera);
+
+        character.drawBoundingBox();
+        
+        crosshair.render();
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -340,6 +358,7 @@ int main(void) {
     // Cleanup VBO and shader
     root.cleanupBuffers();
     crosshair.cleanupBuffers();
+    cubemapTexture.cleanupBuffers();
 
     glDeleteProgram(programID);
     // glDeleteProgram(crosshairProgramID);
@@ -357,5 +376,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+    // marche pas : camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height, camera.getNearPlane(), camera.getFarPlane());
 }
 

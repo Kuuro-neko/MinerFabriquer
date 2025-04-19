@@ -39,7 +39,7 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int ground
                     mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + j * CHUNK_SIZE) * 10);
             if (mountainHeight > 0) {
                 for (int y = baseHeight; y < baseHeight + mountainHeight; y++) {
-                    chunk->generationSetBloc(x, y, z, STONE);
+                    chunk->generationSetBloc(x, y, z, rand() % 10 > 3 ? IRON_BLOCK : IRON_ORE);
                     if (chunk->getBloc(x, y-1, z) == GRASS) {
                         chunk->generationSetBloc(x, y - 1, z, DIRT); // Add grass on top of mountains
                     }

@@ -3,6 +3,7 @@
 #include <stb_image.h>
 #include <GL/glew.h>
 #include <TP/Scene/BlocTypes.hpp>
+#include <TP/Camera/Camera.hpp>
 
 #define TEXTUREATLAS_COORD_UNIT 0.0625f
 
@@ -62,7 +63,7 @@ public:
      * @brief Generate texture buffer and set texture parameters
      * 
      */
-    void genTexture();
+    void genTexture(GLenum wrapS = GL_REPEAT, GLenum wrapT = GL_REPEAT, GLenum minFilter = GL_NEAREST, GLenum magFilter = GL_NEAREST);
 
     /**
      * @brief Binds this texture to the given GLSL program
@@ -125,4 +126,82 @@ public:
     void bind(GLuint programID) {
         m_texture.bind(programID);
     }
+};
+
+class PBRTextureAtlas {
+private:
+    PBRTextureAtlas() {
+        m_texture = Texture("../textures/texture_atlas.png");
+        m_texture.genTexture();
+        m_texture.setSamplerName("TextureSampler");
+
+        m_normals = Texture("../textures/normal_atlas.png");
+        m_normals.genTexture();
+        m_normals.setSamplerName("NormalsSampler");
+
+        m_roughness = Texture("../textures/roughness_atlas.png");
+        m_roughness.genTexture();
+        m_roughness.setSamplerName("RoughnessSampler");
+
+        m_metallic = Texture("../textures/metallic_atlas.png");
+        m_metallic.genTexture();
+        m_metallic.setSamplerName("MetallicSampler");
+    }
+    Texture m_texture;
+    Texture m_normals;
+    Texture m_roughness;
+    Texture m_metallic;
+public:
+    static PBRTextureAtlas& getInstance() {
+        static PBRTextureAtlas instance;
+        return instance;
+    }
+
+    /**
+     * @brief Get the Texture object
+     * 
+     * @return Texture* 
+     */
+    Texture* getTexture() {
+        return &m_texture;
+    }
+
+    Texture* getNormals() {
+        return &m_normals;
+    }
+
+    Texture* getRoughness() {
+        return &m_roughness;
+    }
+
+    Texture* getMetallic() {
+        return &m_metallic;
+    }
+
+    /**
+     * @brief Bind the texture atlas to the given GLSL program
+     * 
+     * @param programID 
+     */
+    void bind(GLuint programID) {
+        m_texture.bind(programID);
+        m_normals.bind(programID);
+        m_roughness.bind(programID);
+        m_metallic.bind(programID);
+    }
+};
+
+class CubemapTexture {
+private:
+    
+    GLuint textureID, VAO, VBO;
+    float skyboxVertices[108];
+    int programID;
+public:
+    CubemapTexture(int programID);
+    inline void setProgramID(int programID) {
+        this->programID = programID;
+    }
+    void draw(Camera &camera);
+    void cleanupBuffers();
 };
