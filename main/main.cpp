@@ -206,9 +206,9 @@ int main(void) {
 
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
-    GLuint programID2 = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
-    Renderer renderer = Renderer(programID2);
-    Renderer rendererCharacterBoundingBox = Renderer(programID2);
+    GLuint wireframeProgramID = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
+    Renderer renderer = Renderer(wireframeProgramID);
+    Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
     GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
     GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
@@ -249,7 +249,7 @@ int main(void) {
     characterModel->setTexture(playerTexture);
     character.addChild(characterModel);
     root.addChild(&character);
-    character.setRenderer(&renderer);
+    character.setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character.getWorldPosition());
 
 /*     Entity* Mr_Vincell = new Entity();
@@ -330,30 +330,24 @@ int main(void) {
         lightMap.bind(programID);
 
         root.draw(programID);
-        renderer.drawWireframeCube(
-                glm::vec3(1.f, 1.f, 1.f),
-                camera.getViewMatrix(),
-                camera.getProjectionMatrix()
-        );
-        rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
-        rendererCharacterBoundingBox.drawWireframeCube(character.getSize(),
-                                                       camera.getViewMatrix(),
-                                                       camera.getProjectionMatrix()
-        );
 
-        crosshair.render();
+        
 
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
-        if (characterInputManager.isKeyPressed(Keybinds::getInstance().getToggleDebug())) {
+        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders)) {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
 
 
         cubemapTexture.draw(camera);
+
+        character.drawBoundingBox();
+        
+        crosshair.render();
 
         // Swap buffers
         glfwSwapBuffers(window);

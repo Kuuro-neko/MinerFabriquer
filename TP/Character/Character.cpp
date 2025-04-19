@@ -83,7 +83,8 @@ void Character::listenAction(float dt, BlocDatabase &database) {
 
     // ==== Debug binds ====
     if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes)) {
-        std::cout << "[Character] Toggle bounding boxes (not implemented)" << std::endl;
+        std::cout << "[Character] Toggle bounding boxes" << std::endl;
+        displayAABB = !displayAABB;
         shouldToggleDebug = false;
     }
 
@@ -121,7 +122,7 @@ void Character::updateClosestBlock(BlocDatabase &db) {
     std::vector<VoxelChunk *> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
     intersection = false;
     if (chunks.empty()) {
-        renderer->disableHighlight();
+        targetCubeRenderer->disableHighlight();
         return;
     }
     std::vector<glm::vec3> origins;
@@ -158,9 +159,9 @@ void Character::updateClosestBlock(BlocDatabase &db) {
     }
     if (intersection) {
         // set highlight
-        renderer->setHighlight(glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z));
+        targetCubeRenderer->setHighlight(glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z));
     } else {
-        renderer->disableHighlight();
+        targetCubeRenderer->disableHighlight();
     }
 }
 
@@ -283,7 +284,7 @@ void Character::update(float dt) {
         placeCooldown += dt;
     }
     updateBoundingBox();
-    renderer->setHighlight(getMinBoundingBox());
+    AABBRenderer->setHighlight(getMinBoundingBox());
 }
 
 /**
@@ -318,11 +319,9 @@ glm::vec3 Character::getMaxBoundingBox() {
     return max;
 }
 
-void Character::drawBoundingBox(GLuint programID) {
-    //use renderer to draw the bounding box
-
-    glUseProgram(programID);
-    renderer->drawWireframeCube(
+void Character::drawBoundingBox() {
+    if (!displayAABB) return;
+    AABBRenderer->drawWireframeCube(
             size,
             camera->getViewMatrix(),
             camera->getProjectionMatrix()
@@ -330,6 +329,10 @@ void Character::drawBoundingBox(GLuint programID) {
 }
 
 void Character::draw(GLuint programID) {
-    return;
     SceneNode::draw(programID);
+    targetCubeRenderer->drawWireframeCube(
+            glm::vec3(1.f, 1.f, 1.f),
+            camera->getViewMatrix(),
+            camera->getProjectionMatrix()
+    );
 }

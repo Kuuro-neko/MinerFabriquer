@@ -23,7 +23,10 @@ public:
     Character(Transform transform, Camera *camera, World *world = nullptr, MeshObject *mesh = nullptr,
               Texture *texture = nullptr);
 
-    inline void setRenderer(Renderer *renderer) { this->renderer = renderer; }
+    inline void setWireframeRenderers(GLuint wireframeProgramID) {
+        this->targetCubeRenderer = new Renderer(wireframeProgramID);
+        this->AABBRenderer = new Renderer(wireframeProgramID);
+    }
 
     void listenAction(float dt, BlocDatabase &database);
 
@@ -48,7 +51,7 @@ public:
         translate(glm::vec3(0.f, -gravity, 0.f));
     }
 
-    void drawBoundingBox(GLuint programID);
+    void drawBoundingBox();
 
     void draw(GLuint programID) override;
 
@@ -78,7 +81,8 @@ private:
         placeCooldown = 0.f;
     }
 
-    Renderer *renderer;
+    Renderer *targetCubeRenderer = nullptr;
+    Renderer *AABBRenderer = nullptr;
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
     float speed = 2.5f;
@@ -98,7 +102,7 @@ private:
 
     // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
     bool shouldToggleDebug = true;
-
+    bool displayAABB = false;
 
 };
 
