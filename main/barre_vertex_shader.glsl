@@ -10,7 +10,6 @@ void main()
 
     // Convertir coordonnées pixel en Normalized Device Coordinates
     vec2 ndc = pos / u_resolution * 2.0 - 1.0;
-    ndc.y *= -1.0; // inverser l'axe Y
 
     gl_Position = vec4(ndc, 0.0, 1.0);
 }
