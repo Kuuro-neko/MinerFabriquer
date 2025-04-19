@@ -6,6 +6,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+
 class Barre {
 public:
     Barre(int windowWidth, int windowHeight);
@@ -13,13 +14,11 @@ public:
 
     void render();
     void updateSize(int windowWidth, int windowHeight);
+    void cleanupBuffers();
 
 private:
-    struct Slot {
-        float x, y;
-    };
 
-    std::vector<Slot> slots;
+    std::vector<glm::vec2> slots;
 
     unsigned int VAO, VBO, EBO;
     GLuint shaderID;

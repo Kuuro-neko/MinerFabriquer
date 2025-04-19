@@ -12,20 +12,20 @@ Barre::Barre(int windowWidth, int windowHeight)
 }
 
 Barre::~Barre() {
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteVertexArrays(1, &VAO);
+    cleanupBuffers();
     glDeleteProgram(shaderID);
+    slots.clear();
 }
 
 void Barre::initSlots() {
     slots.clear();
-    float totalWidth = 9 * 64 + 8 * 8;
+    float totalWidth = 9 * 64 + 8 * 8; //TODO : use m_windowWidth and m_windowHeight 
     float startX = (m_windowWidth - totalWidth) / 2.0f;
     float y = 20.0f;
 
     for (int i = 0; i < 9; ++i) {
-        slots.push_back({ startX + i * (64 + 8), y });
+        glm::vec2 slot = { startX + i * (64 + 8), y };
+        slots.push_back(slot);
     }
 }
 
@@ -55,8 +55,6 @@ void Barre::initBuffers() {
 }
 
 void Barre::render() {
-glDisable(GL_DEPTH_TEST);
-
     glUseProgram(shaderID);
     GLuint resUniform = glGetUniformLocation(shaderID, "u_resolution");
     glUniform2f(resUniform, m_windowWidth, m_windowHeight);
@@ -65,16 +63,22 @@ glDisable(GL_DEPTH_TEST);
 
     glBindVertexArray(VAO);
     for (const auto& slot : slots) {
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(slot.x, slot.y, 0.0f));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(slot[0], slot[1], 0.0f));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
-glEnable(GL_DEPTH_TEST);
 }
 
 void Barre::updateSize(int windowWidth, int windowHeight) {
     m_windowWidth = windowWidth;
     m_windowHeight = windowHeight;
     initSlots();
+}
+
+void Barre::cleanupBuffers() {
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteProgram(shaderID);
 }

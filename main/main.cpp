@@ -9,7 +9,7 @@
 #include "TP/Character/Character.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
-#include <TP/GUI/Barre.hpp>
+#include <TP/GUI/HUD.hpp>
 
 
 
@@ -136,24 +136,6 @@ int main(void) {
     }
 
 
-
-    // struct Slot {
-    //     float x, y;
-    // };
-    
-    // std::vector<Slot> slots;
-    
-    // float totalWidth = 9 * 64 + 8 * 8; // 9 slots, 8px spacing
-    // float startX = (windowWidth - totalWidth) / 2.0f;
-    // float y = 20.0f; // 20 pixels au-dessus du bas de l'écran
-    
-    // for (int i = 0; i < 9; ++i) {
-    //     Slot s;
-    //     s.x = startX + i * (64 + 8);
-    //     s.y = y;
-    //     slots.push_back(s);
-    // }
-
     
 
     camera.init();
@@ -228,11 +210,10 @@ int main(void) {
     Renderer renderer = Renderer(wireframeProgramID);
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
-    GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
     GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
 
 
-    Barre barre = Barre(windowWidth, windowHeight);
+    HUD hud = HUD(windowWidth, windowHeight);
 
     GLint success;
     GLchar infoLog[512];
@@ -253,7 +234,6 @@ int main(void) {
 
     /****************************************/
 
-    Crosshair crosshair = Crosshair(crosshairProgramID, 0.02f);
 
     SceneNode root;
 
@@ -369,12 +349,11 @@ int main(void) {
         cubemapTexture.draw(camera);
 
         character.drawBoundingBox();
-        
-        crosshair.render();
 
 
 
-        barre.render();
+
+        hud.render();
 
 
         // Swap buffers
@@ -389,11 +368,10 @@ int main(void) {
 
     // Cleanup VBO and shader
     root.cleanupBuffers();
-    crosshair.cleanupBuffers();
     cubemapTexture.cleanupBuffers();
+    delete &hud;
 
     glDeleteProgram(programID);
-    // glDeleteProgram(crosshairProgramID);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
