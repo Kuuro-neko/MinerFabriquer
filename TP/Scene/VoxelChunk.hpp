@@ -25,7 +25,7 @@ public:
      * @return true 
      * @return false 
      */
-    bool setBloc(int x, int y, int z, int bloc, bool genMesh=true);
+    bool setBloc(int x, int y, int z, int bloc);
 
     /**
      * @brief Set a block in the chunk, used for generation so it bypasses some checks
@@ -75,6 +75,7 @@ public:
     int m_sizeX = DEFAULT_CHUNK_SIZE;
     int m_sizeY = DEFAULT_CHUNK_SIZE;
     int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
+    bool dirty = false;
     int*** m_cubes;
     glm::ivec3 m_chunkCoords;
     World *m_world;
@@ -100,4 +101,5 @@ private:
 
     void cleanup();
 
+    void markDirtyNeighbors(int x, int y, int z);
 };

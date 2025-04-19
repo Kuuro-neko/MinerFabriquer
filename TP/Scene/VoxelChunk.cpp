@@ -1,6 +1,7 @@
 #include <TP/Scene/VoxelChunk.hpp>
 #include <TP/Scene/World.hpp>
 #include <TP/Character/Character.hpp>
+#include "VoxelChunk.hpp"
 
 VoxelChunk::VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), nullptr, nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
     allocateCubes();
@@ -14,7 +15,7 @@ VoxelChunk::~VoxelChunk() {
     cleanup();
 }
 
-bool VoxelChunk::setBloc(int x, int y, int z, int bloc, bool genMesh) {
+bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
     //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         //std::cout << "Error: Out of bounds" << std::endl;
@@ -25,7 +26,8 @@ bool VoxelChunk::setBloc(int x, int y, int z, int bloc, bool genMesh) {
         return false;
     }
     m_cubes[x][y][z] = bloc;
-    if(genMesh) generateMesh();
+    dirty = true;
+    markDirtyNeighbors(x, y, z);
     return true;
 }
 
@@ -35,6 +37,7 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
         return false;
     }
     m_cubes[x][y][z] = bloc;
+    dirty = true;
     return true;
 }
 
@@ -75,7 +78,8 @@ int VoxelChunk::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
 int VoxelChunk::removeBlock(int x, int y, int z) {
     int id = m_cubes[x][y][z];
     m_cubes[x][y][z] = AIR;
-    generateMesh();
+    dirty = true;
+    markDirtyNeighbors(x, y, z);
     return id;
 }
 
@@ -88,6 +92,7 @@ bool transparentNeighborCheck(int neighbor) {
 }
 
 void VoxelChunk::generateMesh() {
+    std::cout << "Generating mesh at chunk coords (" << m_chunkCoords.x << ", " << m_chunkCoords.y << ", " << m_chunkCoords.z << ")" << std::endl;
     m_opaqueMesh.vertices.clear();
     m_opaqueMesh.triangles.clear();
     m_opaqueMesh.uvs.clear();
@@ -171,9 +176,11 @@ void VoxelChunk::generateMesh() {
         }
     }
     m_transparentMesh.initializeBuffers();
+    dirty = false;
 }
 
 void VoxelChunk::draw(GLuint programID) {
+    if (dirty) generateMesh();
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
     
@@ -254,4 +261,31 @@ void VoxelChunk::cleanup() {
         m_cubes = nullptr;
     }
     cleanupBuffers();
+}
+
+void VoxelChunk::markDirtyNeighbors(int x, int y, int z) {
+    // Mark neighboring chunks as dirty if the block is on the edge of the chunk
+    if (x == 0 || x == m_sizeX - 1 || y == 0 || y == m_sizeY - 1 || z == 0 || z == m_sizeZ - 1) {
+        std::vector<VoxelChunk *> neighbors;
+        if (x == 0) {
+            neighbors.push_back(m_world->getChunk(m_chunkCoords.x - 1, m_chunkCoords.y, m_chunkCoords.z));
+        } else if (x == m_sizeX - 1) {
+            neighbors.push_back(m_world->getChunk(m_chunkCoords.x + 1, m_chunkCoords.y, m_chunkCoords.z));
+        }
+        if (y == 0) {
+            neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y - 1, m_chunkCoords.z));
+        } else if (y == m_sizeY - 1) {
+            neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y + 1, m_chunkCoords.z));
+        }
+        if (z == 0) {
+            neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z - 1));
+        } else if (z == m_sizeZ - 1) {
+            neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z + 1));
+        }
+        for (auto &neighbor: neighbors) {
+            if (neighbor) {
+                neighbor->dirty = true;
+            }
+        }
+    }
 }
