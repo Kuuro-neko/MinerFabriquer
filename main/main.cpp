@@ -9,6 +9,7 @@
 #include "TP/Character/Character.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
+#include <TP/GUI/Barre.hpp>
 
 
 
@@ -134,6 +135,27 @@ int main(void) {
         return -1;
     }
 
+
+
+    // struct Slot {
+    //     float x, y;
+    // };
+    
+    // std::vector<Slot> slots;
+    
+    // float totalWidth = 9 * 64 + 8 * 8; // 9 slots, 8px spacing
+    // float startX = (windowWidth - totalWidth) / 2.0f;
+    // float y = 20.0f; // 20 pixels au-dessus du bas de l'écran
+    
+    // for (int i = 0; i < 9; ++i) {
+    //     Slot s;
+    //     s.x = startX + i * (64 + 8);
+    //     s.y = y;
+    //     slots.push_back(s);
+    // }
+
+    
+
     camera.init();
     Frustrum frustum(camera, 4.0f / 3.0f, 0.1f, 100.f);
     frustum.update();
@@ -208,6 +230,9 @@ int main(void) {
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
     GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
     GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
+
+
+    Barre barre = Barre(windowWidth, windowHeight);
 
     GLint success;
     GLchar infoLog[512];
@@ -285,6 +310,8 @@ int main(void) {
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
+
+
     do {
         UpdateFPS();
         float currentFrame = glfwGetTime();
@@ -344,6 +371,11 @@ int main(void) {
         character.drawBoundingBox();
         
         crosshair.render();
+
+
+
+        barre.render();
+
 
         // Swap buffers
         glfwSwapBuffers(window);
