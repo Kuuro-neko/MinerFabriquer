@@ -7,49 +7,100 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     baseNoise.SetFrequency(0.1f);
     // Perlin noise for mountains
     mountainNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    mountainNoise.SetFrequency(0.05f);
+    mountainNoise.SetFrequency(0.03f);
+    // Noise for caves
+    caveNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+    caveNoise.SetFrequency(0.05f);
 
+    caveNoise2.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    caveNoise2.SetFrequency(0.06f);
+
+    // Noise for ores
+    oreNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+    oreNoise.SetFrequency(0.7f);
 
 }
 
-void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j) {
-    //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,0,j
-    generateTerrain(world, i, j, groundLevel);
+void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {
+    //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
+    generateTerrain(world, i, j, k, groundLevel);
 }
 
-void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int groundLevel) {
+void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
     //on génère le terrain en fonction du bruit de base et du bruit de montagne
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             int baseHeight = groundLevel + static_cast<int>(
-                    baseNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + j * CHUNK_SIZE) * 5);
+                    baseNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 5);
 
+            int worldX = i * CHUNK_SIZE;
+            int worldY = j * CHUNK_SIZE;
+            int worldZ = k * CHUNK_SIZE;
 
             //groundLevel - 3  -> STONE
-            for (int y = groundLevel - 3; y < baseHeight - 2; y++) {
-                chunk->generationSetBloc(x, y, z, STONE);
+            for (int y = worldY; y < baseHeight - 2; y++) {
+                chunk->generationSetBloc(x, y - worldY, z, STONE);
             }
-
             //groundLevel - 2 -> DIRT
             //groundLevel - 1 -> GRASS
-            chunk->generationSetBloc(x, baseHeight - 2, z, DIRT);
-            chunk->generationSetBloc(x, baseHeight - 1, z, GRASS);
+            chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, DIRT);
+            chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, DIRT);
+            chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, GRASS);
 
             int mountainHeight = static_cast<int>(
-                    mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + j * CHUNK_SIZE) * 10);
+                    mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 10);
             if (mountainHeight > 0) {
                 for (int y = baseHeight; y < baseHeight + mountainHeight; y++) {
-                    chunk->generationSetBloc(x, y, z, rand() % 10 > 3 ? IRON_BLOCK : IRON_ORE);
-                    if (chunk->getBloc(x, y-1, z) == GRASS) {
-                        chunk->generationSetBloc(x, y - 1, z, DIRT); // Add grass on top of mountains
+                    chunk->generationSetBloc(x, y - worldY, z, STONE);
+                    if (chunk->getBloc(x, y-1 - worldY, z) == GRASS) {
+                        chunk->generationSetBloc(x, y - 1 - worldY, z, DIRT); // Add grass on top of mountains
                     }
                 }
             }
 
-            addTrees(chunk, x, z, baseHeight);
+            // Ores
+            for (int y = 0; y < chunk->m_sizeY; y++) {
+                if (chunk->getBloc(x, y, z) == STONE) { // Replaces stone
+                    float oreNoiseValue = oreNoise.GetNoise((float) x + i * CHUNK_SIZE,
+                                                            (float) y + j * CHUNK_SIZE,
+                                                            (float) z + k * CHUNK_SIZE);
+                    if (oreNoiseValue > 0.28f) {
+                        chunk->generationSetBloc(x, y, z, IRON_ORE);
+                    }
+                }
+            }
+
+            // Caves
+            for (int y = 0; y < chunk->m_sizeY; y++) { // Replaces ground blocs
+                if (BlocDatabase::getInstance().isPartOfGround(chunk->getBloc(x, y, z))) {
+                    float caveNoiseValue = caveNoise.GetNoise((float) x + i * CHUNK_SIZE,
+                                                               (float) y + j * CHUNK_SIZE,
+                                                               (float) z + k * CHUNK_SIZE);
+                    float caveNoiseValue2 = caveNoise2.GetNoise((float) x + i * CHUNK_SIZE,
+                                                                (float) y + j * CHUNK_SIZE,
+                                                                (float) z + k * CHUNK_SIZE);
+                    float value = caveNoiseValue + caveNoiseValue2;
+                    if (value < -0.6f + (worldY + y ) * 0.01f ) {
+                        chunk->generationSetBloc(x, y, z, AIR);
+                    }
+                }
+            }
+
+            // If surface level and not top of moutain
+            if (worldY <= baseHeight && worldY + chunk->m_sizeY > baseHeight && mountainHeight <=0) {
+                addTrees(chunk, x, z, baseHeight - worldY);
+            }
+
+            // If surface level
+            if (worldY <= baseHeight && worldY + chunk->m_sizeY > baseHeight) {
+                if(mountainHeight <=0) addIronRods(chunk, x, z, baseHeight - worldY);
+                else addIronRods(chunk, x, z, baseHeight + mountainHeight - worldY);
+            }
 
             //lastLayer - 4 -> BEDROCK
-            chunk->generationSetBloc(x, groundLevel - 4, z, BEDROCK);
+            if (worldY == 0) {
+                chunk->generationSetBloc(x, 0, z, BEDROCK);
+            }
         }
     }
 }
@@ -57,6 +108,9 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int ground
 void WorldGenerator::addTrees(VoxelChunk *chunk, int x, int z, int baseHeight) {
 
     if (treeChance(rng) < 1) { // 1% chance, no trees on mountains
+        if (chunk->getBloc(x, baseHeight - 1, z) != GRASS) {
+            return;
+        }
         std::cout << "Adding trees at (" << x << ", " << baseHeight << ", " << z << ")" << std::endl;
         //tree height
         for (int y = 0; y < 3; y++) {
@@ -72,6 +126,29 @@ void WorldGenerator::addTrees(VoxelChunk *chunk, int x, int z, int baseHeight) {
                 }
                 if (std::abs(dx) + std::abs(dz) <= 1) { // Smallest circular leaf pattern for top layer
                     chunk->generationSetBloc(x + dx, baseHeight + 3 + 2, z + dz, LEAVES_OAK);
+                }
+            }
+        }
+
+    }
+
+}
+
+void WorldGenerator::addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight) {
+
+    if (treeChance(rng) < 1) { // 1% chance, no trees on mountains
+        if (chunk->getBloc(x, baseHeight - 1, z) == AIR) {
+            return;
+        }
+        int height = 3 + (treeChance(rng) % 3); // Random height between 3 and 5
+        for (int y = 0; y < height; y++) {
+            chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK);
+        }
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (std::abs(dx) + std::abs(dz) <= 1) { // Smallest circular leaf pattern for top layer
+                    chunk->generationSetBloc(x + dx, baseHeight, z + dz, IRON_BLOCK);
+                    chunk->generationSetBloc(x + dx, baseHeight-1, z + dz, IRON_BLOCK);
                 }
             }
         }

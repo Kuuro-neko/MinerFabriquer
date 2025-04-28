@@ -125,11 +125,12 @@ void World::generation() {
     WorldGenerator worldGenerator;
 
     // 2x2 chunks for testing
-    for (int i = 0; i < 2; i++) { // POur tester collision on met que 1 chunk
-        for (int j = 0; j < 2; j++) {
-            VoxelChunk *chunk = createEmptyChunk(i, 0, j);
-            worldGenerator.genereteProceduralChunk(chunk, i, j);
-
+    for (int x = 0; x <= 2; ++x) {
+        for (int y = 0; y <= 3; ++y) {
+            for (int z = 0; z <= 2; ++z) {
+                VoxelChunk *chunk = createEmptyChunk(x, y, z);
+                worldGenerator.genereteProceduralChunk(chunk, x, y, z);
+            }
         }
     }
 

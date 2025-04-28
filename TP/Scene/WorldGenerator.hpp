@@ -9,16 +9,20 @@ class WorldGenerator {
 private:
     FastNoiseLite baseNoise;
     FastNoiseLite mountainNoise;
+    FastNoiseLite caveNoise;
+    FastNoiseLite caveNoise2;
+    FastNoiseLite oreNoise;
     std::mt19937 rng;
     std::uniform_int_distribution<int> treeChance;
 
-    int groundLevel = 4;
+    int groundLevel = 20;
 
-    void generateTerrain(VoxelChunk *chunk, int i, int j, int groundLevel);
+    void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
+    void addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight);
 
 public:
     WorldGenerator();
 
-    void genereteProceduralChunk(VoxelChunk *world, int i, int j);
+    void genereteProceduralChunk(VoxelChunk *world, int i, int j, int k);
 };

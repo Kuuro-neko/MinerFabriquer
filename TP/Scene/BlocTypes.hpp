@@ -145,6 +145,10 @@ public:
         return m_blocs[id].opaque==1;
     }
 
+    bool isPartOfGround(int id) {
+        return m_blocs[id].id==GRASS || m_blocs[id].id==DIRT || m_blocs[id].id==STONE || m_blocs[id].id==IRON_ORE || m_blocs[id].id==IRON_BLOCK;
+    }
+
     /**
      * @brief Get the Tex Coords object
      * 

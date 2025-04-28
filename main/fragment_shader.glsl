@@ -21,7 +21,7 @@ float PI = 3.14159265358979323846;
 float halfDayDuration = 12.0;
 
 vec3 lightOffset = vec3(10.0, 10.0, 10.0);
-vec3 light_pos = vec3(30.0, 16.0, 30.0);
+vec3 light_pos = vec3(60.0, 36.0, 70.0);
 
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
@@ -100,6 +100,11 @@ float dayNightCycle(float time, float halfDayTime) {
     return 0.5 * (1.0 - cos(2.0 * PI * cycle));
 }
 
+float shadeBasedOnFace(vec3 normal, vec3 lightDir) {
+    float dotProduct = dot(normal, lightDir);
+    return max(dotProduct, 0.0);
+}
+
 void main(){
         vec3 N = getNormalFromNormalMap();
         
@@ -112,7 +117,7 @@ void main(){
                 vec3 light_color = texture(LightmapSampler, lightUV).xyz;
                 //vec3 light_color = vec3(23.47, 21.31, 20.79);
 
-                light_color *= vec3(1500.0);
+                light_color *= vec3(3000.0);
                 //light_color *= 25.0 * (lightX * lightX);
 
                 vec4 albedoTex = texture(TextureSampler, UV);
@@ -172,6 +177,10 @@ void main(){
                 color = color / (color + vec3(1.0));
                 //gamma
                 color = pow(color, vec3(1.0/2.2));
+
+                float shade = shadeBasedOnFace(N, lightdir);
+
+                color = mix(color, vec3(0.0), shade*0.5);
 
                 frag_color = vec4(color, albedoTex.a);
            
