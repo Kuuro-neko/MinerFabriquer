@@ -63,7 +63,7 @@ public:
      * @brief Generate texture buffer and set texture parameters
      * 
      */
-    void genTexture(GLenum wrapS = GL_REPEAT, GLenum wrapT = GL_REPEAT, GLenum minFilter = GL_NEAREST, GLenum magFilter = GL_NEAREST);
+    void genTexture(GLenum wrapS = GL_CLAMP_TO_EDGE, GLenum wrapT = GL_CLAMP_TO_EDGE, GLenum minFilter = GL_NEAREST, GLenum magFilter = GL_NEAREST);
 
     /**
      * @brief Binds this texture to the given GLSL program

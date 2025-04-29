@@ -19,6 +19,22 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     oreNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
     oreNoise.SetFrequency(0.7f);
 
+    // Noise for biomes
+    biomeNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
+    biomeNoise.SetFrequency(0.8f);
+    biomeNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
+
+}
+
+int WorldGenerator::getBiome(int x, int z) {
+    // Get the biome based on the noise value
+    float noiseValue = biomeNoise.GetNoise((float) x*0.01, (float) z*0.01);
+    std::cout << "Biome noise value: " << noiseValue << std::endl;
+    if (noiseValue < -0.6f) {
+        return DESERT;
+    } else  {
+        return PLAINS;
+    }
 }
 
 void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {
@@ -30,33 +46,44 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
     //on génère le terrain en fonction du bruit de base et du bruit de montagne
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
-            int baseHeight = groundLevel + static_cast<int>(
-                    baseNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 5);
-
+            // worldX Y Z are the world pos of the min pos of the chunk
+            // so x and z are local to the chunk and x + worldX and z + worldZ are the world pos (useful for the noises)
             int worldX = i * CHUNK_SIZE;
             int worldY = j * CHUNK_SIZE;
             int worldZ = k * CHUNK_SIZE;
 
+            int baseHeight = groundLevel + static_cast<int>(
+                    baseNoise.GetNoise((float) x + worldX, (float) z + worldZ) * 5);
+
+            int mountainHeight = static_cast<int>(
+                mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 10);
+                
             //groundLevel - 3  -> STONE
             for (int y = worldY; y < baseHeight - 2; y++) {
                 chunk->generationSetBloc(x, y - worldY, z, STONE);
             }
             //groundLevel - 2 -> DIRT
             //groundLevel - 1 -> GRASS
-            chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, DIRT);
-            chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, DIRT);
-            chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, GRASS);
+            if (getBiome(worldX + x, worldZ + z) == DESERT) {
+                chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, SAND);
+                chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, SAND);
+                chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, SAND);
+            } else {
+                chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, DIRT);
+                chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, DIRT);
+                chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, GRASS);
 
-            int mountainHeight = static_cast<int>(
-                    mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 10);
-            if (mountainHeight > 0) {
-                for (int y = baseHeight; y < baseHeight + mountainHeight; y++) {
-                    chunk->generationSetBloc(x, y - worldY, z, STONE);
-                    if (chunk->getBloc(x, y-1 - worldY, z) == GRASS) {
-                        chunk->generationSetBloc(x, y - 1 - worldY, z, DIRT); // Add grass on top of mountains
+
+                if (mountainHeight > 0) {
+                    for (int y = baseHeight; y < baseHeight + mountainHeight; y++) {
+                        chunk->generationSetBloc(x, y - worldY, z, STONE);
+                        if (chunk->getBloc(x, y-1 - worldY, z) == GRASS) {
+                            chunk->generationSetBloc(x, y - 1 - worldY, z, DIRT); // Add grass on top of mountains
+                        }
                     }
                 }
             }
+
 
             // Ores
             for (int y = 0; y < chunk->m_sizeY; y++) {

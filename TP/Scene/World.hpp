@@ -13,6 +13,10 @@
 
 #define OUT_OF_BOUNDS_BLOC -2
 
+#define GENERATION_SIZE_X 32
+#define GENERATION_SIZE_Y 8
+#define GENERATION_SIZE_Z 32
+
 class Character;
 
 struct IVec3Hash {

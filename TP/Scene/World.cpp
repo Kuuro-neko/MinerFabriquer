@@ -125,9 +125,9 @@ void World::generation() {
     WorldGenerator worldGenerator;
     std::cout << "Generating world... 0%" << std::flush;
     // 2x2 chunks for testing
-    for (int x = 0; x <= 8; ++x) {
-        for (int y = 0; y <= 8; ++y) {
-            for (int z = 0; z <= 8; ++z) {
+    for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
+        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+            for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
                 VoxelChunk *chunk = createEmptyChunk(x, y, z);
                 worldGenerator.genereteProceduralChunk(chunk, x, y, z);
             }

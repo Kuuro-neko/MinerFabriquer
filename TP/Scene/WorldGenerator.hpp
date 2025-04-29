@@ -5,6 +5,9 @@
 #include <random>
 #include <TP/Scene/World.hpp>
 
+#define PLAINS 0
+#define DESERT 1
+
 class WorldGenerator {
 private:
     FastNoiseLite baseNoise;
@@ -12,6 +15,7 @@ private:
     FastNoiseLite caveNoise;
     FastNoiseLite caveNoise2;
     FastNoiseLite oreNoise;
+    FastNoiseLite biomeNoise;
     std::mt19937 rng;
     std::uniform_int_distribution<int> treeChance;
 
@@ -20,6 +24,7 @@ private:
     void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
     void addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight);
+    int getBiome(int x, int z);
 
 public:
     WorldGenerator();

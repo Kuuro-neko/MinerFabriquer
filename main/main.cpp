@@ -173,6 +173,8 @@ int main(void) {
         return -1;
     }
 
+    glEnable(GL_MULTISAMPLE);  
+
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Hide the mouse and enable unlimited mouvement
