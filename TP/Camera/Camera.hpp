@@ -25,7 +25,7 @@
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
 
-#define RENDERER_DISTANCE 4.0f
+#define RENDERER_DISTANCE 32.0f
 
 
 class Camera {
@@ -66,7 +66,7 @@ private:
     //Camera parameters
     float m_fovDegree{DEFAULT_FOV};
     float m_nearPlane{0.1f};
-    float m_farPlane{100.f};
+    float m_farPlane{10000.f};
     glm::vec3 m_position{DEFAULT_POSITION};
     glm::vec3 m_eulerAngle{DEFAULT_EULER_ANGLE};
     glm::quat m_rotation{};

@@ -111,7 +111,7 @@ void WorldGenerator::addTrees(VoxelChunk *chunk, int x, int z, int baseHeight) {
         if (chunk->getBloc(x, baseHeight - 1, z) != GRASS) {
             return;
         }
-        std::cout << "Adding trees at (" << x << ", " << baseHeight << ", " << z << ")" << std::endl;
+        //std::cout << "Adding trees at (" << x << ", " << baseHeight << ", " << z << ")" << std::endl;
         //tree height
         for (int y = 0; y < 3; y++) {
             chunk->generationSetBloc(x, baseHeight + y, z, LOG_OAK);

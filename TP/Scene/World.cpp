@@ -123,21 +123,24 @@ void World::draw(GLuint programID) {
 
 void World::generation() {
     WorldGenerator worldGenerator;
-
+    std::cout << "Generating world... 0%" << std::flush;
     // 2x2 chunks for testing
-    for (int x = 0; x <= 2; ++x) {
-        for (int y = 0; y <= 3; ++y) {
-            for (int z = 0; z <= 2; ++z) {
+    for (int x = 0; x <= 8; ++x) {
+        for (int y = 0; y <= 8; ++y) {
+            for (int z = 0; z <= 8; ++z) {
                 VoxelChunk *chunk = createEmptyChunk(x, y, z);
                 worldGenerator.genereteProceduralChunk(chunk, x, y, z);
             }
         }
+        std::cout << "\rGenerating world... " << int((x * 100) / 32) << "%" << std::flush;
     }
-
+    std::cout << "\rGenerating world... done !" << std::endl;
+    std::cout << "Generating meshes..." << std::flush;
     // generate all meshes
     for (auto &[key, chunk]: chunks) {
         chunk.generateMesh();
     }
+    std::cout << " done !" << std::endl;
 }
 
 void World::cleanupBuffers() {

@@ -92,7 +92,7 @@ bool transparentNeighborCheck(int neighbor) {
 }
 
 void VoxelChunk::generateMesh() {
-    std::cout << "Generating mesh at chunk coords (" << m_chunkCoords.x << ", " << m_chunkCoords.y << ", " << m_chunkCoords.z << ")" << std::endl;
+    //std::cout << "Generating mesh at chunk coords (" << m_chunkCoords.x << ", " << m_chunkCoords.y << ", " << m_chunkCoords.z << ")" << std::endl;
     m_opaqueMesh.vertices.clear();
     m_opaqueMesh.triangles.clear();
     m_opaqueMesh.uvs.clear();

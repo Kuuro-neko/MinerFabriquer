@@ -15,7 +15,7 @@ private:
     std::mt19937 rng;
     std::uniform_int_distribution<int> treeChance;
 
-    int groundLevel = 20;
+    int groundLevel = 40;
 
     void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
