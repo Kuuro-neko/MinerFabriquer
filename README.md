@@ -16,7 +16,10 @@
 
 <img src="assets/rmb.png" alt="RMB" height="20 " style="image-rendering: pixelated;"/> Place block
 
-<img src="assets/mmb.png" alt="MMB" height="20 " style="image-rendering: pixelated;"/> Select block from environment
+<img src="assets/mmb.png" alt="MMB" height="20 " style="image-rendering: pixelated;"/> **[click]** Select block from environment (Survival & Creative)
+
+<img src="assets/mmb.png" alt="MMB" height="20 " style="image-rendering: pixelated;"/> **[scroll]** Scroll through inventory (Survival & Creative), Increase / Decrease speed (Spectator)
+
 
 ## Camera
 

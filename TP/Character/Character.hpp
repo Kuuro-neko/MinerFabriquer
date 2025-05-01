@@ -21,6 +21,8 @@
 #define GAMEMODE_SURVIVAL 1
 #define GAMEMODE_SPECTATOR 2
 
+#define DEFAULT_SPEED 2.4f
+
 class Character : public SceneNode {
 
 public:
@@ -38,7 +40,7 @@ public:
     void draw(GLuint programID) override;
 
 
-    void listenAction(float dt, BlocDatabase &database);
+    void listenAction(float dt);
     void scrollCallback(GLFWwindow *window, double xOffset, double yOffset);
     void update(float dt);
     void updateBoundingBox();
@@ -54,6 +56,8 @@ public:
     Inventory *inventory;
     glm::vec3 velocity = glm::vec3(0.f);
     glm::vec3 vecteurDirection = glm::vec3(0.f, 0.f, 0.f);
+    bool sneaking = false;
+    bool sprinting = false;
 
     void resolveGravity(float &deltaTime);
 
@@ -63,6 +67,7 @@ private:
     void breakBlock(BlocDatabase &database);
     void putBlock(BlocDatabase &database);
     void setSelectedBlock(BlocDatabase &database);
+    void updateCamera();
 
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
@@ -76,7 +81,9 @@ private:
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
 
-    float speed = 2.5f;
+    float speed = 2.4f;
+    float sneakSpeed = 1.295f;
+    float sprintSpeed = 3.1f;
     float maxInteractionDistance = 6.f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();

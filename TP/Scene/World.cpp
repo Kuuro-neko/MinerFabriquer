@@ -99,6 +99,7 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
 }
 
 void World::draw(GLuint programID) {
+    glEnable(GL_CULL_FACE);
     for (auto &[key, chunk]: visibleChunks) {
         //si la distance de rendu est depassee, on ne dessine pas le chunk
         float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
@@ -106,24 +107,40 @@ void World::draw(GLuint programID) {
             chunk->draw(programID);
         }
     }
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    for (auto &[key, chunk]: visibleChunks) {
+        //si la distance de rendu est depassee, on ne dessine pas le chunk
+        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
+        if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
+            chunk->drawTransparent(programID);
+        }
+    }
+    glDisable(GL_BLEND);
+    
 }
 
 void World::generation() {
     WorldGenerator worldGenerator;
-
+    std::cout << "Generating world... 0%" << std::flush;
     // 2x2 chunks for testing
-    for (int i = 0; i < 2; i++) { // POur tester collision on met que 1 chunk
-        for (int j = 0; j < 2; j++) {
-            VoxelChunk *chunk = createEmptyChunk(i, 0, j);
-            worldGenerator.genereteProceduralChunk(chunk, i, j);
-
+    for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
+        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+            for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
+                VoxelChunk *chunk = createEmptyChunk(x, y, z);
+                worldGenerator.genereteProceduralChunk(chunk, x, y, z);
+            }
         }
+        std::cout << "\rGenerating world... " << int((x * 100) / 32) << "%" << std::flush;
     }
-
+    std::cout << "\rGenerating world... done !" << std::endl;
+    std::cout << "Generating meshes..." << std::flush;
     // generate all meshes
     for (auto &[key, chunk]: chunks) {
         chunk.generateMesh();
     }
+    std::cout << " done !" << std::endl;
 }
 
 void World::cleanupBuffers() {

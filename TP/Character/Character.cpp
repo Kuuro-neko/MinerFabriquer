@@ -40,7 +40,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise les actions en fonction de la touche détectée
  * @param key
  */
-void Character::listenAction(float dt, BlocDatabase &database) {
+void Character::listenAction(float dt) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -67,8 +67,21 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     if (glm::length(vecteurDirection) > 0.01f) {
         vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
     }
-    vecteurDirection *= speed * dt;
 
+    if (keyInput->isKeybindHeld(keybinds->sneak) && this->gamemode != GAMEMODE_SPECTATOR) {
+        vecteurDirection *= this->sneakSpeed * dt;
+        this->sneaking = true;
+        this->sprinting = false;
+    } else if (keyInput->isKeybindHeld(keybinds->sprint) && this->gamemode != GAMEMODE_SPECTATOR) {
+        vecteurDirection *= this->sprintSpeed * dt;
+        this->sneaking = false;
+        this->sprinting = true;
+    } else {
+        vecteurDirection *= this->speed * dt;
+        this->sneaking = false;
+        this->sprinting = false;
+    }
+    updateCamera();
 
     if (keyInput->isKeybindPressed(keybinds->openInventory)) {
         std::cout << "[Character] Inventaire" << std::endl;
@@ -77,22 +90,27 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     // if (keyInput->isKeybindHeld(keybinds->sprint)) {
     //     std::cout << "[Character] Sprint" << std::endl;
     // }
+    BlocDatabase &db = BlocDatabase::getInstance();
 
-
-    updateClosestBlock(database); //on met à jour le bloc le plus proche
-
-    // ==== Bloc interaction binds ====
-    if (keyInput->isKeybindHeld(keybinds->breakBlock) && breakCooldown >= MAX_BREAK_COOLDOWN) {
-        breakBlock(database); // on fait un coup de pioche
+    if (gamemode == GAMEMODE_SPECTATOR) {
+        targetCubeRenderer->disableHighlight();
+    } else {
+        updateClosestBlock(db); //on met à jour le bloc le plus proche
+    
+        // ==== Bloc interaction binds ====
+        if (keyInput->isKeybindHeld(keybinds->breakBlock) && breakCooldown >= MAX_BREAK_COOLDOWN) {
+            breakBlock(db); // on fait un coup de pioche
+        }
+    
+        if (keyInput->isKeybindHeld(keybinds->placeBlock) && placeCooldown >= MAX_PLACE_COOLDOWN) {
+            putBlock(db); //on pose un bloc
+        }
+    
+        if (keyInput->isKeybindHeld(keybinds->selectBlock)) {
+            setSelectedBlock(db); //on sélectionne un bloc
+        }
     }
 
-    if (keyInput->isKeybindHeld(keybinds->placeBlock) && placeCooldown >= MAX_PLACE_COOLDOWN) {
-        putBlock(database); //on pose un bloc
-    }
-
-    if (keyInput->isKeybindHeld(keybinds->selectBlock)) {
-        setSelectedBlock(database); //on sélectionne un bloc
-    }
 
     // ==== Debug binds ====
     if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes)) {
@@ -112,6 +130,7 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     }
 
     if (keyInput->isKeybindPressed(keybinds->toggleSpectator)) {
+        this->speed = DEFAULT_SPEED;
         std::cout << "[Character] Toggle spectator mode" << std::endl;
         if (gamemode == GAMEMODE_SPECTATOR) {
             gamemode = prevGamemode;
@@ -125,6 +144,7 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     }
 
     if (keyInput->isKeybindPressed(keybinds->toggleCreative)) {
+        this->speed = DEFAULT_SPEED;
         std::cout << "[Character] Toggle creative mode" << std::endl;
         if (gamemode == GAMEMODE_CREATIVE) {
             gamemode = prevGamemode;
@@ -293,17 +313,38 @@ void Character::setSelectedBlock(BlocDatabase &database) {
     inventory->printInventory();
 }
 
+void Character::updateCamera()
+{
+    if (gamemode == GAMEMODE_SPECTATOR) {
+        camera->setPlayerMotions(false, false);
+    } else {
+        camera->setPlayerMotions(sprinting, sneaking);
+    }
+    
+}
 
 void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {
     // Example: Adjust inventory selection based on scroll
-    if (yOffset > 0) {
-        std::cout << "Scroll up" << std::endl;
-        inventory->scrollSelectedItem(1);
-    } else if (yOffset < 0) {
-        std::cout << "Scroll down" << std::endl;
-        inventory->scrollSelectedItem(-1);
+    switch(this->gamemode) {
+        case GAMEMODE_CREATIVE:
+        case GAMEMODE_SURVIVAL:
+            if (yOffset > 0) {
+                std::cout << "Scroll up" << std::endl;
+                inventory->scrollSelectedItem(1);
+            } else if (yOffset < 0) {
+                std::cout << "Scroll down" << std::endl;
+                inventory->scrollSelectedItem(-1);
+            }
+            inventory->printInventory();
+            break;
+        case GAMEMODE_SPECTATOR:
+            if (yOffset > 0) {
+                this->speed += 0.1f;
+            } else if (yOffset < 0) {
+                this->speed -= 0.1f;
+            }
+            break;
     }
-    inventory->printInventory();
 }
 
 /**

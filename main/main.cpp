@@ -101,7 +101,7 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
 Character character = Character(
         Transform(
-                glm::vec3(10, 10, 10),
+                glm::vec3(32, 45, 32),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -172,6 +172,8 @@ int main(void) {
         glfwTerminate();
         return -1;
     }
+
+    glEnable(GL_MULTISAMPLE);  
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -296,7 +298,7 @@ int main(void) {
         glfwPollEvents();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
-        character.listenAction(deltaTime, BlocDatabase::getInstance());
+        character.listenAction(deltaTime);
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
@@ -305,9 +307,9 @@ int main(void) {
 
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
-
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        cubemapTexture.draw(camera);
 
         // Use our shader
         glUseProgram(programID);
@@ -339,7 +341,7 @@ int main(void) {
         }
 
 
-        cubemapTexture.draw(camera);
+        
 
         character.drawBoundingBox();
         
