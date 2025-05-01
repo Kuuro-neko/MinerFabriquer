@@ -92,20 +92,25 @@ void Character::listenAction(float dt) {
     // }
     BlocDatabase &db = BlocDatabase::getInstance();
 
-    updateClosestBlock(db); //on met à jour le bloc le plus proche
-
-    // ==== Bloc interaction binds ====
-    if (keyInput->isKeybindHeld(keybinds->breakBlock) && breakCooldown >= MAX_BREAK_COOLDOWN) {
-        breakBlock(db); // on fait un coup de pioche
+    if (gamemode == GAMEMODE_SPECTATOR) {
+        targetCubeRenderer->disableHighlight();
+    } else {
+        updateClosestBlock(db); //on met à jour le bloc le plus proche
+    
+        // ==== Bloc interaction binds ====
+        if (keyInput->isKeybindHeld(keybinds->breakBlock) && breakCooldown >= MAX_BREAK_COOLDOWN) {
+            breakBlock(db); // on fait un coup de pioche
+        }
+    
+        if (keyInput->isKeybindHeld(keybinds->placeBlock) && placeCooldown >= MAX_PLACE_COOLDOWN) {
+            putBlock(db); //on pose un bloc
+        }
+    
+        if (keyInput->isKeybindHeld(keybinds->selectBlock)) {
+            setSelectedBlock(db); //on sélectionne un bloc
+        }
     }
 
-    if (keyInput->isKeybindHeld(keybinds->placeBlock) && placeCooldown >= MAX_PLACE_COOLDOWN) {
-        putBlock(db); //on pose un bloc
-    }
-
-    if (keyInput->isKeybindHeld(keybinds->selectBlock)) {
-        setSelectedBlock(db); //on sélectionne un bloc
-    }
 
     // ==== Debug binds ====
     if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes)) {
@@ -310,7 +315,12 @@ void Character::setSelectedBlock(BlocDatabase &database) {
 
 void Character::updateCamera()
 {
-    camera->setPlayerMotions(sprinting, sneaking);
+    if (gamemode == GAMEMODE_SPECTATOR) {
+        camera->setPlayerMotions(false, false);
+    } else {
+        camera->setPlayerMotions(sprinting, sneaking);
+    }
+    
 }
 
 void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {
