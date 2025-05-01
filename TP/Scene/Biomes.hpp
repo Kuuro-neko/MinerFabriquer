@@ -46,6 +46,10 @@ class Biome {
         inline FastNoiseLite* getNoise() const { return noise; }
 };
 
+/// ================== ///
+/// ===== Biomes ===== ///
+/// ================== ///
+
 class PlainsBiome : public Biome {
     private:
         int id = PLAINS;
@@ -78,6 +82,10 @@ class DesertBiome : public Biome {
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
         
 };
+
+/// ======================== ///
+/// ===== BiomeManager ===== ///
+/// ======================== ///
 
 class BiomeManager {
     std::vector<std::unique_ptr<Biome>> biomes;
