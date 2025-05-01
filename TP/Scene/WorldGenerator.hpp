@@ -25,7 +25,7 @@ private:
 
     int groundLevel = 40;
 
-    int seed = 7772870;
+    int seed = 777285;
 
     BiomeManager biomeManager = BiomeManager(groundLevel, seed);
 
