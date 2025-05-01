@@ -77,6 +77,7 @@ private:
     Keybinds *keybinds = &Keybinds::getInstance();
 
     float speed = 2.5f;
+    float jumpSpeed = 2.5f;
     float maxInteractionDistance = 6.f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();

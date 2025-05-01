@@ -67,7 +67,16 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     if (glm::length(vecteurDirection) > 0.01f) {
         vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
     }
-    vecteurDirection *= speed * dt;
+    if (keyInput->isKeybindHeld(keybinds->sprint)) {
+        this->speed = 5.f;
+    } else {
+        this->speed = 2.5f;
+    }
+    // Keep Jump force constant 
+    glm::vec3 speeds = glm::vec3(this->speed, this->jumpSpeed, this->speed);
+    vecteurDirection.x *= speeds.x * dt;
+    vecteurDirection.y *= speeds.y * dt;
+    vecteurDirection.z *= speeds.z * dt;
 
 
     if (keyInput->isKeybindPressed(keybinds->openInventory)) {
