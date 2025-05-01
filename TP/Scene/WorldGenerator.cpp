@@ -24,36 +24,11 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     oreNoise.SetFrequency(0.7f);
     oreNoise.SetSeed(seed);
 
-    // Noise for biomes
-    plainsNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
-    plainsNoise.SetFrequency(0.75f);
-    plainsNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
-    plainsNoise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
-    plainsNoise.SetSeed(seed);
-
-    moutainNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
-    moutainNoise.SetFrequency(0.9f);
-    moutainNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
-    moutainNoise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
-    moutainNoise.SetSeed(seed);
-
-    // Perlin noise for desert
-    desertNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
-    desertNoise.SetFrequency(0.8f);
-    desertNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
-    desertNoise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
-    desertNoise.SetSeed(seed);
-
     rng.seed(seed);
 
-    biomeManager.addBiome(
-        std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise),
-        &plainsNoise);
-    biomeManager.addBiome(
-        std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise),
-        &moutainNoise);
-    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise),
-        &desertNoise);
+    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise), 0.75f);
+    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise), 0.9f);
+    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise), 0.8f);
 }
 
 void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {

@@ -13,8 +13,16 @@ class Biome {
         int id = -1;
     public:
         Biome(int groundLevel, FastNoiseLite* noise) : groundLevel(groundLevel), noise(noise) {}
-        virtual float calculateHeight(float x, float z) = 0;
         
+        /**
+         * @brief Calculate the height of the biome at the given coordinates.
+         * 
+         * @param x World x coordinate
+         * @param z World z coordinate
+         * @return float 
+         */
+        virtual float calculateHeight(float x, float z) = 0;
+
         /**
          * @brief Apply the surface of the biome to the chunk at the given coordinates.
          * 
@@ -27,6 +35,12 @@ class Biome {
         virtual void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) = 0;
         virtual void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) = 0;
         virtual ~Biome() = default;
+
+        /**
+         * @brief Get the id of the biome.
+         * 
+         * @return int 
+         */
         inline int getId() const { return id; }
         inline int getGroundLevel() const { return groundLevel; }
         inline FastNoiseLite* getNoise() const { return noise; }
@@ -67,11 +81,12 @@ class DesertBiome : public Biome {
 
 class BiomeManager {
     std::vector<std::unique_ptr<Biome>> biomes;
-    std::vector<FastNoiseLite*> noises;
+    std::vector<FastNoiseLite> noises;
     int groundLevel;
+    int seed;
 public:
-    BiomeManager(int groundLevel);
-    void addBiome(std::unique_ptr<Biome> biome, FastNoiseLite* noise);
+    BiomeManager(int groundLevel, int seed);
+    void addBiome(std::unique_ptr<Biome> biome, float cellularNoiseFrequency);
     std::vector<float> getBiomeWeights(int x, int z);
     Biome* getDominantBiome(const std::vector<float>& weights);
     float blendHeight(const std::vector<float> &weights, int x, int z, glm::ivec3 worldAABBMin);

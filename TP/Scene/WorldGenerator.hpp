@@ -14,10 +14,6 @@ private:
     FastNoiseLite caveNoise2;
     FastNoiseLite oreNoise;
 
-    FastNoiseLite plainsNoise;
-    FastNoiseLite moutainNoise;
-    FastNoiseLite desertNoise;
-
     std::mt19937 rng;
     std::uniform_int_distribution<int> treeChance;
     std::uniform_int_distribution<int> ironRodChance;
@@ -26,7 +22,7 @@ private:
 
     int seed = 7772870;
 
-    BiomeManager biomeManager = BiomeManager(groundLevel);
+    BiomeManager biomeManager = BiomeManager(groundLevel, seed);
 
     void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);

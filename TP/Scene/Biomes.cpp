@@ -84,9 +84,9 @@ void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== BiomeManager ===== ///
 /// ======================== ///
 
-BiomeManager::BiomeManager(int groundLevel) : groundLevel(groundLevel)
+BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel), seed(seed)
 {
-
+   
 }
 
 /**
@@ -95,9 +95,16 @@ BiomeManager::BiomeManager(int groundLevel) : groundLevel(groundLevel)
  * @param biome 
  * @param noise 
  */
-void BiomeManager::addBiome(std::unique_ptr<Biome> biome, FastNoiseLite* noise) {
+void BiomeManager::addBiome(std::unique_ptr<Biome> biome, float cellularNoiseFrequency) {
     biomes.push_back(std::move(biome));
+    FastNoiseLite noise;
     noises.push_back(noise);
+    noises.back().SetNoiseType(FastNoiseLite::NoiseType_Cellular);
+    noises.back().SetNoiseType(FastNoiseLite::NoiseType_Cellular);
+    noises.back().SetFrequency(cellularNoiseFrequency);
+    noises.back().SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
+    noises.back().SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
+    noises.back().SetSeed(seed);
 }
 
 /**
@@ -114,7 +121,7 @@ std::vector<float> BiomeManager::getBiomeWeights(int x, int z)
 
     std::vector<float> weights;
     for (int i = 0; i < biomes.size(); ++i) {
-        weights.push_back(noises[i]->GetNoise(nx + 150 * i, nz - 150 * i));
+        weights.push_back(noises[i].GetNoise(nx + 150 * i, nz - 150 * i));
         weights[i] = 1.0f - std::abs(weights[i]);
         weights[i] = std::pow(weights[i], 2.0f);
     }
