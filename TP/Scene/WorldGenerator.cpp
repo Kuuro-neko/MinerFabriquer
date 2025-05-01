@@ -21,14 +21,14 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
 
     // Noise for biomes
     biomeNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
-    biomeNoise.SetFrequency(0.8f);
+    biomeNoise.SetFrequency(0.75f);
     biomeNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
 
 }
 
 int WorldGenerator::getBiome(int x, int z) {
     // Get the biome based on the noise value
-    float noiseValue = biomeNoise.GetNoise((float) x*0.01, (float) z*0.01);
+    float noiseValue = biomeNoise.GetNoise((float) x*0.01, (float) z*0.011);
     if (noiseValue < -0.6f) {
         return DESERT;
     } else  {
@@ -64,6 +64,9 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
             //groundLevel - 2 -> DIRT
             //groundLevel - 1 -> GRASS
             if (getBiome(worldX + x, worldZ + z) == DESERT) {
+                chunk->generationSetBloc(x, baseHeight - 6 - worldY, z, SANDSTONE);
+                chunk->generationSetBloc(x, baseHeight - 5 - worldY, z, SANDSTONE);
+                chunk->generationSetBloc(x, baseHeight - 4 - worldY, z, SANDSTONE);
                 chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, SAND);
                 chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, SAND);
                 chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, SAND);
@@ -162,7 +165,7 @@ void WorldGenerator::addTrees(VoxelChunk *chunk, int x, int z, int baseHeight) {
 
 void WorldGenerator::addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight) {
 
-    if (treeChance(rng) < 1) { // 1% chance, no trees on mountains
+    if (treeChance(rng) < 0.5) { // 1% chance, no trees on mountains
         if (chunk->getBloc(x, baseHeight - 1, z) == AIR) {
             return;
         }
