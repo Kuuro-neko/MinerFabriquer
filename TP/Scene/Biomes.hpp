@@ -10,9 +10,9 @@ class Biome {
     private:
         int groundLevel = 40;
         FastNoiseLite* noise;
-        int id = -1;
+        int id;
     public:
-        Biome(int groundLevel, FastNoiseLite* noise) : groundLevel(groundLevel), noise(noise) {}
+        Biome(int groundLevel, FastNoiseLite* noise, int id) : groundLevel(groundLevel), noise(noise), id(id) {}
         
         /**
          * @brief Calculate the height of the biome at the given coordinates.
@@ -51,10 +51,8 @@ class Biome {
 /// ================== ///
 
 class PlainsBiome : public Biome {
-    private:
-        int id = PLAINS;
     public:
-        PlainsBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise) {}
+        PlainsBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, PLAINS) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
@@ -63,9 +61,8 @@ class PlainsBiome : public Biome {
 class MoutainsBiome : public Biome {
     private:
         FastNoiseLite* snowNoise;
-        int id = MOUNTAINS;
     public:
-        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise) : Biome(groundLevel, noise), snowNoise(snowNoise) {}
+        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise) : Biome(groundLevel, noise, MOUNTAINS), snowNoise(snowNoise) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
@@ -73,10 +70,8 @@ class MoutainsBiome : public Biome {
 };
 
 class DesertBiome : public Biome {
-    private:
-        int id = DESERT;
     public:
-        DesertBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise) {}
+        DesertBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, DESERT) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
