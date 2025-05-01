@@ -67,17 +67,21 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     if (glm::length(vecteurDirection) > 0.01f) {
         vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
     }
-    if (keyInput->isKeybindHeld(keybinds->sprint)) {
-        this->speed = 5.f;
-    } else {
-        this->speed = 2.5f;
-    }
-    // Keep Jump force constant 
-    glm::vec3 speeds = glm::vec3(this->speed, this->jumpSpeed, this->speed);
-    vecteurDirection.x *= speeds.x * dt;
-    vecteurDirection.y *= speeds.y * dt;
-    vecteurDirection.z *= speeds.z * dt;
 
+    if (keyInput->isKeybindHeld(keybinds->sneak)) {
+        vecteurDirection *= this->sneakSpeed * dt;
+        this->sneaking = true;
+        this->sprinting = false;
+    } else if (keyInput->isKeybindHeld(keybinds->sprint)) {
+        vecteurDirection *= this->sprintSpeed * dt;
+        this->sneaking = false;
+        this->sprinting = true;
+    } else {
+        vecteurDirection *= this->speed * dt;
+        this->sneaking = false;
+        this->sprinting = false;
+    }
+    updateCamera();
 
     if (keyInput->isKeybindPressed(keybinds->openInventory)) {
         std::cout << "[Character] Inventaire" << std::endl;
@@ -121,6 +125,7 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     }
 
     if (keyInput->isKeybindPressed(keybinds->toggleSpectator)) {
+        this->speed = DEFAULT_SPEED;
         std::cout << "[Character] Toggle spectator mode" << std::endl;
         if (gamemode == GAMEMODE_SPECTATOR) {
             gamemode = prevGamemode;
@@ -134,6 +139,7 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     }
 
     if (keyInput->isKeybindPressed(keybinds->toggleCreative)) {
+        this->speed = DEFAULT_SPEED;
         std::cout << "[Character] Toggle creative mode" << std::endl;
         if (gamemode == GAMEMODE_CREATIVE) {
             gamemode = prevGamemode;
@@ -302,17 +308,35 @@ void Character::setSelectedBlock(BlocDatabase &database) {
     inventory->printInventory();
 }
 
+void Character::updateCamera()
+{
+    float FOV = (this->sprinting) ? DEFAULT_FOV + 10.f : DEFAULT_FOV;
+    glm::vec3 relativePos = (this->sneaking) ? CAMERA_POSITION_RELATIVE_TO_SNEAKING_PLAYER : CAMERA_POSITION_RELATIVE_TO_PLAYER;
+    camera->updateFromTargetStatus(FOV, relativePos);
+}
 
 void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {
     // Example: Adjust inventory selection based on scroll
-    if (yOffset > 0) {
-        std::cout << "Scroll up" << std::endl;
-        inventory->scrollSelectedItem(1);
-    } else if (yOffset < 0) {
-        std::cout << "Scroll down" << std::endl;
-        inventory->scrollSelectedItem(-1);
+    switch(this->gamemode) {
+        case GAMEMODE_CREATIVE:
+        case GAMEMODE_SURVIVAL:
+            if (yOffset > 0) {
+                std::cout << "Scroll up" << std::endl;
+                inventory->scrollSelectedItem(1);
+            } else if (yOffset < 0) {
+                std::cout << "Scroll down" << std::endl;
+                inventory->scrollSelectedItem(-1);
+            }
+            inventory->printInventory();
+            break;
+        case GAMEMODE_SPECTATOR:
+            if (yOffset > 0) {
+                this->speed += 0.1f;
+            } else if (yOffset < 0) {
+                this->speed -= 0.1f;
+            }
+            break;
     }
-    inventory->printInventory();
 }
 
 /**

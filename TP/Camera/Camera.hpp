@@ -12,10 +12,11 @@
 #include <TP/Input/KeyBinds.hpp>
 
 
-#define DEFAULT_FOV 45.0f
+#define DEFAULT_FOV 70.0f
 #define DEFAULT_POSITION glm::vec3(0.0f, 0.0f, 0.0f)
 #define DEFAULT_EULER_ANGLE glm::vec3(0.0f, 0.0, 0.0f)
-#define CAMERA_POSITION_RELATIVE_TO_PLAYER glm::vec3(0.f, 1.5f, 0.f)
+#define CAMERA_POSITION_RELATIVE_TO_PLAYER glm::vec3(0.f, 0.75f, 0.f)
+#define CAMERA_POSITION_RELATIVE_TO_SNEAKING_PLAYER glm::vec3(0.f, 0.5625f, 0.f)
 
 #define DEFAULT_TRANSLATION_SPEED 7.5f
 #define DEFAULT_ROTATION_SPEED 0.1f
@@ -37,6 +38,8 @@ public:
     void updateFreeInput(float _deltaTime, GLFWwindow *_window);
     void setTarget(glm::vec3 _target);
     void updateTarget(glm::vec3 _target);
+
+    void updateFromTargetStatus(float FOV, glm::vec3 relativePos);
 
     inline bool isFPS() const { return !m_attached; }
 
@@ -100,6 +103,7 @@ private:
     glm::vec3 m_targetEulerAngle = DEFAULT_EULER_ANGLE;
 
     //Camera Third
+    glm::vec3 m_relativePos = CAMERA_POSITION_RELATIVE_TO_PLAYER;
     glm::vec3 m_targetDeltaPos;
     glm::vec3 m_targetPrev;
     float m_distance = 10.0f;

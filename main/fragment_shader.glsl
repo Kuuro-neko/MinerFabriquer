@@ -106,7 +106,7 @@ void main(){
         if (displayNormals == 1) {
                 frag_color = vec4(N * 0.5 + 0.5, 1.0);   
         } else {
-                vec3 lightdir = normalize(vec3(2.0, 1.0, 2.0));
+                vec3 lightdir = normalize(vec3(-2.0, 1.0, -2.0));
                 float lightX = dayNightCycle(time, halfDayDuration);
                 vec2 lightUV = vec2(lightX*14.5/16.0, 15.0/16.0);
                 vec3 light_color = texture(LightmapSampler, lightUV).xyz;

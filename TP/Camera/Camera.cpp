@@ -1,9 +1,9 @@
 #include <TP/Camera/Camera.hpp>
 #include <TP/Camera/Camera_Helper.hpp>
 
-
 #include <stdio.h>
 #include <iostream>
+#include "Camera.hpp"
 
 void Camera::reset()
 {
@@ -58,7 +58,7 @@ void Camera::updateFreeInput(float _deltaTime, GLFWwindow* _window)
 	// Attach of detach camera from target when togglePerspective key is pressed
 	if (keyInput->isKeybindPressed(keybinds->togglePerspective) || keyInput->isKeybindPressed(keybinds->togglePerspectiveAlternative)) {
 		if (m_attached) {
-			setPosition(m_targetPrev + m_targetDeltaPos + CAMERA_POSITION_RELATIVE_TO_PLAYER);
+			setPosition(m_targetPrev + m_targetDeltaPos + m_relativePos);
 		}
 		m_attached = !m_attached;
     }
@@ -168,4 +168,11 @@ void Camera::updateTarget(glm::vec3 _target)
 {
 	m_targetDeltaPos = _target - m_targetPrev;
 	m_targetPrev = _target;
+}
+
+void Camera::updateFromTargetStatus(float FOV, glm::vec3 relativePos)
+{
+	m_fovDegree = FOV;
+
+	m_relativePos = relativePos;
 }
