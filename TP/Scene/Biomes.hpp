@@ -1,0 +1,78 @@
+#pragma once
+
+#include <TP/Scene/VoxelChunk.hpp>
+
+#define PLAINS 0
+#define MOUNTAINS 1
+#define DESERT 2
+
+class Biome {
+    private:
+        int groundLevel = 40;
+        FastNoiseLite* noise;
+        int id = -1;
+    public:
+        Biome(int groundLevel, FastNoiseLite* noise) : groundLevel(groundLevel), noise(noise) {}
+        virtual float calculateHeight(float x, float z) = 0;
+        
+        /**
+         * @brief Apply the surface of the biome to the chunk at the given coordinates.
+         * 
+         * @param chunk The chunk being generated
+         * @param x Relative x coordinate in the chunk
+         * @param z Relative z coordinate in the chunk
+         * @param baseHeight Computed using the BiomerManager.blendHeight function before
+         * @param worldAABBMin The chunks' world coordinates of it's min corner
+         */
+        virtual void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) = 0;
+        virtual void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) = 0;
+        virtual ~Biome() = default;
+        inline int getId() const { return id; }
+        inline int getGroundLevel() const { return groundLevel; }
+        inline FastNoiseLite* getNoise() const { return noise; }
+};
+
+class PlainsBiome : public Biome {
+    private:
+        int id = PLAINS;
+    public:
+        PlainsBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise) {}
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+};
+
+class MoutainsBiome : public Biome {
+    private:
+        FastNoiseLite* snowNoise;
+        int id = MOUNTAINS;
+    public:
+        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise) : Biome(groundLevel, noise), snowNoise(snowNoise) {}
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        int getSnowHeight(float baseNoise);
+};
+
+class DesertBiome : public Biome {
+    private:
+        int id = DESERT;
+    public:
+        DesertBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise) {}
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        
+};
+
+class BiomeManager {
+    std::vector<std::unique_ptr<Biome>> biomes;
+    std::vector<FastNoiseLite*> noises;
+    int groundLevel;
+public:
+    BiomeManager(int groundLevel);
+    void addBiome(std::unique_ptr<Biome> biome, FastNoiseLite* noise);
+    std::vector<float> getBiomeWeights(int x, int z);
+    Biome* getDominantBiome(const std::vector<float>& weights);
+    float blendHeight(const std::vector<float> &weights, int x, int z, glm::ivec3 worldAABBMin);
+};

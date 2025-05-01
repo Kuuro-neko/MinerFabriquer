@@ -27,63 +27,33 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     // Noise for biomes
     plainsNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
     plainsNoise.SetFrequency(0.75f);
-    plainsNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
+    plainsNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
     plainsNoise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
     plainsNoise.SetSeed(seed);
 
     moutainNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
     moutainNoise.SetFrequency(0.9f);
-    moutainNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
+    moutainNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
     moutainNoise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
     moutainNoise.SetSeed(seed);
 
     // Perlin noise for desert
     desertNoise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
     desertNoise.SetFrequency(0.8f);
-    desertNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
+    desertNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
     desertNoise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
     desertNoise.SetSeed(seed);
 
     rng.seed(seed);
-}
 
-std::vector<float> WorldGenerator::getBiomeWeights(int x, int z) {
-    float nx = x * 0.01f;
-    float nz = z * 0.011f;
-
-    float n1 = plainsNoise.GetNoise(nx*1.2f, nz);               // plains
-    float n2 = moutainNoise.GetNoise(nx + 150, nz*0.9f + 150);  // desert
-    float n3 = desertNoise.GetNoise(nx*1.1f + 250, nz*0.8f - 130);  // mountain
-
-    // Center values around 0.5
-    float plainsRaw = 1.0f - std::abs(n1);
-    float desertRaw = 1.0f - std::abs(n2);
-    float mountainRaw = 1.0f - std::abs(n3);
-
-    // Make them positive and curved — exp or square
-    plainsRaw = std::pow(plainsRaw, 2.0f);
-    desertRaw = std::pow(desertRaw, 2.0f);
-    mountainRaw = std::pow(mountainRaw, 2.0f);
-
-    std::vector<float> weights = {plainsRaw, desertRaw, mountainRaw};
-    float sum = 0.0f;
-    for (float w : weights) sum += w;
-    for (float &w : weights) w /= sum;
-
-    return weights;
-}
-
-
-int WorldGenerator::getBiome(std::vector<float> weights) {
-    float maxWeight = weights[0];
-    int biome = 0;
-    for (int i = 1; i < weights.size(); ++i) {
-        if (weights[i] > maxWeight) {
-            maxWeight = weights[i];
-            biome = i;
-        }
-    }
-    return biome;
+    biomeManager.addBiome(
+        std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise),
+        &plainsNoise);
+    biomeManager.addBiome(
+        std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise),
+        &moutainNoise);
+    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise),
+        &desertNoise);
 }
 
 void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {
@@ -99,65 +69,27 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
     //on génère le terrain en fonction du bruit de base et du bruit de montagne
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
-            // worldX Y Z are the world pos of the min pos of the chunk
-            // so x and z are local to the chunk and x + worldX and z + worldZ are the world pos (useful for the noises)
-            int worldX = i * CHUNK_SIZE;
-            int worldY = j * CHUNK_SIZE;
-            int worldZ = k * CHUNK_SIZE;
+            // worldAABBMin.xyz are the world pos of the min pos of the chunk
+            // so x and z are local to the chunk and x + worldAABBMin.x and z + worldAABBMin.z are the world pos (useful for the noises)
+            glm::ivec3 worldAABBMin = glm::ivec3(
+                i * CHUNK_SIZE,
+                j * CHUNK_SIZE,
+                k * CHUNK_SIZE
+            );
 
-            std::vector<float> biomeWeights = getBiomeWeights(worldX + x, worldZ + z);
-            int biome = getBiome(biomeWeights);
-
-            float baseNoiseValue = baseHeightNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE);
-
-            float mountainNoiseValue = mountainHeightNoise.GetNoise((float) 260 + x + i * CHUNK_SIZE, (float) 500 + z + k * CHUNK_SIZE);
-
-            int baseHeight = 0;
-
-            // Calculate base height based on biome
-            float plainsHeight = groundLevel + std::max(baseNoiseValue * 5.0f, 0.f);
-            float desertHeight = groundLevel + std::max(baseNoiseValue, 0.f);  // Flatter for desert
-            float mountainHeight = groundLevel + std::max(mountainNoiseValue * mountainNoiseValue * 80.0f + 3.f, 0.f); // Higher mountains
-
-            // Blend the heights
-            baseHeight = plainsHeight * biomeWeights[0] +
-                        desertHeight * biomeWeights[1] +
-                        mountainHeight * biomeWeights[2];
+            
+            std::vector<float> biomeWeights = biomeManager.getBiomeWeights(worldAABBMin.x + x, worldAABBMin.z + z);
+            Biome* currentBiome = biomeManager.getDominantBiome(biomeWeights);
+            int baseHeight = biomeManager.blendHeight(biomeWeights, x, z, worldAABBMin);
 
             // Stone everywhere
             for (int y = 0; y < CHUNK_SIZE; y++) {
-                if (y + worldY < baseHeight - 3) {
+                if (y + worldAABBMin.y < baseHeight - 3) {
                     chunk->generationSetBloc(x, y, z, STONE);
                 }
             }
 
-            switch(biome) {
-                case PLAINS:
-                    chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, DIRT);
-                    chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, DIRT);
-                    chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, GRASS);
-                    break;
-                case DESERT:
-                    chunk->generationSetBloc(x, baseHeight - 6 - worldY, z, SANDSTONE);
-                    chunk->generationSetBloc(x, baseHeight - 5 - worldY, z, SANDSTONE);
-                    chunk->generationSetBloc(x, baseHeight - 4 - worldY, z, SANDSTONE);
-                    chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, SAND);
-                    chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, SAND);
-                    chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, SAND);
-                    break;
-                case MOUNTAINS:
-                    int snowheight = 15 + baseNoiseValue * 8;
-                    if (baseHeight > groundLevel + snowheight) {
-                        for (int y = 0; y < 3; y++) {
-                            chunk->generationSetBloc(x, baseHeight - y - 2 - worldY, z, SNOW);
-                        }
-                    } else {
-                        chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, STONE);
-                        chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, STONE);
-                        chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, STONE);
-                    }
-                break;
-            }
+            currentBiome->applySurface(chunk, x, z, baseHeight, worldAABBMin);
 
 
             // Ores
@@ -182,9 +114,9 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
                                                                 (float) y + j * CHUNK_SIZE,
                                                                 (float) z + k * CHUNK_SIZE);
                     float value = caveNoiseValue + caveNoiseValue2;
-                    float check = -0.6f + (worldY + y ) * 0.01f;
-                    if (worldY + y > groundLevel) {
-                        check -= (worldY + y ) * 0.05f;
+                    float check = -0.6f + (worldAABBMin.y + y ) * 0.01f;
+                    if (worldAABBMin.y + y > groundLevel) {
+                        check -= (worldAABBMin.y + y ) * 0.05f;
                     }
                     if (value < check) {
                         chunk->generationSetBloc(x, y, z, AIR);
@@ -193,17 +125,17 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
             }
 
             // If surface level and not top of moutain
-            if (worldY <= baseHeight && worldY + chunk->m_sizeY > baseHeight && getBiome(biomeWeights) == PLAINS) {
-                addTrees(chunk, x, z, baseHeight - worldY);
+            if (worldAABBMin.y <= baseHeight && worldAABBMin.y + chunk->m_sizeY > baseHeight && currentBiome->getId() == PLAINS) {
+                addTrees(chunk, x, z, baseHeight - worldAABBMin.y);
             }
 
             // If surface level
-            if (worldY <= baseHeight && worldY + chunk->m_sizeY > baseHeight) {
-                addIronRods(chunk, x, z, baseHeight - worldY);
+            if (worldAABBMin.y <= baseHeight && worldAABBMin.y + chunk->m_sizeY > baseHeight) {
+                addIronRods(chunk, x, z, baseHeight - worldAABBMin.y);
             }
 
             //lastLayer - 4 -> BEDROCK
-            if (worldY == 0) {
+            if (worldAABBMin.y == 0) {
                 chunk->generationSetBloc(x, 0, z, BEDROCK);
             }
         }

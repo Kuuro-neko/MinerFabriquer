@@ -4,10 +4,7 @@
 #include "common/fastNoiseLit.h"
 #include <random>
 #include <TP/Scene/World.hpp>
-
-#define PLAINS 0
-#define DESERT 1
-#define MOUNTAINS 2
+#include <TP/Scene/Biomes.hpp>
 
 class WorldGenerator {
 private:
@@ -27,13 +24,13 @@ private:
 
     int groundLevel = 40;
 
-    int seed = 777287;
+    int seed = 7772870;
+
+    BiomeManager biomeManager = BiomeManager(groundLevel);
 
     void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
     void addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight);
-    std::vector<float> getBiomeWeights(int x, int z);
-    int getBiome(std::vector<float> weights);
 
 public:
     WorldGenerator();
