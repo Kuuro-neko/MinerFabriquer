@@ -60,7 +60,7 @@ void Character::listenAction(float dt) {
     if (keyInput->isKeybindHeld(keybinds->right))
         vecteurDirection -= cameraRightNoUp;
     if (keyInput->isKeybindHeld(keybinds->sneak))
-        vecteurDirection -= VEC_UP;
+        if(gamemode != GAMEMODE_SURVIVAL) vecteurDirection -= VEC_UP;
     if (keyInput->isKeybindHeld(keybinds->jump))
         vecteurDirection += VEC_UP;
 
