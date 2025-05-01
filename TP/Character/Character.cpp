@@ -40,7 +40,7 @@ void Character::move(glm::vec3 direction) {
  * \brief fonction qui réalise les actions en fonction de la touche détectée
  * @param key
  */
-void Character::listenAction(float dt, BlocDatabase &database) {
+void Character::listenAction(float dt) {
     update(dt);
     glm::vec3 cameraFrontNoUp = camera->getRotation() * VEC_FRONT;
     cameraFrontNoUp.y = 0.f;
@@ -90,21 +90,21 @@ void Character::listenAction(float dt, BlocDatabase &database) {
     // if (keyInput->isKeybindHeld(keybinds->sprint)) {
     //     std::cout << "[Character] Sprint" << std::endl;
     // }
+    BlocDatabase &db = BlocDatabase::getInstance();
 
-
-    updateClosestBlock(database); //on met à jour le bloc le plus proche
+    updateClosestBlock(db); //on met à jour le bloc le plus proche
 
     // ==== Bloc interaction binds ====
     if (keyInput->isKeybindHeld(keybinds->breakBlock) && breakCooldown >= MAX_BREAK_COOLDOWN) {
-        breakBlock(database); // on fait un coup de pioche
+        breakBlock(db); // on fait un coup de pioche
     }
 
     if (keyInput->isKeybindHeld(keybinds->placeBlock) && placeCooldown >= MAX_PLACE_COOLDOWN) {
-        putBlock(database); //on pose un bloc
+        putBlock(db); //on pose un bloc
     }
 
     if (keyInput->isKeybindHeld(keybinds->selectBlock)) {
-        setSelectedBlock(database); //on sélectionne un bloc
+        setSelectedBlock(db); //on sélectionne un bloc
     }
 
     // ==== Debug binds ====

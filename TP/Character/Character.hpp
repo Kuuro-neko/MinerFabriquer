@@ -40,7 +40,7 @@ public:
     void draw(GLuint programID) override;
 
 
-    void listenAction(float dt, BlocDatabase &database);
+    void listenAction(float dt);
     void scrollCallback(GLFWwindow *window, double xOffset, double yOffset);
     void update(float dt);
     void updateBoundingBox();

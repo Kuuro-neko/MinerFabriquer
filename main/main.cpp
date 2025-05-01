@@ -298,7 +298,7 @@ int main(void) {
         glfwPollEvents();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
-        character.listenAction(deltaTime, BlocDatabase::getInstance());
+        character.listenAction(deltaTime);
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
