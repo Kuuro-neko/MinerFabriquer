@@ -110,10 +110,8 @@ void main(){
                 float lightX = dayNightCycle(time, halfDayDuration);
                 vec2 lightUV = vec2(lightX*14.5/16.0, 15.0/16.0);
                 vec3 light_color = texture(LightmapSampler, lightUV).xyz;
-                //vec3 light_color = vec3(23.47, 21.31, 20.79);
 
                 float intensity = 5.0;
-                //light_color *= 25.0 * (lightX * lightX);
 
                 vec4 albedoTex = texture(TextureSampler, UV);
                 vec3 albedo = pow(albedoTex.rgb, vec3(2.2));

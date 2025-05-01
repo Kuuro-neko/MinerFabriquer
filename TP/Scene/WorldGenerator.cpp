@@ -29,7 +29,6 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
 int WorldGenerator::getBiome(int x, int z) {
     // Get the biome based on the noise value
     float noiseValue = biomeNoise.GetNoise((float) x*0.01, (float) z*0.01);
-    std::cout << "Biome noise value: " << noiseValue << std::endl;
     if (noiseValue < -0.6f) {
         return DESERT;
     } else  {
