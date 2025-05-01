@@ -7,6 +7,7 @@
 
 #define PLAINS 0
 #define DESERT 1
+#define MOUNTAINS 2
 
 class WorldGenerator {
 private:
@@ -16,6 +17,7 @@ private:
     FastNoiseLite caveNoise2;
     FastNoiseLite oreNoise;
     FastNoiseLite biomeNoise;
+    FastNoiseLite biomeNoise2;
     std::mt19937 rng;
     std::uniform_int_distribution<int> treeChance;
 

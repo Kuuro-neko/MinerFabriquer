@@ -24,20 +24,32 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     biomeNoise.SetFrequency(0.75f);
     biomeNoise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
 
+    biomeNoise2.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
+    biomeNoise2.SetFrequency(0.9f);
+    biomeNoise2.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
 }
 
 int WorldGenerator::getBiome(int x, int z) {
     // Get the biome based on the noise value
     float noiseValue = biomeNoise.GetNoise((float) x*0.01, (float) z*0.011);
+    float noiseValue2 = biomeNoise2.GetNoise((float) 150+x*0.01, (float) 150+z*0.011);
     if (noiseValue < -0.6f) {
         return DESERT;
     } else  {
-        return PLAINS;
+        if (noiseValue2 < -0.6f) {
+            return MOUNTAINS;
+        } else {
+            return PLAINS;
+        }
     }
 }
 
 void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {
     //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
+    if (groundLevel + CHUNK_SIZE * 2 < j * CHUNK_SIZE) {
+        // Skipping chunks too high to have any generated bloc
+        return;
+    }
     generateTerrain(world, i, j, k, groundLevel);
 }
 
@@ -54,8 +66,10 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
             int baseHeight = groundLevel + static_cast<int>(
                     baseNoise.GetNoise((float) x + worldX, (float) z + worldZ) * 5);
 
-            int mountainHeight = static_cast<int>(
-                mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 10);
+            if (getBiome(worldX + x, worldZ + z) == MOUNTAINS) {
+                baseHeight += static_cast<int>(
+                    mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 50);
+            }
                 
             //groundLevel - 3  -> STONE
             for (int y = 0; y < CHUNK_SIZE; y++) {
@@ -65,27 +79,25 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
             }
             //groundLevel - 2 -> DIRT
             //groundLevel - 1 -> GRASS
-            if (getBiome(worldX + x, worldZ + z) == DESERT) {
-                chunk->generationSetBloc(x, baseHeight - 6 - worldY, z, SANDSTONE);
-                chunk->generationSetBloc(x, baseHeight - 5 - worldY, z, SANDSTONE);
-                chunk->generationSetBloc(x, baseHeight - 4 - worldY, z, SANDSTONE);
-                chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, SAND);
-                chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, SAND);
-                chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, SAND);
-            } else {
-                chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, DIRT);
-                chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, DIRT);
-                chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, GRASS);
-
-
-                if (mountainHeight > 0) {
-                    for (int y = baseHeight; y < baseHeight + mountainHeight; y++) {
-                        chunk->generationSetBloc(x, y - worldY, z, STONE);
-                        if (chunk->getBloc(x, y-1 - worldY, z) == GRASS) {
-                            chunk->generationSetBloc(x, y - 1 - worldY, z, DIRT); // Add grass on top of mountains
-                        }
-                    }
-                }
+            switch(getBiome(worldX + x, worldZ + z)) {
+                case PLAINS:
+                    chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, DIRT);
+                    chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, DIRT);
+                    chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, GRASS);
+                    break;
+                case DESERT:
+                    chunk->generationSetBloc(x, baseHeight - 6 - worldY, z, SANDSTONE);
+                    chunk->generationSetBloc(x, baseHeight - 5 - worldY, z, SANDSTONE);
+                    chunk->generationSetBloc(x, baseHeight - 4 - worldY, z, SANDSTONE);
+                    chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, SAND);
+                    chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, SAND);
+                    chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, SAND);
+                    break;
+                case MOUNTAINS:
+                    chunk->generationSetBloc(x, baseHeight - 3 - worldY, z, STONE);
+                    chunk->generationSetBloc(x, baseHeight - 2 - worldY, z, STONE);
+                    chunk->generationSetBloc(x, baseHeight - 1 - worldY, z, STONE);
+                    break;
             }
 
 
@@ -111,21 +123,21 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
                                                                 (float) y + j * CHUNK_SIZE,
                                                                 (float) z + k * CHUNK_SIZE);
                     float value = caveNoiseValue + caveNoiseValue2;
-                    if (value < -0.6f + (worldY + y ) * 0.01f ) {
+                    float check = (worldY + y ) < baseHeight ? -0.6f + (worldY + y ) * 0.01f : 0.0f;
+                    if (value <  check) {
                         chunk->generationSetBloc(x, y, z, AIR);
                     }
                 }
             }
 
             // If surface level and not top of moutain
-            if (worldY <= baseHeight && worldY + chunk->m_sizeY > baseHeight && mountainHeight <=0) {
+            if (worldY <= baseHeight && worldY + chunk->m_sizeY > baseHeight && getBiome(worldX + x, worldZ + z) == PLAINS) {
                 addTrees(chunk, x, z, baseHeight - worldY);
             }
 
             // If surface level
             if (worldY <= baseHeight && worldY + chunk->m_sizeY > baseHeight) {
-                if(mountainHeight <=0) addIronRods(chunk, x, z, baseHeight - worldY);
-                else addIronRods(chunk, x, z, baseHeight + mountainHeight - worldY);
+                addIronRods(chunk, x, z, baseHeight - worldY);
             }
 
             //lastLayer - 4 -> BEDROCK
