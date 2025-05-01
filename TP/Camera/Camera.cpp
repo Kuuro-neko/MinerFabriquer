@@ -148,6 +148,23 @@ void Camera::update(float _deltaTime, GLFWwindow* _window)
 		}
 	}
 
+	// Animation du FOV en fonction de la course de la target
+	InterPolationType fovInterpolationType;
+	if (m_sprinting) {
+		m_runningFOVtime += _deltaTime;
+		if (m_runningFOVtime > m_runningFOVduration) {
+			m_runningFOVtime = m_runningFOVduration;
+		}
+		fovInterpolationType = InterPolationType::SQRT;	
+	} else {
+		m_runningFOVtime -= _deltaTime;
+		if (m_runningFOVtime < 0) {
+			m_runningFOVtime = 0;
+		}
+		fovInterpolationType = InterPolationType::CUBIC;
+	}
+	m_deltaFov = m_maxDeltaFOX * Camera_Helper::interpolation(m_runningFOVtime / m_runningFOVduration, fovInterpolationType);
+
 	if (m_attached) {
 		//Rotation autour de la target
 		m_rotation = glm::quat(m_eulerAngle);
@@ -155,7 +172,8 @@ void Camera::update(float _deltaTime, GLFWwindow* _window)
 	} else {
 		m_rotation = glm::quat(m_eulerAngle);
 	}
-	Camera_Helper::computeFinalView(m_projectionMatrix, m_viewMatrix, m_position, m_rotation, m_fovDegree, m_nearPlane, m_farPlane);
+	
+	Camera_Helper::computeFinalView(m_projectionMatrix, m_viewMatrix, m_position, m_rotation, m_fovDegree + m_deltaFov, m_nearPlane, m_farPlane);
 }
 
 void Camera::setTarget(glm::vec3 _target)
@@ -170,9 +188,7 @@ void Camera::updateTarget(glm::vec3 _target)
 	m_targetPrev = _target;
 }
 
-void Camera::updateFromTargetStatus(float FOV, glm::vec3 relativePos)
+void Camera::setSprinting(bool sprinting)
 {
-	m_fovDegree = FOV;
-
-	m_relativePos = relativePos;
+	m_sprinting = sprinting;
 }

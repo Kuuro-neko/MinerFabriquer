@@ -310,9 +310,7 @@ void Character::setSelectedBlock(BlocDatabase &database) {
 
 void Character::updateCamera()
 {
-    float FOV = (this->sprinting) ? DEFAULT_FOV + 10.f : DEFAULT_FOV;
-    glm::vec3 relativePos = (this->sneaking) ? CAMERA_POSITION_RELATIVE_TO_SNEAKING_PLAYER : CAMERA_POSITION_RELATIVE_TO_PLAYER;
-    camera->updateFromTargetStatus(FOV, relativePos);
+    camera->setSprinting(sprinting);
 }
 
 void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {

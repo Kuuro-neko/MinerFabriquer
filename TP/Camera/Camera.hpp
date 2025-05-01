@@ -39,7 +39,7 @@ public:
     void setTarget(glm::vec3 _target);
     void updateTarget(glm::vec3 _target);
 
-    void updateFromTargetStatus(float FOV, glm::vec3 relativePos);
+    void setSprinting(bool sprinting);
 
     inline bool isFPS() const { return !m_attached; }
 
@@ -107,6 +107,12 @@ private:
     glm::vec3 m_targetDeltaPos;
     glm::vec3 m_targetPrev;
     float m_distance = 10.0f;
+
+    bool m_sprinting = false;
+	float m_deltaFov = 0.0f;
+	float m_maxDeltaFOX = 10.0f;
+	float m_runningFOVtime = 0.0f;
+	float m_runningFOVduration = 0.25f;
 
     inline glm::vec3 getTarget() const { return m_targetPrev; }
 
