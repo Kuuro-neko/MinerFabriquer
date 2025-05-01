@@ -40,8 +40,24 @@ void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, in
     generateTerrain(world, i, j, k, groundLevel);
 }
 
+void WorldGenerator::setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight) {
+    for (int y = 0; y < CHUNK_SIZE; y++) {
+        if (y + worldAABBMin.y < baseHeight - 3) {
+            chunk->generationSetBloc(x, y, z, STONE);
+        }
+    }
+}
+
+/**
+ * @brief Generate the terrain of a chunk at the given chunks coordinates.
+ * 
+ * @param chunk 
+ * @param i 
+ * @param j 
+ * @param k 
+ * @param groundLevel 
+ */
 void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
-    //on génère le terrain en fonction du bruit de base et du bruit de montagne
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk
@@ -52,34 +68,31 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
                 k * CHUNK_SIZE
             );
 
-            
+            // Compute the baseHeight : "heightmap" of the current biome based on its blend with other biomes
             std::vector<float> biomeWeights = biomeManager.getBiomeWeights(worldAABBMin.x + x, worldAABBMin.z + z);
             Biome* currentBiome = biomeManager.getDominantBiome(biomeWeights);
             int baseHeight = biomeManager.blendHeight(biomeWeights, x, z, worldAABBMin);
 
-            // Stone everywhere
-            for (int y = 0; y < CHUNK_SIZE; y++) {
-                if (y + worldAABBMin.y < baseHeight - 3) {
-                    chunk->generationSetBloc(x, y, z, STONE);
-                }
-            }
+            // Set the base stone shape
+            setBaseStone(chunk, x, z, worldAABBMin, baseHeight);
 
+            // Apply the biome surface
             currentBiome->applySurface(chunk, x, z, baseHeight, worldAABBMin);
 
 
-            // Ores
+            // Generate ores in stone blocs
             for (int y = 0; y < chunk->m_sizeY; y++) {
                 if (chunk->getBloc(x, y, z) == STONE) { // Replaces only stone
                     float oreNoiseValue = oreNoise.GetNoise((float) x + i * CHUNK_SIZE,
                                                             (float) y + j * CHUNK_SIZE,
                                                             (float) z + k * CHUNK_SIZE);
-                    if (oreNoiseValue > 0.28f) {
+                    if (oreNoiseValue > IRON_THRESHOLD) {
                         chunk->generationSetBloc(x, y, z, IRON_ORE);
                     }
                 }
             }
 
-            // Caves
+            // Generate caves on ground blocs
             for (int y = 0; y < chunk->m_sizeY; y++) { // Replaces ground blocs
                 if (BlocDatabase::getInstance().isPartOfGround(chunk->getBloc(x, y, z))) {
                     float caveNoiseValue = caveNoise.GetNoise((float) x + i * CHUNK_SIZE,
@@ -89,7 +102,7 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
                                                                 (float) y + j * CHUNK_SIZE,
                                                                 (float) z + k * CHUNK_SIZE);
                     float value = caveNoiseValue + caveNoiseValue2;
-                    float check = -0.6f + (worldAABBMin.y + y ) * 0.01f;
+                    float check = CAVE_BASE_THRESHOLD + (worldAABBMin.y + y ) * CAVE_DEPTH_SCALING_FACTOR;
                     if (worldAABBMin.y + y > groundLevel) {
                         check -= (worldAABBMin.y + y ) * 0.05f;
                     }
@@ -99,17 +112,17 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
                 }
             }
 
-            // If surface level and not top of moutain
+            // If surface level and biome is plains, add trees
             if (worldAABBMin.y <= baseHeight && worldAABBMin.y + chunk->m_sizeY > baseHeight && currentBiome->getId() == PLAINS) {
                 addTrees(chunk, x, z, baseHeight - worldAABBMin.y);
             }
 
-            // If surface level
+            // If surface level, add iron rods
             if (worldAABBMin.y <= baseHeight && worldAABBMin.y + chunk->m_sizeY > baseHeight) {
                 addIronRods(chunk, x, z, baseHeight - worldAABBMin.y);
             }
 
-            //lastLayer - 4 -> BEDROCK
+            // Bedrock at the bottom of the world
             if (worldAABBMin.y == 0) {
                 chunk->generationSetBloc(x, 0, z, BEDROCK);
             }

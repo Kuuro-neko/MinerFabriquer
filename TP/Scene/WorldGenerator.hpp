@@ -6,6 +6,11 @@
 #include <TP/Scene/World.hpp>
 #include <TP/Scene/Biomes.hpp>
 
+#define CAVE_BASE_THRESHOLD -0.75f
+#define CAVE_DEPTH_SCALING_FACTOR 0.01f
+
+#define IRON_THRESHOLD 0.28f
+
 class WorldGenerator {
 private:
     FastNoiseLite baseHeightNoise;
@@ -24,6 +29,7 @@ private:
 
     BiomeManager biomeManager = BiomeManager(groundLevel, seed);
 
+    void setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
     void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
     void addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight);

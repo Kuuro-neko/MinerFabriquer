@@ -68,11 +68,11 @@ void Character::listenAction(float dt) {
         vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
     }
 
-    if (keyInput->isKeybindHeld(keybinds->sneak)) {
+    if (keyInput->isKeybindHeld(keybinds->sneak) && this->gamemode != GAMEMODE_SPECTATOR) {
         vecteurDirection *= this->sneakSpeed * dt;
         this->sneaking = true;
         this->sprinting = false;
-    } else if (keyInput->isKeybindHeld(keybinds->sprint)) {
+    } else if (keyInput->isKeybindHeld(keybinds->sprint) && this->gamemode != GAMEMODE_SPECTATOR) {
         vecteurDirection *= this->sprintSpeed * dt;
         this->sneaking = false;
         this->sprinting = true;
