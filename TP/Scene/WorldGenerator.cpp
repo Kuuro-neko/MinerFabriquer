@@ -58,8 +58,10 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
                 mountainNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE) * 10);
                 
             //groundLevel - 3  -> STONE
-            for (int y = worldY; y < baseHeight - 2; y++) {
-                chunk->generationSetBloc(x, y - worldY, z, STONE);
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                if (y + worldY < baseHeight - 3) {
+                    chunk->generationSetBloc(x, y, z, STONE);
+                }
             }
             //groundLevel - 2 -> DIRT
             //groundLevel - 1 -> GRASS
