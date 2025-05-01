@@ -18,6 +18,8 @@
 #define SAND 10
 #define IRON_ORE 11
 #define IRON_BLOCK 12
+#define SANDSTONE 13
+#define SNOW 14
 
 #define ERROR_BLOC 255
 
@@ -143,6 +145,10 @@ public:
 
     bool isOpaque(int id) {
         return m_blocs[id].opaque==1;
+    }
+
+    bool isPartOfGround(int id) {
+        return m_blocs[id].id==GRASS || m_blocs[id].id==DIRT || m_blocs[id].id==STONE || m_blocs[id].id==IRON_ORE || m_blocs[id].id==IRON_BLOCK || m_blocs[id].id==SAND || m_blocs[id].id==SANDSTONE || m_blocs[id].id==SNOW;
     }
 
     /**
