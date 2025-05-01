@@ -310,7 +310,7 @@ void Character::setSelectedBlock(BlocDatabase &database) {
 
 void Character::updateCamera()
 {
-    camera->setSprinting(sprinting);
+    camera->setPlayerMotions(sprinting, sneaking);
 }
 
 void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {

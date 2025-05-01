@@ -16,7 +16,7 @@
 #define DEFAULT_POSITION glm::vec3(0.0f, 0.0f, 0.0f)
 #define DEFAULT_EULER_ANGLE glm::vec3(0.0f, 0.0, 0.0f)
 #define CAMERA_POSITION_RELATIVE_TO_PLAYER glm::vec3(0.f, 0.75f, 0.f)
-#define CAMERA_POSITION_RELATIVE_TO_SNEAKING_PLAYER glm::vec3(0.f, 0.5625f, 0.f)
+#define DELTA_Y_SNEAK 0.1875f
 
 #define DEFAULT_TRANSLATION_SPEED 7.5f
 #define DEFAULT_ROTATION_SPEED 0.1f
@@ -39,7 +39,7 @@ public:
     void setTarget(glm::vec3 _target);
     void updateTarget(glm::vec3 _target);
 
-    void setSprinting(bool sprinting);
+    void setPlayerMotions(bool sprinting, bool sneaking);
 
     inline bool isFPS() const { return !m_attached; }
 
@@ -113,6 +113,11 @@ private:
 	float m_maxDeltaFOX = 10.0f;
 	float m_runningFOVtime = 0.0f;
 	float m_runningFOVduration = 0.25f;
+
+    bool m_sneaking = false;
+    float m_sneakDeltaY = 0.0f;
+    float m_sneaktime = 0.0f;
+    float m_sneakDuration = 0.25f;
 
     inline glm::vec3 getTarget() const { return m_targetPrev; }
 

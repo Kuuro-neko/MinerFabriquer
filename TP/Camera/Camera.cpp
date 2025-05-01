@@ -165,6 +165,23 @@ void Camera::update(float _deltaTime, GLFWwindow* _window)
 	}
 	m_deltaFov = m_maxDeltaFOX * Camera_Helper::interpolation(m_runningFOVtime / m_runningFOVduration, fovInterpolationType);
 
+	// Animation du FOV en fonction de la course de la target
+	InterPolationType sneakInterpolationType;
+	if (m_sneaking) {
+		m_sneaktime += _deltaTime;
+		if (m_sneaktime > m_runningFOVduration) {
+			m_sneaktime = m_runningFOVduration;
+		}
+		sneakInterpolationType = InterPolationType::SQRT;
+	} else {
+		m_sneaktime -= _deltaTime;
+		if (m_sneaktime < 0) {
+			m_sneaktime = 0;
+		}
+		sneakInterpolationType = InterPolationType::CUBIC;
+	}
+	m_sneakDeltaY = DELTA_Y_SNEAK * Camera_Helper::interpolation(m_sneaktime / m_runningFOVduration, sneakInterpolationType);
+
 	if (m_attached) {
 		//Rotation autour de la target
 		m_rotation = glm::quat(m_eulerAngle);
@@ -172,6 +189,8 @@ void Camera::update(float _deltaTime, GLFWwindow* _window)
 	} else {
 		m_rotation = glm::quat(m_eulerAngle);
 	}
+
+	m_position.y -= m_sneakDeltaY;
 	
 	Camera_Helper::computeFinalView(m_projectionMatrix, m_viewMatrix, m_position, m_rotation, m_fovDegree + m_deltaFov, m_nearPlane, m_farPlane);
 }
@@ -188,7 +207,8 @@ void Camera::updateTarget(glm::vec3 _target)
 	m_targetPrev = _target;
 }
 
-void Camera::setSprinting(bool sprinting)
+void Camera::setPlayerMotions(bool sprinting, bool sneaking)
 {
 	m_sprinting = sprinting;
+	m_sneaking = sneaking;
 }
