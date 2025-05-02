@@ -2,6 +2,7 @@
 #include <TP/Scene/BlocTypes.hpp>
 #include <algorithm>
 #include "Biomes.hpp"
+#include <random>
 
 /// ======================= ///
 /// ===== PlainsBiome ===== ///
@@ -76,8 +77,85 @@ void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
 }
 
-void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight){
+
+}
+
+/// ========================= ///
+/// ===== WaterBiome ===== ///
+/// ========================= ///
+
+float WaterBiome::calculateHeight(float x, float z)
 {
+    return getGroundLevel() - std::max(getNoise()->GetNoise(x, z) * 5.0f + 1.f, 0.f);
+}
+
+//function that returns the minimum height of the chunk'neighbors
+int WaterBiome::getMinNeighborHeight(VoxelChunk *chunk, int x, int z, glm::ivec3 worldAABBMin)
+{
+    int minHeight = INT_MAX;
+    for (int dx = -1; dx <= 1; ++dx)
+    {
+        for (int dz = -1; dz <= 1; ++dz)
+        {
+            if (dx == 0 && dz == 0) continue; // Skip the current chunk
+
+            int neighborX = x + dx;
+            int neighborZ = z + dz;
+
+            // Check if the neighbor is within the chunk bounds
+            if (neighborX >= 0 && neighborX < chunk->m_sizeX && neighborZ >= 0 && neighborZ < chunk->m_sizeZ)
+            {
+                int neighborHeight = chunk->getBloc(neighborX, worldAABBMin.y, neighborZ);
+                minHeight = std::min(minHeight, neighborHeight);
+            }
+        }
+    }
+
+    return minHeight;
+}
+//TODO pas de bedrock + pas lisse entre les biomes
+void WaterBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    const int WATER_LEVEL = 64; // Water level base height
+
+    // get the minimum height of the neighbors to limit the water level to have a nice water surface
+    int minNeighborHeight = getMinNeighborHeight(chunk, x, z, worldAABBMin);
+    int maxWaterHeight = std::min(WATER_LEVEL, minNeighborHeight);
+
+
+    // Fill the chunk with water blocks below the maximum water height for each blocs
+    for(int x = 0; x < chunk->m_sizeX; ++x)
+    {
+        for (int z = 0; z < chunk->m_sizeZ; ++z)
+        {
+            for (int y = 0; y < maxWaterHeight; ++y)
+            {
+                if(y<= worldAABBMin.y){
+                    chunk->generationSetBloc(x, y - worldAABBMin.y, z, BEDROCK);
+                }
+                else if (y <= maxWaterHeight)
+                {
+                    chunk->generationSetBloc(x, y - worldAABBMin.y, z, WATER);
+                }
+                else
+                {
+                    chunk->generationSetBloc(x, y - worldAABBMin.y, z, AIR);
+                }
+            }
+        }
+    }
+
+    // Above the water level, set the blocks to air
+    for (int y = maxWaterHeight + 1; y < worldAABBMin.y + chunk->m_sizeY; ++y)
+    {
+        chunk->generationSetBloc(x, y - worldAABBMin.y, z, AIR);
+    }
+}
+
+void WaterBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+    // No decoration for water biome
 }
 
 /// ======================== ///
