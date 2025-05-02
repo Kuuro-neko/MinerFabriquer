@@ -87,7 +87,7 @@ void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight){
 
 float WaterBiome::calculateHeight(float x, float z)
 {
-    return getGroundLevel() - std::max(getNoise()->GetNoise(x, z) * 5.0f + 1.f, 0.f);
+    return -getGroundLevel();
 }
 
 //function that returns the minimum height of the chunk'neighbors
@@ -117,39 +117,38 @@ int WaterBiome::getMinNeighborHeight(VoxelChunk *chunk, int x, int z, glm::ivec3
 //TODO pas de bedrock + pas lisse entre les biomes
 void WaterBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    const int WATER_LEVEL = 64; // Water level base height
+    const int WATER_LEVEL = 64; // Niveau d'eau fixe
 
-    // get the minimum height of the neighbors to limit the water level to have a nice water surface
+    // Calculer la hauteur maximale de l'eau en fonction des voisins
     int minNeighborHeight = getMinNeighborHeight(chunk, x, z, worldAABBMin);
     int maxWaterHeight = std::min(WATER_LEVEL, minNeighborHeight);
 
-
-    // Fill the chunk with water blocks below the maximum water height for each blocs
-    for(int x = 0; x < chunk->m_sizeX; ++x)
+    // Parcourir chaque bloc du chunk
+    for (int localX = 0; localX < chunk->m_sizeX; ++localX)
     {
-        for (int z = 0; z < chunk->m_sizeZ; ++z)
+        for (int localZ = 0; localZ < chunk->m_sizeZ; ++localZ)
         {
-            for (int y = 0; y < maxWaterHeight; ++y)
+            for (int localY = 0; localY < chunk->m_sizeY; ++localY)
             {
-                if(y<= worldAABBMin.y){
-                    chunk->generationSetBloc(x, y - worldAABBMin.y, z, BEDROCK);
-                }
-                else if (y <= maxWaterHeight)
+                int globalY = localY + worldAABBMin.y;
+
+                if (globalY <= 0)
                 {
-                    chunk->generationSetBloc(x, y - worldAABBMin.y, z, WATER);
+                    // Placer la bedrock à la couche la plus basse
+                    chunk->generationSetBloc(localX, localY, localZ, BEDROCK);
+                }
+                else if (globalY <= maxWaterHeight)
+                {
+                    // Remplir avec de l'eau jusqu'à la hauteur maximale
+                    chunk->generationSetBloc(localX, localY, localZ, WATER);
                 }
                 else
                 {
-                    chunk->generationSetBloc(x, y - worldAABBMin.y, z, AIR);
+                    // Remplir au-dessus de la hauteur maximale avec de l'air
+                    chunk->generationSetBloc(localX, localY, localZ, AIR);
                 }
             }
         }
-    }
-
-    // Above the water level, set the blocks to air
-    for (int y = maxWaterHeight + 1; y < worldAABBMin.y + chunk->m_sizeY; ++y)
-    {
-        chunk->generationSetBloc(x, y - worldAABBMin.y, z, AIR);
     }
 }
 
