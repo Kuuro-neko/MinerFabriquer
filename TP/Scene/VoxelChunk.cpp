@@ -5,8 +5,8 @@
 
 VoxelChunk::VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), nullptr, nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ) {
     allocateCubes();
-    m_opaqueMesh = MeshObject();
-    m_transparentMesh = MeshObject();
+    m_opaqueMesh = VoxelMeshObject();
+    m_transparentMesh = VoxelMeshObject();
 }
 VoxelChunk::VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {
     allocateCubes();

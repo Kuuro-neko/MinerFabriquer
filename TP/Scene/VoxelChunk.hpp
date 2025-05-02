@@ -79,8 +79,8 @@ public:
     int*** m_cubes;
     glm::ivec3 m_chunkCoords;
     World *m_world;
-    MeshObject m_opaqueMesh;
-    MeshObject m_transparentMesh;
+    VoxelMeshObject m_opaqueMesh;
+    VoxelMeshObject m_transparentMesh;
 
     // Move Constructor
     VoxelChunk(VoxelChunk&& other) noexcept;
