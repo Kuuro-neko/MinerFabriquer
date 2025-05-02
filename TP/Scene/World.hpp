@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "TP/Camera/Frustrum.hpp"
 
+#include <set>
 
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
@@ -32,6 +33,9 @@ private:
     Camera *camera;
     float time = 12.0f;
     bool doDaylightCycle = true;
+
+    std::set<std::pair<int, int>> getDirtyColumns();
+    void updateLightsInColumn(int x, int z);
 public:
     World();
 

@@ -5,7 +5,59 @@
 #include <algorithm>
 #include "World.hpp"
 
-World::World() : SceneNode(Transform(), new MeshObject(), nullptr) {
+
+std::set<std::pair<int, int>> World::getDirtyColumns()
+{
+    std::set<std::pair<int, int>> cols;
+    for (auto &[key, chunk]: chunks) {
+        if (chunk.dirty) {
+            cols.insert({chunk.m_chunkCoords.x, chunk.m_chunkCoords.z});
+        }
+    }
+    return cols;
+}
+
+void World::updateLightsInColumn(int x, int z)
+{
+    std::vector<VoxelChunk *> chunksInColumn;
+    for (auto &[key, chunk]: chunks) {
+        if (chunk.m_chunkCoords.x == x && chunk.m_chunkCoords.z == z) {
+            chunksInColumn.push_back(&chunk);
+        }
+    }
+    if (chunksInColumn.empty()) {
+        return;
+    }
+    // order them by lhighest y to lowest y
+    std::sort(chunksInColumn.begin(), chunksInColumn.end(), [](VoxelChunk *a, VoxelChunk *b) {
+        return a->m_chunkCoords.y > b->m_chunkCoords.y;
+    });
+
+    int maxY = chunksInColumn[0]->m_chunkCoords.y * CHUNK_SIZE + CHUNK_SIZE - 1;
+
+    for (int x = 0; x < CHUNK_SIZE; x++) {
+        for (int z = 0; z < CHUNK_SIZE; z++) {
+            bool touchedGround = false;
+            for (VoxelChunk *chunk: chunksInColumn) {
+                for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
+                    if (touchedGround) {
+                        chunk->m_lights[x][y][z] = MIN_LIGHT;
+                    } else {
+                        if (chunk->getBloc(x, y, z) != AIR) {
+                            touchedGround = true;
+                            chunk->m_lights[x][y][z] = MIN_LIGHT;
+                        } else {
+                            chunk->m_lights[x][y][z] = MAX_LIGHT;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
+{
     generation();
 }
 
@@ -108,6 +160,13 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
 }
 
 void World::draw(GLuint programID) {
+
+    std::set<std::pair<int, int>> dirtyColumns = getDirtyColumns();
+    // update lights for each dirtyColumn, ITERATE THROUGH THE SET OMG !!
+    for (auto &[x, z]: dirtyColumns) {
+        updateLightsInColumn(x, z);
+    }
+
     glEnable(GL_CULL_FACE);
     for (auto &[key, chunk]: visibleChunks) {
         //si la distance de rendu est depassee, on ne dessine pas le chunk
@@ -132,8 +191,8 @@ void World::draw(GLuint programID) {
 
 void World::generation() {
     WorldGenerator worldGenerator;
+    // Generate the world
     std::cout << "Generating world... 0%" << std::flush;
-    // 2x2 chunks for testing
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
             for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
@@ -143,9 +202,19 @@ void World::generation() {
         }
         std::cout << "\rGenerating world... " << int((x * 100) / 32) << "%" << std::flush;
     }
-    std::cout << "\rGenerating world... done !" << std::endl;
+    std::cout << "\rGenerating world...  done !\n";
+
+    // Update all lights levels
+    std::cout << "Updating lights... ";
+    for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
+        for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
+            updateLightsInColumn(x, z);
+        }
+    }
+    std::cout << "  done !\n";
+
+    // Generate meshes for first draw calls
     std::cout << "Generating meshes..." << std::flush;
-    // generate all meshes
     for (auto &[key, chunk]: chunks) {
         chunk.generateMesh();
     }
