@@ -130,9 +130,9 @@ void VoxelMeshObject::initializeBuffers() {
     // Light buffer
     glGenBuffers(1, &lightbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, lightbuffer);
-    glBufferData(GL_ARRAY_BUFFER, lights.size() * sizeof(unsigned short), lights.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, lights.size() * sizeof(int), lights.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 1, GL_UNSIGNED_SHORT, GL_FALSE, 0, (void*)0);
+    glVertexAttribIPointer(3, 1, GL_INT, 0, (void*)0);
 
     // Element buffer
     glGenBuffers(1, &elementbuffer);
@@ -143,7 +143,10 @@ void VoxelMeshObject::initializeBuffers() {
 }
 
 void VoxelMeshObject::draw(GLuint programID) {
-    MeshObject::draw(programID);
+    glUseProgram(programID);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, triangles.size(), GL_UNSIGNED_SHORT, 0);
+    glBindVertexArray(0);
 }
 
 void VoxelMeshObject::cleanupBuffers() {

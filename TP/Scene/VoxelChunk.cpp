@@ -59,6 +59,14 @@ int VoxelChunk::getBlocIncludingNeighbors(int x, int y, int z) {
     return m_cubes[x][y][z];
 }
 
+unsigned short VoxelChunk::getLightLevelIncludingNeighbors(int x, int y, int z) {
+    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
+        int a = m_world->getLightLevel(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+        return a;
+    }
+    return m_lights[x][y][z];
+}
+
 int VoxelChunk::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         std::cout << "Error: Out of bounds" << std::endl;
@@ -91,12 +99,36 @@ bool transparentNeighborCheck(int neighbor) {
     return neighbor == AIR || BlocDatabase::getInstance().isOpaque(neighbor) || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
+unsigned short VoxelChunk::getFaceLight(int x, int y, int z, int face) {
+    unsigned short light = 0;
+    if (face & BLOC_LEFT) {
+        light = this->getLightLevelIncludingNeighbors(x - 1, y, z);
+    }
+    if (face & BLOC_RIGHT) {
+        light = this->getLightLevelIncludingNeighbors(x + 1, y, z);
+    }
+    if (face & BLOC_BOTTOM) {
+        light = this->getLightLevelIncludingNeighbors(x, y - 1, z);
+    }
+    if (face & BLOC_TOP) {
+        light = this->getLightLevelIncludingNeighbors(x, y + 1, z);
+    }
+    if (face & BLOC_FRONT) {
+        light = this->getLightLevelIncludingNeighbors(x, y, z - 1);
+    }
+    if (face & BLOC_BACK) {
+        light = this->getLightLevelIncludingNeighbors(x, y, z + 1);
+    }
+    return light;
+}
+
 void VoxelChunk::generateMesh() {
     //std::cout << "Generating mesh at chunk coords (" << m_chunkCoords.x << ", " << m_chunkCoords.y << ", " << m_chunkCoords.z << ")" << std::endl;
     m_opaqueMesh.vertices.clear();
     m_opaqueMesh.triangles.clear();
     m_opaqueMesh.uvs.clear();
     m_opaqueMesh.normals.clear();
+    m_opaqueMesh.lights.clear();
 
     int neighbor;
 
@@ -109,26 +141,50 @@ void VoxelChunk::generateMesh() {
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
+                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
                     }
                 }
             }
@@ -140,6 +196,7 @@ void VoxelChunk::generateMesh() {
     m_transparentMesh.triangles.clear();
     m_transparentMesh.uvs.clear();
     m_transparentMesh.normals.clear();
+    m_transparentMesh.lights.clear();
 
     // Loop through all the cubes in the chunk. If a cube has a face that is not adjacent to another non opaque cube, add a face to the mesh
     for (int x = 0; x < m_sizeX; x++) {
@@ -150,26 +207,50 @@ void VoxelChunk::generateMesh() {
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
                     if (transparentNeighborCheck(neighbor)) {
                         addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (transparentNeighborCheck(neighbor)) {
                         addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (transparentNeighborCheck(neighbor)) {
                         addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (transparentNeighborCheck(neighbor)) {
                         addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (transparentNeighborCheck(neighbor)) {
                         addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (transparentNeighborCheck(neighbor)) {
                         addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
+                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
                     }
                 }
             }
@@ -218,7 +299,7 @@ bool VoxelChunk::intersects(Ray ray, float maxDistance) {
 
 // Move Constructor
 VoxelChunk::VoxelChunk(VoxelChunk&& other) noexcept
-    : SceneNode(std::move(other)), m_sizeX(other.m_sizeX), m_sizeY(other.m_sizeY), m_sizeZ(other.m_sizeZ), m_cubes(std::move(other.m_cubes)) {
+    : SceneNode(std::move(other)), m_sizeX(other.m_sizeX), m_sizeY(other.m_sizeY), m_sizeZ(other.m_sizeZ), m_cubes(std::move(other.m_cubes)), m_lights(std::move(other.m_lights)) {
 }
 
 // Move Assignment Operator
@@ -230,12 +311,14 @@ VoxelChunk& VoxelChunk::operator=(VoxelChunk&& other) noexcept {
         m_sizeY = other.m_sizeY;
         m_sizeZ = other.m_sizeZ;
         m_cubes = std::move(other.m_cubes);
+        m_lights = std::move(other.m_lights);
     }
     return *this;
 }
 
 void VoxelChunk::allocateCubes() {
     m_cubes = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, AIR)));
+    m_lights = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, MAX_LIGHT)));
 }
 
 void VoxelChunk::cleanup() {

@@ -48,7 +48,7 @@ public:
 class VoxelMeshObject : public MeshObject {
     public:
         GLuint lightbuffer;
-        std::vector<unsigned short> lights;
+        std::vector<int> lights;
         VoxelMeshObject() : lightbuffer(0), MeshObject() {}
         ~VoxelMeshObject() {}
     

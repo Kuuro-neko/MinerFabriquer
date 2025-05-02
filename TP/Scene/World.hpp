@@ -113,6 +113,8 @@ public:
      */
     bool setBloc(int x, int y, int z, int bloc);
 
+    unsigned short getLightLevel(int x, int y, int z);
+
     /**
      * @brief Get a block at the given WORLD coordinates.
      * 

@@ -61,6 +61,15 @@ bool World::setBloc(int x, int y, int z, int bloc) {
     return false;
 }
 
+unsigned short World::getLightLevel(int x, int y, int z) {
+    VoxelChunk *chunk = getChunkAt(x, y, z);
+    if (chunk) {
+        return chunk->getLightLevelIncludingNeighbors(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+    } else {
+        return MAX_LIGHT;
+    }
+}
+
 int World::getBloc(int x, int y, int z) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {

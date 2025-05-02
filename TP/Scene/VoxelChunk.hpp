@@ -6,6 +6,9 @@
 #define DEFAULT_CHUNK_SIZE 16
 #define DEFAULT_CHUNK_HEIGHT 128
 
+#define MAX_LIGHT 15
+#define MIN_LIGHT 0
+
 class World;
 
 class VoxelChunk : public SceneNode
@@ -42,6 +45,10 @@ public:
     int getBloc(int x, int y, int z);
     int getBlocIncludingNeighbors(int x, int y, int z);
 
+    unsigned short getLightLevelIncludingNeighbors(int x, int y, int z);
+
+    unsigned short getFaceLight(int x, int y, int z, int face);
+
     int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
     int removeBlock(int x, int y, int z);
@@ -77,6 +84,7 @@ public:
     int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
     bool dirty = false;
     std::vector<std::vector<std::vector<int>>> m_cubes;
+    std::vector<std::vector<std::vector<int>>> m_lights;
     glm::ivec3 m_chunkCoords;
     World *m_world;
     VoxelMeshObject m_opaqueMesh;
