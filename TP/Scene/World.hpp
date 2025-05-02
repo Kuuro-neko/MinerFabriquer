@@ -9,6 +9,8 @@
 #include <queue>
 #include <set>
 
+#include <TP/Scene/ChunkColumn.hpp>
+
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
 
@@ -20,6 +22,12 @@
 
 class Character;
 
+struct IVec2Hash {
+    std::size_t operator()(const glm::ivec2 &vec) const {
+        return std::hash<int>()(vec.x) ^ (std::hash<int>()(vec.y) << 1);
+    }
+};
+
 struct IVec3Hash {
     std::size_t operator()(const glm::ivec3 &vec) const {
         return std::hash<int>()(vec.x) ^ (std::hash<int>()(vec.y) << 1) ^ (std::hash<int>()(vec.z) << 2);
@@ -28,7 +36,7 @@ struct IVec3Hash {
 
 class World : public SceneNode {
 private:
-    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
+    std::unordered_map<glm::ivec2, ChunkColumn, IVec2Hash> chunkColumns;
     std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> visibleChunks;
     Camera *camera;
     float time = 12.0f;
@@ -59,7 +67,9 @@ public:
      * 
      * 
      */
-    void removeChunk(int x, int y, int z);
+    void removeChunkColumn(int x, int z);
+
+    ChunkColumn *getChunkColumn(int x, int z);
 
     /**
      * @brief Get a chunk at the given CHUNK coordinates.
@@ -69,13 +79,15 @@ public:
      */
     VoxelChunk *getChunk(int x, int y, int z);
 
+    std::vector<VoxelChunk *> getAllChunks();
+
     /**
      * @brief Get a chunk containing the given WORLD coordinates.
      * 
      * 
      * @return VoxelChunk* pointer to the chunk
      */
-    VoxelChunk *getChunkAt(int x, int y, int z);
+    VoxelChunk *getChunkContaining(int x, int y, int z);
 
     /**
      * @brief Get a chunk containing the given WORLD float coordinates.

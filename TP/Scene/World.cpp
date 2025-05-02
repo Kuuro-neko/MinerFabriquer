@@ -10,87 +10,32 @@
 
 std::set<std::pair<int, int>> World::getDirtyColumns()
 {
-    std::set<std::pair<int, int>> cols;
-    for (auto &[key, chunk]: chunks) {
-        if (chunk.dirty) {
-            cols.insert({chunk.m_chunkCoords.x, chunk.m_chunkCoords.z});
+    std::set<std::pair<int, int>> dirtyColumns;
+    for (auto &[key, column]: chunkColumns) {
+        if (column.isDirty()) {
+            dirtyColumns.insert({key.x, key.y});
         }
     }
-    return cols;
-}
-
-void World::updateAllLightsInColumn(int x, int z)
-{
-    std::vector<VoxelChunk *> chunksInColumn;
-    for (auto &[key, chunk]: chunks) {
-        if (chunk.m_chunkCoords.x == x && chunk.m_chunkCoords.z == z) {
-            chunksInColumn.push_back(&chunk);
-        }
-    }
-    if (chunksInColumn.empty()) {
-        return;
-    }
-    // order them by lhighest y to lowest y
-    std::sort(chunksInColumn.begin(), chunksInColumn.end(), [](VoxelChunk *a, VoxelChunk *b) {
-        return a->m_chunkCoords.y > b->m_chunkCoords.y;
-    });
-
-    int maxY = chunksInColumn[0]->m_chunkCoords.y * CHUNK_SIZE + CHUNK_SIZE - 1;
-
-    for (int x = 0; x < CHUNK_SIZE; x++) {
-        for (int z = 0; z < CHUNK_SIZE; z++) {
-            bool touchedGround = false;
-            for (VoxelChunk *chunk: chunksInColumn) {
-                for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
-                    if (touchedGround) {
-                        chunk->m_lights[x][y][z] = MIN_LIGHT;
-                    } else {
-                        if (chunk->getBloc(x, y, z) != AIR) {
-                            touchedGround = true;
-                            chunk->m_lights[x][y][z] = BlocDatabase::getInstance().defaultLightLevel(chunk->getBloc(x, y, z));
-                        } else {
-                            chunk->m_lights[x][y][z] = MAX_LIGHT;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    return dirtyColumns;
 }
 
 void World::updateSkyLightsInColumn(int x, int z)
 {
-    std::vector<VoxelChunk *> chunksInColumn;
-    for (auto &[key, chunk]: chunks) {
-        if (chunk.m_chunkCoords.x == x && chunk.m_chunkCoords.z == z) {
-            chunksInColumn.push_back(&chunk);
-        }
-    }
-    if (chunksInColumn.empty()) {
+    ChunkColumn *column = getChunkColumn(x, z);
+    if (!column) {
         return;
     }
-    // order them by lhighest y to lowest y
-    std::sort(chunksInColumn.begin(), chunksInColumn.end(), [](VoxelChunk *a, VoxelChunk *b) {
-        return a->m_chunkCoords.y > b->m_chunkCoords.y;
-    });
 
-    int maxY = chunksInColumn[0]->m_chunkCoords.y * CHUNK_SIZE + CHUNK_SIZE - 1;
+    column->updateSkyLights();
+
+    std::vector<std::vector<int>> *surfaceHeightmap = column->getSurfaceHeightMap();
 
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
-            bool touchedGround = false;
-            for (VoxelChunk *chunk: chunksInColumn) {
-                for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
-                    if (chunk->getBloc(x, y, z) == AIR) {
-                        chunk->m_lights[x][y][z] = MAX_LIGHT;
-                    }
-                    else {
-                        touchedGround = true;
-                        this->lightFloodfill(chunk->m_chunkCoords.x * CHUNK_SIZE + x, chunk->m_chunkCoords.y * CHUNK_SIZE + y + 1, chunk->m_chunkCoords.z * CHUNK_SIZE + z, MAX_LIGHT);
-                        break;
-                    }
-                }
-                if (touchedGround) break;
+            int y = (*surfaceHeightmap)[x][z];
+            if (y != -1) {
+                VoxelChunk *chunk = column->getChunkContainingHeight(y);
+                lightFloodfill(x + chunk->m_chunkCoords.x * CHUNK_SIZE, y + chunk->m_chunkCoords.y * CHUNK_SIZE, z + chunk->m_chunkCoords.z * CHUNK_SIZE, MAX_LIGHT);
             }
         }
     }
@@ -105,32 +50,47 @@ World::~World() {
 }
 
 VoxelChunk *World::createEmptyChunk(int x, int y, int z) {
-    chunks.emplace(glm::ivec3(x, y, z), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
-    VoxelChunk *chunk = &chunks.at(glm::ivec3(x, y, z));
-    chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
+    ChunkColumn *column = getChunkColumn(x, z);
+    if (!column) {
+        chunkColumns.emplace(glm::ivec2(x, z), ChunkColumn(x, z));
+    }
+    column = getChunkColumn(x, z);
+    column->allocateSurfaceHeightMap();
+    VoxelChunk *chunk = column->createEmptyChunk(x, y, z);
     chunk->m_world = this;
-    chunk->m_chunkCoords = glm::ivec3(x, y, z);
     return chunk;
 }
 
-void World::removeChunk(int x, int y, int z) {
-    auto it = chunks.find({x, y, z});
-    if (it != chunks.end()) {
-        it->second.cleanupBuffers();
-        chunks.erase(it);
+void World::removeChunkColumn(int x, int z) {
+    ChunkColumn *column = getChunkColumn(x, z);
+    if (!column) {
+        return;
+    }
+    column->free();
+    auto it = chunkColumns.find({x, z});
+    if (it != chunkColumns.end()) {
+        chunkColumns.erase(it);
     }
 }
 
-VoxelChunk *World::getChunk(int x, int y, int z) {
-    auto it = chunks.find({x, y, z});
-    if (it != chunks.end()) {
+ChunkColumn *World::getChunkColumn(int x, int z) {
+    auto it = chunkColumns.find({x, z});
+    if (it != chunkColumns.end()) {
         return &it->second;
     }
     return nullptr;
 }
 
+VoxelChunk *World::getChunk(int x, int y, int z) {
+    ChunkColumn *column = getChunkColumn(x, z);
+    if (column) {
+        return column->getChunk(y);
+    }
+    return nullptr;
+}
+
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
-    VoxelChunk *chunk = getChunkAt(x, y, z);
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
         int bloc = chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, gamemode);
         if (bloc != -1) {
@@ -147,7 +107,7 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
 }
 
 int World::removeBlock(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkAt(x, y, z);
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
         int bloc = chunk->removeBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
         if (bloc != -1) {
@@ -164,7 +124,7 @@ int World::removeBlock(int x, int y, int z) {
 }
 
 bool World::setBloc(int x, int y, int z, int bloc) {
-    VoxelChunk *chunk = getChunkAt(x, y, z);
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
         bool err = chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
         if (!err && BlocDatabase::getInstance().defaultLightLevel(bloc) > 1) {
@@ -176,7 +136,7 @@ bool World::setBloc(int x, int y, int z, int bloc) {
 }
 
 unsigned short World::getLightLevel(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkAt(x, y, z);
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
         return chunk->getLightLevelIncludingNeighbors(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
     } else {
@@ -185,7 +145,7 @@ unsigned short World::getLightLevel(int x, int y, int z) {
 }
 
 int World::getBloc(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkAt(x, y, z);
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
         return chunk->getBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
     } else {
@@ -193,29 +153,41 @@ int World::getBloc(int x, int y, int z) {
     }
 }
 
-VoxelChunk *World::getChunkAt(int x, int y, int z) {
-    int xx = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
-    int yy = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
-    int zz = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
-    auto it = chunks.find({xx, yy, zz});
-    if (it != chunks.end()) {
-        return &it->second;
+VoxelChunk *World::getChunkContaining(int x, int y, int z) {
+    int chunkCoordX = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
+    int chunkCoordY = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
+    int chunkCoordZ = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
+    ChunkColumn *column = getChunkColumn(chunkCoordX, chunkCoordZ);
+    if (!column) {
+        return nullptr;
     }
-    return nullptr;
+    return column->getChunk(chunkCoordY);
 }
 
 VoxelChunk *World::getChunkContaining(glm::vec3 position) {
     int x = static_cast<int>(position.x);
     int y = static_cast<int>(position.y);
     int z = static_cast<int>(position.z);
-    return getChunkAt(x, y, z);
+    return getChunkContaining(x, y, z);
+}
+
+std::vector<VoxelChunk *> World::getAllChunks() {
+    std::vector<VoxelChunk *> allChunks;
+    for (auto &[key, column]: chunkColumns) {
+        std::vector<VoxelChunk *> chunks = column.getChunks();
+        for (auto &chunk: chunks) {
+            allChunks.push_back(chunk);
+        }
+    }
+    return allChunks;
 }
 
 std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance) {
     std::vector<VoxelChunk *> intersectedChunks;
-    for (auto &[key, chunk]: chunks) {
-        if (chunk.intersects(ray, maxDistance)) {
-            intersectedChunks.push_back(&chunk);
+    std::vector<VoxelChunk *> chunks = getAllChunks();
+    for (auto &chunk: chunks) {
+        if (chunk->intersects(ray, maxDistance)) {
+            intersectedChunks.push_back(chunk);
         }
     }
     return intersectedChunks;
@@ -270,16 +242,17 @@ void World::generation() {
     std::cout << "Updating lights... " << std::flush;
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
-            updateAllLightsInColumn(x, z);
+            updateSkyLightsInColumn(x, z);
         }
     }
 
-    for (auto &[key, chunk] : chunks) {
-        glm::ivec3 chunkCoords = chunk.m_chunkCoords;
+    std::vector<VoxelChunk *> chunks = getAllChunks();
+    for (auto chunk : chunks) {
+        glm::ivec3 chunkCoords = chunk->m_chunkCoords;
         for (int i = 0; i < CHUNK_SIZE; ++i) {
             for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
                 for (int k = 0; k < CHUNK_SIZE; ++k) {
-                    int lightLevel = chunk.m_lights[i][j][k];
+                    int lightLevel = chunk->m_lights[i][j][k];
                     if (lightLevel < 15) continue;
     
                     int worldX = i + chunkCoords.x * CHUNK_SIZE;
@@ -298,28 +271,30 @@ void World::generation() {
 
     // Generate meshes for first draw calls
     std::cout << "Generating meshes..." << std::flush;
-    for (auto &[key, chunk]: chunks) {
-        chunk.generateMesh();
+    for (auto chunk : chunks) {
+        chunk->generateMesh();
     }
     std::cout << " done !" << std::endl;
 }
 
 void World::cleanupBuffers() {
-    for (auto &[key, chunk]: chunks) {
-        chunk.cleanupBuffers();
+    std::vector<VoxelChunk *> chunks = getAllChunks();
+    for (auto chunk : chunks) {
+        chunk->cleanupBuffers();
     }
 }
 
 void World::updateVisibleChunk(Frustrum &frustum) {
 
     // on parcourt tous les chunks et on les ajoute à la liste des chunks visibles s'ils sont dans le frustum
-    for (auto &[key, chunk]: chunks) {
-        if (frustum.isBoundingBoxInFrustum(chunk.getWorldPosition(),
-                                           chunk.getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
-            visibleChunks[key] = &chunk;
+    std::vector<VoxelChunk *> chunks = getAllChunks();
+    for (auto chunk: chunks) {
+        if (frustum.isBoundingBoxInFrustum(chunk->getWorldPosition(),
+                                           chunk->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
+            visibleChunks[chunk->m_chunkCoords] = chunk;
         } else {
             // si le chunk n'est pas visible, on le supprime de la liste des chunks visibles
-            auto it = visibleChunks.find(key);
+            auto it = visibleChunks.find(chunk->m_chunkCoords);
             if (it != visibleChunks.end()) {
                 it->second->cleanupBuffers();
                 visibleChunks.erase(it);
@@ -380,7 +355,7 @@ void World::update(float deltaTime) {
 }
 
 void World::updateLightFloodfill(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkAt(x, y, z);
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk == nullptr) return;
     lightFloodfill(x, y, z, chunk->m_lights[x % CHUNK_SIZE][y % CHUNK_SIZE][z % CHUNK_SIZE]);
 }
@@ -422,7 +397,7 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
 
         
         
-        VoxelChunk *chunk = getChunkAt(x, y, z);
+        VoxelChunk *chunk = getChunkContaining(x, y, z);
         if (chunk == nullptr) continue;
         
         int localX = x % CHUNK_SIZE;

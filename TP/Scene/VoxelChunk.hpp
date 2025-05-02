@@ -3,8 +3,8 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/BlocTypes.hpp>
 #include <common/fastNoiseLit.h>
-#define DEFAULT_CHUNK_SIZE 16
-#define DEFAULT_CHUNK_HEIGHT 128
+
+#define CHUNK_SIZE 16
 
 #define MAX_LIGHT 15
 #define MIN_LIGHT 0
@@ -79,9 +79,9 @@ public:
         return glm::vec3(m_chunkCoords.x * m_sizeX, m_chunkCoords.y * m_sizeY, m_chunkCoords.z * m_sizeZ);
     }
 
-    int m_sizeX = DEFAULT_CHUNK_SIZE;
-    int m_sizeY = DEFAULT_CHUNK_SIZE;
-    int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
+    int m_sizeX = CHUNK_SIZE;
+    int m_sizeY = CHUNK_SIZE;
+    int m_sizeZ = CHUNK_SIZE;
     bool dirty = true;
     std::vector<std::vector<std::vector<int>>> m_cubes;
     std::vector<std::vector<std::vector<int>>> m_lights;

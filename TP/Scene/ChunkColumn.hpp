@@ -2,21 +2,34 @@
 
 #include <TP/Scene/VoxelChunk.hpp>
 
-class ChunkColumn : public VoxelChunk
+class ChunkColumn
 {
 private:
     glm::ivec2 m_chunkCoords;
-    std::vector<VoxelChunk*> m_chunks;
-    std::vector<std::vector<int>> skyLightHeightMap;
-public:
-    ChunkColumn(int chunkCoordX, int chunkCoordZ);
-    ChunkColumn();
-    ~ChunkColumn();
+    // sorted from lowest y to highest y
+    std::vector<VoxelChunk> m_chunks;
+    std::vector<std::vector<int>> surfaceHeightmap;
 
-    void addChunk(VoxelChunk* chunk);
+    void sortChunks();
+public:
+    ChunkColumn(int chunkCoordX, int chunkCoordZ) {
+        m_chunkCoords = glm::ivec2(chunkCoordX, chunkCoordZ);
+        allocateSurfaceHeightMap();
+    }
+    ~ChunkColumn() {
+        free();
+    }
+
 
     VoxelChunk* getChunk(int chunkCoordY);
+    std::vector<VoxelChunk*> getChunks();
     VoxelChunk* getChunkContainingHeight(int y);
+    VoxelChunk* createEmptyChunk(int x, int y, int z);
+    
+    void updateSkyLights();
 
-    void allocateSkyLightHeightMap();
+    void allocateSurfaceHeightMap();
+    std::vector<std::vector<int>> *getSurfaceHeightMap();
+    void free();
+    bool isDirty();
 };

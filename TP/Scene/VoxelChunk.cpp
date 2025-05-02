@@ -8,7 +8,7 @@ VoxelChunk::VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(),
     m_opaqueMesh = VoxelMeshObject();
     m_transparentMesh = VoxelMeshObject();
 }
-VoxelChunk::VoxelChunk() : VoxelChunk(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_HEIGHT) {
+VoxelChunk::VoxelChunk() : VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE) {
     allocateCubes();
 }
 VoxelChunk::~VoxelChunk() {
@@ -26,6 +26,7 @@ bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
         return false;
     }
     m_cubes[x][y][z] = bloc;
+    m_lights[x][y][z] = BlocDatabase::getInstance().defaultLightLevel(bloc);
     dirty = true;
     markDirtyNeighbors(x, y, z);
     return true;
@@ -37,6 +38,7 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
         return false;
     }
     m_cubes[x][y][z] = bloc;
+    m_lights[x][y][z] = BlocDatabase::getInstance().defaultLightLevel(bloc);
     dirty = true;
     return true;
 }
@@ -86,6 +88,7 @@ int VoxelChunk::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
 int VoxelChunk::removeBlock(int x, int y, int z) {
     int id = m_cubes[x][y][z];
     m_cubes[x][y][z] = AIR;
+    m_lights[x][y][z] = MIN_LIGHT;
     dirty = true;
     markDirtyNeighbors(x, y, z);
     return id;
@@ -318,7 +321,7 @@ VoxelChunk& VoxelChunk::operator=(VoxelChunk&& other) noexcept {
 
 void VoxelChunk::allocateCubes() {
     m_cubes = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, AIR)));
-    m_lights = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, MAX_LIGHT)));
+    m_lights = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, MIN_LIGHT)));
 }
 
 void VoxelChunk::cleanup() {
