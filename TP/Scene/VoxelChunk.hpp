@@ -76,7 +76,7 @@ public:
     int m_sizeY = DEFAULT_CHUNK_SIZE;
     int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
     bool dirty = false;
-    int*** m_cubes;
+    std::vector<std::vector<std::vector<int>>> m_cubes;
     glm::ivec3 m_chunkCoords;
     World *m_world;
     VoxelMeshObject m_opaqueMesh;

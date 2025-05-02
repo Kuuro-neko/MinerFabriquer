@@ -218,8 +218,7 @@ bool VoxelChunk::intersects(Ray ray, float maxDistance) {
 
 // Move Constructor
 VoxelChunk::VoxelChunk(VoxelChunk&& other) noexcept
-    : SceneNode(std::move(other)), m_sizeX(other.m_sizeX), m_sizeY(other.m_sizeY), m_sizeZ(other.m_sizeZ), m_cubes(other.m_cubes) {
-    other.m_cubes = nullptr; // Nullify the source pointer
+    : SceneNode(std::move(other)), m_sizeX(other.m_sizeX), m_sizeY(other.m_sizeY), m_sizeZ(other.m_sizeZ), m_cubes(std::move(other.m_cubes)) {
 }
 
 // Move Assignment Operator
@@ -230,36 +229,17 @@ VoxelChunk& VoxelChunk::operator=(VoxelChunk&& other) noexcept {
         m_sizeX = other.m_sizeX;
         m_sizeY = other.m_sizeY;
         m_sizeZ = other.m_sizeZ;
-        m_cubes = other.m_cubes;
-        other.m_cubes = nullptr; // Nullify the source pointer
+        m_cubes = std::move(other.m_cubes);
     }
     return *this;
 }
 
 void VoxelChunk::allocateCubes() {
-    m_cubes = new int**[m_sizeX];
-    for (int i = 0; i < m_sizeX; ++i) {
-        m_cubes[i] = new int*[m_sizeY];
-        for (int j = 0; j < m_sizeY; ++j) {
-            m_cubes[i][j] = new int[m_sizeZ];
-            for (int k = 0; k < m_sizeZ; ++k) {
-                m_cubes[i][j][k] = AIR;
-            }
-        }
-    }
+    m_cubes = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, AIR)));
 }
 
 void VoxelChunk::cleanup() {
-    if (m_cubes) {
-        for (int i = 0; i < m_sizeX; ++i) {
-            for (int j = 0; j < m_sizeY; ++j) {
-                delete[] m_cubes[i][j];
-            }
-            delete[] m_cubes[i];
-        }
-        delete[] m_cubes;
-        m_cubes = nullptr;
-    }
+    m_cubes.clear();
     cleanupBuffers();
 }
 
