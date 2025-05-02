@@ -19,7 +19,7 @@ std::set<std::pair<int, int>> World::getDirtyColumns()
     return cols;
 }
 
-void World::updateLightsInColumn(int x, int z)
+void World::updateAllLightsInColumn(int x, int z)
 {
     std::vector<VoxelChunk *> chunksInColumn;
     for (auto &[key, chunk]: chunks) {
@@ -47,12 +47,50 @@ void World::updateLightsInColumn(int x, int z)
                     } else {
                         if (chunk->getBloc(x, y, z) != AIR) {
                             touchedGround = true;
-                            chunk->m_lights[x][y][z] = MIN_LIGHT;
+                            chunk->m_lights[x][y][z] = BlocDatabase::getInstance().defaultLightLevel(chunk->getBloc(x, y, z));
                         } else {
                             chunk->m_lights[x][y][z] = MAX_LIGHT;
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+void World::updateSkyLightsInColumn(int x, int z)
+{
+    std::vector<VoxelChunk *> chunksInColumn;
+    for (auto &[key, chunk]: chunks) {
+        if (chunk.m_chunkCoords.x == x && chunk.m_chunkCoords.z == z) {
+            chunksInColumn.push_back(&chunk);
+        }
+    }
+    if (chunksInColumn.empty()) {
+        return;
+    }
+    // order them by lhighest y to lowest y
+    std::sort(chunksInColumn.begin(), chunksInColumn.end(), [](VoxelChunk *a, VoxelChunk *b) {
+        return a->m_chunkCoords.y > b->m_chunkCoords.y;
+    });
+
+    int maxY = chunksInColumn[0]->m_chunkCoords.y * CHUNK_SIZE + CHUNK_SIZE - 1;
+
+    for (int x = 0; x < CHUNK_SIZE; x++) {
+        for (int z = 0; z < CHUNK_SIZE; z++) {
+            bool touchedGround = false;
+            for (VoxelChunk *chunk: chunksInColumn) {
+                for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
+                    if (chunk->getBloc(x, y, z) == AIR) {
+                        chunk->m_lights[x][y][z] = MAX_LIGHT;
+                    }
+                    else {
+                        touchedGround = true;
+                        this->lightFloodfill(chunk->m_chunkCoords.x * CHUNK_SIZE + x, chunk->m_chunkCoords.y * CHUNK_SIZE + y + 1, chunk->m_chunkCoords.z * CHUNK_SIZE + z, MAX_LIGHT);
+                        break;
+                    }
+                }
+                if (touchedGround) break;
             }
         }
     }
@@ -94,7 +132,16 @@ VoxelChunk *World::getChunk(int x, int y, int z) {
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {
-        return chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, gamemode);
+        int bloc = chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, gamemode);
+        if (bloc != -1) {
+            updateLightFloodfill(x+1, y, z);
+            updateLightFloodfill(x-1, y, z);
+            updateLightFloodfill(x, y+1, z);
+            updateLightFloodfill(x, y-1, z);
+            updateLightFloodfill(x, y, z+1);
+            updateLightFloodfill(x, y, z-1);
+        }
+        return bloc;
     }
     return -1;
 }
@@ -102,7 +149,16 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
 int World::removeBlock(int x, int y, int z) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {
-        return chunk->removeBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+        int bloc = chunk->removeBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
+        if (bloc != -1) {
+            updateLightFloodfill(x+1, y, z);
+            updateLightFloodfill(x-1, y, z);
+            updateLightFloodfill(x, y+1, z);
+            updateLightFloodfill(x, y-1, z);
+            updateLightFloodfill(x, y, z+1);
+            updateLightFloodfill(x, y, z-1);
+        }
+        return bloc;
     }
     return -1;
 }
@@ -110,7 +166,11 @@ int World::removeBlock(int x, int y, int z) {
 bool World::setBloc(int x, int y, int z, int bloc) {
     VoxelChunk *chunk = getChunkAt(x, y, z);
     if (chunk) {
-        return chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
+        bool err = chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
+        if (!err && BlocDatabase::getInstance().defaultLightLevel(bloc) > 1) {
+            doLightFloodFillNeighbors(x, y, z, BlocDatabase::getInstance().defaultLightLevel(bloc)-1);
+        }
+        return err;
     }
     return false;
 }
@@ -166,7 +226,7 @@ void World::draw(GLuint programID) {
     std::set<std::pair<int, int>> dirtyColumns = getDirtyColumns();
     // update lights for each dirtyColumn, ITERATE THROUGH THE SET OMG !!
     for (auto &[x, z]: dirtyColumns) {
-        updateLightsInColumn(x, z);
+        updateSkyLightsInColumn(x, z);
     }
 
     glEnable(GL_CULL_FACE);
@@ -210,7 +270,7 @@ void World::generation() {
     std::cout << "Updating lights... " << std::flush;
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
-            updateLightsInColumn(x, z);
+            updateAllLightsInColumn(x, z);
         }
     }
 
@@ -319,6 +379,21 @@ void World::update(float deltaTime) {
     if (doDaylightCycle) time += deltaTime;
 }
 
+void World::updateLightFloodfill(int x, int y, int z) {
+    VoxelChunk *chunk = getChunkAt(x, y, z);
+    if (chunk == nullptr) return;
+    lightFloodfill(x, y, z, chunk->m_lights[x % CHUNK_SIZE][y % CHUNK_SIZE][z % CHUNK_SIZE]);
+}
+
+void World::doLightFloodFillNeighbors(int x, int y, int z, int lightLevel) {
+    lightFloodfill(x + 1, y, z, lightLevel);
+    lightFloodfill(x - 1, y, z, lightLevel);
+    lightFloodfill(x, y + 1, z, lightLevel);
+    lightFloodfill(x, y - 1, z, lightLevel);
+    lightFloodfill(x, y, z + 1, lightLevel);
+    lightFloodfill(x, y, z - 1, lightLevel);
+}
+
 void World::lightFloodfill(int startX, int startY, int startZ, int startLightLevel) {
     if (startLightLevel <= 0) return;
    
@@ -364,10 +439,13 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
         int currentLight = chunk->m_lights[localX][localY][localZ];
         //std::cout << "Light floodfill at " << x << ", " << y << ", " << z << " with level " << lightLevel << " Current is " << currentLight << std::endl;
         if (currentLight > lightLevel) continue;
-
-
-
+        if (currentLight < lightLevel) chunk->dirty = true;
+        
+        
+        
         chunk->m_lights[localX][localY][localZ] = lightLevel;
+        
+
 
         // Propagation dans les 6 directions
         queue.emplace(x + 1, y, z, lightLevel - 1);
