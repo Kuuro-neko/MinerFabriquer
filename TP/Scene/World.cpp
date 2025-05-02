@@ -4,6 +4,8 @@
 #include "TP/Character/Character.hpp"
 #include <algorithm>
 #include "World.hpp"
+#include <unordered_set>
+
 
 
 std::set<std::pair<int, int>> World::getDirtyColumns()
@@ -205,12 +207,33 @@ void World::generation() {
     std::cout << "\rGenerating world...  done !\n";
 
     // Update all lights levels
-    std::cout << "Updating lights... ";
+    std::cout << "Updating lights... " << std::flush;
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
             updateLightsInColumn(x, z);
         }
     }
+
+    for (auto &[key, chunk] : chunks) {
+        glm::ivec3 chunkCoords = chunk.m_chunkCoords;
+        for (int i = 0; i < CHUNK_SIZE; ++i) {
+            for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
+                for (int k = 0; k < CHUNK_SIZE; ++k) {
+                    int lightLevel = chunk.m_lights[i][j][k];
+                    if (lightLevel < 15) continue;
+    
+                    int worldX = i + chunkCoords.x * CHUNK_SIZE;
+                    int worldY = j + chunkCoords.y * CHUNK_SIZE;
+                    int worldZ = k + chunkCoords.z * CHUNK_SIZE;
+    
+                    lightFloodfill(worldX, worldY, worldZ, lightLevel);
+                }
+            }
+        }
+    }
+    
+
+
     std::cout << "  done !\n";
 
     // Generate meshes for first draw calls
@@ -295,7 +318,68 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 void World::update(float deltaTime) {
     if (doDaylightCycle) time += deltaTime;
 }
-    // Récupération de la position du personnage
+
+void World::lightFloodfill(int startX, int startY, int startZ, int startLightLevel) {
+    if (startLightLevel <= 0) return;
+   
+
+    std::queue<std::tuple<int, int, int, int>> queue; // (x, y, z, lightLevel)
+    std::unordered_set<uint64_t> visited;
+
+    auto encodePos = [](int x, int y, int z) -> uint64_t {
+        return (static_cast<uint64_t>(x) & 0x3FFFFF) << 42 |
+               (static_cast<uint64_t>(y) & 0x3FFFFF) << 21 |
+               (static_cast<uint64_t>(z) & 0x1FFFFF);
+    };
+
+    queue.emplace(startX, startY, startZ, startLightLevel);
+
+    while (!queue.empty()) {
+        auto [x, y, z, lightLevel] = queue.front();
+        queue.pop();
+
+        if (lightLevel <= 0) continue;
+
+        // Position déjà visitée à une intensité supérieure ou égale
+        uint64_t key = encodePos(x, y, z);
+        if (visited.find(key) != visited.end()) continue;
+        visited.insert(key);
+
+        
+        
+        VoxelChunk *chunk = getChunkAt(x, y, z);
+        if (chunk == nullptr) continue;
+        
+        int localX = x % CHUNK_SIZE;
+        int localY = y % CHUNK_SIZE;
+        int localZ = z % CHUNK_SIZE;
+        if (localX < 0) localX += CHUNK_SIZE;
+        if (localY < 0) localY += CHUNK_SIZE;
+        if (localZ < 0) localZ += CHUNK_SIZE;
+
+        int bloc = chunk->getBloc(localX, localY, localZ);
+
+        if (BlocDatabase::getInstance().isOpaque(bloc)) continue;
+
+        int currentLight = chunk->m_lights[localX][localY][localZ];
+        //std::cout << "Light floodfill at " << x << ", " << y << ", " << z << " with level " << lightLevel << " Current is " << currentLight << std::endl;
+        if (currentLight > lightLevel) continue;
+
+
+
+        chunk->m_lights[localX][localY][localZ] = lightLevel;
+
+        // Propagation dans les 6 directions
+        queue.emplace(x + 1, y, z, lightLevel - 1);
+        queue.emplace(x - 1, y, z, lightLevel - 1);
+        queue.emplace(x, y + 1, z, lightLevel - 1);
+        queue.emplace(x, y - 1, z, lightLevel - 1);
+        queue.emplace(x, y, z + 1, lightLevel - 1);
+        queue.emplace(x, y, z - 1, lightLevel - 1);
+    }
+}
+
+// Récupération de la position du personnage
 void World::resolveCollisions(Character &character, World *world) {
     if (character.getGamemode() == GAMEMODE_SPECTATOR) {
         character.move(character.vecteurDirection);

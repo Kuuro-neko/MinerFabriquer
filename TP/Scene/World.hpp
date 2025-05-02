@@ -6,7 +6,7 @@
 
 #include <unordered_map>
 #include "TP/Camera/Frustrum.hpp"
-
+#include <queue>
 #include <set>
 
 #define CHUNK_SIZE 16
@@ -150,4 +150,6 @@ public:
     inline float getTime() {
         return time;
     }
+
+    void lightFloodfill(int startX, int startY, int startZ, int startLightLevel);
 };

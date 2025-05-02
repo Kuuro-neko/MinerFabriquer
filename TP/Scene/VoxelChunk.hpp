@@ -82,7 +82,7 @@ public:
     int m_sizeX = DEFAULT_CHUNK_SIZE;
     int m_sizeY = DEFAULT_CHUNK_SIZE;
     int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
-    bool dirty = false;
+    bool dirty = true;
     std::vector<std::vector<std::vector<int>>> m_cubes;
     std::vector<std::vector<std::vector<int>>> m_lights;
     glm::ivec3 m_chunkCoords;
