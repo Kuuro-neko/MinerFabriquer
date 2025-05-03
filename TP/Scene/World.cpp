@@ -159,8 +159,30 @@ bool World::setBloc(int x, int y, int z, int bloc) {
     VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
         bool err = chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
-        if (!err && BlocDatabase::getInstance().defaultLightLevel(bloc) > 1) {
-            doLightFloodFillNeighbors(x, y, z, BlocDatabase::getInstance().defaultLightLevel(bloc)-1);
+        if (!err) {
+            ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
+            auto& heightmap = column->getSurfaceHeightMap()->at(x % CHUNK_SIZE).at(z % CHUNK_SIZE);
+            if (y > heightmap) {
+                for (int i = heightmap; i < y; i++) {
+                    setLightLevel(x, i, z, MIN_LIGHT);
+                    // Update the light levels of the neighbors
+                    updateLightFloodfill(x+1, y, z);
+                    updateLightFloodfill(x-1, y, z);
+                    updateLightFloodfill(x, y, z+1);
+                    updateLightFloodfill(x, y, z-1);
+                }
+                heightmap = y;
+            } else {
+                updateLightFloodfill(x+1, y, z);
+                updateLightFloodfill(x-1, y, z);
+                updateLightFloodfill(x, y+1, z);
+                updateLightFloodfill(x, y-1, z);
+                updateLightFloodfill(x, y, z+1);
+                updateLightFloodfill(x, y, z-1);
+            }
+
+            int emission = BlocDatabase::getInstance().defaultLightLevel(bloc);
+            if (emission) doLightFloodFillNeighbors(x, y, z, emission-1);
         }
         return err;
     }
@@ -460,6 +482,20 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
         queue.emplace(x, y, z + 1, lightLevel - 1);
         queue.emplace(x, y, z - 1, lightLevel - 1);
     }
+}
+
+void World::setLightLevel(int x, int y, int z, int lightLevel)
+{
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    if (chunk == nullptr) return;
+    int localX = x % CHUNK_SIZE;
+    int localY = y % CHUNK_SIZE;
+    int localZ = z % CHUNK_SIZE;
+    if (localX < 0) localX += CHUNK_SIZE;
+    if (localY < 0) localY += CHUNK_SIZE;
+    if (localZ < 0) localZ += CHUNK_SIZE;
+
+    chunk->m_lights[localX][localY][localZ] = lightLevel;
 }
 
 // Récupération de la position du personnage

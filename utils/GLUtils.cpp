@@ -70,7 +70,7 @@ void addNormals(std::vector<glm::vec3> &normals, unsigned char face) {
     normals.push_back(normal);
 }
 
-void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset, float y_offset, float z_offset, float size) {
+void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset, float y_offset, float z_offset, bool lowerTop, float size) {
     int vertexInsertIndex = vertices.size();
     BlocDatabase &blocDatabase = BlocDatabase::getInstance();
     if (face & BLOC_FRONT) {
@@ -122,10 +122,14 @@ void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<glm::vec3> 
         addNormals(normals, BLOC_RIGHT);
     }
     if (face & BLOC_TOP) {
-        vertices.push_back(glm::vec3(0.0f, size, 0.0f));
-        vertices.push_back(glm::vec3(size, size, 0.0f));
-        vertices.push_back(glm::vec3(0.0f, size, size));
-        vertices.push_back(glm::vec3(size, size, size));
+        float sizeY = size;
+        if (lowerTop) {
+            sizeY *= 0.875f;
+        }
+        vertices.push_back(glm::vec3(0.0f, sizeY, 0.0f));
+        vertices.push_back(glm::vec3(size, sizeY, 0.0f));
+        vertices.push_back(glm::vec3(0.0f, sizeY, size));
+        vertices.push_back(glm::vec3(size, sizeY, size));
 
         addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
         addQuadToTriangles(triangles, vertexInsertIndex);

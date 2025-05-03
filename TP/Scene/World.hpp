@@ -44,8 +44,6 @@ private:
     bool doDaylightCycle = true;
 
     std::set<std::pair<int, int>> getDirtyColumns();
-    
-    void updateAllLightsInColumn(int x, int z);
 
     void updateSkyLightsInColumn(int x, int z);
 public:
@@ -170,4 +168,5 @@ public:
     void updateLightFloodfill(int x, int y, int z);
     void doLightFloodFillNeighbors(int x, int y, int z, int lightLevel);
     void lightFloodfill(int startX, int startY, int startZ, int startLightLevel);
+    void setLightLevel(int x, int y, int z, int lightLevel);
 };

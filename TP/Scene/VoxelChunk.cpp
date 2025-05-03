@@ -99,7 +99,7 @@ bool opaqueNeighborCheck(int neighbor) {
 }
 
 bool transparentNeighborCheck(int neighbor) {
-    return neighbor == AIR || BlocDatabase::getInstance().isOpaque(neighbor) || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
+    return neighbor == AIR || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
 unsigned short VoxelChunk::getFaceLight(int x, int y, int z, int face) {
@@ -233,7 +233,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (transparentNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
+                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z, m_cubes[x][y][z] == WATER && getBlocIncludingNeighbors(x, y + 1, z) != WATER);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
