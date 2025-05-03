@@ -60,6 +60,7 @@ public:
     bool sprinting = false;
 
     void resolveGravity(float &deltaTime);
+    bool isInWater = false;
 
 private:
 

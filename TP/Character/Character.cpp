@@ -34,6 +34,14 @@ Character::Character(Transform transform, Camera *camera, World *world, MeshObje
 
 void Character::move(glm::vec3 direction)
 {
+    if (isInWater)
+    {
+        speed = 1.2f; // Réduction de la vitesse dans l'eau
+    }
+    else
+    {
+        speed = 2.4f; // Vitesse normale hors de l'eau
+    }
     translate(direction * speed);
     camera->setPosition(getWorldPosition() + CAMERA_POSITION_RELATIVE_TO_PLAYER);
 }
@@ -511,35 +519,29 @@ void Character::resolveGravity(float &deltaTime)
         return;
     }
 
-    glm::vec3 currentPosition = getWorldPosition();
-    int currentBlock = m_world->getBloc(static_cast<int>(currentPosition.x),
-                                        static_cast<int>(currentPosition.y),
-                                        static_cast<int>(currentPosition.z));
-
-    if (currentBlock == WATER)
+    // Si le personnage est dans l'eau
+    if (isInWater)
     {
-        // Slow down movement in water
-        velocity *= 0.8f;
+        // Réduction de la gravité dans l'eau
+        velocity.y -= gravity * 0.1f * deltaTime; // Gravité réduite (10% de la normale)
 
-        // Apply upward buoyancy if no key is pressed
-        if (!keyInput->isKeybindHeld(keybinds->jump) && velocity.y < 0)
-        {
-            velocity.y += 0.05f; // Buoyancy effect
-        }
-
-        // Allow swimming upwards when jump is pressed
+        // Si le joueur saute, applique une force ascendante
         if (keyInput->isKeybindHeld(keybinds->jump))
         {
-            velocity.y += 0.1f; // Swim upwards
+            velocity.y += gravity * 0.3f * deltaTime; // Force ascendante pour remonter
         }
 
-        // Apply movement
-        translate(velocity * deltaTime);
-        return;
+        // Limite la vitesse verticale dans l'eau (pour éviter des mouvements trop rapides)
+        if (velocity.y > 2.0f)
+            velocity.y = 2.0f; // Limite la montée
+        if (velocity.y < -2.0f)
+            velocity.y = -2.0f; // Limite la descente
     }
-
-    // Apply gravity to the velocity
-    velocity += glm::vec3(0.f, gravity * deltaTime, 0.f); // Gravity acceleration
+    else
+    {
+        // Gravité normale hors de l'eau
+        velocity += glm::vec3(0.f, gravity * deltaTime, 0.f);
+    }
 
     // Predict the next position based on velocity
     glm::vec3 nextPosition = getWorldPosition() + velocity * deltaTime;
@@ -560,7 +562,13 @@ void Character::resolveGravity(float &deltaTime)
         {
             for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z)
             {
-                if (m_world->getBloc(x, y, z) != AIR && m_world->getBloc(x, y, z) != WATER)
+                int blockId = m_world->getBloc(x, y, z);
+                isInWater = false;
+                if (blockId == WATER)
+                {
+                    isInWater = true;
+                }
+                if (blockId != AIR && blockId != WATER)
                 { // Check for solid blocks
                     isGrounded = true;
                     velocity.y = 0; // Stop downward movement

@@ -31,9 +31,9 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
 
     rng.seed(seed);
 
-    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise), 0.75f);
-    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise), 0.9f);
-    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise), 0.8f);
+    // biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise), 0.75f);
+    // biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise), 0.9f);
+    // biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise), 0.8f);
     biomeManager.addBiome(std::make_unique<WaterBiome>(groundLevel, &baseHeightNoise), 0.5f);
 }
 
