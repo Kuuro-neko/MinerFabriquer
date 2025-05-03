@@ -43,8 +43,10 @@ private:
     float time = 12.0f;
     bool doDaylightCycle = true;
 
+    // Set of dirty columns
     std::set<std::pair<int, int>> getDirtyColumns();
 
+    // Update the sky lights for a given chunk x,z in the chunk column
     void updateSkyLightsInColumn(int x, int z);
 public:
     World();
@@ -53,47 +55,25 @@ public:
 
     void generation();
 
-    /**
-     * @brief Create an empty chunk at the given CHUNK coordinates.
-     *  
-     * 
-     * @return VoxelChunk* pointer to the created chunk
-     */
+    // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
     VoxelChunk *createEmptyChunk(int x, int y, int z);
 
-    /**
-     * @brief Remove a chunk at the given CHUNK coordinates.
-     * 
-     * 
-     */
+    // Remove a chunk at the given CHUNK coordinates.
     void removeChunkColumn(int x, int z);
 
+    // Get a chunk column at the given CHUNK coordinates
     ChunkColumn *getChunkColumn(int x, int z);
-
-    /**
-     * @brief Get a chunk at the given CHUNK coordinates.
-     * 
-     * 
-     * @return VoxelChunk* pointer to the chunk
-     */
-    VoxelChunk *getChunk(int x, int y, int z);
-
+    
+    // Return all chunks in the world
     std::vector<VoxelChunk *> getAllChunks();
 
-    /**
-     * @brief Get a chunk containing the given WORLD coordinates.
-     * 
-     * 
-     * @return VoxelChunk* pointer to the chunk
-     */
+    // Get a pointer to the chunk at the given CHUNK coordinates
+    VoxelChunk *getChunk(int x, int y, int z);
+
+    // Get a pointer to the chunk at the given WORLD coordinates
     VoxelChunk *getChunkContaining(int x, int y, int z);
 
-    /**
-     * @brief Get a chunk containing the given WORLD float coordinates.
-     * 
-     * 
-     * @return VoxelChunk* pointer to the chunk
-     */
+    // Get a pointer to the chunk at the given WORLD coordinates (float version)
     VoxelChunk *getChunkContaining(glm::vec3 position);
 
     /**
@@ -165,8 +145,15 @@ public:
         return time;
     }
 
+    // Propage la lumière d'un bloc à partir de son emplacement.
     void updateLightFloodfill(int x, int y, int z);
-    void doLightFloodFillNeighbors(int x, int y, int z, int lightLevel);
+
+    // Définit la lumière de tous les blocs voisins d'un bloc et propage la lumière.
+    void lightFloodFillNeighbors(int x, int y, int z, int lightLevel);
+
+    // Définit le niveau de lumière d'un bloc et propage la lumière.
     void lightFloodfill(int startX, int startY, int startZ, int startLightLevel);
+
+    // Définit le niveau de lumière d'un bloc.
     void setLightLevel(int x, int y, int z, int lightLevel);
 };

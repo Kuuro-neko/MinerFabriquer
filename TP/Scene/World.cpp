@@ -183,7 +183,7 @@ bool World::setBloc(int x, int y, int z, int bloc) {
             }
 
             int emission = BlocDatabase::getInstance().defaultLightLevel(bloc);
-            if (emission) doLightFloodFillNeighbors(x, y, z, emission-1);
+            if (emission) lightFloodFillNeighbors(x, y, z, emission-1);
         }
         return err;
     }
@@ -423,7 +423,7 @@ void World::updateLightFloodfill(int x, int y, int z) {
     lightFloodfill(x, y, z, chunk->m_lights[x % CHUNK_SIZE][y % CHUNK_SIZE][z % CHUNK_SIZE]);
 }
 
-void World::doLightFloodFillNeighbors(int x, int y, int z, int lightLevel) {
+void World::lightFloodFillNeighbors(int x, int y, int z, int lightLevel) {
     lightFloodfill(x + 1, y, z, lightLevel);
     lightFloodfill(x - 1, y, z, lightLevel);
     lightFloodfill(x, y + 1, z, lightLevel);
