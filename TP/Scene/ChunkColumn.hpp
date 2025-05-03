@@ -9,8 +9,6 @@ private:
     // sorted from lowest y to highest y
     std::vector<VoxelChunk*> m_chunks;
     std::vector<std::vector<int>> surfaceHeightmap;
-
-    void sortChunks();
 public:
     ChunkColumn(int chunkCoordX, int chunkCoordZ) {
         m_chunkCoords = glm::ivec2(chunkCoordX, chunkCoordZ);
@@ -24,12 +22,14 @@ public:
     VoxelChunk* getChunk(int chunkCoordY);
     std::vector<VoxelChunk*> getChunks();
     VoxelChunk* getChunkContainingHeight(int y);
-    VoxelChunk* createEmptyChunk(int x, int y, int z);
+    void addChunk(VoxelChunk* chunk);
     
     void updateSkyLights();
+    void updateSkyLights(int x, int z);
 
     void allocateSurfaceHeightMap();
     std::vector<std::vector<int>> *getSurfaceHeightMap();
     void free();
     bool isDirty();
+    void sortChunks();
 };

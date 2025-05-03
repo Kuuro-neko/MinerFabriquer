@@ -22,10 +22,8 @@ std::set<std::pair<int, int>> World::getDirtyColumns()
 void World::updateSkyLightsInColumn(int x, int z)
 {
     ChunkColumn *column = getChunkColumn(x, z);
-    if (!column) {
-        return;
-    }
-
+    if (!column) return;
+    
     column->updateSkyLights();
 
     std::vector<std::vector<int>> *surfaceHeightmap = column->getSurfaceHeightMap();
@@ -35,7 +33,12 @@ void World::updateSkyLightsInColumn(int x, int z)
             int y = (*surfaceHeightmap)[x][z];
             if (y != -1) {
                 VoxelChunk *chunk = column->getChunkContainingHeight(y);
-                lightFloodfill(x + chunk->m_chunkCoords.x * CHUNK_SIZE, y + chunk->m_chunkCoords.y * CHUNK_SIZE, z + chunk->m_chunkCoords.z * CHUNK_SIZE, MAX_LIGHT);
+                if(chunk) lightFloodfill(
+                    x + chunk->m_chunkCoords.x * CHUNK_SIZE,
+                    y + chunk->m_chunkCoords.y * CHUNK_SIZE + 1,
+                    z + chunk->m_chunkCoords.z * CHUNK_SIZE,
+                    MAX_LIGHT
+                );
             }
         }
     }
@@ -55,9 +58,12 @@ VoxelChunk *World::createEmptyChunk(int x, int y, int z) {
         chunkColumns.emplace(glm::ivec2(x, z), ChunkColumn(x, z));
     }
     column = getChunkColumn(x, z);
-    column->allocateSurfaceHeightMap();
-    VoxelChunk *chunk = column->createEmptyChunk(x, y, z);
+    chunks.emplace(glm::ivec3(x, y, z), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
+    VoxelChunk *chunk = &chunks.at(glm::ivec3(x, y, z));
+    chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
     chunk->m_world = this;
+    chunk->m_chunkCoords = glm::ivec3(x, y, z);
+    column->addChunk(chunk);
     return chunk;
 }
 
@@ -91,9 +97,22 @@ VoxelChunk *World::getChunk(int x, int y, int z) {
 
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
     VoxelChunk *chunk = getChunkContaining(x, y, z);
+    ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
+    if (!column) return -1;
     if (chunk) {
         int bloc = chunk->playerRemoveBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, gamemode);
-        if (bloc != -1) {
+        if (bloc == -1) return bloc;
+        std::vector<std::vector<int>> *surfaceHeightmap = column->getSurfaceHeightMap();
+        int currentSurface = surfaceHeightmap->at(x % CHUNK_SIZE).at(z % CHUNK_SIZE);
+        if (y == currentSurface) {
+            // Skylight is now available so we update it
+            column->updateSkyLights(x % CHUNK_SIZE, z % CHUNK_SIZE);
+            int newSurface = surfaceHeightmap->at(x % CHUNK_SIZE).at(z % CHUNK_SIZE);
+            for (int i = currentSurface; i > newSurface; i--) {
+                lightFloodfill(x, i, z, MAX_LIGHT);
+            }
+        } else {
+            // Update the light levels of the neighbors
             updateLightFloodfill(x+1, y, z);
             updateLightFloodfill(x-1, y, z);
             updateLightFloodfill(x, y+1, z);
@@ -108,9 +127,22 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
 
 int World::removeBlock(int x, int y, int z) {
     VoxelChunk *chunk = getChunkContaining(x, y, z);
+    ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
+    if (!column) return -1;
     if (chunk) {
         int bloc = chunk->removeBlock(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE);
-        if (bloc != -1) {
+        if (bloc == -1) return bloc;
+        std::vector<std::vector<int>> *surfaceHeightmap = column->getSurfaceHeightMap();
+        int currentSurface = surfaceHeightmap->at(x % CHUNK_SIZE).at(z % CHUNK_SIZE);
+        if (y == currentSurface) {
+            // Skylight is now available so we update it
+            column->updateSkyLights(x % CHUNK_SIZE, z % CHUNK_SIZE);
+            int newSurface = surfaceHeightmap->at(x % CHUNK_SIZE).at(z % CHUNK_SIZE);
+            for (int i = currentSurface; i > newSurface; i--) {
+                lightFloodfill(x, i, z, MAX_LIGHT);
+            }
+        } else {
+            // Update the light levels of the neighbors
             updateLightFloodfill(x+1, y, z);
             updateLightFloodfill(x-1, y, z);
             updateLightFloodfill(x, y+1, z);
@@ -234,18 +266,19 @@ void World::generation() {
                 worldGenerator.genereteProceduralChunk(chunk, x, y, z);
             }
         }
-        std::cout << "\rGenerating world... " << int((x * 100) / 32) << "%" << std::flush;
+        std::cout << "\rGenerating world... " << int((x * 100) / GENERATION_SIZE_X) << "%" << std::flush;
     }
     std::cout << "\rGenerating world...  done !\n";
 
     // Update all lights levels
+    //  ->  First set the sky lights to 15 for all air blocks
     std::cout << "Updating lights... " << std::flush;
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
             updateSkyLightsInColumn(x, z);
         }
     }
-
+    //  ->  Then floodfill the lights
     std::vector<VoxelChunk *> chunks = getAllChunks();
     for (auto chunk : chunks) {
         glm::ivec3 chunkCoords = chunk->m_chunkCoords;
@@ -264,9 +297,6 @@ void World::generation() {
             }
         }
     }
-    
-
-
     std::cout << "  done !\n";
 
     // Generate meshes for first draw calls
