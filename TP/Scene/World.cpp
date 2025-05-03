@@ -295,6 +295,7 @@ void World::generation() {
     // Update all lights levels
     //  ->  First set the sky lights to 15 for all air blocks
     std::cout << "Updating lights... " << std::flush;
+    time_t start = std::time(nullptr);
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
             updateSkyLightsInColumn(x, z);
@@ -320,6 +321,8 @@ void World::generation() {
         }
     }
     std::cout << "  done !\n";
+    time_t end = std::time(nullptr);
+    std::cout << "Time taken to update lights: " << std::difftime(end, start) << " seconds" << std::endl;
 
     // Generate meshes for first draw calls
     std::cout << "Generating meshes..." << std::flush;
@@ -444,10 +447,7 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
 
         // Position déjà visitée à une intensité supérieure ou égale
         uint64_t key = encodePos(x, y, z);
-        if (visited.find(key) != visited.end()) continue;
-        visited.insert(key);
-
-        
+        if (!visited.insert(key).second) continue;
         
         VoxelChunk *chunk = getChunkContaining(x, y, z);
         if (chunk == nullptr) continue;
@@ -468,11 +468,7 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
         if (currentLight > lightLevel) continue;
         if (currentLight < lightLevel) chunk->dirty = true;
         
-        
-        
         chunk->m_lights[localX][localY][localZ] = lightLevel;
-        
-
 
         // Propagation dans les 6 directions
         queue.emplace(x + 1, y, z, lightLevel - 1);
