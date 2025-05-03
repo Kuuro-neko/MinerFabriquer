@@ -6,7 +6,8 @@
 #include "World.hpp"
 #include <unordered_set>
 
-
+#include <chrono>
+#include <iostream>
 
 std::set<std::pair<int, int>> World::getDirtyColumns()
 {
@@ -281,6 +282,7 @@ void World::generation() {
     WorldGenerator worldGenerator;
     // Generate the world
     std::cout << "Generating world... 0%" << std::flush;
+    auto start = std::chrono::high_resolution_clock::now();
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
             for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
@@ -290,42 +292,48 @@ void World::generation() {
         }
         std::cout << "\rGenerating world... " << int((x * 100) / GENERATION_SIZE_X) << "%" << std::flush;
     }
-    std::cout << "\rGenerating world...  done !\n";
+    auto end = std::chrono::high_resolution_clock::now();
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "\rGenerating world...  done ! (" << ms << " ms) \n";
 
     // Update all lights levels
     //  ->  First set the sky lights to 15 for all air blocks
     std::cout << "Updating lights... " << std::flush;
-    time_t start = std::time(nullptr);
+    start = std::chrono::high_resolution_clock::now();
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
             updateSkyLightsInColumn(x, z);
         }
     }
     //  ->  Then floodfill the lights
-    std::vector<VoxelChunk *> chunks = getAllChunks();
-    for (auto chunk : chunks) {
-        glm::ivec3 chunkCoords = chunk->m_chunkCoords;
-        for (int i = 0; i < CHUNK_SIZE; ++i) {
-            for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
+    for (auto column : chunkColumns) {
+        for (auto chunk : column.second.getChunks()) {
+            glm::ivec3 chunkCoords = chunk->m_chunkCoords;
+            for (int i = 0; i < CHUNK_SIZE; ++i) {
                 for (int k = 0; k < CHUNK_SIZE; ++k) {
-                    int lightLevel = chunk->m_lights[i][j][k];
-                    if (lightLevel < 15) continue;
-    
-                    int worldX = i + chunkCoords.x * CHUNK_SIZE;
-                    int worldY = j + chunkCoords.y * CHUNK_SIZE;
-                    int worldZ = k + chunkCoords.z * CHUNK_SIZE;
-    
-                    lightFloodfill(worldX, worldY, worldZ, lightLevel);
+                    // Bloc column is completely above the surface, skip it
+                    if(chunk->m_chunkCoords.y * CHUNK_SIZE >= column.second.getSurfaceHeightMap()->at(i).at(k)) continue;
+                    for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
+                        int lightLevel = chunk->m_lights[i][j][k];
+                        if (lightLevel < 15) continue;
+        
+                        int worldX = i + chunkCoords.x * CHUNK_SIZE;
+                        int worldY = j + chunkCoords.y * CHUNK_SIZE;
+                        int worldZ = k + chunkCoords.z * CHUNK_SIZE;
+        
+                        lightFloodfill(worldX, worldY, worldZ, lightLevel);
+                    }
                 }
             }
         }
     }
-    std::cout << "  done !\n";
-    time_t end = std::time(nullptr);
-    std::cout << "Time taken to update lights: " << std::difftime(end, start) << " seconds" << std::endl;
+    end = std::chrono::high_resolution_clock::now();
+    ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "  done ! (" << ms << " ms) \n";
 
     // Generate meshes for first draw calls
     std::cout << "Generating meshes..." << std::flush;
+    std::vector<VoxelChunk *> chunks = getAllChunks();
     for (auto chunk : chunks) {
         chunk->generateMesh();
     }
