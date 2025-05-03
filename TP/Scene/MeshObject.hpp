@@ -28,7 +28,7 @@ public:
      * @brief Initialize the buffers for the mesh object (vertices, triangles, uvs)
      * 
      */
-    void initializeBuffers();
+    virtual void initializeBuffers();
 
     /**
      * @brief Draw the mesh object
@@ -40,7 +40,23 @@ public:
      * @brief Clean the buffers for the mesh object
      * 
      */
-    void cleanupBuffers();
+    virtual void cleanupBuffers();
 
-    glm::vec3 raycast(Ray ray);
+    virtual glm::vec3 raycast(Ray ray);
 };
+
+class VoxelMeshObject : public MeshObject {
+    public:
+        GLuint lightbuffer;
+        std::vector<int> lights;
+        VoxelMeshObject() : lightbuffer(0), MeshObject() {}
+        ~VoxelMeshObject() {}
+    
+        void initializeBuffers() override;
+    
+        void draw(GLuint programID) override;
+
+        void cleanupBuffers() override;
+
+        glm::vec3 raycast(Ray ray) override;
+    };
