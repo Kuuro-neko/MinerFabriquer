@@ -37,6 +37,7 @@ struct IVec3Hash {
 class World : public SceneNode {
 private:
     std::unordered_map<glm::ivec2, ChunkColumn, IVec2Hash> chunkColumns;
+    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
     std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> visibleChunks;
     Camera *camera;
     float time = 12.0f;

@@ -2,9 +2,10 @@
 
 #include <TP/Scene/VoxelChunk.hpp>
 
-#define PLAINS 0
-#define MOUNTAINS 1
-#define DESERT 2
+#define PLAINS_BIOME 0
+#define MOUNTAINS_BIOME 1
+#define DESERT_BIOME 2
+#define WATER_BIOME 3
 
 class Biome {
     private:
@@ -52,7 +53,7 @@ class Biome {
 
 class PlainsBiome : public Biome {
     public:
-        PlainsBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, PLAINS) {}
+        PlainsBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, PLAINS_BIOME) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
@@ -62,7 +63,7 @@ class MoutainsBiome : public Biome {
     private:
         FastNoiseLite* snowNoise;
     public:
-        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise) : Biome(groundLevel, noise, MOUNTAINS), snowNoise(snowNoise) {}
+        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise) : Biome(groundLevel, noise, MOUNTAINS_BIOME), snowNoise(snowNoise) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
@@ -71,11 +72,23 @@ class MoutainsBiome : public Biome {
 
 class DesertBiome : public Biome {
     public:
-        DesertBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, DESERT) {}
+        DesertBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, DESERT_BIOME) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
         
+};
+
+class WaterBiome : public Biome {
+    private:
+        FastNoiseLite* waterNoise;
+        int getMinNeighborHeight(VoxelChunk *chunk, int x, int z, glm::ivec3 worldAABBMin);
+
+    public :
+        WaterBiome(int groundLevel, FastNoiseLite *noise) : Biome(groundLevel, noise, WATER_BIOME) {}
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
 
 /// ======================== ///

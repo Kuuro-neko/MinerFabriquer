@@ -10,9 +10,9 @@ void ChunkColumn::sortChunks()
 
 VoxelChunk *ChunkColumn::getChunk(int chunkCoordY)
 {
-    for (auto &chunk : m_chunks) {
-        if (chunk.m_chunkCoords.y == chunkCoordY) {
-            return &chunk;
+    for (VoxelChunk *chunk : m_chunks) {
+        if (chunk->m_chunkCoords.y == chunkCoordY) {
+            return chunk;
         }
     }
     return nullptr;
@@ -22,7 +22,7 @@ std::vector<VoxelChunk*> ChunkColumn::getChunks()
 {
     std::vector<VoxelChunk*> chunks;
     for (auto &chunk : m_chunks) {
-        chunks.push_back(&chunk);
+        chunks.push_back(chunk);
     }
     return chunks;
 }
@@ -30,7 +30,7 @@ std::vector<VoxelChunk*> ChunkColumn::getChunks()
 VoxelChunk* ChunkColumn::createEmptyChunk(int x, int y, int z)
 {
     m_chunks.emplace_back(VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
-    VoxelChunk *chunk = &m_chunks.back();
+    VoxelChunk *chunk = m_chunks.back();
     chunk->m_chunkCoords = glm::ivec3(x, y, z);
     chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
 }
@@ -76,15 +76,15 @@ void ChunkColumn::updateSkyLights()
         */
 
     sortChunks();
-    int maxY = m_chunks.back().m_chunkCoords.y * CHUNK_SIZE + CHUNK_SIZE - 1;
+    int maxY = m_chunks.back()->m_chunkCoords.y * CHUNK_SIZE + CHUNK_SIZE - 1;
 
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
             bool touchedGround = false;
-            for (VoxelChunk &chunk: m_chunks) {
+            for (VoxelChunk *chunk: m_chunks) {
                 for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
-                    if (chunk.getBloc(x, y, z) == AIR) {
-                        chunk.m_lights[x][y][z] = MAX_LIGHT;
+                    if (chunk->getBloc(x, y, z) == AIR) {
+                        chunk->m_lights[x][y][z] = MAX_LIGHT;
                     }
                     else {
                         touchedGround = true;
@@ -116,8 +116,8 @@ void ChunkColumn::free()
 
 bool ChunkColumn::isDirty()
 {
-    for (auto &chunk : m_chunks) {
-        if (chunk.dirty) {
+    for (VoxelChunk *chunk : m_chunks) {
+        if (chunk->dirty) {
             return true;
         }
     }

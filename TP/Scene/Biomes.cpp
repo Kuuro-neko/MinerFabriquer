@@ -2,6 +2,7 @@
 #include <TP/Scene/BlocTypes.hpp>
 #include <algorithm>
 #include "Biomes.hpp"
+#include <random>
 
 /// ======================= ///
 /// ===== PlainsBiome ===== ///
@@ -76,8 +77,36 @@ void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
 }
 
-void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight){
+
+}
+
+/// ========================= ///
+/// ===== WaterBiome ======== ///
+/// ========================= ///
+
+float WaterBiome::calculateHeight(float x, float z)
 {
+    return getGroundLevel() + std::min(getNoise()->GetNoise(x,z) * -10.0f - 35.f, 0.f);
+}
+
+
+void WaterBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
+
+    for (int y = 0; y < 16; y++) {
+        if (y + worldAABBMin.y < getGroundLevel()-15 && y + worldAABBMin.y >= baseHeight && chunk->getBloc(x, y, z) == AIR) {
+            chunk->generationSetBloc(x, y, z, WATER);
+        }
+    }
+}
+
+void WaterBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+    // No decoration for water biome
 }
 
 /// ======================== ///

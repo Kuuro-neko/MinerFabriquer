@@ -7,7 +7,7 @@ class ChunkColumn
 private:
     glm::ivec2 m_chunkCoords;
     // sorted from lowest y to highest y
-    std::vector<VoxelChunk> m_chunks;
+    std::vector<VoxelChunk*> m_chunks;
     std::vector<std::vector<int>> surfaceHeightmap;
 
     void sortChunks();
