@@ -438,7 +438,7 @@ void Character::resolveGravity(float &deltaTime) {
     for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
         for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
             for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
-                if (m_world->getBloc(x, y, z) != AIR) { // Check for solid blocks
+                if (m_world->getBloc(x, y, z) != AIR && m_world->getBloc(x,y,z) != WATER) { // Check for solid blocks
                     isGrounded = true;
                     velocity.y = 0; // Stop downward movement
                     break;

@@ -238,7 +238,7 @@ void World::resolveCollisions(Character &character, World *world) {
         for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
             for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
                 // Vérification des blocs dans le chunk actuel et le chunk proche
-                if(world->getBloc(x, y, z) != AIR) {
+                if(world->getBloc(x, y, z) != AIR && world->getBloc(x, y, z) != WATER) {
                     resolveCollisionForBlock(character, glm::vec3(x, y, z));
                 }
             }
