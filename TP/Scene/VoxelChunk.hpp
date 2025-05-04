@@ -3,8 +3,11 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/BlocTypes.hpp>
 #include <common/fastNoiseLit.h>
-#define DEFAULT_CHUNK_SIZE 16
-#define DEFAULT_CHUNK_HEIGHT 128
+
+#define CHUNK_SIZE 16
+
+#define MAX_LIGHT 15
+#define MIN_LIGHT 0
 
 class World;
 
@@ -42,6 +45,10 @@ public:
     int getBloc(int x, int y, int z);
     int getBlocIncludingNeighbors(int x, int y, int z);
 
+    unsigned short getLightLevelIncludingNeighbors(int x, int y, int z);
+
+    unsigned short getFaceLight(int x, int y, int z, int face);
+
     int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
     int removeBlock(int x, int y, int z);
@@ -72,15 +79,16 @@ public:
         return glm::vec3(m_chunkCoords.x * m_sizeX, m_chunkCoords.y * m_sizeY, m_chunkCoords.z * m_sizeZ);
     }
 
-    int m_sizeX = DEFAULT_CHUNK_SIZE;
-    int m_sizeY = DEFAULT_CHUNK_SIZE;
-    int m_sizeZ = DEFAULT_CHUNK_HEIGHT;
-    bool dirty = false;
-    int*** m_cubes;
+    int m_sizeX = CHUNK_SIZE;
+    int m_sizeY = CHUNK_SIZE;
+    int m_sizeZ = CHUNK_SIZE;
+    bool dirty = true;
+    std::vector<std::vector<std::vector<int>>> m_cubes;
+    std::vector<std::vector<std::vector<int>>> m_lights;
     glm::ivec3 m_chunkCoords;
     World *m_world;
-    MeshObject m_opaqueMesh;
-    MeshObject m_transparentMesh;
+    VoxelMeshObject m_opaqueMesh;
+    VoxelMeshObject m_transparentMesh;
 
     // Move Constructor
     VoxelChunk(VoxelChunk&& other) noexcept;

@@ -100,3 +100,63 @@ glm::vec3 MeshObject::raycast(Ray ray) {
     }
     return glm::vec3(0.0f);
 }
+
+
+void VoxelMeshObject::initializeBuffers() {
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    // Vertex buffer
+    glGenBuffers(1, &vertexbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // UV buffer
+    glGenBuffers(1, &uvbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), uvs.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // Normal buffer
+    glGenBuffers(1, &normalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // Light buffer
+    glGenBuffers(1, &lightbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, lightbuffer);
+    glBufferData(GL_ARRAY_BUFFER, lights.size() * sizeof(int), lights.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(3);
+    glVertexAttribIPointer(3, 1, GL_INT, 0, (void*)0);
+
+    // Element buffer
+    glGenBuffers(1, &elementbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, triangles.size() * sizeof(unsigned short), triangles.data(), GL_STATIC_DRAW);
+
+    glBindVertexArray(0);
+}
+
+void VoxelMeshObject::draw(GLuint programID) {
+    glUseProgram(programID);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, triangles.size(), GL_UNSIGNED_SHORT, 0);
+    glBindVertexArray(0);
+}
+
+void VoxelMeshObject::cleanupBuffers() {
+    MeshObject::cleanupBuffers();
+    if (lightbuffer) {
+        glDeleteBuffers(1, &lightbuffer);
+        lightbuffer = 0;
+    }
+}
+
+glm::vec3 VoxelMeshObject::raycast(Ray ray) {
+    return MeshObject::raycast(ray);
+}
