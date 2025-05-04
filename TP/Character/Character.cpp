@@ -67,7 +67,7 @@ void Character::listenAction(float dt)
                                         static_cast<int>(currentPosition.y),
                                         static_cast<int>(currentPosition.z));
 
-    bool isInWater = (currentBlock == WATER);
+    this->isInWater = (currentBlock == WATER);
 
     // ==== Movement binds ====
     if (keyInput->isKeybindHeld(keybinds->forward))
@@ -84,9 +84,11 @@ void Character::listenAction(float dt)
     if (isInWater)
     {
         vecteurDirection *= this->speed * 0.5f * dt; // Slow down in water
+    
     }
     else
     {
+
         if (glm::length(vecteurDirection) > 0.01f)
         {
             vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
@@ -514,64 +516,67 @@ void Character::draw(GLuint programID)
  */
 void Character::resolveGravity(float &deltaTime)
 {
+    // Les modes créatif et spectateur ignorent la gravité
     if (gamemode == GAMEMODE_CREATIVE || gamemode == GAMEMODE_SPECTATOR)
     {
         return;
     }
 
-    // Si le personnage est dans l'eau
+    // Appliquer la gravité selon le contexte (eau ou non)
     if (isInWater)
     {
-        // Réduction de la gravité dans l'eau
-        velocity.y -= gravity * 0.1f * deltaTime; // Gravité réduite (10% de la normale)
+        // Gravité réduite dans l’eau
+        velocity.y += -gravity * 0.1f * deltaTime;
 
-        // Si le joueur saute, applique une force ascendante
+        // Saut dans l’eau (remontée)
         if (keyInput->isKeybindHeld(keybinds->jump))
         {
-            velocity.y += gravity * 0.3f * deltaTime; // Force ascendante pour remonter
+            velocity.y -= gravity * 0.3f * deltaTime;
+        }
+        if (keyInput->isKeybindHeld(keybinds->sneak))
+        {
+            velocity.y += gravity * 0.3f * deltaTime;
         }
 
-        // Limite la vitesse verticale dans l'eau (pour éviter des mouvements trop rapides)
-        if (velocity.y > 2.0f)
-            velocity.y = 2.0f; // Limite la montée
-        if (velocity.y < -2.0f)
-            velocity.y = -2.0f; // Limite la descente
+        // Limiter la vitesse verticale dans l’eau
+        velocity.y = glm::clamp(velocity.y, -4.0f, 2.0f);
     }
     else
     {
-        // Gravité normale hors de l'eau
-        velocity += glm::vec3(0.f, gravity * deltaTime, 0.f);
+        // Gravité normale hors de l’eau
+        velocity.y += gravity * deltaTime;
     }
 
-    // Predict the next position based on velocity
+    // Prédire la position suivante
     glm::vec3 nextPosition = getWorldPosition() + velocity * deltaTime;
 
-    // Check for collisions with the ground
+    // Bounding box mise à jour avec la vitesse verticale
     glm::vec3 minBB = getMinBoundingBox();
     glm::vec3 maxBB = getMaxBoundingBox();
 
-    // Adjust the bounding box for the next position
     minBB.y += velocity.y * deltaTime;
     maxBB.y += velocity.y * deltaTime;
 
+    // Réinitialiser l’état
     bool isGrounded = false;
+    bool detectedWater = false;
 
-    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x)
+    // Vérifie les collisions dans le volume de la bounding box
+    for (int x = static_cast<int>(std::floor(minBB.x)); x <= static_cast<int>(std::floor(maxBB.x)); ++x)
     {
-        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y)
+        for (int y = static_cast<int>(std::floor(minBB.y)); y <= static_cast<int>(std::floor(maxBB.y)); ++y)
         {
-            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z)
+            for (int z = static_cast<int>(std::floor(minBB.z)); z <= static_cast<int>(std::floor(maxBB.z)); ++z)
             {
                 int blockId = m_world->getBloc(x, y, z);
-                isInWater = false;
+
                 if (blockId == WATER)
                 {
-                    isInWater = true;
+                    detectedWater = true;
                 }
-                if (blockId != AIR && blockId != WATER)
-                { // Check for solid blocks
+                else if (blockId != AIR)
+                {
                     isGrounded = true;
-                    velocity.y = 0; // Stop downward movement
                     break;
                 }
             }
@@ -582,13 +587,16 @@ void Character::resolveGravity(float &deltaTime)
             break;
     }
 
-    // Apply the remaining velocity if not grounded
+    // Appliquer la position si non bloqué
     if (!isGrounded)
     {
-        translate(velocity * deltaTime);
+        translate(glm::vec3(0.f, velocity.y * deltaTime, 0.f));
     }
     else
     {
-        velocity.y = 0; // Reset vertical velocity when grounded
+        velocity.y = 0.0f;
     }
+
+    // Met à jour l’état de l’eau (sera utilisé dans listenAction)
+    this->isInWater = detectedWater;
 }

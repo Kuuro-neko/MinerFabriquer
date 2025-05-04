@@ -171,7 +171,7 @@ void World::updateVisibleChunk(Frustrum &frustum) {
 void World::setCamera(Camera &camera) {
     this->camera = &camera;
 }
-
+// function that manage the collision for the block collisiing to hte bounding boxe of the character
 void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
     // Bounding box du personnage
     glm::vec3 minBB = character.getMinBoundingBox();
