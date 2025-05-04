@@ -134,12 +134,11 @@ void Character::listenAction(float dt) {
         std::cout << "[Character] Toggle spectator mode" << std::endl;
         if (gamemode == GAMEMODE_SPECTATOR) {
             gamemode = prevGamemode;
-            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
         } else {
             prevGamemode = gamemode;
             gamemode = GAMEMODE_SPECTATOR;
-            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
         }
+        std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
         shouldToggleDebug = false;
     }
 
@@ -147,13 +146,11 @@ void Character::listenAction(float dt) {
         this->speed = DEFAULT_SPEED;
         std::cout << "[Character] Toggle creative mode" << std::endl;
         if (gamemode == GAMEMODE_CREATIVE) {
-            gamemode = prevGamemode;
-            std::cout << "[Character] Set gamemode to " << gamemodeString(prevGamemode) << std::endl;
+            gamemode = GAMEMODE_SURVIVAL;
         } else {
-            prevGamemode = gamemode;
             gamemode = GAMEMODE_CREATIVE;
-            std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
         }
+        std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
         shouldToggleDebug = false;
     }
 

@@ -333,11 +333,14 @@ void World::generation() {
 
     // Generate meshes for first draw calls
     std::cout << "Generating meshes..." << std::flush;
+    start = std::chrono::high_resolution_clock::now();
     std::vector<VoxelChunk *> chunks = getAllChunks();
     for (auto chunk : chunks) {
         chunk->generateMesh();
     }
-    std::cout << " done !" << std::endl;
+    end = std::chrono::high_resolution_clock::now();
+    ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << " done ! (" << ms << " ms) \n";
 }
 
 void World::cleanupBuffers() {
