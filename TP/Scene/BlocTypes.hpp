@@ -48,6 +48,7 @@ public:
     float xTexBottom = 15.0f * TEXTUREATLAS_UNIT;
     float yTexBottom = 15.0f * TEXTUREATLAS_UNIT;
     float opaque = 1.0f;
+    bool solid = true;
     bool breakable = false;
     int lightLevel = 0;
 
@@ -57,7 +58,7 @@ public:
         int xTexSide, int yTexSide,
         int xTexTop, int yTexTop,
         int xTexBottom, int yTexBottom,
-        int opaque, int breakable, int lightLevel)
+        int opaque, int solid, int breakable, int lightLevel)
         : id(id), name(name),
             xTexSide(xTexSide * TEXTUREATLAS_UNIT),
             yTexSide(yTexSide * TEXTUREATLAS_UNIT),
@@ -66,6 +67,7 @@ public:
             xTexBottom(xTexBottom * TEXTUREATLAS_UNIT),
             yTexBottom(yTexBottom * TEXTUREATLAS_UNIT),
             opaque(opaque),
+            solid(solid),
             breakable(breakable),
             lightLevel(lightLevel) {}
     
@@ -90,21 +92,21 @@ private:
 
     BlocDatabase() {
         std::string database = "../database/Blocs.csv";
-        io::CSVReader<11> in(database);
-        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque", "Breakable", "Light");
+        io::CSVReader<12> in(database);
+        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque", "Solid", "Breakable", "LightLevel");
         int id;
         std::string name;
         float xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom;
-        int opaque, breakable, lightLevel;
+        int opaque, solid, breakable, lightLevel;
         std::cout << "\nBloc database loading..." << std::endl;
-        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, breakable, lightLevel)) {
-            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << ", breakable: " << breakable << ", lightLevel: " << lightLevel << std::endl;
+        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, solid, breakable, lightLevel)) {
+            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << ", solid: " << solid << ", breakable: " << breakable << ", lightLevel: " << lightLevel << std::endl;
             BlockData blockData(
                 id, name,
                 xTexSide, yTexSide,
                 xTexTop, yTexTop,
                 xTexBottom, yTexBottom,
-                opaque, breakable, lightLevel
+                opaque, solid, breakable, lightLevel
             );
             m_blocs[id] = blockData;
         }
@@ -152,6 +154,10 @@ public:
 
     bool isOpaque(int id) {
         return m_blocs[id].opaque==1;
+    }
+
+    bool isSolid(int id) {
+        return m_blocs[id].solid;
     }
 
     bool isPartOfGround(int id) {
