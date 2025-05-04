@@ -13,6 +13,7 @@ out vec4 frag_color;
 in vec3 vNormal;
 in vec3 pos;
 flat in int vLights;
+flat in int vAO;
 
 uniform int displayNormals;
 uniform vec3 camPos;

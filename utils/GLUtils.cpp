@@ -3,8 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <TP/Scene/BlocTypes.hpp>
-
-#define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
+#include <Defines.hpp>
 
 /**
  * @brief Add an offset to the last 4 vertices in the vertices vector

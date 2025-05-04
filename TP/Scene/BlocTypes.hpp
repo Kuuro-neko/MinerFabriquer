@@ -5,31 +5,7 @@
 #include "csv.h"
 #include <iostream>
 
-#define AIR 0
-#define STONE 1
-#define DIRT 2
-#define GRASS 3
-#define PLANKS_OAK 4
-#define LOG_OAK 5
-#define LEAVES_OAK 6
-#define BEDROCK 7
-#define GLOWSTONE 8
-#define WATER 9
-#define SAND 10
-#define IRON_ORE 11
-#define IRON_BLOCK 12
-#define SANDSTONE 13
-#define SNOW 14
-
-#define ERROR_BLOC 255
-
-// Block types, bit mask for each side
-#define BLOC_FRONT 1
-#define BLOC_BACK 2
-#define BLOC_LEFT 4
-#define BLOC_RIGHT 8
-#define BLOC_TOP 16
-#define BLOC_BOTTOM 32
+#include <Defines.hpp>
 
 #define TEXTUREATLAS_UNIT 0.06250f
 

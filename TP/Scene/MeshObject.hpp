@@ -48,8 +48,10 @@ public:
 class VoxelMeshObject : public MeshObject {
     public:
         GLuint lightbuffer;
+        GLuint aobuffer;
         std::vector<int> lights;
-        VoxelMeshObject() : lightbuffer(0), MeshObject() {}
+        std::vector<int> ao;
+        VoxelMeshObject() : lightbuffer(0), aobuffer(0), MeshObject() {}
         ~VoxelMeshObject() {}
     
         void initializeBuffers() override;

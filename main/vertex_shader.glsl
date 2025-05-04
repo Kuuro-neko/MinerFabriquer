@@ -12,11 +12,13 @@ uniform mat4 ProjectionMatrix;
 layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec3 vertexNormal_modelspace;
 layout(location = 3) in int lights;
+layout(location = 4) in int ao;
 
 out vec2 UV;
 out vec3 vNormal;
 out vec3 pos;
 flat out int vLights;
+flat out int vAO;
 
 void main(){
 
@@ -33,5 +35,7 @@ void main(){
         //camPos = vec3(0.f, 0.f, 0.f);
 
         vLights = lights;
+
+        vAO = ao;
 }
 

@@ -2,11 +2,7 @@
 
 #include <TP/Scene/VoxelChunk.hpp>
 
-#define PLAINS_BIOME 0
-#define MOUNTAINS_BIOME 1
-#define DESERT_BIOME 2
-#define WATER_BIOME 3
-
+#include <Defines.hpp>
 class Biome {
     private:
         int groundLevel = 40;

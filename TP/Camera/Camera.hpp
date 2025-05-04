@@ -11,23 +11,7 @@
 #include <TP/Input/KeyInput.hpp>
 #include <TP/Input/KeyBinds.hpp>
 
-
-#define DEFAULT_FOV 70.0f
-#define DEFAULT_POSITION glm::vec3(0.0f, 0.0f, 0.0f)
-#define DEFAULT_EULER_ANGLE glm::vec3(0.0f, 0.0, 0.0f)
-#define CAMERA_POSITION_RELATIVE_TO_PLAYER glm::vec3(0.f, 0.75f, 0.f)
-#define DELTA_Y_SNEAK 0.1875f
-
-#define DEFAULT_TRANSLATION_SPEED 7.5f
-#define DEFAULT_ROTATION_SPEED 0.1f
-#define DEFAULT_DISTANCE_SPEED 5.0f
-#define KEYS_ROTATION_SPEED_CORRECTION 5.0f
-
-#define DEFAULT_ATTACHED false
-#define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
-
-#define RENDERER_DISTANCE 32.0f
-
+#include <Defines.hpp>
 
 class Camera {
 public:

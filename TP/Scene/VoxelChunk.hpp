@@ -4,10 +4,7 @@
 #include <TP/Scene/BlocTypes.hpp>
 #include <common/fastNoiseLit.h>
 
-#define CHUNK_SIZE 16
-
-#define MAX_LIGHT 15
-#define MIN_LIGHT 0
+#include <Defines.hpp>
 
 class World;
 

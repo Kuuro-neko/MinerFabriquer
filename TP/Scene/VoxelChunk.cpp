@@ -102,6 +102,8 @@ bool transparentNeighborCheck(int neighbor) {
     return neighbor == AIR || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
+
+
 unsigned short VoxelChunk::getFaceLight(int x, int y, int z, int face) {
     unsigned short light = 0;
     if (face & BLOC_LEFT) {
@@ -132,6 +134,7 @@ void VoxelChunk::generateMesh() {
     m_opaqueMesh.uvs.clear();
     m_opaqueMesh.normals.clear();
     m_opaqueMesh.lights.clear();
+    m_opaqueMesh.ao.clear();
 
     int neighbor;
 
@@ -148,6 +151,9 @@ void VoxelChunk::generateMesh() {
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
+                        if(BlocDatabase::getInstance().isSolid(m_cubes[x][y][z])) {
+                            
+                        }
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (opaqueNeighborCheck(neighbor)) {
@@ -200,6 +206,7 @@ void VoxelChunk::generateMesh() {
     m_transparentMesh.uvs.clear();
     m_transparentMesh.normals.clear();
     m_transparentMesh.lights.clear();
+    m_transparentMesh.ao.clear();
 
     // Loop through all the cubes in the chunk. If a cube has a face that is not adjacent to another non opaque cube, add a face to the mesh
     for (int x = 0; x < m_sizeX; x++) {

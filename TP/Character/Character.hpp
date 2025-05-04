@@ -14,14 +14,7 @@
 #include <TP/Input/KeyBinds.hpp>
 #include "vector"
 
-#define MAX_BREAK_COOLDOWN 0.3f
-#define MAX_PLACE_COOLDOWN 0.3f
-
-#define GAMEMODE_CREATIVE 0
-#define GAMEMODE_SURVIVAL 1
-#define GAMEMODE_SPECTATOR 2
-
-#define DEFAULT_SPEED 2.4f
+#include <Defines.hpp>
 
 class Character : public SceneNode {
 
