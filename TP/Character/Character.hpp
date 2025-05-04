@@ -75,9 +75,9 @@ private:
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
 
-    float speed = 2.4f;
-    float sneakSpeed = 1.295f;
-    float sprintSpeed = 3.1f;
+    float speed = DEFAULT_SPEED;
+    float sneakSpeed = DEFAULT_SNEAK_SPEED;
+    float sprintSpeed = DEFAULT_SPRINT_SPEED;
     float maxInteractionDistance = 6.f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();

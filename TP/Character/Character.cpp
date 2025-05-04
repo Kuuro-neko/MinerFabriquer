@@ -34,15 +34,7 @@ Character::Character(Transform transform, Camera *camera, World *world, MeshObje
 
 void Character::move(glm::vec3 direction)
 {
-    if (isInWater)
-    {
-        speed = 1.2f; // Réduction de la vitesse dans l'eau
-    }
-    else
-    {
-        speed = 2.4f; // Vitesse normale hors de l'eau
-    }
-    translate(direction * speed);
+    translate(direction);
     camera->setPosition(getWorldPosition() + CAMERA_POSITION_RELATIVE_TO_PLAYER);
 }
 
@@ -69,6 +61,22 @@ void Character::listenAction(float dt)
 
     this->isInWater = (currentBlock == WATER);
 
+    if (gamemode != GAMEMODE_SPECTATOR)
+    {
+        if (isInWater)
+        {
+            speed = WATER_SPEED;
+            sneakSpeed = WATER_SNEAK_SPEED;
+            sprintSpeed = WATER_SPRINT_SPEED;
+        }
+        else
+        {
+            speed = DEFAULT_SPEED;
+            sneakSpeed = DEFAULT_SNEAK_SPEED;
+            sprintSpeed = DEFAULT_SPRINT_SPEED;
+        }
+    }
+
     // ==== Movement binds ====
     if (keyInput->isKeybindHeld(keybinds->forward))
         vecteurDirection += cameraFrontNoUp;
@@ -80,38 +88,36 @@ void Character::listenAction(float dt)
         vecteurDirection -= cameraRightNoUp;
     if (keyInput->isKeybindHeld(keybinds->jump))
         vecteurDirection += VEC_UP;
-
-    if (isInWater)
-    {
-        vecteurDirection *= this->speed * 0.5f * dt; // Slow down in water
     
+    if (gamemode == GAMEMODE_SPECTATOR || gamemode == GAMEMODE_CREATIVE)
+    {
+        if (keyInput->isKeybindHeld(keybinds->sneak))
+            vecteurDirection -= VEC_UP;
+    }
+
+    if (glm::length(vecteurDirection) > 0.01f)
+    {
+        vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
+    }
+
+
+    if (keyInput->isKeybindHeld(keybinds->sneak)  && this->gamemode == GAMEMODE_SURVIVAL)
+    {
+        vecteurDirection *= this->sneakSpeed * dt;
+        this->sneaking = true;
+        this->sprinting = false;
+    }
+    else if (keyInput->isKeybindHeld(keybinds->sprint) && this->gamemode != GAMEMODE_SPECTATOR)
+    {
+        vecteurDirection *= this->sprintSpeed * dt;
+        this->sneaking = false;
+        this->sprinting = true;
     }
     else
     {
-
-        if (glm::length(vecteurDirection) > 0.01f)
-        {
-            vecteurDirection = glm::normalize(vecteurDirection); // normalize to not go faster on diagonals
-        }
-
-        if (keyInput->isKeybindHeld(keybinds->sneak) && this->gamemode != GAMEMODE_SPECTATOR)
-        {
-            vecteurDirection *= this->sneakSpeed * dt;
-            this->sneaking = true;
-            this->sprinting = false;
-        }
-        else if (keyInput->isKeybindHeld(keybinds->sprint) && this->gamemode != GAMEMODE_SPECTATOR)
-        {
-            vecteurDirection *= this->sprintSpeed * dt;
-            this->sneaking = false;
-            this->sprinting = true;
-        }
-        else
-        {
-            vecteurDirection *= this->speed * dt;
-            this->sneaking = false;
-            this->sprinting = false;
-        }
+        vecteurDirection *= this->speed * dt;
+        this->sneaking = false;
+        this->sprinting = false;
     }
 
     updateCamera();
@@ -249,8 +255,7 @@ void Character::updateClosestBlock(BlocDatabase &db)
                     int id = chunks[i]->m_cubes[x][y][z];
                     if (db.isAir(id))
                         continue; // si c'est de l'air on skip
-                    glm::vec3 pos = origins[i] + glm::vec3(x, y,
-                                                           z); // on récupère la position du bloc -> chunckTransform + position du bloc
+                    glm::vec3 pos = origins[i] + glm::vec3(x, y, z); // on récupère la position du bloc -> chunckTransform + position du bloc
 
                     // on vérifie si le rayon intersecte le bloc
                     int face = ray.rayIntersectsAABBFace(ray, pos, pos + glm::vec3(1.f), maxInteractionDistance);
