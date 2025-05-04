@@ -143,7 +143,7 @@ void VoxelChunk::generateMesh() {
                     // Check all the adjacent cubes to see if they are air or leaves
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
                     if (opaqueNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
+                        addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
@@ -151,7 +151,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (opaqueNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
+                        addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
@@ -159,7 +159,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (opaqueNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
+                        addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
@@ -167,7 +167,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (opaqueNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z);
+                        addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], BLOC_TOP, x, y, z);
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
@@ -175,7 +175,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (opaqueNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
+                        addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
@@ -183,7 +183,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (opaqueNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_opaqueMesh.vertices, m_opaqueMesh.normals, m_opaqueMesh.triangles, m_opaqueMesh.uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
+                        addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], BLOC_BACK, x, y, z);
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
                         m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
@@ -209,7 +209,7 @@ void VoxelChunk::generateMesh() {
                     // Check all the adjacent cubes to see if they are air or leaves
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
                     if (transparentNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
+                        addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], BLOC_LEFT, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_LEFT));
@@ -217,7 +217,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (transparentNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
+                        addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], BLOC_RIGHT, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_RIGHT));
@@ -225,7 +225,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (transparentNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
+                        addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], BLOC_BOTTOM, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BOTTOM));
@@ -233,7 +233,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (transparentNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_TOP, x, y, z, m_cubes[x][y][z] == WATER && getBlocIncludingNeighbors(x, y + 1, z) != WATER);
+                        addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], BLOC_TOP, x, y, z, m_cubes[x][y][z] == WATER && getBlocIncludingNeighbors(x, y + 1, z) != WATER);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_TOP));
@@ -241,7 +241,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (transparentNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
+                        addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], BLOC_FRONT, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_FRONT));
@@ -249,7 +249,7 @@ void VoxelChunk::generateMesh() {
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (transparentNeighborCheck(neighbor)) {
-                        addSquareGeometry(m_transparentMesh.vertices, m_transparentMesh.normals, m_transparentMesh.triangles, m_transparentMesh.uvs, m_cubes[x][y][z], BLOC_BACK, x, y, z);
+                        addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], BLOC_BACK, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, BLOC_BACK));

@@ -41,16 +41,16 @@ class BlockData {
 public:
     int id = 255;
     std::string name = "Error";
-    float xTexSide = 15.0f * TEXTUREATLAS_UNIT;
-    float yTexSide = 15.0f * TEXTUREATLAS_UNIT;
-    float xTexTop = 15.0f * TEXTUREATLAS_UNIT;
-    float yTexTop = 15.0f * TEXTUREATLAS_UNIT;
-    float xTexBottom = 15.0f * TEXTUREATLAS_UNIT;
-    float yTexBottom = 15.0f * TEXTUREATLAS_UNIT;
-    float opaque = 1.0f;
-    bool solid = true;
-    bool breakable = false;
-    int lightLevel = 0;
+    float xTexSide = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the side texture
+    float yTexSide = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the side texture
+    float xTexTop = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the top texture
+    float yTexTop = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the top texture
+    float xTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the bottom texture
+    float yTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the bottom texture
+    float opaque = 1.0f; // Opacity of the block (1.0f = opaque, 0.0f = transparent)
+    bool solid = true; // True if the block is solid (can be walked on)
+    bool breakable = false; // True if the block can be broken in survival
+    int lightLevel = 0; // Light level of the block (0-15), 0 = no light, 15 = full light
 
     BlockData() = default;
 
