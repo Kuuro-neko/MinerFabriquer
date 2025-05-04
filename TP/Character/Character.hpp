@@ -14,14 +14,7 @@
 #include <TP/Input/KeyBinds.hpp>
 #include "vector"
 
-#define MAX_BREAK_COOLDOWN 0.3f
-#define MAX_PLACE_COOLDOWN 0.3f
-
-#define GAMEMODE_CREATIVE 0
-#define GAMEMODE_SURVIVAL 1
-#define GAMEMODE_SPECTATOR 2
-
-#define DEFAULT_SPEED 2.4f
+#include <Defines.hpp>
 
 class Character : public SceneNode {
 
@@ -82,9 +75,9 @@ private:
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
 
-    float speed = 2.4f;
-    float sneakSpeed = 1.295f;
-    float sprintSpeed = 3.1f;
+    float speed = DEFAULT_SPEED;
+    float sneakSpeed = DEFAULT_SNEAK_SPEED;
+    float sprintSpeed = DEFAULT_SPRINT_SPEED;
     float maxInteractionDistance = 6.f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();

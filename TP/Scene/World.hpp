@@ -11,14 +11,7 @@
 
 #include <TP/Scene/ChunkColumn.hpp>
 
-#define CHUNK_SIZE 16
-#define BLOC_SIZE 1
-
-#define OUT_OF_BOUNDS_BLOC -2
-
-#define GENERATION_SIZE_X 16
-#define GENERATION_SIZE_Y 8
-#define GENERATION_SIZE_Z 16
+#include <Defines.hpp>
 
 class Character;
 

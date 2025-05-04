@@ -134,6 +134,13 @@ void VoxelMeshObject::initializeBuffers() {
     glEnableVertexAttribArray(3);
     glVertexAttribIPointer(3, 1, GL_INT, 0, (void*)0);
 
+    // AO buffer
+    glGenBuffers(1, &aobuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, aobuffer);
+    glBufferData(GL_ARRAY_BUFFER, ao.size() * sizeof(float), ao.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
     // Element buffer
     glGenBuffers(1, &elementbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);

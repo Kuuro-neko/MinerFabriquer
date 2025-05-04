@@ -3,8 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <TP/Scene/BlocTypes.hpp>
-
-#define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
+#include <Defines.hpp>
 
 /**
  * @brief Add an offset to the last 4 vertices in the vertices vector
@@ -51,17 +50,17 @@ void addUvs(std::vector<glm::vec2> &uvs, std::pair<float, float> texCoords) {
 
 void addNormals(std::vector<glm::vec3> &normals, unsigned char face) {
     glm::vec3 normal;
-    if (face & BLOC_FRONT) {
+    if (face & FACE_SOUTH) {
         normal = glm::vec3(0.0f, 0.0f, -1.0f);
-    } else if (face & BLOC_BACK) {
+    } else if (face & FACE_NORTH) {
         normal = glm::vec3(0.0f, 0.0f, 1.0f);
-    } else if (face & BLOC_LEFT) {
+    } else if (face & FACE_EAST) {
         normal = glm::vec3(-1.0f, 0.0f, 0.0f);
-    } else if (face & BLOC_RIGHT) {
+    } else if (face & FACE_WEST) {
         normal = glm::vec3(1.0f, 0.0f, 0.0f);
-    } else if (face & BLOC_TOP) {
+    } else if (face & FACE_TOP) {
         normal = glm::vec3(0.0f, 1.0f, 0.0f);
-    } else if (face & BLOC_BOTTOM) {
+    } else if (face & FACE_BOTTOM) {
         normal = glm::vec3(0.0f, -1.0f, 0.0f);
     }
     normals.push_back(normal);
@@ -70,82 +69,82 @@ void addNormals(std::vector<glm::vec3> &normals, unsigned char face) {
     normals.push_back(normal);
 }
 
-void addSquareGeometry(std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals, std::vector<unsigned short> &triangles, std::vector<glm::vec2> &uvs, int bloc, unsigned char face, float x_offset, float y_offset, float z_offset, bool lowerTop, float size) {
-    int vertexInsertIndex = vertices.size();
+void addSquareGeometry(VoxelMeshObject &mesh, int bloc, unsigned char face, float x_offset, float y_offset, float z_offset, bool lowerTop, float size) {
+    int vertexInsertIndex = mesh.vertices.size();
     BlocDatabase &blocDatabase = BlocDatabase::getInstance();
-    if (face & BLOC_FRONT) {
-        vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-        vertices.push_back(glm::vec3(size, 0.0f, 0.0f));
-        vertices.push_back(glm::vec3(0.0f, size, 0.0f));
-        vertices.push_back(glm::vec3(size, size, 0.0f));
+    if (face & FACE_SOUTH) {
+        mesh.vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+        mesh.vertices.push_back(glm::vec3(size, 0.0f, 0.0f));
+        mesh.vertices.push_back(glm::vec3(0.0f, size, 0.0f));
+        mesh.vertices.push_back(glm::vec3(size, size, 0.0f));
 
-        addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
-        addQuadToTriangles(triangles, vertexInsertIndex);
+        addOffsetToLast4Vertices(mesh.vertices, x_offset, y_offset, z_offset);
+        addQuadToTriangles(mesh.triangles, vertexInsertIndex);
         
-        addUvs(uvs, blocDatabase.getTexCoords(bloc, BLOC_FRONT));
-        addNormals(normals, BLOC_FRONT);
+        addUvs(mesh.uvs, blocDatabase.getTexCoords(bloc, FACE_SOUTH));
+        addNormals(mesh.normals, FACE_SOUTH);
     }
     
-    if (face & BLOC_BACK) {
-        vertices.push_back(glm::vec3(size, 0.0f, size));
-        vertices.push_back(glm::vec3(0.0f, 0.0f, size));
-        vertices.push_back(glm::vec3(size, size, size));
-        vertices.push_back(glm::vec3(0.0f, size, size));
+    if (face & FACE_NORTH) {
+        mesh.vertices.push_back(glm::vec3(size, 0.0f, size));
+        mesh.vertices.push_back(glm::vec3(0.0f, 0.0f, size));
+        mesh.vertices.push_back(glm::vec3(size, size, size));
+        mesh.vertices.push_back(glm::vec3(0.0f, size, size));
 
-        addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
-        addQuadToTriangles(triangles, vertexInsertIndex);
-        addUvs(uvs, blocDatabase.getTexCoords(bloc, BLOC_BACK));
-        addNormals(normals, BLOC_BACK);
+        addOffsetToLast4Vertices(mesh.vertices, x_offset, y_offset, z_offset);
+        addQuadToTriangles(mesh.triangles, vertexInsertIndex);
+        addUvs(mesh.uvs, blocDatabase.getTexCoords(bloc, FACE_NORTH));
+        addNormals(mesh.normals, FACE_NORTH);
     }
     
-    if (face & BLOC_LEFT) {
-        vertices.push_back(glm::vec3(0.0f, 0.0f, size));
-        vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-        vertices.push_back(glm::vec3(0.0f, size, size));
-        vertices.push_back(glm::vec3(0.0f, size, 0.0f));
+    if (face & FACE_EAST) {
+        mesh.vertices.push_back(glm::vec3(0.0f, 0.0f, size));
+        mesh.vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+        mesh.vertices.push_back(glm::vec3(0.0f, size, size));
+        mesh.vertices.push_back(glm::vec3(0.0f, size, 0.0f));
 
-        addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
-        addQuadToTriangles(triangles, vertexInsertIndex);
-        addUvs(uvs, blocDatabase.getTexCoords(bloc, BLOC_LEFT));
-        addNormals(normals, BLOC_LEFT);
+        addOffsetToLast4Vertices(mesh.vertices, x_offset, y_offset, z_offset);
+        addQuadToTriangles(mesh.triangles, vertexInsertIndex);
+        addUvs(mesh.uvs, blocDatabase.getTexCoords(bloc, FACE_EAST));
+        addNormals(mesh.normals, FACE_EAST);
     }
     
-    if (face & BLOC_RIGHT) {
-        vertices.push_back(glm::vec3(size, 0.0f, 0.0f));
-        vertices.push_back(glm::vec3(size, 0.0f, size));
-        vertices.push_back(glm::vec3(size, size, 0.0f));
-        vertices.push_back(glm::vec3(size, size, size));
+    if (face & FACE_WEST) {
+        mesh.vertices.push_back(glm::vec3(size, 0.0f, 0.0f));
+        mesh.vertices.push_back(glm::vec3(size, 0.0f, size));
+        mesh.vertices.push_back(glm::vec3(size, size, 0.0f));
+        mesh.vertices.push_back(glm::vec3(size, size, size));
 
-        addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
-        addQuadToTriangles(triangles, vertexInsertIndex);
-        addUvs(uvs, blocDatabase.getTexCoords(bloc, BLOC_RIGHT));
-        addNormals(normals, BLOC_RIGHT);
+        addOffsetToLast4Vertices(mesh.vertices, x_offset, y_offset, z_offset);
+        addQuadToTriangles(mesh.triangles, vertexInsertIndex);
+        addUvs(mesh.uvs, blocDatabase.getTexCoords(bloc, FACE_WEST));
+        addNormals(mesh.normals, FACE_WEST);
     }
-    if (face & BLOC_TOP) {
+    if (face & FACE_TOP) {
         float sizeY = size;
         if (lowerTop) {
             sizeY *= 0.875f;
         }
-        vertices.push_back(glm::vec3(0.0f, sizeY, 0.0f));
-        vertices.push_back(glm::vec3(size, sizeY, 0.0f));
-        vertices.push_back(glm::vec3(0.0f, sizeY, size));
-        vertices.push_back(glm::vec3(size, sizeY, size));
+        mesh.vertices.push_back(glm::vec3(0.0f, sizeY, 0.0f));
+        mesh.vertices.push_back(glm::vec3(size, sizeY, 0.0f));
+        mesh.vertices.push_back(glm::vec3(0.0f, sizeY, size));
+        mesh.vertices.push_back(glm::vec3(size, sizeY, size));
 
-        addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
-        addQuadToTriangles(triangles, vertexInsertIndex);
-        addUvs(uvs, blocDatabase.getTexCoords(bloc, BLOC_TOP));
-        addNormals(normals, BLOC_TOP);
+        addOffsetToLast4Vertices(mesh.vertices, x_offset, y_offset, z_offset);
+        addQuadToTriangles(mesh.triangles, vertexInsertIndex);
+        addUvs(mesh.uvs, blocDatabase.getTexCoords(bloc, FACE_TOP));
+        addNormals(mesh.normals, FACE_TOP);
     }
-    if (face & BLOC_BOTTOM) {
-        vertices.push_back(glm::vec3(size, 0.0f, size));
-        vertices.push_back(glm::vec3(size, 0.0f, 0.0f));
-        vertices.push_back(glm::vec3(0.0f, 0.0f, size));
-        vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+    if (face & FACE_BOTTOM) {
+        mesh.vertices.push_back(glm::vec3(size, 0.0f, size));
+        mesh.vertices.push_back(glm::vec3(size, 0.0f, 0.0f));
+        mesh.vertices.push_back(glm::vec3(0.0f, 0.0f, size));
+        mesh.vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 
-        addOffsetToLast4Vertices(vertices, x_offset, y_offset, z_offset);
-        addQuadToTriangles(triangles, vertexInsertIndex);
-        addUvs(uvs, blocDatabase.getTexCoords(bloc, BLOC_BOTTOM));
-        addNormals(normals, BLOC_BOTTOM);
+        addOffsetToLast4Vertices(mesh.vertices, x_offset, y_offset, z_offset);
+        addQuadToTriangles(mesh.triangles, vertexInsertIndex);
+        addUvs(mesh.uvs, blocDatabase.getTexCoords(bloc, FACE_BOTTOM));
+        addNormals(mesh.normals, FACE_BOTTOM);
     }
 }
 
