@@ -373,7 +373,7 @@ void World::updateVisibleChunk(Frustrum &frustum) {
 void World::setCamera(Camera &camera) {
     this->camera = &camera;
 }
-
+// function that manage the collision for the block collisiing to hte bounding boxe of the character
 void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPosition) {
     // Bounding box du personnage
     glm::vec3 minBB = character.getMinBoundingBox();
@@ -511,28 +511,30 @@ void World::resolveCollisions(Character &character, World *world) {
         character.move(character.vecteurDirection);
         return;
     }
-    //TODO au lieu de faire la vérification dans world, on fait un broadphase -> on vérifie quel chunk
-    // sont intersecté par le personnage et on fait la recherche dans ces deux chunks
-    // On peut aussi ajouter un octree pour optimiser la recherche
-    glm::vec3 characterPosition = character.getWorldPosition();
 
-
-// Récupération de la bounding box du personnage
     glm::vec3 minBB = character.getMinBoundingBox();
     glm::vec3 maxBB = character.getMaxBoundingBox();
 
-// Parcours des blocs proches de la bounding box du personnage
-    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
-        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
-            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
-                // Vérification des blocs dans le chunk actuel et le chunk proche
-                if(world->getBloc(x, y, z) != AIR) {
-                    resolveCollisionForBlock(character, glm::vec3(x, y, z));
+    // Parcours des blocs proches de la bounding box du personnage
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x)
+    {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y)
+        {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z)
+            {
+                int blockType = world->getBloc(x, y, z);
+
+                // Ignore les blocs d'air et d'eau
+                if (blockType == AIR || blockType == WATER)
+                {
+                    continue;
                 }
+
+                // Résolution des collisions pour les blocs solides
+                resolveCollisionForBlock(character, glm::vec3(x, y, z));
             }
         }
     }
-
 
     // Application du mouvement du personnage
     character.move(character.vecteurDirection);

@@ -53,6 +53,7 @@ public:
     bool sprinting = false;
 
     void resolveGravity(float &deltaTime);
+    bool isInWater = false;
 
 private:
 
@@ -81,7 +82,7 @@ private:
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
 
-    const float gravity = -9.81f;
+    float gravity = -9.81f;
 
     std::vector<glm::vec3> boundingBox;
     glm::vec3 size;
