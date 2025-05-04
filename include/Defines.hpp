@@ -90,17 +90,17 @@
 // The XYZ deltas are used to calculate the AO for each 4 vertices of a cube face, hence the 4x3 arrays per face
 
 constexpr short AO_Front_deltas [4][3] = {
-    { -1, -1, -1 },
     {  1, -1, -1 },
+    { -1, -1, -1 },
+    {  1,  1, -1 },
     { -1,  1, -1 },
-    {  1,  1, -1 }
 };
 
 constexpr short AO_Back_deltas [4][3] = {
     {  1, -1,  1 },
     { -1, -1,  1 },
     {  1,  1,  1 },
-    { -1,  1,  1 }
+    { -1,  1,  1 },
 };
 
 constexpr short AO_Left_deltas [4][3] = {

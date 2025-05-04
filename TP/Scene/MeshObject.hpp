@@ -50,7 +50,7 @@ class VoxelMeshObject : public MeshObject {
         GLuint lightbuffer;
         GLuint aobuffer;
         std::vector<int> lights;
-        std::vector<int> ao;
+        std::vector<float> ao;
         VoxelMeshObject() : lightbuffer(0), aobuffer(0), MeshObject() {}
         ~VoxelMeshObject() {}
     

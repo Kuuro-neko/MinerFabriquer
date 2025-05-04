@@ -13,7 +13,7 @@ out vec4 frag_color;
 in vec3 vNormal;
 in vec3 pos;
 flat in int vLights;
-flat in int vAO;
+in float vAO;
 
 uniform int displayNormals;
 uniform vec3 camPos;
@@ -164,6 +164,8 @@ void main(){
                 color = mix(color, vec3(0.0), shade*0.4);
 
                 color = mix(color, vec3(0.0), 1.0 - clamp(float(vLights) / 15.0 * 0.8 + 0.2, 0.2, 1.0));
+
+                color = mix(color, vec3(0.0), 1.0 - clamp(vAO / 3.0 * 0.8 + 0.2, 0.2, 1.0));
 
                 frag_color = vec4(color, albedoTex.a);
            

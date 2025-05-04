@@ -24,7 +24,7 @@ public:
     float xTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the bottom texture
     float yTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the bottom texture
     float opaque = 1.0f; // Opacity of the block (1.0f = opaque, 0.0f = transparent)
-    bool solid = true; // True if the block is solid (can be walked on)
+    float solid = 1.0f; // True if the block is solid (can be walked on)
     bool breakable = false; // True if the block can be broken in survival
     int lightLevel = 0; // Light level of the block (0-15), 0 = no light, 15 = full light
 
@@ -133,6 +133,10 @@ public:
     }
 
     bool isSolid(int id) {
+        return m_blocs[id].solid==1.0f;
+    }
+
+    float solidValue(int id) {
         return m_blocs[id].solid;
     }
 
