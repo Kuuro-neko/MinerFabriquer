@@ -523,12 +523,12 @@ void Character::resolveGravity(float &deltaTime)
     if (isInWater)
     {
         // Gravité réduite dans l’eau
-        velocity.y += -gravity * 0.1f * deltaTime;
+        velocity.y += -gravity * 0.3f * deltaTime;
 
         // Saut dans l’eau (remontée)
         if (keyInput->isKeybindHeld(keybinds->jump))
         {
-            velocity.y -= gravity * 0.3f * deltaTime;
+            velocity.y -= gravity * 0.6f * deltaTime;
         }
         if (keyInput->isKeybindHeld(keybinds->sneak))
         {
