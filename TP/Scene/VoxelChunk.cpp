@@ -297,7 +297,7 @@ void VoxelChunk::generateMesh() {
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
-                        m_transparentMesh.ao.push_back(0);
+                        addAOValues(x, y, z, FACE_EAST, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (transparentNeighborCheck(neighbor)) {
@@ -306,7 +306,7 @@ void VoxelChunk::generateMesh() {
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
-                        m_transparentMesh.ao.push_back(0);
+                        addAOValues(x, y, z, FACE_WEST, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (transparentNeighborCheck(neighbor)) {
@@ -315,7 +315,7 @@ void VoxelChunk::generateMesh() {
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
-                        m_transparentMesh.ao.push_back(0);
+                        addAOValues(x, y, z, FACE_BOTTOM, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (transparentNeighborCheck(neighbor)) {
@@ -324,7 +324,7 @@ void VoxelChunk::generateMesh() {
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
-                        m_transparentMesh.ao.push_back(0);
+                        addAOValues(x, y, z, FACE_TOP, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (transparentNeighborCheck(neighbor)) {
@@ -333,7 +333,7 @@ void VoxelChunk::generateMesh() {
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
-                        m_transparentMesh.ao.push_back(0);
+                        addAOValues(x, y, z, FACE_SOUTH, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (transparentNeighborCheck(neighbor)) {
@@ -342,7 +342,7 @@ void VoxelChunk::generateMesh() {
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
-                        m_transparentMesh.ao.push_back(0);
+                        addAOValues(x, y, z, FACE_NORTH, m_transparentMesh.ao);
                     }
                 }
             }

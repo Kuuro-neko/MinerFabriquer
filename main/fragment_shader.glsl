@@ -21,6 +21,8 @@ uniform float time;
 
 float PI = 3.14159265358979323846;
 float halfDayDuration = 12.0;
+float minAO = 0.25;
+float minLight = 0.2;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
@@ -163,9 +165,9 @@ void main(){
 
                 color = mix(color, vec3(0.0), shade*0.4);
 
-                color = mix(color, vec3(0.0), 1.0 - clamp(float(vLights) / 15.0 * 0.8 + 0.2, 0.2, 1.0));
+                color = mix(color, vec3(0.0), 1.0 - clamp(float(vLights) / 15.0 * 0.8 + minLight, minLight, 1.0));
 
-                color = mix(color, vec3(0.0), 1.0 - clamp(vAO / 3.0 * 0.8 + 0.2, 0.2, 1.0));
+                color = mix(color, vec3(0.0), 1.0 - clamp(vAO / 3.0 * 0.75 + minAO, minAO, 1.0));
 
                 frag_color = vec4(color, albedoTex.a);
            
