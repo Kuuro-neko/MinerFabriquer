@@ -11,7 +11,7 @@
  * 
  * @param mesh The chunk's mesh object
  * @param bloc You can use a macro such as : AIR, STONE, DIRT, GRASS, PLANKS_OAK, ...
- * @param face defined macro you can use : BLOC_FRONT, BLOC_BACK, BLOC_LEFT, BLOC_RIGHT, BLOC_TOP, BLOC_BOTTOM
+ * @param face defined macro you can use : FACE_SOUTH, FACE_NORTH, FACE_EAST, FACE_WEST, FACE_TOP, FACE_BOTTOM
  * @param x_offset offset on the x axis relative to the chunk's position
  * @param y_offset offset on the y axis relative to the chunk's position
  * @param z_offset offset on the z axis relative to the chunk's position

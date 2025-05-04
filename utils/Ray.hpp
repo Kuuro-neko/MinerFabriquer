@@ -71,24 +71,24 @@ public:
                 return -1;
             else {
                 if (tmax <= maxDistance) {
-                    if (t[0] == tmin) return BLOC_LEFT;
-                    if (t[1] == tmin) return BLOC_RIGHT;
-                    if (t[2] == tmin) return BLOC_TOP;
-                    if (t[3] == tmin) return BLOC_BOTTOM;
-                    if (t[4] == tmin) return BLOC_BACK;
-                    if (t[5] == tmin) return BLOC_FRONT;
+                    if (t[0] == tmin) return FACE_EAST;
+                    if (t[1] == tmin) return FACE_WEST;
+                    if (t[2] == tmin) return FACE_TOP;
+                    if (t[3] == tmin) return FACE_BOTTOM;
+                    if (t[4] == tmin) return FACE_NORTH;
+                    if (t[5] == tmin) return FACE_SOUTH;
                 } else {
                     return -1;
                 }
             }
         } else {
             if (tmin <= maxDistance) {
-                if (t[0] == tmin) return BLOC_LEFT;
-                if (t[1] == tmin) return BLOC_RIGHT;
-                if (t[2] == tmin) return BLOC_TOP;
-                if (t[3] == tmin) return BLOC_BOTTOM;
-                if (t[4] == tmin) return BLOC_BACK;
-                if (t[5] == tmin) return BLOC_FRONT;
+                if (t[0] == tmin) return FACE_EAST;
+                if (t[1] == tmin) return FACE_WEST;
+                if (t[2] == tmin) return FACE_TOP;
+                if (t[3] == tmin) return FACE_BOTTOM;
+                if (t[4] == tmin) return FACE_NORTH;
+                if (t[5] == tmin) return FACE_SOUTH;
             } else
                 return -1;
         }

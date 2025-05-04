@@ -11,9 +11,9 @@
 
 #define OUT_OF_BOUNDS_BLOC -2
 
-#define GENERATION_SIZE_X 16 // X size of initial generation
+#define GENERATION_SIZE_X 4 // X size of initial generation
 #define GENERATION_SIZE_Y 8 // Y size of initial generation
-#define GENERATION_SIZE_Z 16 // Z size of initial generation
+#define GENERATION_SIZE_Z 4 // Z size of initial generation
 
 // ===== Bloc database ===== //
 
@@ -36,12 +36,12 @@
 #define ERROR_BLOC 255
 
 // Block face, bit mask for each side
-#define BLOC_FRONT 1
-#define BLOC_BACK 2
-#define BLOC_LEFT 4
-#define BLOC_RIGHT 8
-#define BLOC_TOP 16
-#define BLOC_BOTTOM 32
+#define FACE_SOUTH 1
+#define FACE_NORTH 2
+#define FACE_EAST 4
+#define FACE_WEST 8
+#define FACE_TOP 16
+#define FACE_BOTTOM 32
 
 // ===== Biomes ===== //
 
@@ -89,28 +89,28 @@
 // For each vertex, the AO is 3 - (side1 + side2 + corner)
 // The XYZ deltas are used to calculate the AO for each 4 vertices of a cube face, hence the 4x3 arrays per face
 
-constexpr short AO_Front_deltas [4][3] = {
-    {  1, -1, -1 },
+constexpr short AO_South_deltas [4][3] = {
     { -1, -1, -1 },
-    {  1,  1, -1 },
+    {  1, -1, -1 },
     { -1,  1, -1 },
+    {  1,  1, -1 },
 };
 
-constexpr short AO_Back_deltas [4][3] = {
+constexpr short AO_North_deltas [4][3] = {
     {  1, -1,  1 },
     { -1, -1,  1 },
     {  1,  1,  1 },
     { -1,  1,  1 },
 };
 
-constexpr short AO_Left_deltas [4][3] = {
-    { -1, -1, -1 },
+constexpr short AO_East_deltas [4][3] = {
     { -1, -1,  1 },
+    { -1, -1, -1 },
+    { -1,  1,  1 },
     { -1,  1, -1 },
-    { -1,  1,  1 }
 };
 
-constexpr short AO_Right_deltas [4][3] = {
+constexpr short AO_West_deltas [4][3] = {
     {  1, -1, -1 },
     {  1, -1,  1 },
     {  1,  1, -1 },

@@ -52,7 +52,7 @@ public:
     /**
      * @brief Get the Tex Coords object from a side
      * 
-     * @param side defined macro you can use : BLOC_FRONT, BLOC_BACK, BLOC_LEFT, BLOC_RIGHT, BLOC_TOP, BLOC_BOTTOM
+     * @param side defined macro you can use : FACE_SOUTH, FACE_NORTH, FACE_EAST, FACE_WEST, FACE_TOP, FACE_BOTTOM
      * @return std::pair<float, float> 
      */
     std::pair<float, float> getTexCoords(unsigned char side);
@@ -148,7 +148,7 @@ public:
      * @brief Get the Tex Coords object
      * 
      * @param id The bloc id, you can use macros such as : AIR, STONE, DIRT, GRASS, PLANKS_OAK, ...
-     * @param side defined macro you can use : BLOC_FRONT, BLOC_BACK, BLOC_LEFT, BLOC_RIGHT, BLOC_TOP, BLOC_BOTTOM
+     * @param side defined macro you can use : FACE_SOUTH, FACE_NORTH, FACE_EAST, FACE_WEST, FACE_TOP, FACE_BOTTOM
      * @return std::pair<float, float> 
      */
     std::pair<float, float> getTexCoords(int id, unsigned char side);

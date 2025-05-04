@@ -264,22 +264,22 @@ void Character::putBlock(BlocDatabase &database) {
     }
     glm::vec3 position = glm::vec3(blocPlusProche.x, blocPlusProche.y, blocPlusProche.z);
     switch (facePlusProche) {
-        case BLOC_LEFT:
+        case FACE_EAST:
             position.x -= 1;
             break;
-        case BLOC_RIGHT:
+        case FACE_WEST:
             position.x += 1;
             break;
-        case BLOC_BOTTOM:
+        case FACE_BOTTOM:
             position.y += 1;
             break;
-        case BLOC_TOP:
+        case FACE_TOP:
             position.y -= 1;
             break;
-        case BLOC_FRONT:
+        case FACE_SOUTH:
             position.z += 1;
             break;
-        case BLOC_BACK:
+        case FACE_NORTH:
             position.z -= 1;
             break;
     }
