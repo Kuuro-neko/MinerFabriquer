@@ -19,7 +19,7 @@ bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
     //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         //std::cout << "Error: Out of bounds" << std::endl;
-        return false;
+        return m_world->setBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
     }
     if (m_cubes[x][y][z] != AIR) {
         //std::cout << "Error: Block already set" << std::endl;

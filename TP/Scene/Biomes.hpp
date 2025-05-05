@@ -11,10 +11,12 @@ class Biome {
         int seed;
         std::mt19937 rng;
         std::uniform_int_distribution<int> random1000;
+        std::uniform_real_distribution<float> randomFloat;
     public:
         Biome(int groundLevel, FastNoiseLite* noise, int id, int seed) : groundLevel(groundLevel), noise(noise), id(id), seed(seed) {
             rng.seed(seed+id);
             random1000 = std::uniform_int_distribution<int>(0, 1000);
+            randomFloat = std::uniform_real_distribution<float>(0.0f, 1.0f);
         }
         
         /**
@@ -48,7 +50,9 @@ class Biome {
         inline int getGroundLevel() const { return groundLevel; }
         inline int getSeed() const { return seed; }
         inline int getRandom1000() { return random1000(rng); }
+        inline float getRandomFloat() { return randomFloat(rng); }
         inline FastNoiseLite* getNoise() const { return noise; }
+        inline std::mt19937& getRNG() { return rng; }
 };
 
 /// ================== ///
@@ -101,6 +105,7 @@ class IceBiome : public Biome {
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void addIceSpike(VoxelChunk* chunk, int x, int z, int baseHeight, int height, int radius);
 };
 
 class CristalPeaksBiome : public Biome {

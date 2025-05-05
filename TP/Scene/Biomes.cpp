@@ -22,11 +22,9 @@ void PlainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
 
 void PlainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
+    if (chunk->getBloc(x, baseHeight - 1, z) != GRASS) return;
+
     if (getRandom1000() < 10) { // 1% chance
-        int b = chunk->getBloc(x, baseHeight - 1, z);
-        if (b != GRASS) {
-            return;
-        }
         chunk->generationSetBloc(x, baseHeight - 1, z, DIRT);
         for (int y = 0; y < 3; y++) {
             chunk->generationSetBloc(x, baseHeight + y, z, LOG_OAK);
@@ -102,10 +100,9 @@ void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
 
 void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
+    if (chunk->getBloc(x, baseHeight - 1, z) == AIR) return;
+
     if (getRandom1000() < 1) {
-        if (chunk->getBloc(x, baseHeight - 1, z) == AIR) {
-            return;
-        }
         int height = 3 + (getRandom1000() % 4); // Random height between 3 and 5
         for (int y = 0; y < height; y++) {
             chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK);
@@ -170,11 +167,55 @@ void IceBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm
 
 void IceBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
+    if (chunk->getBloc(x, baseHeight - 1, z) == AIR) return;
+
+    float p = getRandomFloat();
+
+    if(p <= 0.0045f)  {
+        addIceSpike(chunk, x, z, baseHeight, getRandomFloat() * 8 + 4, 1); // Small spikes
+    } else if (p <= 0.0055f) {
+        addIceSpike(chunk, x, z, baseHeight, getRandomFloat() * 20 + 4, 1); // High spikes
+    }
 }
 
-/// ==================== ///
+void IceBiome::addIceSpike(VoxelChunk *chunk, int x, int z, int baseHeight, int height, int radius)
+{
+    int y = -2;
+    int rings = getRandom1000() % 4 + 3;
+    for (; y < 0; y++) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (std::abs(dx) + std::abs(dz) <= radius) chunk->setBloc(x + dx, baseHeight + y, z + dz, ICE); // Set the base of the spike
+            }
+        }
+    }
+    for (; y < height-1; y++) {
+        if (y % rings == 0) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    int delta = std::abs(dx) + std::abs(dz);
+                    if(getRandomFloat() <= 1.0f - float(delta)/float(5*radius)) chunk->setBloc(x + dx, baseHeight + y, z + dz, ICE); // Repetitive rings
+                }
+            }
+        } else {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (std::abs(dx) + std::abs(dz) <= radius) {
+                        int delta = std::abs(dx) + std::abs(dz);
+                        if(getRandomFloat() <= 1.0f - float(delta)/float(3*radius)) chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, ICE); // Normal radius
+                    }
+                }
+            }
+        }
+    }
+    // Set the top of the spike
+    chunk->generationSetBloc(x, baseHeight + y, z, ICE);
+    chunk->generationSetBloc(x, baseHeight + y + 1, z, ICE);
+}
+
+/// ============================= ///
 /// ===== CristalPeaksBiome ===== ///
-/// ==================== ///
+/// ============================= ///
 
 float CristalPeaksBiome::calculateHeight(float x, float z)
 {
