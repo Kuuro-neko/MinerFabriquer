@@ -369,7 +369,7 @@ int main(void) {
     // Cleanup VBO and shader
     root.cleanupBuffers();
     cubemapTexture.cleanupBuffers();
-    delete &hud;
+    // delete &hud;
 
     glDeleteProgram(programID);
 
