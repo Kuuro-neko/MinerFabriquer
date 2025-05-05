@@ -9,7 +9,7 @@
 #include "TP/Character/Character.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
-
+#include <TP/FileSystem/SaveManager.hpp>
 
 
 #define CHUNK_SIZE 16
@@ -127,6 +127,18 @@ void UpdateFPS() {
 }
 
 int main(void) {
+
+    SaveManager &saveManager1 = SaveManager::getInstance();
+    SaveManager &saveManager2 = SaveManager::getInstance();
+
+    if (&saveManager1 == &saveManager2)
+    {
+        std::cout << "Singleton fonctionne : les deux instances sont identiques." << std::endl;
+    }
+    else
+    {
+        std::cout << "Erreur : les instances sont différentes !" << std::endl;
+    }
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");

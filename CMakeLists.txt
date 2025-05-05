@@ -95,6 +95,8 @@ add_executable(MinerFabriquer
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
         TP/Input/KeyBinds.cpp
+        TP/FileSystem/SaveManager.cpp
+        TP/FileSystem/SaveManager.hpp
 
 )
 target_link_libraries(MinerFabriquer
