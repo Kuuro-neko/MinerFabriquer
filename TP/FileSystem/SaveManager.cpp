@@ -22,11 +22,20 @@ void SaveManager::loadPlayerData(Character &character, const std::string &filena
     unsigned char gamemode;
     unsigned char prev;
     float position[3];
-    // the file is not created yet -> we create it
-    if (!isPlayerDataFileExist(filename))
+   
+    std::cout << "most recent -> "<< getMostRecentSaveFolder() <<std::endl;
+    // no actual data -> create the folder
+    if (isSaveFolderEmpty())  
     {
         std::cout << "Player data file does not exist." << std::endl;
         std::cout << "Creating a new player data file." << std::endl;
+        std::string saveFolder = generateSaveFolderPath();
+        // Crée le dossier s'il n'existe pas encore
+        if (!std::filesystem::exists(saveFolder))
+        {
+            std::filesystem::create_directories(saveFolder);
+        }
+
         std::ofstream file(filename);
         std::ofstream ofs(filename, std::ios::binary);
 
@@ -70,10 +79,7 @@ void SaveManager::loadPlayerData(Character &character, const std::string &filena
     }
 }
 
-void SaveManager::readPlayerDataFromFile(const std::string &filename, Character &data)
-{
-}
-
+// create the folder if not exists and add the playerData.bin file with actual character data
 void SaveManager::saveCharacterFile(Character &data)
 {
     std::string saveFolder = generateSaveFolderPath();
@@ -171,7 +177,7 @@ bool SaveManager::isSaveFolderEmpty()
     return true; // Aucun fichier utile
 }
 
-// Function used to create the folder name YYYY-MM-DD based on the timestamp
+
 std::string SaveManager::getDate(long timestamp)
 {
     std::time_t time = static_cast<std::time_t>(timestamp);
@@ -183,7 +189,7 @@ std::string SaveManager::getDate(long timestamp)
     return std::string(buffer);
 }
 
-// Return the actual timestamp
+
 long SaveManager::getTimestamp()
 {
     return static_cast<long>(std::time(nullptr));
@@ -196,8 +202,46 @@ std::string SaveManager::generateSaveFolderPath()
     return fullPath.string(); // convert to std::string
 }
 
+std::string SaveManager::getMostRecentSaveFolder()
+{
+    const std::string saveDirectory = PATHSAVES;
+    namespace fs = std::filesystem;
 
+    fs::path dirPath(saveDirectory);
+    if (!fs::exists(dirPath) || !fs::is_directory(dirPath))
+    {
+        return ""; // Return an empty string if the directory doesn't exist
+    }
 
+    std::string mostRecentFolder;
+    std::time_t mostRecentTime = 0;
+
+    for (const auto &entry : fs::directory_iterator(dirPath))
+    {
+        if (entry.is_directory())
+        {
+            std::string folderName = entry.path().filename().string();
+            if (folderName.rfind("save-", 0) == 0) // Check if the folder name starts with "save-"
+            {
+                std::string timestampStr = folderName.substr(5); // Extract the timestamp part
+                std::tm tm = {};
+                std::istringstream ss(timestampStr);
+                ss >> std::get_time(&tm, "%Y-%m-%d-%H-%M");
+                if (!ss.fail())
+                {
+                    std::time_t folderTime = std::mktime(&tm);
+                    if (folderTime > mostRecentTime)
+                    {
+                        mostRecentTime = folderTime;
+                        mostRecentFolder = entry.path().string();
+                    }
+                }
+            }
+        }
+    }
+
+    return mostRecentFolder;
+}
 
 /* great way to test
 SaveManager &saveManager1 = SaveManager::getInstance();

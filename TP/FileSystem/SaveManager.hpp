@@ -50,18 +50,17 @@ public:
     // load the player data from the file -> default values if the file does not exist, file's values if it does
     void loadPlayerData(Character &character, const std::string &filename);
 
-    // read and write the player data from the existing file
-    void readPlayerDataFromFile(const std::string &filename, Character &data);
-
+   
     // character data save
     void saveCharacterFile(Character &data);
 
     // function that start the auto save thread and save the player data every X seconds
     void startAutoSave(Character &data);
     void stopAutoSave();
-
+    // Functions used to create the folder name YYYY-MM-DD based on the timestamp
     std::string getDate(long timestamp);
     long getTimestamp();
     std::string generateSaveFolderPath();
+
     std::string getMostRecentSaveFolder();
 };
