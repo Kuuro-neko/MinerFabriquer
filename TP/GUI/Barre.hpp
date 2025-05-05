@@ -15,10 +15,14 @@ public:
     void render();
     void updateSize(int windowWidth, int windowHeight);
     void cleanupBuffers();
+    void setSelectedSlot(int selectedSlot);
+    int getSelectedSlot() const;
+    void nextSelectedSlot(int pos);
 
 private:
 
     std::vector<glm::vec2> slots;
+    int m_selectedSlot = 0;
 
     // VAO : Vertex Array Object — stocke l'état de configuration des attributs de vertex (liaison entre les VBO et les shaders)
     // VBO : Vertex Buffer Object — contient les données des sommets (positions, normales, UVs, etc.)

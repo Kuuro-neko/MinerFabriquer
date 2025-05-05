@@ -216,6 +216,7 @@ int main(void) {
 
 
     HUD hud = HUD(windowWidth, windowHeight);
+    character.setHUD(&hud);
 
     GLint success;
     GLchar infoLog[512];
@@ -351,7 +352,6 @@ int main(void) {
         
 
         character.drawBoundingBox();
-
 
 
 

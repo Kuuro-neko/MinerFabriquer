@@ -1,6 +1,7 @@
 #include "Barre.hpp"
 #include "common/shader.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 
 Barre::Barre(int windowWidth, int windowHeight)
@@ -71,11 +72,13 @@ void Barre::render() {
     glUniform2f(resUniform, m_windowWidth, m_windowHeight);
 
     GLuint modelLoc = glGetUniformLocation(shaderID, "u_model");
+    GLuint isSelectedUniform = glGetUniformLocation(shaderID, "u_isSelected");
 
     glBindVertexArray(VAO);
-    for (const auto& slot : slots) {
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(slot[0], slot[1], 0.0f));
+    for (int i = 0; i < slots.size(); ++i) {
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(slots[i][0], slots[i][1], 0.0f));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+        glUniform1i(isSelectedUniform, i == m_selectedSlot ? 1 : 0);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
@@ -92,4 +95,25 @@ void Barre::cleanupBuffers() {
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
     glDeleteProgram(shaderID);
+}
+
+void Barre::setSelectedSlot(int selectedSlot) {
+    m_selectedSlot = selectedSlot;
+}
+
+int Barre::getSelectedSlot() const {
+    return m_selectedSlot;
+}
+
+void Barre::nextSelectedSlot(int pos) {
+    const int size = static_cast<int>(slots.size());
+    if(pos<0){
+        m_selectedSlot = (m_selectedSlot - 1 + size) % size;
+    }else if (pos>0){
+        std::cout << "positif " << std::endl;
+
+        m_selectedSlot = (m_selectedSlot + 1) % size;
+    }
+    std::cout << "Selected slot: " << m_selectedSlot << std::endl;
+
 }

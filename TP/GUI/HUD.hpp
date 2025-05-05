@@ -14,6 +14,7 @@ public:
 
     void render();
     void updateWindowSize(int width, int height);
+    Barre* getBarre() { return m_barre; }
 
 private:
     int m_windowWidth;
