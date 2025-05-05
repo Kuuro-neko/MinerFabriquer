@@ -355,7 +355,7 @@ int main(void) {
 
 
 
-        hud.render();
+        if(character.isHUDVisible()) hud.render();
 
 
         // Swap buffers
