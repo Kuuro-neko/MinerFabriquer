@@ -22,6 +22,29 @@ void PlainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
 
 void PlainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
+    if (getRandom1000() < 10) { // 1% chance
+        int b = chunk->getBloc(x, baseHeight - 1, z);
+        if (b != GRASS) {
+            return;
+        }
+        chunk->generationSetBloc(x, baseHeight - 1, z, DIRT);
+        for (int y = 0; y < 3; y++) {
+            chunk->generationSetBloc(x, baseHeight + y, z, LOG_OAK);
+        }
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (std::abs(dx) + std::abs(dz) <= 3) { // Simple circular leaf pattern
+                    chunk->generationSetBloc(x + dx, baseHeight + 3, z + dz, LEAVES_OAK);
+                }
+                if (std::abs(dx) + std::abs(dz) <= 2) { // Smaller circular leaf pattern for upper layer
+                    chunk->generationSetBloc(x + dx, baseHeight + 3 + 1, z + dz, LEAVES_OAK);
+                }
+                if (std::abs(dx) + std::abs(dz) <= 1) { // Smallest circular leaf pattern for top layer
+                    chunk->generationSetBloc(x + dx, baseHeight + 3 + 2, z + dz, LEAVES_OAK);
+                }
+            }
+        }
+    }
 }
 
 /// ========================= ///
@@ -77,8 +100,26 @@ void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
 }
 
-void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight){
-
+void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+    if (getRandom1000() < 1) {
+        if (chunk->getBloc(x, baseHeight - 1, z) == AIR) {
+            return;
+        }
+        int height = 3 + (getRandom1000() % 4); // Random height between 3 and 5
+        for (int y = 0; y < height; y++) {
+            chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK);
+            //std::cout << "Iron rod bloc result : " << chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK) << std::endl;
+        }
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (std::abs(dx) + std::abs(dz) <= 1) { // Smallest circular leaf pattern for top layer
+                    chunk->generationSetBloc(x + dx, baseHeight, z + dz, IRON_BLOCK);
+                    chunk->generationSetBloc(x + dx, baseHeight-1, z + dz, IRON_BLOCK);
+                }
+            }
+        }
+    }
 }
 
 /// ========================= ///

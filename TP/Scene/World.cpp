@@ -221,8 +221,10 @@ VoxelChunk *World::getChunkContaining(int x, int y, int z) {
     int chunkCoordX = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
     int chunkCoordY = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
     int chunkCoordZ = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
+    
     ChunkColumn *column = getChunkColumn(chunkCoordX, chunkCoordZ);
     if (!column) {
+        //std::cout << "Chunk coords : " << chunkCoordX << ", " << chunkCoordY << ", " << chunkCoordZ << std::endl;
         return nullptr;
     }
     return column->getChunk(chunkCoordY);
@@ -290,7 +292,7 @@ void World::draw(GLuint programID) {
 void World::generation() {
     WorldGenerator worldGenerator;
     // Generate the world
-    std::cout << "Generating world... 0%" << std::flush;
+    std::cout << "Generating base shape... 0%" << std::flush;
     auto start = std::chrono::high_resolution_clock::now();
     for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
         for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
@@ -299,11 +301,26 @@ void World::generation() {
                 worldGenerator.genereteProceduralChunk(this, chunk, x, y, z);
             }
         }
-        std::cout << "\rGenerating world... " << int((x * 100) / GENERATION_SIZE_X) << "%" << std::flush;
+        std::cout << "\rGenerating base shape... " << int((x * 100) / GENERATION_SIZE_X) << "%" << std::flush;
     }
     auto end = std::chrono::high_resolution_clock::now();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "\rGenerating world...  done ! (" << ms << " ms) \n";
+    std::cout << "\rGenerating base shape...  done ! (" << ms << " ms) \n";
+
+    std::cout << "Generating decorations... 0%" << std::flush;
+    start = std::chrono::high_resolution_clock::now();
+    for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
+        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+            for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
+                VoxelChunk *chunk = getChunk(x, y, z);
+                worldGenerator.decorateProceduralChunk(this, chunk, x, y, z);
+            }
+        }
+        std::cout << "\rGenerating decorations... " << int((x * 100) / GENERATION_SIZE_X) << "%" << std::flush;
+    }
+    end = std::chrono::high_resolution_clock::now();
+    ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "\rGenerating decorations...  done ! (" << ms << " ms) \n";
 
     // Update all lights levels
     //  ->  First set the sky lights to 15 for all air blocks
