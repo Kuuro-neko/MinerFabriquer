@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "Biomes.hpp"
 #include <random>
+#include <TP/Scene/World.hpp> // Include the header defining the World class
 
 /// ======================= ///
 /// ===== PlainsBiome ===== ///
@@ -235,6 +236,16 @@ void CristalPeaksBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHe
 
 void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
+    int wX = chunk->m_chunkCoords.x * CHUNK_SIZE + x;
+    int wZ = chunk->m_chunkCoords.z * CHUNK_SIZE + z;
+    for (float y = getGroundLevel() - 5.0f; y < baseHeight+2; y++) {
+        float noiseValue = amethystNoise.GetNoise(x-136.0f,y,z-136.0f);
+        if (noiseValue < 0.1f) {
+            chunk->m_world->generationSetBloc(wX, y, wZ, CALCITE);
+        } else if (noiseValue < 0.15f) {
+            chunk->m_world->generationSetBloc(wX, y, wZ, AMETHYST);
+        }
+    }
 }
 
 /// ======================== ///

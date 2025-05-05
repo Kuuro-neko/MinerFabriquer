@@ -109,8 +109,19 @@ class IceBiome : public Biome {
 };
 
 class CristalPeaksBiome : public Biome {
+    private:
+        FastNoiseLite amethystNoise;
     public:
-        CristalPeaksBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, CRISTALPEAKS_BIOME, seed) {}
+        CristalPeaksBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, CRISTALPEAKS_BIOME, seed) {
+            amethystNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+            amethystNoise.SetFrequency(0.05f);
+            amethystNoise.SetSeed(seed);
+            amethystNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+            amethystNoise.SetFractalOctaves(1);
+            amethystNoise.SetFractalLacunarity(5.0f);
+            amethystNoise.SetFractalGain(5.0f);
+            amethystNoise.SetFractalWeightedStrength(0.5f);
+        }
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
