@@ -21,8 +21,7 @@ private:
     FastNoiseLite waterHolesHeightNoise;
 
     std::mt19937 rng;
-    std::uniform_int_distribution<int> treeChance;
-    std::uniform_int_distribution<int> ironRodChance;
+    std::uniform_int_distribution<int> bedrockRng;
 
     int groundLevel = GROUND_LEVEL;
 

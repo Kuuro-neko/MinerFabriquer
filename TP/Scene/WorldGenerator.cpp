@@ -1,7 +1,7 @@
 #include "WorldGenerator.hpp"
 
 
-WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 100), ironRodChance(0, 1000) {
+WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 100) {
     // Perlin noise for base terrain
     baseHeightNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     baseHeightNoise.SetFrequency(0.1f);
@@ -152,8 +152,12 @@ void WorldGenerator::decorateTerrain(World *world, VoxelChunk *chunk, int i, int
             // Bedrock at the bottom of the world
             if (worldAABBMin.y == 0) {
                 chunk->generationSetBloc(x, 0, z, BEDROCK);
-                if(treeChance(rng) < 50) {
+                int r = bedrockRng(rng);
+                if(r < 50) {
                     chunk->generationSetBloc(x, 1, z, BEDROCK);
+                }
+                if(r < 25) {
+                    chunk->generationSetBloc(x, 2, z, BEDROCK);
                 }
             }
         }
