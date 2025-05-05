@@ -84,7 +84,7 @@
 #define DEFAULT_TRANSLATION_SPEED 7.5f
 #define DEFAULT_ROTATION_SPEED 0.1f
 #define DEFAULT_DISTANCE_SPEED 5.0f
-#define KEYS_ROTATION_SPEED_CORRECTION 5.0f
+#define KEYS_ROTATION_SPEED_CORRECTION 20.0f
 
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera

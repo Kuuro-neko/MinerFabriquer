@@ -95,6 +95,11 @@ add_executable(MinerFabriquer
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
         TP/Input/KeyBinds.cpp
+        TP/GUI/HUD.hpp
+        TP/GUI/HUD.cpp
+        TP/GUI/Barre.hpp
+        TP/GUI/Barre.cpp
+
 
 )
 target_link_libraries(MinerFabriquer

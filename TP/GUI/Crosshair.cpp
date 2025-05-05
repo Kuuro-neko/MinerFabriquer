@@ -18,7 +18,7 @@ void Crosshair::initializeBuffers() {
 void Crosshair::render() {
     if (!visible) return;
 
-    glUseProgram(programID);
+    glUseProgram(crosshairID);
     glBindVertexArray(VAO);
     glLineWidth(2.0f);
     glDrawArrays(GL_LINES, 0, 4);
