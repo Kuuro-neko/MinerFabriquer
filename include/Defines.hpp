@@ -11,9 +11,9 @@
 
 #define OUT_OF_BOUNDS_BLOC -2
 
-#define GENERATION_SIZE_X 4 // X size of initial generation
+#define GENERATION_SIZE_X 16 // X size of initial generation
 #define GENERATION_SIZE_Y 8 // Y size of initial generation
-#define GENERATION_SIZE_Z 4 // Z size of initial generation
+#define GENERATION_SIZE_Z 16 // Z size of initial generation
 
 // ===== Bloc database ===== //
 
