@@ -193,7 +193,7 @@ bool World::setBloc(int x, int y, int z, int bloc) {
 bool World::generationSetBloc(int x, int y, int z, int bloc) {
     VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
-        bool err = chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
+        bool err = chunk->generationSetBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
         return err;
     }
     return false;

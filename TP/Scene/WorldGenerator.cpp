@@ -132,6 +132,9 @@ void WorldGenerator::generateTerrain(World *world, VoxelChunk *chunk, int i, int
             // Bedrock at the bottom of the world
             if (worldAABBMin.y == 0) {
                 chunk->generationSetBloc(x, 0, z, BEDROCK);
+                if(treeChance(rng) < 50) {
+                    chunk->generationSetBloc(x, 1, z, BEDROCK);
+                }
             }
         }
     }
@@ -143,6 +146,7 @@ void WorldGenerator::addTrees(VoxelChunk *chunk, int x, int z, int baseHeight) {
         if (chunk->getBloc(x, baseHeight - 1, z) != GRASS) {
             return;
         }
+        chunk->generationSetBloc(x, baseHeight - 1, z, DIRT);
         //std::cout << "Adding trees at (" << x << ", " << baseHeight << ", " << z << ")" << std::endl;
         //tree height
         for (int y = 0; y < 3; y++) {

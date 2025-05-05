@@ -42,6 +42,9 @@
 #define SANDSTONE 13
 #define SNOW 14
 #define ICE 15
+#define AMETHYST 16
+#define SMOOTH_BASALT 17
+#define CALCITE 18
 
 #define ERROR_BLOC 255
 
