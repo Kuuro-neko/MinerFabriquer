@@ -9,12 +9,14 @@
 #include "TP/Character/Character.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
-
-
+#include <TP/GUI/HUD.hpp>
+#include <TP/FileSystem/SaveManager.hpp>
+#include <Defines.hpp>
 
 #define CHUNK_SIZE 16
 
 GLFWwindow *window;
+SaveManager &saveManager = SaveManager::getInstance();
 
 using namespace std;
 using namespace glm;
@@ -127,12 +129,21 @@ void UpdateFPS() {
 }
 
 int main(void) {
+
+     saveManager.loadPlayerData(character);
+    saveManager.startAutoSave(character);
+   
+
+
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
         getchar();
         return -1;
     }
+
+
+    
 
     camera.init();
     Frustrum frustum(camera, 4.0f / 3.0f, 0.1f, 100.f);
@@ -208,8 +219,11 @@ int main(void) {
     Renderer renderer = Renderer(wireframeProgramID);
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
-    GLuint crosshairProgramID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
     GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
+
+
+    HUD hud = HUD(windowWidth, windowHeight);
+    character.setHUD(&hud);
 
     GLint success;
     GLchar infoLog[512];
@@ -230,7 +244,6 @@ int main(void) {
 
     /****************************************/
 
-    Crosshair crosshair = Crosshair(crosshairProgramID, 0.02f);
 
     SceneNode root;
 
@@ -286,6 +299,8 @@ int main(void) {
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+
+
 
     do {
         UpdateFPS();
@@ -344,8 +359,11 @@ int main(void) {
         
 
         character.drawBoundingBox();
-        
-        crosshair.render();
+
+
+
+        hud.render();
+
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -359,15 +377,15 @@ int main(void) {
 
     // Cleanup VBO and shader
     root.cleanupBuffers();
-    crosshair.cleanupBuffers();
     cubemapTexture.cleanupBuffers();
+    // delete &hud;
 
     glDeleteProgram(programID);
-    // glDeleteProgram(crosshairProgramID);
 
     // Close OpenGL window and terminate GLFW
-    glfwTerminate();
 
+    glfwTerminate();
+    saveManager.stopAutoSave();
     return 0;
 }
 

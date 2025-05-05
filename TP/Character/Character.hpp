@@ -13,15 +13,8 @@
 #include <TP/Input/KeyInput.hpp>
 #include <TP/Input/KeyBinds.hpp>
 #include "vector"
-
-#define MAX_BREAK_COOLDOWN 0.3f
-#define MAX_PLACE_COOLDOWN 0.3f
-
-#define GAMEMODE_CREATIVE 0
-#define GAMEMODE_SURVIVAL 1
-#define GAMEMODE_SPECTATOR 2
-
-#define DEFAULT_SPEED 2.4f
+#include <TP/GUI/HUD.hpp>
+#include <Defines.hpp>
 
 class Character : public SceneNode {
 
@@ -36,6 +29,7 @@ public:
     inline void applyGravity() {translate(glm::vec3(0.f, -gravity, 0.f));}
     inline glm::vec3 getSize() { return size; }
     inline unsigned char getGamemode() { return gamemode; }
+    inline unsigned char GetprevGamemode() { return prevGamemode; }
     inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
     void draw(GLuint programID) override;
 
@@ -60,6 +54,22 @@ public:
     bool sprinting = false;
 
     void resolveGravity(float &deltaTime);
+    bool isInWater = false;
+
+    void setHUD(HUD* hud) { m_hud = hud; }
+
+    void setGamemode(unsigned char gamemode)
+    {
+        this->gamemode = gamemode;
+    }
+    void SetprevGamemode(unsigned char prevGamemode)
+    {
+        this->prevGamemode = prevGamemode;
+    }
+    void setWorldPosition(float x, float y, float z)
+    {
+        this->m_transform.m_translation = glm::vec3(x, y, z);
+    }
 
 private:
 
@@ -69,6 +79,8 @@ private:
     void setSelectedBlock(BlocDatabase &database);
     void updateCamera();
 
+   
+    
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
@@ -81,14 +93,14 @@ private:
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
 
-    float speed = 2.4f;
-    float sneakSpeed = 1.295f;
-    float sprintSpeed = 3.1f;
+    float speed = DEFAULT_SPEED;
+    float sneakSpeed = DEFAULT_SNEAK_SPEED;
+    float sprintSpeed = DEFAULT_SPRINT_SPEED;
     float maxInteractionDistance = 6.f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
 
-    const float gravity = -9.81f;
+    float gravity = -9.81f;
 
     std::vector<glm::vec3> boundingBox;
     glm::vec3 size;
@@ -102,6 +114,8 @@ private:
     bool displayAABB = false;
     unsigned char gamemode = GAMEMODE_SURVIVAL;
     unsigned char prevGamemode = GAMEMODE_SURVIVAL;
+
+    HUD* m_hud = nullptr;
 };
 
 #endif // CHARACTER_HPP

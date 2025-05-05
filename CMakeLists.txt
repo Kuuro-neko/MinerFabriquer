@@ -87,12 +87,20 @@ add_executable(MinerFabriquer
         TP/Scene/WorldGenerator.hpp
         TP/Scene/Biomes.cpp
         TP/Scene/Biomes.hpp
+        TP/Scene/ChunkColumn.cpp
+        TP/Scene/ChunkColumn.hpp
         TP/Scene/Entity.hpp
         TP/Scene/Entity.cpp
         TP/Input/KeyInput.cpp
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
         TP/Input/KeyBinds.cpp
+        TP/GUI/HUD.hpp
+        TP/GUI/HUD.cpp
+        TP/GUI/Barre.hpp
+        TP/GUI/Barre.cpp
+        TP/FileSystem/SaveManager.cpp
+        TP/FileSystem/SaveManager.hpp
 
 )
 target_link_libraries(MinerFabriquer

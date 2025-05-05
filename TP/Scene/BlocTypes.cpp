@@ -2,10 +2,10 @@
 #include <vector>
 
 std::pair<float, float> BlockData::getTexCoords(unsigned char side) {
-    if (side == BLOC_TOP) {
+    if (side == FACE_TOP) {
         return std::make_pair(xTexTop, yTexTop);
     }
-    if (side == BLOC_BOTTOM) {
+    if (side == FACE_BOTTOM) {
         return std::make_pair(xTexBottom, yTexBottom);
     }
     return std::make_pair(xTexSide, yTexSide);

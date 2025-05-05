@@ -5,8 +5,6 @@
 #include <TP/Scene/BlocTypes.hpp>
 #include <TP/Camera/Camera.hpp>
 
-#define TEXTUREATLAS_COORD_UNIT 0.0625f
-
 #define DONT_INCREMENT_BINDING 0
 
 class NextFreeIndexBinding {
@@ -131,19 +129,19 @@ public:
 class PBRTextureAtlas {
 private:
     PBRTextureAtlas() {
-        m_texture = Texture("../textures/texture_atlas.png");
+        m_texture = Texture("../textures/texture_atlas_x32.png");
         m_texture.genTexture();
         m_texture.setSamplerName("TextureSampler");
 
-        m_normals = Texture("../textures/normal_atlas.png");
+        m_normals = Texture("../textures/normal_atlas_x32.png");
         m_normals.genTexture();
         m_normals.setSamplerName("NormalsSampler");
 
-        m_roughness = Texture("../textures/roughness_atlas.png");
+        m_roughness = Texture("../textures/roughness_atlas_x32.png");
         m_roughness.genTexture();
         m_roughness.setSamplerName("RoughnessSampler");
 
-        m_metallic = Texture("../textures/metallic_atlas.png");
+        m_metallic = Texture("../textures/metallic_atlas_x32.png");
         m_metallic.genTexture();
         m_metallic.setSamplerName("MetallicSampler");
     }

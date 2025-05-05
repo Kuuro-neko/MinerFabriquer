@@ -28,8 +28,7 @@ Texture::Texture(char* filename, int bindingIndex) {
 void Texture::loadTexture(const char* filename) {
     data = stbi_load(filename, &width, &height, &nrChannels, STBI_rgb_alpha);
     if (data) {
-        std::cout << "Loaded texture " << filename << " with size " << width << "x" << height << std::endl;
-        std::cout << "Nb channels: " << nrChannels << std::endl;
+        std::cout << "Loaded texture " << filename << " with size " << width << "x" << height << " (" << nrChannels << " channels)" << std::endl;
     } else {
         std::cerr << "Failed to load texture " << filename << std::endl;
     }

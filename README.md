@@ -41,9 +41,9 @@
 
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> Show debug info
 
-<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/n.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle spectator mode
+<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/n.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle between *spectator* and *current* mode
 
-<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/j.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle creative mode
+<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/j.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle between *creative* and *survival* mode
 
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/z.png" alt="Z" width="20 " style="image-rendering: pixelated;"/> Toggle wireframe mode
 

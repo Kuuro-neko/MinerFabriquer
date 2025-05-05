@@ -23,12 +23,18 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     oreNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
     oreNoise.SetFrequency(0.7f);
     oreNoise.SetSeed(seed);
+    
+    // Noise for water holes
+    waterHolesHeightNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    waterHolesHeightNoise.SetFrequency(0.02f);
+    waterHolesHeightNoise.SetSeed(seed);
 
     rng.seed(seed);
 
     biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise), 0.75f);
     biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise), 0.9f);
     biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise), 0.8f);
+    biomeManager.addBiome(std::make_unique<WaterBiome>(groundLevel, &baseHeightNoise), 0.5f);
 }
 
 void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {
@@ -113,7 +119,7 @@ void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int
             }
 
             // If surface level and biome is plains, add trees
-            if (worldAABBMin.y <= baseHeight && worldAABBMin.y + chunk->m_sizeY > baseHeight && currentBiome->getId() == PLAINS) {
+            if (worldAABBMin.y <= baseHeight && worldAABBMin.y + chunk->m_sizeY > baseHeight && currentBiome->getId() == PLAINS_BIOME) {
                 addTrees(chunk, x, z, baseHeight - worldAABBMin.y);
             }
 

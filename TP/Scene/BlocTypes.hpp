@@ -5,31 +5,7 @@
 #include "csv.h"
 #include <iostream>
 
-#define AIR 0
-#define STONE 1
-#define DIRT 2
-#define GRASS 3
-#define PLANKS_OAK 4
-#define LOG_OAK 5
-#define LEAVES_OAK 6
-#define BEDROCK 7
-#define GLOWSTONE 8
-#define WATER 9
-#define SAND 10
-#define IRON_ORE 11
-#define IRON_BLOCK 12
-#define SANDSTONE 13
-#define SNOW 14
-
-#define ERROR_BLOC 255
-
-// Block types, bit mask for each side
-#define BLOC_FRONT 1
-#define BLOC_BACK 2
-#define BLOC_LEFT 4
-#define BLOC_RIGHT 8
-#define BLOC_TOP 16
-#define BLOC_BOTTOM 32
+#include <Defines.hpp>
 
 #define TEXTUREATLAS_UNIT 0.06250f
 
@@ -41,14 +17,16 @@ class BlockData {
 public:
     int id = 255;
     std::string name = "Error";
-    float xTexSide = 15.0f * TEXTUREATLAS_UNIT;
-    float yTexSide = 15.0f * TEXTUREATLAS_UNIT;
-    float xTexTop = 15.0f * TEXTUREATLAS_UNIT;
-    float yTexTop = 15.0f * TEXTUREATLAS_UNIT;
-    float xTexBottom = 15.0f * TEXTUREATLAS_UNIT;
-    float yTexBottom = 15.0f * TEXTUREATLAS_UNIT;
-    float opaque = 1.0f;
-    bool breakable = false;
+    float xTexSide = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the side texture
+    float yTexSide = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the side texture
+    float xTexTop = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the top texture
+    float yTexTop = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the top texture
+    float xTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the bottom texture
+    float yTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the bottom texture
+    float opaque = 1.0f; // Opacity of the block (1.0f = opaque, 0.0f = transparent)
+    float solid = 1.0f; // True if the block is solid (can be walked on)
+    bool breakable = false; // True if the block can be broken in survival
+    int lightLevel = 0; // Light level of the block (0-15), 0 = no light, 15 = full light
 
     BlockData() = default;
 
@@ -56,23 +34,26 @@ public:
         int xTexSide, int yTexSide,
         int xTexTop, int yTexTop,
         int xTexBottom, int yTexBottom,
-        int opaque, int breakable)
+        int opaque, int solid, int breakable, int lightLevel)
         : id(id), name(name),
-            xTexSide(xTexSide * TEXTUREATLAS_UNIT),
-            yTexSide(yTexSide * TEXTUREATLAS_UNIT),
-            xTexTop(xTexTop * TEXTUREATLAS_UNIT),
-            yTexTop(yTexTop * TEXTUREATLAS_UNIT),
-            xTexBottom(xTexBottom * TEXTUREATLAS_UNIT),
-            yTexBottom(yTexBottom * TEXTUREATLAS_UNIT),
             opaque(opaque),
-            breakable(breakable) {}
+            solid(solid),
+            breakable(breakable),
+            lightLevel(lightLevel) {
+                this->xTexSide = float(xTexSide) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->yTexSide = float(yTexSide) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->xTexTop = float(xTexTop) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->yTexTop = float(yTexTop) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->xTexBottom = float(xTexBottom) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->yTexBottom = float(yTexBottom) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+            }
     
     ~BlockData() {}
 
     /**
      * @brief Get the Tex Coords object from a side
      * 
-     * @param side defined macro you can use : BLOC_FRONT, BLOC_BACK, BLOC_LEFT, BLOC_RIGHT, BLOC_TOP, BLOC_BOTTOM
+     * @param side defined macro you can use : FACE_SOUTH, FACE_NORTH, FACE_EAST, FACE_WEST, FACE_TOP, FACE_BOTTOM
      * @return std::pair<float, float> 
      */
     std::pair<float, float> getTexCoords(unsigned char side);
@@ -88,20 +69,21 @@ private:
 
     BlocDatabase() {
         std::string database = "../database/Blocs.csv";
-        io::CSVReader<10> in(database);
-        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque", "Breakable");
+        io::CSVReader<12> in(database);
+        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque", "Solid", "Breakable", "LightLevel");
         int id;
         std::string name;
         float xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom;
-        int opaque, breakable;
-        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, breakable)) {
-            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << ", breakable: " << breakable << std::endl;
+        int opaque, solid, breakable, lightLevel;
+        std::cout << "\nBloc database loading..." << std::endl;
+        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, solid, breakable, lightLevel)) {
+            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << ", solid: " << solid << ", breakable: " << breakable << ", lightLevel: " << lightLevel << std::endl;
             BlockData blockData(
                 id, name,
                 xTexSide, yTexSide,
                 xTexTop, yTexTop,
                 xTexBottom, yTexBottom,
-                opaque, breakable
+                opaque, solid, breakable, lightLevel
             );
             m_blocs[id] = blockData;
         }
@@ -139,12 +121,24 @@ public:
         return m_blocs[id].id==0;
     }
 
+    int defaultLightLevel(int id) {
+        return m_blocs[id].lightLevel;
+    }
+
     bool isUnbreakable(int id) {
         return m_blocs[id].breakable==0;
     }
 
     bool isOpaque(int id) {
         return m_blocs[id].opaque==1;
+    }
+
+    bool isSolid(int id) {
+        return m_blocs[id].solid==1.0f;
+    }
+
+    float solidValue(int id) {
+        return m_blocs[id].solid;
     }
 
     bool isPartOfGround(int id) {
@@ -155,7 +149,7 @@ public:
      * @brief Get the Tex Coords object
      * 
      * @param id The bloc id, you can use macros such as : AIR, STONE, DIRT, GRASS, PLANKS_OAK, ...
-     * @param side defined macro you can use : BLOC_FRONT, BLOC_BACK, BLOC_LEFT, BLOC_RIGHT, BLOC_TOP, BLOC_BOTTOM
+     * @param side defined macro you can use : FACE_SOUTH, FACE_NORTH, FACE_EAST, FACE_WEST, FACE_TOP, FACE_BOTTOM
      * @return std::pair<float, float> 
      */
     std::pair<float, float> getTexCoords(int id, unsigned char side);

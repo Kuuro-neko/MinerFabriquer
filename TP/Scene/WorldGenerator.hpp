@@ -18,6 +18,7 @@ private:
     FastNoiseLite caveNoise;
     FastNoiseLite caveNoise2;
     FastNoiseLite oreNoise;
+    FastNoiseLite waterHolesHeightNoise;
 
     std::mt19937 rng;
     std::uniform_int_distribution<int> treeChance;
