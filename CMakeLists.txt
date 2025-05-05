@@ -85,6 +85,10 @@ add_executable(MinerFabriquer
         main/fragment_shader.glsl
         TP/Scene/WorldGenerator.cpp
         TP/Scene/WorldGenerator.hpp
+        TP/Scene/Biomes.cpp
+        TP/Scene/Biomes.hpp
+        TP/Scene/ChunkColumn.cpp
+        TP/Scene/ChunkColumn.hpp
         TP/Scene/Entity.hpp
         TP/Scene/Entity.cpp
         TP/Input/KeyInput.cpp

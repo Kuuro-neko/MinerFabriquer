@@ -14,12 +14,7 @@
 #include <TP/Input/KeyBinds.hpp>
 #include "vector"
 
-#define MAX_BREAK_COOLDOWN 0.3f
-#define MAX_PLACE_COOLDOWN 0.3f
-
-#define GAMEMODE_CREATIVE 0
-#define GAMEMODE_SURVIVAL 1
-#define GAMEMODE_SPECTATOR 2
+#include <Defines.hpp>
 
 class Character : public SceneNode {
 
@@ -38,7 +33,7 @@ public:
     void draw(GLuint programID) override;
 
 
-    void listenAction(float dt, BlocDatabase &database);
+    void listenAction(float dt);
     void scrollCallback(GLFWwindow *window, double xOffset, double yOffset);
     void update(float dt);
     void updateBoundingBox();
@@ -54,8 +49,11 @@ public:
     Inventory *inventory;
     glm::vec3 velocity = glm::vec3(0.f);
     glm::vec3 vecteurDirection = glm::vec3(0.f, 0.f, 0.f);
+    bool sneaking = false;
+    bool sprinting = false;
 
     void resolveGravity(float &deltaTime);
+    bool isInWater = false;
 
 private:
 
@@ -63,6 +61,7 @@ private:
     void breakBlock(BlocDatabase &database);
     void putBlock(BlocDatabase &database);
     void setSelectedBlock(BlocDatabase &database);
+    void updateCamera();
 
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
@@ -76,12 +75,14 @@ private:
     KeyInput *keyInput;
     Keybinds *keybinds = &Keybinds::getInstance();
 
-    float speed = 2.5f;
+    float speed = DEFAULT_SPEED;
+    float sneakSpeed = DEFAULT_SNEAK_SPEED;
+    float sprintSpeed = DEFAULT_SPRINT_SPEED;
     float maxInteractionDistance = 6.f;
     float breakCooldown = std::numeric_limits<float>::max();
     float placeCooldown = std::numeric_limits<float>::max();
 
-    const float gravity = -9.81f;
+    float gravity = -9.81f;
 
     std::vector<glm::vec3> boundingBox;
     glm::vec3 size;

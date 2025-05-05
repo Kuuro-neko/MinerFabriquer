@@ -11,22 +11,7 @@
 #include <TP/Input/KeyInput.hpp>
 #include <TP/Input/KeyBinds.hpp>
 
-
-#define DEFAULT_FOV 45.0f
-#define DEFAULT_POSITION glm::vec3(0.0f, 0.0f, 0.0f)
-#define DEFAULT_EULER_ANGLE glm::vec3(0.0f, 0.0, 0.0f)
-#define CAMERA_POSITION_RELATIVE_TO_PLAYER glm::vec3(0.f, 1.5f, 0.f)
-
-#define DEFAULT_TRANSLATION_SPEED 7.5f
-#define DEFAULT_ROTATION_SPEED 0.1f
-#define DEFAULT_DISTANCE_SPEED 5.0f
-#define KEYS_ROTATION_SPEED_CORRECTION 5.0f
-
-#define DEFAULT_ATTACHED false
-#define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
-
-#define RENDERER_DISTANCE 4.0f
-
+#include <Defines.hpp>
 
 class Camera {
 public:
@@ -37,6 +22,8 @@ public:
     void updateFreeInput(float _deltaTime, GLFWwindow *_window);
     void setTarget(glm::vec3 _target);
     void updateTarget(glm::vec3 _target);
+
+    void setPlayerMotions(bool sprinting, bool sneaking);
 
     inline bool isFPS() const { return !m_attached; }
 
@@ -66,7 +53,7 @@ private:
     //Camera parameters
     float m_fovDegree{DEFAULT_FOV};
     float m_nearPlane{0.1f};
-    float m_farPlane{100.f};
+    float m_farPlane{10000.f};
     glm::vec3 m_position{DEFAULT_POSITION};
     glm::vec3 m_eulerAngle{DEFAULT_EULER_ANGLE};
     glm::quat m_rotation{};
@@ -100,9 +87,21 @@ private:
     glm::vec3 m_targetEulerAngle = DEFAULT_EULER_ANGLE;
 
     //Camera Third
+    glm::vec3 m_relativePos = CAMERA_POSITION_RELATIVE_TO_PLAYER;
     glm::vec3 m_targetDeltaPos;
     glm::vec3 m_targetPrev;
     float m_distance = 10.0f;
+
+    bool m_sprinting = false;
+	float m_deltaFov = 0.0f;
+	float m_maxDeltaFOX = 10.0f;
+	float m_runningFOVtime = 0.0f;
+	float m_runningFOVduration = 0.25f;
+
+    bool m_sneaking = false;
+    float m_sneakDeltaY = 0.0f;
+    float m_sneaktime = 0.0f;
+    float m_sneakDuration = 0.25f;
 
     inline glm::vec3 getTarget() const { return m_targetPrev; }
 

@@ -3,7 +3,7 @@
         {
             "label": "Build Project",
             "type": "shell",
-            "command": "./Devtools/build.sh",
+            "command": "export MY_INSTALL_DIR=$HOME/.local; export PATH=\"$MY_INSTALL_DIR/bin:$PATH\"; ./Devtools/build.sh ",
             "group": {
                 "kind": "build",
                 "isDefault": true
