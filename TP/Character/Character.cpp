@@ -413,13 +413,20 @@ void Character::scrollCallback(GLFWwindow *window, double xOffset, double yOffse
         {
             std::cout << "Scroll up" << std::endl;
             inventory->scrollSelectedItem(1);
+            if (m_hud != nullptr) {
+                m_hud->getBarre()->nextSelectedSlot(1);
+            }
         }
         else if (yOffset < 0)
         {
             std::cout << "Scroll down" << std::endl;
             inventory->scrollSelectedItem(-1);
+            if (m_hud != nullptr) {
+                m_hud->getBarre()->nextSelectedSlot(-1);
+            }
         }
         inventory->printInventory();
+        
         break;
     case GAMEMODE_SPECTATOR:
         if (yOffset > 0)

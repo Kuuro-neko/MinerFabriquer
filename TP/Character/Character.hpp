@@ -13,7 +13,7 @@
 #include <TP/Input/KeyInput.hpp>
 #include <TP/Input/KeyBinds.hpp>
 #include "vector"
-
+#include <TP/GUI/HUD.hpp>
 #include <Defines.hpp>
 
 class Character : public SceneNode {
@@ -55,6 +55,8 @@ public:
 
     void resolveGravity(float &deltaTime);
     bool isInWater = false;
+
+    void setHUD(HUD* hud) { m_hud = hud; }
 
     void setGamemode(unsigned char gamemode)
     {
@@ -112,6 +114,8 @@ private:
     bool displayAABB = false;
     unsigned char gamemode = GAMEMODE_SURVIVAL;
     unsigned char prevGamemode = GAMEMODE_SURVIVAL;
+
+    HUD* m_hud = nullptr;
 };
 
 #endif // CHARACTER_HPP

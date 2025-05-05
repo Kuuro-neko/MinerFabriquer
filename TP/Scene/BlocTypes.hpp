@@ -36,16 +36,17 @@ public:
         int xTexBottom, int yTexBottom,
         int opaque, int solid, int breakable, int lightLevel)
         : id(id), name(name),
-            xTexSide(xTexSide * TEXTUREATLAS_UNIT),
-            yTexSide(yTexSide * TEXTUREATLAS_UNIT),
-            xTexTop(xTexTop * TEXTUREATLAS_UNIT),
-            yTexTop(yTexTop * TEXTUREATLAS_UNIT),
-            xTexBottom(xTexBottom * TEXTUREATLAS_UNIT),
-            yTexBottom(yTexBottom * TEXTUREATLAS_UNIT),
             opaque(opaque),
             solid(solid),
             breakable(breakable),
-            lightLevel(lightLevel) {}
+            lightLevel(lightLevel) {
+                this->xTexSide = float(xTexSide) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->yTexSide = float(yTexSide) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->xTexTop = float(xTexTop) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->yTexTop = float(yTexTop) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->xTexBottom = float(xTexBottom) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+                this->yTexBottom = float(yTexBottom) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
+            }
     
     ~BlockData() {}
 

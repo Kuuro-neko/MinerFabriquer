@@ -17,6 +17,11 @@
 
 // ===== Bloc database ===== //
 
+#define TEXTUREATLAS_COORD_UNIT 0.0625f
+
+#define TEXTUREATLAS_COORD_UNIT_OFFSET_X32 0.00625f
+#define TEXTUREATLAS_COORD_UNIT_X32 0.05f
+
 #define AIR 0
 #define STONE 1
 #define DIRT 2
@@ -32,6 +37,7 @@
 #define IRON_BLOCK 12
 #define SANDSTONE 13
 #define SNOW 14
+#define ICE 15
 
 #define ERROR_BLOC 255
 
@@ -78,7 +84,7 @@
 #define DEFAULT_TRANSLATION_SPEED 7.5f
 #define DEFAULT_ROTATION_SPEED 0.1f
 #define DEFAULT_DISTANCE_SPEED 5.0f
-#define KEYS_ROTATION_SPEED_CORRECTION 5.0f
+#define KEYS_ROTATION_SPEED_CORRECTION 20.0f
 
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
