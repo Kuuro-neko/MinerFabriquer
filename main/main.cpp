@@ -9,6 +9,7 @@
 #include "TP/Character/Character.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
+#include <TP/Scene/Zombie.hpp>
 #include <TP/GUI/HUD.hpp>
 
 
@@ -102,7 +103,7 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
 Character character = Character(
         Transform(
-                glm::vec3(32, 45, 32),
+                glm::vec3(32, 36, 32),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -257,6 +258,21 @@ int main(void) {
     character.setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character.getWorldPosition());
 
+
+    Zombie* zombie = new Zombie(
+        Transform(
+            glm::vec3(32, 36, 38),
+            DEFAULT_ROTATION,
+            1),
+        &world
+    );
+    Texture* zombieTexture = new Texture("../textures/zombie.png");
+    zombie->setTexture(zombieTexture);
+    zombie->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(zombie);
+
+    
+
 /*     Entity* Mr_Vincell = new Entity();
     Mr_Vincell->generateHumanoidMesh(0.0f);
     Texture* playerTexture2 = new Texture("../textures/Mr_Vincell.png");
@@ -336,7 +352,6 @@ int main(void) {
         lightMap.bind(programID);
 
         root.draw(programID);
-
         
 
         // Restore shader program and matrices for the scene
@@ -356,6 +371,8 @@ int main(void) {
 
 
         hud.render();
+
+
 
 
         // Swap buffers

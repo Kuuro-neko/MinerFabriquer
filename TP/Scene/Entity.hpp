@@ -51,5 +51,6 @@ class Entity : public SceneNode {
 
 
 
+
     bool isFPSActive();
 };
