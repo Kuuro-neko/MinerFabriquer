@@ -76,11 +76,21 @@ void SaveManager::readPlayerDataFromFile(const std::string &filename, Character 
 
 void SaveManager::saveCharacterFile(Character &data)
 {
+    std::string saveFolder = generateSaveFolderPath();
 
-    std::ofstream ofs(PATHPLAYERFILE, std::ios::binary);
+    // Crée le dossier s'il n'existe pas encore
+    if (!std::filesystem::exists(saveFolder))
+    {
+        std::filesystem::create_directories(saveFolder);
+    }
+
+    // Crée le fichier de sauvegarde dans ce dossier
+    std::string filePath = saveFolder + "/playerData.bin";
+
+    std::ofstream ofs(filePath, std::ios::binary);
     if (!ofs)
     {
-        std::cerr << "Error opening file for manual save: " << PATHPLAYERFILE << std::endl;
+        std::cerr << "Erreur lors de l'ouverture du fichier : " << filePath << std::endl;
         return;
     }
 
@@ -96,7 +106,7 @@ void SaveManager::saveCharacterFile(Character &data)
     ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
     ofs.close();
 
-    std::cout << "Player data manually saved to file: " << PATHPLAYERFILE << std::endl;
+    std::cout << "Données sauvegardées dans : " << filePath << std::endl;
 }
 
 void SaveManager::startAutoSave(Character &data)
@@ -167,8 +177,8 @@ std::string SaveManager::getDate(long timestamp)
     std::time_t time = static_cast<std::time_t>(timestamp);
     std::tm *tm = std::localtime(&time);
 
-    char buffer[11]; // YYYY-MM-DD is 10 characters + null terminator
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", tm);
+    char buffer[17]; // YYYY-MM-DD-HH-MM is 16 characters + null terminator
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d-%H-%M", tm);
 
     return std::string(buffer);
 }
@@ -178,6 +188,17 @@ long SaveManager::getTimestamp()
 {
     return static_cast<long>(std::time(nullptr));
 }
+
+std::string SaveManager::generateSaveFolderPath()
+{
+    std::string folderName = "save-" + getDate(getTimestamp());
+    std::filesystem::path fullPath = std::filesystem::path(PATHSAVES) / folderName;
+    return fullPath.string(); // convert to std::string
+}
+
+
+
+
 /* great way to test
 SaveManager &saveManager1 = SaveManager::getInstance();
     SaveManager &saveManager2 = SaveManager::getInstance();

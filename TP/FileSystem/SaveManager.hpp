@@ -62,4 +62,6 @@ public:
 
     std::string getDate(long timestamp);
     long getTimestamp();
+    std::string generateSaveFolderPath();
+    std::string getMostRecentSaveFolder();
 };
