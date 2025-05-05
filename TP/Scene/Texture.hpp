@@ -128,7 +128,7 @@ public:
 
 class PBRTextureAtlas {
 private:
-    PBRTextureAtlas(int resolution = 16) {
+    PBRTextureAtlas(int resolution = 32) {
         std::string resolutionStr = std::to_string(resolution);
         m_texture = Texture(("../textures/texture_atlas_x" + resolutionStr + ".png").c_str());
         m_texture.genTexture();
