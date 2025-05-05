@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 // ===== Maths ===== //
 
 #define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
@@ -142,3 +142,10 @@ constexpr short AO_Bottom_deltas [4][3] = {
     { -1, -1,  1 },
     { -1, -1, -1 }
 };
+
+
+// ===== FileManager ===== //
+
+const std::string PATH_PLAYER_FILE = "/playerData.bin";
+const std::string PATHSAVES = "../saves/";
+#define SAVE_DELAY 50 // seconds
