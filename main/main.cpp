@@ -10,12 +10,12 @@
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
-
+#include <Defines.hpp>
 
 #define CHUNK_SIZE 16
-static const std::string PATHPLAYERFILE = "../saves/playerData.bin";
 
 GLFWwindow *window;
+SaveManager &saveManager = SaveManager::getInstance();
 
 using namespace std;
 using namespace glm;
@@ -128,12 +128,13 @@ void UpdateFPS() {
 }
 
 int main(void) {
-
-    SaveManager &saveManager = SaveManager::getInstance();
-    saveManager.loadPlayerData(character, PATHPLAYERFILE);
+   
     
-    std::cout << "le fichier existe ?  " << saveManager.isPlayerDataFileExist(PATHPLAYERFILE) << std::endl;
+    std::cout << "saves folder empty ?  "<<  saveManager.isAlreadyDataCreated() << std::endl;
 
+    saveManager.loadPlayerData(character, PATHPLAYERFILE);
+    saveManager.startAutoSave(character);
+   
 
 
     // Initialise GLFW
@@ -375,8 +376,9 @@ int main(void) {
     // glDeleteProgram(crosshairProgramID);
 
     // Close OpenGL window and terminate GLFW
-    glfwTerminate();
 
+    glfwTerminate();
+    saveManager.stopAutoSave();
     return 0;
 }
 

@@ -56,6 +56,19 @@ public:
     void resolveGravity(float &deltaTime);
     bool isInWater = false;
 
+    void setGamemode(unsigned char gamemode)
+    {
+        this->gamemode = gamemode;
+    }
+    void SetprevGamemode(unsigned char prevGamemode)
+    {
+        this->prevGamemode = prevGamemode;
+    }
+    void setWorldPosition(float x, float y, float z)
+    {
+        this->m_transform.m_translation = glm::vec3(x, y, z);
+    }
+
 private:
 
     void updateClosestBlock(BlocDatabase &database);
@@ -64,6 +77,8 @@ private:
     void setSelectedBlock(BlocDatabase &database);
     void updateCamera();
 
+   
+    
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
