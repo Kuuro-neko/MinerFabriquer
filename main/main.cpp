@@ -129,7 +129,7 @@ void UpdateFPS() {
 
 int main(void) {
 
-     saveManager.loadPlayerData(character, PATHPLAYERFILE);
+     saveManager.loadPlayerData(character);
     saveManager.startAutoSave(character);
    
 

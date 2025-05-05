@@ -17,27 +17,28 @@ bool SaveManager::isPlayerDataFileExist(const std::string &filename)
     return file.good();
 }
 
-void SaveManager::loadPlayerData(Character &character, const std::string &filename)
+void SaveManager::loadPlayerData(Character &character)
 {
     unsigned char gamemode;
     unsigned char prev;
     float position[3];
-   
-    std::cout << "most recent -> "<< getMostRecentSaveFolder() <<std::endl;
+
     // no actual data -> create the folder
-    if (isSaveFolderEmpty())  
+    if (isSaveFolderEmpty())
     {
-        std::cout << "Player data file does not exist." << std::endl;
-        std::cout << "Creating a new player data file." << std::endl;
+        std::cout << "Player data file does not exist..." << std::endl;
+        std::cout << "Creating a new player data file..." << std::endl;
         std::string saveFolder = generateSaveFolderPath();
         // Crée le dossier s'il n'existe pas encore
         if (!std::filesystem::exists(saveFolder))
         {
             std::filesystem::create_directories(saveFolder);
         }
+        std::string filename = +"/playerData.bin";
 
-        std::ofstream file(filename);
-        std::ofstream ofs(filename, std::ios::binary);
+        std::ofstream file(saveFolder + filename);
+        std::ofstream ofs(saveFolder + filename, std::ios::binary);
+        std::cout << "Creation of the brand new Save folder at  :" << saveFolder + filename << std::endl;
 
         // Default values (that's on default values)
         gamemode = character.getGamemode();
@@ -56,12 +57,16 @@ void SaveManager::loadPlayerData(Character &character, const std::string &filena
     }
     else // the file is already created -> we load the data from the file
     {
+        std::string motRecentFolder = getMostRecentSaveFolder();
+        std::string mostRecentPlayerFilePath = motRecentFolder + "/playerData.bin";
 
-        std::cout << "Player data file already exists." << std::endl;
-        std::ifstream ifs(filename, std::ios::binary);
+        std::cout
+            << "Player data file already exists." << std::endl;
+        std::cout << "Reading data from : " << motRecentFolder << std::endl;
+        std::ifstream ifs(mostRecentPlayerFilePath, std::ios::binary);
         if (!ifs)
         {
-            std::cerr << "Error opening file: " << filename << std::endl;
+            std::cerr << "Error opening file: " << mostRecentPlayerFilePath << std::endl;
             return;
         }
 
@@ -92,6 +97,7 @@ void SaveManager::saveCharacterFile(Character &data)
 
     // Crée le fichier de sauvegarde dans ce dossier
     std::string filePath = saveFolder + "/playerData.bin";
+    std::cout << "Creation of a new most Recent save folder : " << saveFolder + "/playerData.bin" << std::endl;
 
     std::ofstream ofs(filePath, std::ios::binary);
     if (!ofs)
@@ -124,9 +130,9 @@ void SaveManager::startAutoSave(Character &data)
     }
 
     autoSaveRunning = true;
-    const std::string pathForThread = PATHPLAYERFILE;
+    const std::string autoPlayerFilePath = generateSaveFolderPath() + "/playerData.bin";
     int saveDelayFortheThread = SAVE_DELAY;
-    autoSaveThread = std::thread([this, pathForThread, &data, saveDelayFortheThread]()
+    autoSaveThread = std::thread([this, autoPlayerFilePath, &data, saveDelayFortheThread]()
                                  {
                                      while (autoSaveRunning)
                                      {
@@ -136,7 +142,7 @@ void SaveManager::startAutoSave(Character &data)
                                              std::cout << "Auto-saving player data..." << std::endl;
                                              saveCharacterFile(data);
 
-                                             std::cout << "Player data auto-saved to file: " << PATHPLAYERFILE << std::endl;
+                                             std::cout << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
                                      } });
 }
@@ -177,7 +183,6 @@ bool SaveManager::isSaveFolderEmpty()
     return true; // Aucun fichier utile
 }
 
-
 std::string SaveManager::getDate(long timestamp)
 {
     std::time_t time = static_cast<std::time_t>(timestamp);
@@ -188,7 +193,6 @@ std::string SaveManager::getDate(long timestamp)
 
     return std::string(buffer);
 }
-
 
 long SaveManager::getTimestamp()
 {

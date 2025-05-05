@@ -48,7 +48,7 @@ public:
     bool isSaveFolderEmpty();
 
     // load the player data from the file -> default values if the file does not exist, file's values if it does
-    void loadPlayerData(Character &character, const std::string &filename);
+    void loadPlayerData(Character &character);
 
    
     // character data save
