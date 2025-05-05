@@ -37,6 +37,7 @@
 #define IRON_BLOCK 12
 #define SANDSTONE 13
 #define SNOW 14
+#define ICE 15
 
 #define ERROR_BLOC 255
 
