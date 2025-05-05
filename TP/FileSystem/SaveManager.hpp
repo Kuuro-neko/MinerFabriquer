@@ -45,7 +45,7 @@ public:
     bool isPlayerDataFileExist(const std::string &filename);
 
     //return if PATHSAVES contains a folder
-    bool isAlreadyDataCreated();
+    bool isSaveFolderEmpty();
 
     // load the player data from the file -> default values if the file does not exist, file's values if it does
     void loadPlayerData(Character &character, const std::string &filename);
@@ -59,4 +59,7 @@ public:
     // function that start the auto save thread and save the player data every X seconds
     void startAutoSave(Character &data);
     void stopAutoSave();
+
+    std::string getDate(long timestamp);
+    long getTimestamp();
 };

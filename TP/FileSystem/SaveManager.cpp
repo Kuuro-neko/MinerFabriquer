@@ -138,17 +138,46 @@ void SaveManager::stopAutoSave()
     }
 }
 
-bool SaveManager::isAlreadyDataCreated()
+bool SaveManager::isSaveFolderEmpty()
 {
     const std::string saveDirectory = PATHSAVES;
-     if (!std::filesystem::exists(saveDirectory) || !std::filesystem::is_directory(saveDirectory))
+    namespace fs = std::filesystem;
+
+    fs::path dirPath(saveDirectory);
+
+    if (!fs::exists(dirPath) || !fs::is_directory(dirPath))
     {
-        return false; // Directory does not exist or is not a directory
+        return false;
     }
 
-    return !std::filesystem::is_empty(saveDirectory); // Returns true if the directory is not empty
+    for (const auto &entry : fs::directory_iterator(dirPath))
+    {
+        if (entry.is_regular_file() || entry.is_directory())
+        {
+            return false; // On a trouvé au moins un fichier ou sous-dossier
+        }
+    }
+
+    return true; // Aucun fichier utile
 }
 
+// Function used to create the folder name YYYY-MM-DD based on the timestamp
+std::string SaveManager::getDate(long timestamp)
+{
+    std::time_t time = static_cast<std::time_t>(timestamp);
+    std::tm *tm = std::localtime(&time);
+
+    char buffer[11]; // YYYY-MM-DD is 10 characters + null terminator
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", tm);
+
+    return std::string(buffer);
+}
+
+// Return the actual timestamp
+long SaveManager::getTimestamp()
+{
+    return static_cast<long>(std::time(nullptr));
+}
 /* great way to test
 SaveManager &saveManager1 = SaveManager::getInstance();
     SaveManager &saveManager2 = SaveManager::getInstance();

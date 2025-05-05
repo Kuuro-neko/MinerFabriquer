@@ -128,9 +128,8 @@ void UpdateFPS() {
 }
 
 int main(void) {
-   
-    
-    std::cout << "saves folder empty ?  "<<  saveManager.isAlreadyDataCreated() << std::endl;
+
+    std::cout << "saves folder empty ?  " << saveManager.isSaveFolderEmpty() << std::endl;
 
     saveManager.loadPlayerData(character, PATHPLAYERFILE);
     saveManager.startAutoSave(character);
