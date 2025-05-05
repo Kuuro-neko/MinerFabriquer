@@ -6,6 +6,10 @@
 
 // ===== Generation & chunks ===== //
 
+#define GENERATION_SEED 48569
+#define GROUND_LEVEL 56
+#define WATER_LEVEL_DELTA 15
+
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
 

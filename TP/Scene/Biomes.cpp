@@ -98,7 +98,7 @@ void WaterBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, g
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
 
     for (int y = 0; y < 16; y++) {
-        if (y + worldAABBMin.y < getGroundLevel()-15 && y + worldAABBMin.y >= baseHeight && chunk->getBloc(x, y, z) == AIR) {
+        if (y + worldAABBMin.y < getGroundLevel()-WATER_LEVEL_DELTA && y + worldAABBMin.y >= baseHeight && chunk->getBloc(x, y, z) == AIR) {
             chunk->generationSetBloc(x, y, z, WATER);
         }
     }

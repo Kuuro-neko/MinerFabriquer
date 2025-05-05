@@ -287,7 +287,7 @@ void World::generation() {
         for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
             for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
                 VoxelChunk *chunk = createEmptyChunk(x, y, z);
-                worldGenerator.genereteProceduralChunk(chunk, x, y, z);
+                worldGenerator.genereteProceduralChunk(this, chunk, x, y, z);
             }
         }
         std::cout << "\rGenerating world... " << int((x * 100) / GENERATION_SIZE_X) << "%" << std::flush;

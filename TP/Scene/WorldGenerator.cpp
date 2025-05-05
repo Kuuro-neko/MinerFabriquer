@@ -38,13 +38,13 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, &baseHeightNoise), 0.65f);
 }
 
-void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {
+void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {
     //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
     if (groundLevel + CHUNK_SIZE * 2 < j * CHUNK_SIZE) {
         // Skipping chunks too high to have any generated bloc
         return;
     }
-    generateTerrain(world, i, j, k, groundLevel);
+    generateTerrain(world, chunk, i, j, k, groundLevel);
 }
 
 void WorldGenerator::setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight) {
@@ -64,7 +64,7 @@ void WorldGenerator::setBaseStone(VoxelChunk *chunk, int x, int z, const glm::iv
  * @param k 
  * @param groundLevel 
  */
-void WorldGenerator::generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
+void WorldGenerator::generateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk
