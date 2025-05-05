@@ -10,12 +10,6 @@ SaveManager &SaveManager::getInstance()
     static SaveManager instance; // local static variable
     return instance;
 }
-// return if the file has been created at least once
-bool SaveManager::isPlayerDataFileExist(const std::string &filename)
-{
-    std::ifstream file(filename);
-    return file.good();
-}
 
 void SaveManager::loadPlayerData(Character &character)
 {
@@ -29,18 +23,18 @@ void SaveManager::loadPlayerData(Character &character)
         std::cout << "Player data file does not exist..." << std::endl;
         std::cout << "Creating a new player data file..." << std::endl;
         std::string saveFolder = generateSaveFolderPath();
-        // Crée le dossier s'il n'existe pas encore
+      
         if (!std::filesystem::exists(saveFolder))
         {
             std::filesystem::create_directories(saveFolder);
         }
-        std::string filename = +"/playerData.bin";
+    
 
-        std::ofstream file(saveFolder + filename);
-        std::ofstream ofs(saveFolder + filename, std::ios::binary);
-        std::cout << "Creation of the brand new Save folder at  :" << saveFolder + filename << std::endl;
+        std::ofstream file(saveFolder + PATH_PLAYER_FILE);
+        std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
+        std::cout << "Creation of the brand new Save folder at  :" << saveFolder + PATH_PLAYER_FILE << std::endl;
 
-        // Default values (that's on default values)
+        // Default values from main.cpp
         gamemode = character.getGamemode();
         prev = character.GetprevGamemode();
         float position[3] = {
@@ -58,7 +52,7 @@ void SaveManager::loadPlayerData(Character &character)
     else // the file is already created -> we load the data from the file
     {
         std::string motRecentFolder = getMostRecentSaveFolder();
-        std::string mostRecentPlayerFilePath = motRecentFolder + "/playerData.bin";
+        std::string mostRecentPlayerFilePath = motRecentFolder + PATH_PLAYER_FILE;
 
         std::cout
             << "Player data file already exists." << std::endl;
@@ -84,25 +78,25 @@ void SaveManager::loadPlayerData(Character &character)
     }
 }
 
-// create the folder if not exists and add the playerData.bin file with actual character data
+// create the correct folder based on time with the playerData.bin file
 void SaveManager::saveCharacterFile(Character &data)
 {
     std::string saveFolder = generateSaveFolderPath();
 
-    // Crée le dossier s'il n'existe pas encore
+ 
     if (!std::filesystem::exists(saveFolder))
     {
         std::filesystem::create_directories(saveFolder);
     }
 
-    // Crée le fichier de sauvegarde dans ce dossier
-    std::string filePath = saveFolder + "/playerData.bin";
-    std::cout << "Creation of a new most Recent save folder : " << saveFolder + "/playerData.bin" << std::endl;
+    // File path
+    std::string filePath = saveFolder + PATH_PLAYER_FILE;
+    std::cout << "Creation of a new most Recent save folder : " << saveFolder + PATH_PLAYER_FILE << std::endl;
 
     std::ofstream ofs(filePath, std::ios::binary);
     if (!ofs)
     {
-        std::cerr << "Erreur lors de l'ouverture du fichier : " << filePath << std::endl;
+        std::cerr << "Erreur when trying to open the file : " << filePath << std::endl;
         return;
     }
 
@@ -118,7 +112,7 @@ void SaveManager::saveCharacterFile(Character &data)
     ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
     ofs.close();
 
-    std::cout << "Données sauvegardées dans : " << filePath << std::endl;
+    std::cout << "Data saved at : " << filePath << std::endl;
 }
 
 void SaveManager::startAutoSave(Character &data)
@@ -130,7 +124,7 @@ void SaveManager::startAutoSave(Character &data)
     }
 
     autoSaveRunning = true;
-    const std::string autoPlayerFilePath = generateSaveFolderPath() + "/playerData.bin";
+    const std::string autoPlayerFilePath = generateSaveFolderPath() + PATH_PLAYER_FILE;
     int saveDelayFortheThread = SAVE_DELAY;
     autoSaveThread = std::thread([this, autoPlayerFilePath, &data, saveDelayFortheThread]()
                                  {

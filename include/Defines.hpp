@@ -140,6 +140,6 @@ constexpr short AO_Bottom_deltas [4][3] = {
 
 // ===== FileManager ===== //
 
-const std::string PATHPLAYERFILE = "../saves/playerData.bin";
+const std::string PATH_PLAYER_FILE = "/playerData.bin";
 const std::string PATHSAVES = "../saves/";
 #define SAVE_DELAY 50 // seconds
