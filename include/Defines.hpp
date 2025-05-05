@@ -55,6 +55,7 @@
 #define MOUNTAINS_BIOME 1
 #define DESERT_BIOME 2
 #define WATER_BIOME 3
+#define ICE_BIOME 4
 
 // ===== Player ===== //
 

@@ -87,6 +87,14 @@ class WaterBiome : public Biome {
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
 
+class IceBiome : public Biome {
+    public:
+        IceBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, ICE_BIOME) {}
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+};
+
 /// ======================== ///
 /// ===== BiomeManager ===== ///
 /// ======================== ///

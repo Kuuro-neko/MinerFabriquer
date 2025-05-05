@@ -109,6 +109,28 @@ void WaterBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
     // No decoration for water biome
 }
 
+/// ==================== ///
+/// ===== IceBiome ===== ///
+/// ==================== ///
+
+float IceBiome::calculateHeight(float x, float z)
+{
+    return getGroundLevel() + std::max(getNoise()->GetNoise(x,z) * 5.0f + 1.f, 0.f);
+}
+
+void IceBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, DIRT);
+    chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, DIRT);
+    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SNOW);
+    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SNOW);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SNOW);
+}
+
+void IceBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+}
+
 /// ======================== ///
 /// ===== BiomeManager ===== ///
 /// ======================== ///

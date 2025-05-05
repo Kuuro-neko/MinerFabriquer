@@ -35,6 +35,7 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
     biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise), 0.9f);
     biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise), 0.8f);
     biomeManager.addBiome(std::make_unique<WaterBiome>(groundLevel, &baseHeightNoise), 0.5f);
+    biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, &baseHeightNoise), 0.65f);
 }
 
 void WorldGenerator::genereteProceduralChunk(VoxelChunk *world, int i, int j, int k) {
