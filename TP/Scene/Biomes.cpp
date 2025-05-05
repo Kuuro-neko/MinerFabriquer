@@ -184,6 +184,9 @@ float CristalPeaksBiome::calculateHeight(float x, float z)
 
 void CristalPeaksBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
+    int r = getRandom1000();
+    if (r % 23 < 10) chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SMOOTH_BASALT);
+    if (r % 50 < 25) chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, SMOOTH_BASALT);
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SMOOTH_BASALT);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SMOOTH_BASALT);
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SMOOTH_BASALT);
