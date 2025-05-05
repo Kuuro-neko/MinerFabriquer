@@ -17,6 +17,11 @@
 
 // ===== Bloc database ===== //
 
+#define TEXTUREATLAS_COORD_UNIT 0.0625f
+
+#define TEXTUREATLAS_COORD_UNIT_OFFSET_X32 0.00625f
+#define TEXTUREATLAS_COORD_UNIT_X32 0.05f
+
 #define AIR 0
 #define STONE 1
 #define DIRT 2
@@ -32,6 +37,7 @@
 #define IRON_BLOCK 12
 #define SANDSTONE 13
 #define SNOW 14
+#define ICE 15
 
 #define ERROR_BLOC 255
 

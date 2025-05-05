@@ -42,10 +42,10 @@ void addQuadToTriangles(std::vector<unsigned short> &triangles, int vertexInsert
  * @param texCoords 
  */
 void addUvs(std::vector<glm::vec2> &uvs, std::pair<float, float> texCoords) {
-    uvs.push_back(glm::vec2(texCoords.first + EPSILON, texCoords.second + TEXTUREATLAS_UNIT - EPSILON));
-    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT - EPSILON, texCoords.second + TEXTUREATLAS_UNIT - EPSILON));
-    uvs.push_back(glm::vec2(texCoords.first + EPSILON, texCoords.second + EPSILON));
-    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_UNIT - EPSILON, texCoords.second + EPSILON));
+    uvs.push_back(glm::vec2(texCoords.first, texCoords.second + TEXTUREATLAS_COORD_UNIT_X32));
+    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_COORD_UNIT_X32, texCoords.second + TEXTUREATLAS_COORD_UNIT_X32));
+    uvs.push_back(glm::vec2(texCoords.first, texCoords.second));
+    uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_COORD_UNIT_X32, texCoords.second));
 }
 
 void addNormals(std::vector<glm::vec3> &normals, unsigned char face) {
