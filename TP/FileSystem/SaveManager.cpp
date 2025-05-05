@@ -9,6 +9,12 @@ SaveManager &SaveManager::getInstance()
     return instance;
 }
 
+bool SaveManager::isPlayerDataFileExist(const std::string &filename)
+{
+    std::ifstream file(filename);
+    return file.good();
+}
+
 /* great way to test
 SaveManager &saveManager1 = SaveManager::getInstance();
     SaveManager &saveManager2 = SaveManager::getInstance();

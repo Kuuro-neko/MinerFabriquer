@@ -24,4 +24,19 @@ public:
     // TODO
     void saveWorld(World &world, const std::string &filename);
     void loadWorld(World &world, const std::string &filename);
+
+    //player data
+
+    struct ItemData{
+        int32_t id;
+        int32_t count;
+    };
+
+    struct playerData{
+        int8_t gamemode;
+        float position[3];
+    };
+
+    bool isPlayerDataFileExist(const std::string &filename);
+ 
 };

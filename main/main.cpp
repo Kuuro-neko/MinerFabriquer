@@ -13,6 +13,7 @@
 
 
 #define CHUNK_SIZE 16
+static const std::string PATHPLAYERFILE = "../saves/playerData.bin";
 
 GLFWwindow *window;
 
@@ -128,17 +129,14 @@ void UpdateFPS() {
 
 int main(void) {
 
-    SaveManager &saveManager1 = SaveManager::getInstance();
-    SaveManager &saveManager2 = SaveManager::getInstance();
+    SaveManager &saveManager = SaveManager::getInstance();
+    
 
-    if (&saveManager1 == &saveManager2)
-    {
-        std::cout << "Singleton fonctionne : les deux instances sont identiques." << std::endl;
-    }
-    else
-    {
-        std::cout << "Erreur : les instances sont différentes !" << std::endl;
-    }
+
+    std::cout << "le fichier existe ?  " << saveManager.isPlayerDataFileExist(PATHPLAYERFILE) << std::endl;
+
+
+    
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
