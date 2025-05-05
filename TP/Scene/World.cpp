@@ -190,6 +190,15 @@ bool World::setBloc(int x, int y, int z, int bloc) {
     return false;
 }
 
+bool World::generationSetBloc(int x, int y, int z, int bloc) {
+    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    if (chunk) {
+        bool err = chunk->setBloc(x % CHUNK_SIZE, y % CHUNK_SIZE, z % CHUNK_SIZE, bloc);
+        return err;
+    }
+    return false;
+}
+
 unsigned short World::getLightLevel(int x, int y, int z) {
     VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {

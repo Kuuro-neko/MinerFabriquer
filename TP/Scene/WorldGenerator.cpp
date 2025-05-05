@@ -175,6 +175,7 @@ void WorldGenerator::addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight
         int height = 3 + (treeChance(rng) % 4); // Random height between 3 and 5
         for (int y = 0; y < height; y++) {
             chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK);
+            //std::cout << "Iron rod bloc result : " << chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK) << std::endl;
         }
         for (int dx = -2; dx <= 2; dx++) {
             for (int dz = -2; dz <= 2; dz++) {
