@@ -131,6 +131,27 @@ void IceBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
 }
 
+/// ==================== ///
+/// ===== CristalPeaksBiome ===== ///
+/// ==================== ///
+
+float CristalPeaksBiome::calculateHeight(float x, float z)
+{
+    float noiseValue = getNoise()->GetNoise(x,z);
+    return getGroundLevel() + std::max(noiseValue * noiseValue * 70.0f + 3.f, 0.f);
+}
+
+void CristalPeaksBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SMOOTH_BASALT);
+    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SMOOTH_BASALT);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SMOOTH_BASALT);
+}
+
+void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+}
+
 /// ======================== ///
 /// ===== BiomeManager ===== ///
 /// ======================== ///
@@ -151,10 +172,10 @@ void BiomeManager::addBiome(std::unique_ptr<Biome> biome, float cellularNoiseFre
     FastNoiseLite noise;
     noises.push_back(noise);
     noises.back().SetNoiseType(FastNoiseLite::NoiseType_Cellular);
-    noises.back().SetNoiseType(FastNoiseLite::NoiseType_Cellular);
     noises.back().SetFrequency(cellularNoiseFrequency);
     noises.back().SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
-    noises.back().SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Manhattan);
+    noises.back().SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Euclidean);
+    noises.back().SetCellularJitter(0.9f);
     noises.back().SetSeed(seed);
 }
 
@@ -167,12 +188,9 @@ void BiomeManager::addBiome(std::unique_ptr<Biome> biome, float cellularNoiseFre
  */
 std::vector<float> BiomeManager::getBiomeWeights(int x, int z)
 {
-    float nx = x * 0.01f;
-    float nz = z * 0.011f;
-
     std::vector<float> weights;
     for (int i = 0; i < biomes.size(); ++i) {
-        weights.push_back(noises[i].GetNoise(nx + 150 * i, nz - 150 * i));
+        weights.push_back(noises[i].GetNoise((float) x + 150 * i,(float)  z - 150 * i));
         weights[i] = 1.0f - std::abs(weights[i]);
         weights[i] = std::pow(weights[i], 2.0f);
     }

@@ -31,11 +31,12 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), treeChance(0, 10
 
     rng.seed(seed);
 
-    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise), 0.75f);
-    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise), 0.9f);
-    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise), 0.8f);
-    biomeManager.addBiome(std::make_unique<WaterBiome>(groundLevel, &baseHeightNoise), 0.5f);
-    biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, &baseHeightNoise), 0.65f);
+    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise), 0.008f);
+    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise), 0.01f);
+    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise), 0.009f);
+    biomeManager.addBiome(std::make_unique<WaterBiome>(groundLevel, &baseHeightNoise), 0.013f);
+    biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, &baseHeightNoise), 0.009f);
+    biomeManager.addBiome(std::make_unique<CristalPeaksBiome>(groundLevel, &baseHeightNoise), 0.012f);
 }
 
 void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {

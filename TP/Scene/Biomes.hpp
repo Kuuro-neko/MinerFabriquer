@@ -95,6 +95,14 @@ class IceBiome : public Biome {
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
 
+class CristalPeaksBiome : public Biome {
+    public:
+        CristalPeaksBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, CRISTALPEAKS_BIOME) {}
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+};
+
 /// ======================== ///
 /// ===== BiomeManager ===== ///
 /// ======================== ///
