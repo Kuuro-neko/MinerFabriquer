@@ -130,13 +130,12 @@ void UpdateFPS() {
 int main(void) {
 
     SaveManager &saveManager = SaveManager::getInstance();
+    saveManager.loadPlayerData(character, PATHPLAYERFILE);
     
-
-
     std::cout << "le fichier existe ?  " << saveManager.isPlayerDataFileExist(PATHPLAYERFILE) << std::endl;
 
 
-    
+
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");

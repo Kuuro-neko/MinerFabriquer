@@ -29,6 +29,7 @@ public:
     inline void applyGravity() {translate(glm::vec3(0.f, -gravity, 0.f));}
     inline glm::vec3 getSize() { return size; }
     inline unsigned char getGamemode() { return gamemode; }
+    inline unsigned char GetprevGamemode() { return prevGamemode; }
     inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
     void draw(GLuint programID) override;
 
