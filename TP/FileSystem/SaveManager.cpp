@@ -281,7 +281,7 @@ void SaveManager::saveWorldFile()
     std::cout << "Begin saving world data..." << std::endl;
 
     std::string saveFolder = generateSaveFolderPath();
-    std::string filePath = saveFolder + PATH_PLAYER_FILE;
+    std::string filePath = saveFolder + PATH_WORLD_FILE;
 
     // TODO pour le moment on ne fait que la region actuelle mais faudra ajouter un system pour szuvgarder de nouvelle region
 
