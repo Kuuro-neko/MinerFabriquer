@@ -132,8 +132,6 @@ int main(void) {
     SaveManager &saveManager = SaveManager::getInstance();
     saveManager.loadPlayerData(character);
     saveManager.startAutoSave(character);
-   
-
 
     // Initialise GLFW
     if (!glfwInit()) {
@@ -251,6 +249,7 @@ int main(void) {
     root.addChild(&world);
     world.setCamera(camera);
     world.setDoDaylightCycle(false);
+
 
     character.m_world = &world;
 

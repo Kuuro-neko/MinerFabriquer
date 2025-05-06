@@ -139,6 +139,8 @@ void SaveManager::startAutoSave(Character &data)
     autoSaveRunning = true;
     const std::string autoPlayerFilePath = generateSaveFolderPath() + PATH_PLAYER_FILE;
     int saveDelayFortheThread = SAVE_DELAY;
+
+    // for the tread we have to define the lambda function and pass the data by reference
     autoSaveThread = std::thread([this, autoPlayerFilePath, &data, saveDelayFortheThread]()
                                  {
                                      while (autoSaveRunning)
@@ -149,6 +151,7 @@ void SaveManager::startAutoSave(Character &data)
                                              std::cout << "Auto-saving player data..." << std::endl;
                                              //save all the file that we need (player data, world data)
                                              saveCharacterFile(data);
+                                             
 
                                              std::cout << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
@@ -262,6 +265,8 @@ std::string SaveManager::getMostRecentSaveFolder()
 
     return mostRecentFolder;
 }
+
+
 
 // TODO : pour l'oral parler des types de représentation qui existait avec pour t contre
 // JSON -> lisible mais pas optimisé quand il faut parcourir beaucoup de données + lourd
