@@ -383,7 +383,6 @@ int main(void) {
     glDeleteProgram(programID);
 
     // Close OpenGL window and terminate GLFW
-
     glfwTerminate();
     return 0;
 }

@@ -23,12 +23,11 @@ void SaveManager::loadPlayerData(Character &character)
         std::cout << "Player data file does not exist..." << std::endl;
         std::cout << "Creating a new player data file..." << std::endl;
         std::string saveFolder = generateSaveFolderPath();
-      
+
         if (!std::filesystem::exists(saveFolder))
         {
             std::filesystem::create_directories(saveFolder);
         }
-    
 
         std::ofstream file(saveFolder + PATH_PLAYER_FILE);
         std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
@@ -83,7 +82,6 @@ void SaveManager::saveCharacterFile(Character &data)
 {
     std::string saveFolder = generateSaveFolderPath();
 
- 
     if (!std::filesystem::exists(saveFolder))
     {
         std::filesystem::create_directories(saveFolder);
@@ -134,10 +132,12 @@ void SaveManager::startAutoSave(Character &data)
                                          if (autoSaveRunning) // Check again to avoid race conditions
                                          {
                                              std::cout << "Auto-saving player data..." << std::endl;
+                                             //save all the file that we need (player data, world data)
                                              saveCharacterFile(data);
 
                                              std::cout << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
+                                    
                                      } });
 }
 
@@ -145,11 +145,18 @@ void SaveManager::stopAutoSave()
 {
     if (autoSaveRunning)
     {
-        autoSaveRunning = false;
+        autoSaveRunning = false; // Signal the thread to stop
+        autoSaveThread.detach(); 
         if (autoSaveThread.joinable())
         {
-            autoSaveThread.join();
+            std::cout << "Waiting for auto-save thread to finish..." << std::endl;
+            autoSaveThread.join(); // Wait for the thread to finish
         }
+        else
+        {
+            std::cerr << "Auto-save thread is not joinable." << std::endl;
+        }
+
         std::cout << "Auto-save stopped." << std::endl;
     }
 }
