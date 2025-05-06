@@ -71,7 +71,6 @@ void SaveManager::loadPlayerData(Character &character)
         {
             ifs.read(reinterpret_cast<char *>(&quantity), sizeof(quantity));
             // Add the item to the inventory
-            std::cout << "Item loaded: ID = " << id << ", Quantity = " << quantity << std::endl;
             character.inventory->addItem(ItemStack(id, quantity));
         }
 
