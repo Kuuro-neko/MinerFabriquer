@@ -16,7 +16,7 @@
 #define CHUNK_SIZE 16
 
 GLFWwindow *window;
-SaveManager &saveManager = SaveManager::getInstance();
+
 
 using namespace std;
 using namespace glm;
@@ -129,8 +129,8 @@ void UpdateFPS() {
 }
 
 int main(void) {
-
-     saveManager.loadPlayerData(character);
+    SaveManager &saveManager = SaveManager::getInstance();
+    saveManager.loadPlayerData(character);
     saveManager.startAutoSave(character);
    
 
@@ -383,9 +383,7 @@ int main(void) {
     glDeleteProgram(programID);
 
     // Close OpenGL window and terminate GLFW
-
     glfwTerminate();
-    saveManager.stopAutoSave();
     return 0;
 }
 
