@@ -99,7 +99,8 @@ add_executable(MinerFabriquer
         TP/GUI/HUD.cpp
         TP/GUI/Barre.hpp
         TP/GUI/Barre.cpp
-
+        TP/FileSystem/SaveManager.cpp
+        TP/FileSystem/SaveManager.hpp
 
 )
 target_link_libraries(MinerFabriquer

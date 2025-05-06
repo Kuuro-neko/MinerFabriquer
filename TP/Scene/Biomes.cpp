@@ -355,7 +355,7 @@ void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int bas
 {
     float distance;
     // Set the base of the mushroom
-    for (int y = -2; y < 2; y++) {
+    for (int y = -2; y < capRadius; y++) {
         chunk->generationSetBloc(x, baseHeight + y, z, stemMaterial);
     }
     glm::ivec3 center = glm::ivec3(x, baseHeight + capRadius/2, z);
@@ -370,10 +370,7 @@ void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int bas
 
             }
         }
-        // Set the stem
-        if (y <= capRadius - 0.3f) {
-            chunk->generationSetBloc(center.x, y, center.z, stemMaterial);
-        } else if (y <= capRadius + 0.7f) {
+        if (y <= capRadius + 0.7f && y > capRadius - 0.3f) {
             chunk->generationSetBloc(center.x, y, center.z, capMaterial);
         }
     }

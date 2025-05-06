@@ -10,12 +10,13 @@
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
 #include <TP/GUI/HUD.hpp>
-
-
+#include <TP/FileSystem/SaveManager.hpp>
+#include <Defines.hpp>
 
 #define CHUNK_SIZE 16
 
 GLFWwindow *window;
+SaveManager &saveManager = SaveManager::getInstance();
 
 using namespace std;
 using namespace glm;
@@ -128,6 +129,12 @@ void UpdateFPS() {
 }
 
 int main(void) {
+
+     saveManager.loadPlayerData(character);
+    saveManager.startAutoSave(character);
+   
+
+
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -376,8 +383,9 @@ int main(void) {
     glDeleteProgram(programID);
 
     // Close OpenGL window and terminate GLFW
-    glfwTerminate();
 
+    glfwTerminate();
+    saveManager.stopAutoSave();
     return 0;
 }
 

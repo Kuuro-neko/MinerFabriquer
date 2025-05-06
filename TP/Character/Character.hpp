@@ -29,6 +29,7 @@ public:
     inline void applyGravity() {translate(glm::vec3(0.f, -gravity, 0.f));}
     inline glm::vec3 getSize() { return size; }
     inline unsigned char getGamemode() { return gamemode; }
+    inline unsigned char GetprevGamemode() { return prevGamemode; }
     inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
     void draw(GLuint programID) override;
 
@@ -57,6 +58,20 @@ public:
 
     void setHUD(HUD* hud) { m_hud = hud; }
     int isHUDVisible();
+
+    void setGamemode(unsigned char gamemode)
+    {
+        this->gamemode = gamemode;
+    }
+    void SetprevGamemode(unsigned char prevGamemode)
+    {
+        this->prevGamemode = prevGamemode;
+    }
+    void setWorldPosition(float x, float y, float z)
+    {
+        this->m_transform.m_translation = glm::vec3(x, y, z);
+    }
+
 private:
 
     void updateClosestBlock(BlocDatabase &database);
@@ -65,6 +80,8 @@ private:
     void setSelectedBlock(BlocDatabase &database);
     void updateCamera();
 
+   
+    
     inline void resetBreakCooldown() {
         breakCooldown = 0.f;
     }
