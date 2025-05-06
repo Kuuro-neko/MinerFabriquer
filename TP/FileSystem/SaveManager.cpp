@@ -110,8 +110,7 @@ void SaveManager::saveCharacterFile(Character &data)
         data.getWorldPosition().x,
         data.getWorldPosition().y,
         data.getWorldPosition().z};
-    int id,quantity;
-   
+    int id, quantity;
 
     ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
     ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
@@ -151,9 +150,10 @@ void SaveManager::startAutoSave(Character &data)
                                              std::cout << "Auto-saving player data..." << std::endl;
                                              //save all the file that we need (player data, world data)
                                              saveCharacterFile(data);
-                                             
+                                             saveWorldFile();
 
-                                             std::cout << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
+                                                     std::cout
+                                                 << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
                                     
                                      } });
@@ -266,6 +266,24 @@ std::string SaveManager::getMostRecentSaveFolder()
     return mostRecentFolder;
 }
 
+void SaveManager::setWorld(World *worldInstance)
+{
+    this->world = worldInstance;
+}
+
+void SaveManager::saveWorldFile()
+{
+    if (!world)
+    {
+        std::cerr << "World instance is not set. Cannot save world data." << std::endl;
+        return;
+    }
+    std::cout << "Saving world data..." << std::endl;
+
+   // test print the number of chunks
+    std::cout << "Number of chunks in the world: " << world->getAllChunks().size() << std::endl;
+
+    }
 
 
 // TODO : pour l'oral parler des types de représentation qui existait avec pour t contre

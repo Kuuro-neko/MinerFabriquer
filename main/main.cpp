@@ -250,7 +250,7 @@ int main(void) {
     world.setCamera(camera);
     world.setDoDaylightCycle(false);
 
-
+    saveManager.setWorld(&world);
     character.m_world = &world;
 
     Entity* characterModel = new Entity();

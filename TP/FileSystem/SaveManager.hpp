@@ -8,6 +8,8 @@
 class SaveManager
 {
 
+private:
+    World *world = nullptr; // Pointeur vers l'instance de World
 
 protected:
     static SaveManager *instance;
@@ -86,7 +88,7 @@ public:
 
         Chunk chunks[8]; // 8 niveaux verticaux
     };
+    void setWorld(World *worldInstance);
+    void saveWorldFile();
 
-    void saveWorldFile(World &world);
-   
 };
