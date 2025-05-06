@@ -18,3 +18,12 @@ Id,Name,xTexSide,yTexSide,xTexTop,yTexTop,xTexBottom,yTexBottom,Opaque,Solid,Bre
 16,Amethyst,3,1,3,1,3,1,1,1,1,0,1
 17,Smooth_basalt,4,1,4,1,4,1,1,1,1,0,1
 18,Calcite,5,1,5,1,5,1,1,1,1,0,1
+19,Andesite,6,1,6,1,6,1,1,1,1,0,1
+20,Brain_coral,7,1,7,1,7,1,1,1,1,0,0
+21,Bubble_coral,8,1,8,1,8,1,1,1,1,0,0
+22,End_stone,9,1,9,1,9,1,1,1,1,0,1
+23,Moss,10,1,10,1,10,1,1,1,1,0,1
+24,Mushroom_stem,11,1,11,1,11,1,1,1,1,0,0
+25,Brown_mushroom,12,1,12,1,12,1,1,1,1,0,0
+26,Mycelium,13,1,14,1,1,0,1,1,1,0,1
+27,Red_mushroom,15,1,15,1,15,1,1,1,1,0,0

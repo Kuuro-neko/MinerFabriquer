@@ -238,12 +238,143 @@ void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight
 {
     int wX = chunk->m_chunkCoords.x * CHUNK_SIZE + x;
     int wZ = chunk->m_chunkCoords.z * CHUNK_SIZE + z;
-    for (float y = getGroundLevel() - 5.0f; y < baseHeight+2; y++) {
+    for (float y = getGroundLevel() - 15.0f; y < baseHeight+2; y++) {
+        if (y <= getGroundLevel()) {
+            if (getRandomFloat() > (y + 16.0f - float(getGroundLevel())) /20.f) {
+                continue;   
+            }
+        }
         float noiseValue = amethystNoise.GetNoise(x-136.0f,y,z-136.0f);
         if (noiseValue < 0.1f) {
             chunk->m_world->generationSetBloc(wX, y, wZ, CALCITE);
         } else if (noiseValue < 0.15f) {
             chunk->m_world->generationSetBloc(wX, y, wZ, AMETHYST);
+        }
+    }
+}
+
+/// ======================= ///
+/// ===== MushroomBiome ===== ///
+/// ======================= ///
+
+float MushroomBiome::calculateHeight(float x, float z)
+{
+    float noiseValue = getNoise()->GetNoise(x,z);
+    return getGroundLevel() + std::max(noiseValue, 0.f);
+}
+
+void MushroomBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, DIRT);
+    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
+    float noiseValue = coralVineNoise.GetNoise((float) x,(float) z);
+    if(noiseValue < -0.4f) {
+        chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, MOSS);
+        if (noiseValue > -0.44f) {
+            chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, GLOWSTONE);
+        } else {
+            chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, MOSS);
+        }
+    } else {
+        chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
+        chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, MYCELIUM);
+    }
+}
+
+void MushroomBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+    if (chunk->getBloc(x, baseHeight - 1, z) == AIR) return;
+
+    if (getRandomFloat() >= 0.9975f) {
+        int stemRadius = getRandom1000() % 2;
+        float capRadius = stemRadius == 0 ? 1.0f + getRandomFloat() * 2.0f : 3.0f + getRandomFloat() * 2.0f;
+        addMushroomCup(chunk, x, z, baseHeight, getRandomFloat() * 5.0f + 3, stemRadius, capRadius, MUSHROOM_STEM, BROWN_MUSHROOM);
+    } else if (getRandomFloat() >= 0.9955f) {
+        int h = getRandom1000() % 2 + 5;
+        float r =  1.5f + getRandomFloat() * 2.0f;
+        addMushroomReverseU(chunk, x, z, baseHeight, h, r, MUSHROOM_STEM, RED_MUSHROOM);
+    }
+}
+
+void MushroomBiome::addMushroomCup(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial)
+{
+    for (int dx = -stemRadius-1; dx <= stemRadius; dx+=stemRadius+1) {
+        for (int dz = -stemRadius-1; dz <= stemRadius; dz+=stemRadius+1) {
+            if (chunk->getBloc(x + dx, baseHeight + 2, z + dz) != AIR) {
+                return;
+            }
+        }
+    }
+    int distance;
+    for (int dx = -stemRadius; dx <= stemRadius; dx++) {
+        for (int dz = -stemRadius; dz <= stemRadius; dz++) {
+            distance = std::abs(dx) + std::abs(dz);
+            // Set the base of the mushroom
+            for (int y = -2; y < 0; y++) {
+                if (distance <= stemRadius) {
+                    chunk->setBloc(x + dx, baseHeight + y, z + dz, stemMaterial);
+                }
+            }
+            // Set the stem of the mushroom
+            for (int y = 0; y < stemHeight-1; y++) {
+                
+                if (distance <= stemRadius) {
+                    chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, stemMaterial);
+                }
+            }
+        }
+    }
+    // Set the cap of the mushroom
+    int y = stemHeight-1;
+    for (int dx = -capRadius; dx <= capRadius; dx++) {
+        for (int dz = -capRadius; dz <= capRadius; dz++) {
+            distance = std::sqrt(dx * dx + dz * dz);
+            if (distance < capRadius-2.0f) {
+                chunk->generationSetBloc(x + dx, baseHeight + y + 1, z + dz, WATER);
+                if(dx == 0 || dz == 0 ) {
+                    chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, stemMaterial);
+                } else {
+                    chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, capMaterial);
+                }
+            } else if (distance <= capRadius-1.0f) {
+                chunk->generationSetBloc(x + dx, baseHeight + y + 1, z + dz, capMaterial);
+                if(dx == 0 || dz == 0) {
+                    chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, stemMaterial);
+                }
+            } else if (distance < capRadius) {
+                if(dx == 0 || dz == 0) {
+                    chunk->generationSetBloc(x + dx, baseHeight + y + 1, z + dz, stemMaterial);
+                }
+            }
+        }
+    }
+    chunk->generationSetBloc(x, baseHeight + y, z, stemMaterial);
+}
+
+void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial)
+{
+    float distance;
+    // Set the base of the mushroom
+    for (int y = -2; y < 2; y++) {
+        chunk->generationSetBloc(x, baseHeight + y, z, stemMaterial);
+    }
+    glm::ivec3 center = glm::ivec3(x, baseHeight + capRadius/2, z);
+    for (int y = baseHeight + capRadius*3; y >= baseHeight + 2; y--) {
+        for (int dx = -capRadius*2; dx <= capRadius*2; dx++) {
+            for (int dz = -capRadius*2; dz <= capRadius*2; dz++) {
+                // Set the cap
+                distance = std::sqrt(std::pow(x + dx - center.x, 2) + std::pow(z + dz - center.z, 2) + std::pow(y - center.y, 2));
+                if (distance >= capRadius - 0.3f && distance <= capRadius + 0.7f) {
+                    chunk->generationSetBloc(x + dx, y, z + dz, capMaterial);
+                }
+
+            }
+        }
+        // Set the stem
+        if (y <= capRadius - 0.3f) {
+            chunk->generationSetBloc(center.x, y, center.z, stemMaterial);
+        } else if (y <= capRadius + 0.7f) {
+            chunk->generationSetBloc(center.x, y, center.z, capMaterial);
         }
     }
 }

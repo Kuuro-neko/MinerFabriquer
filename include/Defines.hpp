@@ -15,9 +15,9 @@
 
 #define OUT_OF_BOUNDS_BLOC -2
 
-#define GENERATION_SIZE_X 8 // X size of initial generation
+#define GENERATION_SIZE_X 16 // X size of initial generation
 #define GENERATION_SIZE_Y 8 // Y size of initial generation
-#define GENERATION_SIZE_Z 8 // Z size of initial generation
+#define GENERATION_SIZE_Z 16 // Z size of initial generation
 
 // ===== Bloc database ===== //
 
@@ -45,6 +45,15 @@
 #define AMETHYST 16
 #define SMOOTH_BASALT 17
 #define CALCITE 18
+#define ANDESITE 19
+#define BRAIN_CORAL 20
+#define BUBBLE_CORAL 21
+#define END_STONE 22
+#define MOSS 23
+#define MUSHROOM_STEM 24
+#define BROWN_MUSHROOM 25
+#define MYCELIUM 26
+#define RED_MUSHROOM 27
 
 #define ERROR_BLOC 255
 
@@ -64,6 +73,7 @@
 #define WATER_BIOME 3
 #define ICE_BIOME 4
 #define CRISTALPEAKS_BIOME 5
+#define MUSHROOM_BIOME 6
 
 // ===== Player ===== //
 

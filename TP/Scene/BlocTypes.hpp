@@ -78,8 +78,9 @@ private:
         float xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom;
         int opaque, solid, breakable, lightLevel, ground;
         std::cout << "\nBloc database loading..." << std::endl;
+        int count = 0;
         while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, solid, breakable, lightLevel, ground)) {
-            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", Side UV: (" << xTexSide << ", " << yTexSide << "), Top UV: (" << xTexTop << ", " << yTexTop << "), Bottom UV: (" << xTexBottom << ", " << yTexBottom << "), Opaque: " << opaque << ", Solid: " << solid << ", Breakable: " << breakable << ", LightLevel: " << lightLevel << ", Ground: " << ground << std::endl;
+            //std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", Side UV: (" << xTexSide << ", " << yTexSide << "), Top UV: (" << xTexTop << ", " << yTexTop << "), Bottom UV: (" << xTexBottom << ", " << yTexBottom << "), Opaque: " << opaque << ", Solid: " << solid << ", Breakable: " << breakable << ", LightLevel: " << lightLevel << ", Ground: " << ground << std::endl;
             BlockData blockData(
                 id, name,
                 xTexSide, yTexSide,
@@ -88,7 +89,9 @@ private:
                 opaque, solid, breakable, lightLevel, ground
             );
             m_blocs[id] = blockData;
+            count++;
         }
+        std::cout << "Bloc database loaded, " << count << " blocs loaded." << std::endl;
         m_blocs[ERROR_BLOC] = BlockData();
     }
 

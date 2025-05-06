@@ -83,15 +83,12 @@ class DesertBiome : public Biome {
         DesertBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, DESERT_BIOME, seed) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
-        
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
 };
 
 class WaterBiome : public Biome {
     private:
         FastNoiseLite* waterNoise;
-        int getMinNeighborHeight(VoxelChunk *chunk, int x, int z, glm::ivec3 worldAABBMin);
-
     public :
         WaterBiome(int groundLevel, FastNoiseLite *noise, int seed) : Biome(groundLevel, noise, WATER_BIOME, seed) {}
         float calculateHeight(float x, float z) override;
@@ -125,6 +122,24 @@ class CristalPeaksBiome : public Biome {
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+};
+
+class MushroomBiome : public Biome {
+    private:
+        FastNoiseLite coralVineNoise;
+    public:
+        MushroomBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, MUSHROOM_BIOME, seed) {
+            coralVineNoise = FastNoiseLite();
+            coralVineNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+            coralVineNoise.SetFrequency(0.25f);
+            coralVineNoise.SetSeed(seed);
+            coralVineNoise.SetFractalType(FastNoiseLite::FractalType_PingPong);
+        }
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void addMushroomCup(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial);
+        void addMushroomReverseU(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial);
 };
 
 /// ======================== ///
