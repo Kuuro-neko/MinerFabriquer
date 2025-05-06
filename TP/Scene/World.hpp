@@ -47,7 +47,9 @@ public:
 
     ~World();
 
-    void generation();
+    void initialGeneration();
+
+    void generateChunkColumn(int x, int z);
 
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
     VoxelChunk *createEmptyChunk(int x, int y, int z);
@@ -79,6 +81,7 @@ public:
      */
     std::vector<VoxelChunk *> getIntersectedChunks(Ray ray, float maxDistance);
 
+    void updateLoadedChunks();
     void draw(GLuint programID) override;
 
     /**

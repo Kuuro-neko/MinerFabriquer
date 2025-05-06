@@ -47,7 +47,7 @@ void World::updateSkyLightsInColumn(int x, int z)
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
-    generation();
+    initialGeneration();
 }
 
 World::~World() {
@@ -279,6 +279,36 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
     return intersectedChunks;
 }
 
+void World::updateLoadedChunks() {
+    glm::vec3 pos = camera->getPosition();
+    VoxelChunk *chunk = getChunkContaining(pos);
+    if (!chunk) {
+        std::cout << "No chunk found at camera position" << std::endl;
+        return;
+    }
+    int chunkX = chunk->m_chunkCoords.x;
+    int chunkY = chunk->m_chunkCoords.y;
+    int chunkZ = chunk->m_chunkCoords.z;
+
+    // look for all the columns around, and remove those too far. Initialize those not found that should exist.
+    int count = 0;
+    for (int x = chunkX - GENERATION_RADIUS_X; x <= chunkX + GENERATION_RADIUS_X; ++x) {
+        for (int z = chunkZ - GENERATION_RADIUS_Z; z <= chunkZ + GENERATION_RADIUS_Z; ++z) {
+            int distance = std::abs(chunkX - x) + std::abs(chunkZ - z);
+            if (distance > GENERATION_RADIUS_X) {
+                removeChunkColumn(x, z);
+                continue;
+            }
+            ChunkColumn *column = getChunkColumn(x, z);
+            if (!column) {
+                generateChunkColumn(x, z);
+                count ++;
+            }
+        }
+    }
+    if(count) std::cout << "Generated " << count << " chunk columns pos(" << chunkX << ", " << chunkZ << ") " << chunks.size() << " chunks in total" << std::endl;
+}
+
 void World::draw(GLuint programID) {
 
     std::set<std::pair<int, int>> dirtyColumns = getDirtyColumns();
@@ -298,7 +328,12 @@ void World::draw(GLuint programID) {
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    for (auto &[key, chunk]: visibleChunks) {
+    //sort visible chunks by distance to camera
+    std::vector<std::pair<glm::ivec3, VoxelChunk*>> sortedChunks(visibleChunks.begin(), visibleChunks.end());
+    std::sort(sortedChunks.begin(), sortedChunks.end(), [this](const auto &a, const auto &b) {
+        return glm::length(a.second->getWorldPosition() - camera->getPosition()) < glm::length(b.second->getWorldPosition() - camera->getPosition());
+    });
+    for (auto &[key, chunk]: sortedChunks) {
         //si la distance de rendu est depassee, on ne dessine pas le chunk
         float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
         if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
@@ -309,45 +344,24 @@ void World::draw(GLuint programID) {
     
 }
 
-void World::generation() {
-    WorldGenerator worldGenerator;
-    // Generate the world
-    std::cout << "Generating base shape... 0%" << std::flush;
-    auto start = std::chrono::high_resolution_clock::now();
+void World::initialGeneration() {
     int count = 0;
     int total = GENERATION_RADIUS_X * 2;
+    auto start = std::chrono::high_resolution_clock::now();
+    std::cout << "Generation of the world..." << std::flush;
     for (int x = -GENERATION_RADIUS_X; x <= GENERATION_RADIUS_X; ++x) {
-        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
-            for (int z = -GENERATION_RADIUS_Z; z <= GENERATION_RADIUS_Z; ++z) {
-                VoxelChunk *chunk = createEmptyChunk(x, y, z);
-                worldGenerator.genereteProceduralChunk(this, chunk, x, y, z);
-            }
+        for (int z = -GENERATION_RADIUS_Z; z <= GENERATION_RADIUS_Z; ++z) {
+            generateChunkColumn(x, z);
         }
-        count ++;
-        std::cout << "\rGenerating base shape... " << int((count * 100) / total) << "%" << std::flush;
+        count++;
+        std::cout << "\rGeneration of the world... " << int((count * 100) / total) << "%" << std::flush;
     }
+
     auto end = std::chrono::high_resolution_clock::now();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "\rGenerating base shape...  done ! (" << ms << " ms) \n";
+    std::cout << "\rGeneration of the world... done ! (" << ms << " ms) \n";
 
-    std::cout << "Generating decorations... 0%" << std::flush;
-    start = std::chrono::high_resolution_clock::now();
-    count = 0;
-    for (int x = -GENERATION_RADIUS_X; x <= GENERATION_RADIUS_X; ++x) {
-        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
-            for (int z = -GENERATION_RADIUS_Z; z <= GENERATION_RADIUS_Z; ++z) {
-                VoxelChunk *chunk = getChunk(x, y, z);
-                worldGenerator.decorateProceduralChunk(this, chunk, x, y, z);
-            }
-        }
-        count ++;
-        std::cout << "\rGenerating decorations... " << int((count * 100) / total) << "%" << std::flush;
-    }
-    end = std::chrono::high_resolution_clock::now();
-    ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "\rGenerating decorations...  done ! (" << ms << " ms) \n";
-
-    // Update all lights levels
+        // Update all lights levels
     //  ->  First set the sky lights to 15 for all air blocks
     std::cout << "Updating lights... " << std::flush;
     start = std::chrono::high_resolution_clock::now();
@@ -380,18 +394,35 @@ void World::generation() {
     }
     end = std::chrono::high_resolution_clock::now();
     ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "  done ! (" << ms << " ms) \n";
+    std::cout << "\rUpdating lights... done ! (" << ms << " ms) \n";
 
-    // Generate meshes for first draw calls
-    std::cout << "Generating meshes..." << std::flush;
     start = std::chrono::high_resolution_clock::now();
+    std::cout << "Generation of the meshes..." << std::flush;
     std::vector<VoxelChunk *> chunks = getAllChunks();
     for (auto chunk : chunks) {
         chunk->generateMesh();
     }
     end = std::chrono::high_resolution_clock::now();
     ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << " done ! (" << ms << " ms) \n";
+    std::cout << "\rGeneration of the meshes... done ! (" << ms << " ms) \n";
+}
+
+void World::generateChunkColumn(int x, int z) {
+    // Column initialisation
+    for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+        VoxelChunk *chunk = createEmptyChunk(x, y, z);
+    }
+    // Column generation
+    ChunkColumn *column = getChunkColumn(x, z);
+    if (column) {
+        column->generate(
+            *this,
+            getChunkColumn(x-1, z),
+            getChunkColumn(x+1, z),
+            getChunkColumn(x, z-1),
+            getChunkColumn(x, z+1)
+        );
+    }
 }
 
 void World::cleanupBuffers() {

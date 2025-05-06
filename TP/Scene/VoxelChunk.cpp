@@ -33,9 +33,24 @@ bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
 }
 
 bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
-    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-        //std::cout << "Error: Out of bounds" << std::endl;
+    if (y < 0 || y >= m_sizeY) {
         return m_world->generationSetBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
+    }
+    if (x < 0) {
+        m_unGeneratedBlocks.push_back({betterModulo(x, CHUNK_SIZE), y, z, m_chunkCoords.x -1, m_chunkCoords.z, bloc});
+        return false;
+    }
+    if (x >= m_sizeX) {
+        m_unGeneratedBlocks.push_back({betterModulo(x, CHUNK_SIZE), y, z, m_chunkCoords.x +1, m_chunkCoords.z, bloc});
+        return false;
+    }
+    if (z < 0) {
+        m_unGeneratedBlocks.push_back({x, y, betterModulo(z, CHUNK_SIZE), m_chunkCoords.x, m_chunkCoords.z -1, bloc});
+        return false;
+    }
+    if (z >= m_sizeZ) {
+        m_unGeneratedBlocks.push_back({x, y, betterModulo(z, CHUNK_SIZE), m_chunkCoords.x, m_chunkCoords.z +1, bloc});
+        return false;
     }
     m_cubes[x][y][z] = bloc;
     m_lights[x][y][z] = BlocDatabase::getInstance().defaultLightLevel(bloc);

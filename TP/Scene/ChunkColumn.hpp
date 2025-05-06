@@ -39,6 +39,14 @@ public:
 
     // Get the surfaceHeightmap : a map of the surface height for each chunk-relative x,z in the chunk column
     std::vector<std::vector<int>> *getSurfaceHeightMap();
+
+    inline glm::ivec2 getChunkCoords() { return m_chunkCoords; }
+
+
+    void checkForUngeneratedBlocks(ChunkColumn *neighbor);
+    void generate(World &world, ChunkColumn *westNeighbor, ChunkColumn *eastNeighbor, ChunkColumn *southNeighbor, ChunkColumn *northNeighbor);
+
+
     
     void allocateSurfaceHeightMap();
     void free();

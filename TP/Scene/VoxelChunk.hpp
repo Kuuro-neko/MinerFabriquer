@@ -6,7 +6,18 @@
 
 #include <Defines.hpp>
 
+
+
 class World;
+
+struct UngeneratedBlock {
+    int x;
+    int y;
+    int z;
+    int chunkX;
+    int chunkZ;
+    int bloc;
+};
 
 class VoxelChunk : public SceneNode
 {
@@ -82,6 +93,7 @@ public:
     bool dirty = true;
     std::vector<std::vector<std::vector<int>>> m_cubes;
     std::vector<std::vector<std::vector<int>>> m_lights;
+    std::vector<UngeneratedBlock> m_unGeneratedBlocks;
     glm::ivec3 m_chunkCoords;
     World *m_world;
     VoxelMeshObject m_opaqueMesh;

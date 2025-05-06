@@ -40,7 +40,7 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
     biomeManager.addBiome(std::make_unique<MushroomBiome>(groundLevel, &baseHeightNoise, seed), 0.009f);
 }
 
-void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {
+void WorldGenerator::genereteProceduralChunk(World &world, VoxelChunk *chunk, int i, int j, int k) {
     //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
     if (groundLevel + CHUNK_SIZE * 2 < j * CHUNK_SIZE) {
         // Skipping chunks too high to have any generated bloc
@@ -49,7 +49,7 @@ void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, in
     generateTerrain(world, chunk, i, j, k, groundLevel);
 }
 
-void WorldGenerator::decorateProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {
+void WorldGenerator::decorateProceduralChunk(World &world, VoxelChunk *chunk, int i, int j, int k) {
     //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
     if (groundLevel + CHUNK_SIZE * 2 < j * CHUNK_SIZE) {
         // Skipping chunks too high to have any generated bloc
@@ -75,7 +75,7 @@ void WorldGenerator::setBaseStone(VoxelChunk *chunk, int x, int z, const glm::iv
  * @param k 
  * @param groundLevel 
  */
-void WorldGenerator::generateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
+void WorldGenerator::generateTerrain(World &world, VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk
@@ -132,7 +132,7 @@ void WorldGenerator::generateTerrain(World *world, VoxelChunk *chunk, int i, int
     }
 }
 
-void WorldGenerator::decorateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
+void WorldGenerator::decorateTerrain(World &world, VoxelChunk *chunk, int i, int j, int k, int groundLevel) {
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk

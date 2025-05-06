@@ -4,6 +4,11 @@
 
 #define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
 
+// ===== Fast access ===== //
+
+#define RENDERER_DISTANCE 8
+#define GENERATION_DISTANCE 8
+
 // ===== Generation & chunks ===== //
 
 #define GENERATION_SEED 4799
@@ -107,8 +112,6 @@
 
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
-
-#define RENDERER_DISTANCE 32.0f
 
 // ===== Lights ===== //
 

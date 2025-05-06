@@ -318,6 +318,7 @@ int main(void) {
         camera.update(deltaTime, window);
 
         frustum.update();
+        world.updateLoadedChunks();
         world.updateVisibleChunk(frustum);
 
         world.resolveCollisions(character, &world);

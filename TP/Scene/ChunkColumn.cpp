@@ -1,4 +1,7 @@
 #include "ChunkColumn.hpp"
+#include <TP/Scene/WorldGenerator.hpp>
+#include <TP/Scene/World.hpp>
+#include <TP/Scene/VoxelChunk.hpp>
 
 // sort from highest to lowest
 void ChunkColumn::sortChunks()
@@ -69,6 +72,39 @@ void ChunkColumn::updateSkyLights(int x, int z) {
         }
         if (touchedGround) break;
     }
+}
+
+void ChunkColumn::checkForUngeneratedBlocks(ChunkColumn *neighbor) {
+    if (!neighbor) return;
+    std::vector<VoxelChunk*> nChunks = neighbor->getChunks();
+    for (VoxelChunk *chunk : nChunks) {
+        std::vector<UngeneratedBlock> unGeneratedBlocks = chunk->m_unGeneratedBlocks;
+        for (auto &block : unGeneratedBlocks) {
+            if (block.chunkX == m_chunkCoords.x && block.chunkZ == m_chunkCoords.y) {
+                chunk->setBloc(block.x, block.y, block.z, block.bloc);
+            }
+        }
+    }
+}
+
+void ChunkColumn::generate(World &world, ChunkColumn *westNeighbor, ChunkColumn *eastNeighbor, ChunkColumn *southNeighbor, ChunkColumn *northNeighbor)
+{
+    WorldGenerator worldGenerator;
+    // Generate the world
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; --y) {
+        VoxelChunk *chunk = getChunk(y);
+        worldGenerator.genereteProceduralChunk(world, chunk, m_chunkCoords.x, y, m_chunkCoords.y);
+    }
+
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; --y) {
+        VoxelChunk *chunk = getChunk(y);
+        worldGenerator.decorateProceduralChunk(world, chunk, m_chunkCoords.x, y, m_chunkCoords.y);
+    }
+
+    checkForUngeneratedBlocks(westNeighbor);
+    checkForUngeneratedBlocks(eastNeighbor);
+    checkForUngeneratedBlocks(southNeighbor);
+    checkForUngeneratedBlocks(northNeighbor);
 }
 
 void ChunkColumn::allocateSurfaceHeightMap()
