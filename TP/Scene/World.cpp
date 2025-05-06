@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "World.hpp"
 #include <unordered_set>
+#include <TP/Scene/Zombie.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -538,4 +539,76 @@ void World::resolveCollisions(Character &character, World *world) {
 
     // Application du mouvement du personnage
     character.move(character.vecteurDirection);
+}
+
+void World::resolveCollisions(Zombie& zombie, World* world) {
+    // Logique de collision similaire à celle utilisée pour Character
+    // Récupérer la boîte englobante
+    glm::vec3 minBB = zombie.getMinBoundingBox();
+    glm::vec3 maxBB = zombie.getMaxBoundingBox();
+    
+    // Récupérer la direction de déplacement
+    glm::vec3& direction = zombie.vecteurDirection;
+    
+    // Traiter les collisions avec les blocs dans la boîte englobante
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
+                int blockType = world->getBloc(x, y, z);
+                
+                // Ignorer l'air et l'eau
+                if (blockType == AIR || blockType == WATER) {
+                    continue;
+                }
+                
+                // Résoudre les collisions avec les blocs solides
+                resolveCollisionForBlock(zombie, glm::vec3(x, y, z));
+            }
+        }
+    }
+    
+    // Appliquer le mouvement
+    zombie.move(zombie.vecteurDirection);
+}
+
+void World::resolveCollisionForBlock(Zombie &zombie, glm::vec3 blockPosition) {
+    // Bounding box du zombie
+    glm::vec3 minBB = zombie.getMinBoundingBox();
+    glm::vec3 maxBB = zombie.getMaxBoundingBox();
+
+    // Position minimale et maximale du bloc intersecté
+    glm::vec3 blockMin = blockPosition;
+    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+
+    // Vérification si la bounding box du zombie intersecte celle du bloc
+    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
+        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
+        maxBB.z > blockMin.z && minBB.z < blockMax.z) {
+
+        // Calcul des overlaps sur chaque axe
+        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
+        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
+        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
+
+        // Détermination de l'axe avec la plus petite profondeur de collision
+        if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
+            if (zombie.vecteurDirection.x > 0 && zombie.getWorldPosition().x < blockPosition.x) {
+                zombie.vecteurDirection.x = 0; // Bloque le mouvement vers la droite
+            } else if (zombie.vecteurDirection.x < 0 && zombie.getWorldPosition().x > blockPosition.x) {
+                zombie.vecteurDirection.x = 0; // Bloque le mouvement vers la gauche
+            }
+        } else if (overlapY < overlapX && overlapY < overlapZ) { // Axe Y
+            if (zombie.vecteurDirection.y > 0 && zombie.getWorldPosition().y < blockPosition.y) {
+                zombie.vecteurDirection.y = 0; // Bloque le mouvement vers le haut
+            } else if (zombie.vecteurDirection.y < 0 && zombie.getWorldPosition().y > blockPosition.y) {
+                zombie.vecteurDirection.y = 0; // Bloque le mouvement vers le bas
+            }
+        } else { // Axe Z
+            if (zombie.vecteurDirection.z > 0 && zombie.getWorldPosition().z < blockPosition.z) {
+                zombie.vecteurDirection.z = 0; // Bloque le mouvement vers l'avant
+            } else if (zombie.vecteurDirection.z < 0 && zombie.getWorldPosition().z > blockPosition.z) {
+                zombie.vecteurDirection.z = 0; // Bloque le mouvement vers l'arrière
+            }
+        }
+    }
 }

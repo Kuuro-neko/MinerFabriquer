@@ -261,15 +261,20 @@ int main(void) {
 
     Zombie* zombie = new Zombie(
         Transform(
-            glm::vec3(32, 36, 38),
+            glm::vec3(32, 36, 32),
             DEFAULT_ROTATION,
             1),
-        &world
+        &world,
+        &camera
     );
     Texture* zombieTexture = new Texture("../textures/zombie.png");
     zombie->setTexture(zombieTexture);
     zombie->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
     root.addChild(zombie);
+    // After creating the zombie in main.cpp, add:
+
+    zombie->setWireframeRenderer(wireframeProgramID);
+    zombie->setDisplayAABB(true);
 
     
 
@@ -331,6 +336,11 @@ int main(void) {
 
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
+
+        zombie->resolveGravity(deltaTime);
+        world.resolveCollisions(*zombie, &world);
+        zombie->update(deltaTime);
+
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         cubemapTexture.draw(camera);
@@ -367,6 +377,8 @@ int main(void) {
         
 
         character.drawBoundingBox();
+
+        zombie->drawBoundingBox();
 
 
 

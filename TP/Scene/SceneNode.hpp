@@ -101,6 +101,22 @@ public:
         translate(hit - getWorldPosition() + glm::vec3(0.0f, 1.f, 0.0f));
     }
 
+    SceneNode* getParent() const {
+        return m_parent;
+    }
+    
+    SceneNode* getRoot() {
+        SceneNode* current = this;
+        while (current->getParent() != nullptr) {
+            current = current->getParent();
+        }
+        return current;
+    }
+    
+    const std::vector<SceneNode*>& getChildren() const {
+        return m_children;
+    }
+
 private:
     SceneNode* m_parent;
     std::vector<SceneNode*> m_children;
