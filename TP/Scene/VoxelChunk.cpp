@@ -19,7 +19,7 @@ bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
     //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         //std::cout << "Error: Out of bounds" << std::endl;
-        return false;
+        return m_world->setBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
     }
     if (m_cubes[x][y][z] != AIR) {
         //std::cout << "Error: Block already set" << std::endl;
@@ -35,7 +35,7 @@ bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
 bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
         //std::cout << "Error: Out of bounds" << std::endl;
-        return false;
+        return m_world->generationSetBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
     }
     m_cubes[x][y][z] = bloc;
     m_lights[x][y][z] = BlocDatabase::getInstance().defaultLightLevel(bloc);
@@ -46,9 +46,7 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
 int VoxelChunk::getBloc(int x, int y, int z) {
     //quand on sort du chunk, on renvoie -1
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-        // POUR MATHIS : QUAND ON SORT DU CHUNK CETTE FONCTION CASSE
-        // On devrait peut etre ajouter des exceptions ? xD et enlever mes vieux return -1, -2
-        return -1;
+        return m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
     }
     return m_cubes[x][y][z];
 }
@@ -98,8 +96,8 @@ bool opaqueNeighborCheck(int neighbor) {
     return neighbor == AIR || !BlocDatabase::getInstance().isOpaque(neighbor) || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
-bool transparentNeighborCheck(int neighbor) {
-    return neighbor == AIR || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
+bool transparentNeighborCheck(int neighbor, int current, unsigned char face) {
+    return neighbor == AIR || neighbor == OUT_OF_BOUNDS_BLOC || (current == WATER && face & FACE_TOP); // to display chunk sides even if it's out of bounds
 }
 
 
@@ -291,7 +289,7 @@ void VoxelChunk::generateMesh() {
                 if (m_cubes[x][y][z] != AIR && !BlocDatabase::getInstance().isOpaque(m_cubes[x][y][z])) {
                     // Check all the adjacent cubes to see if they are air or leaves
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
-                    if (transparentNeighborCheck(neighbor)) {
+                    if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_EAST)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_EAST, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
@@ -300,7 +298,7 @@ void VoxelChunk::generateMesh() {
                         addAOValues(x, y, z, FACE_EAST, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
-                    if (transparentNeighborCheck(neighbor)) {
+                    if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_WEST)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_WEST, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
@@ -309,7 +307,7 @@ void VoxelChunk::generateMesh() {
                         addAOValues(x, y, z, FACE_WEST, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
-                    if (transparentNeighborCheck(neighbor)) {
+                    if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_BOTTOM)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_BOTTOM, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
@@ -318,7 +316,7 @@ void VoxelChunk::generateMesh() {
                         addAOValues(x, y, z, FACE_BOTTOM, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
-                    if (transparentNeighborCheck(neighbor)) {
+                    if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_TOP)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_TOP, x, y, z, m_cubes[x][y][z] == WATER && getBlocIncludingNeighbors(x, y + 1, z) != WATER);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
@@ -327,7 +325,7 @@ void VoxelChunk::generateMesh() {
                         addAOValues(x, y, z, FACE_TOP, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
-                    if (transparentNeighborCheck(neighbor)) {
+                    if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_SOUTH)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_SOUTH, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
@@ -336,7 +334,7 @@ void VoxelChunk::generateMesh() {
                         addAOValues(x, y, z, FACE_SOUTH, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
-                    if (transparentNeighborCheck(neighbor)) {
+                    if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_NORTH)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_NORTH, x, y, z);
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
                         m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));

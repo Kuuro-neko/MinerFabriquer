@@ -57,6 +57,7 @@ public:
     bool isInWater = false;
 
     void setHUD(HUD* hud) { m_hud = hud; }
+    int isHUDVisible();
 
     void setGamemode(unsigned char gamemode)
     {
@@ -112,6 +113,7 @@ private:
     // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
     bool shouldToggleDebug = true;
     bool displayAABB = false;
+    int displayHUD = 1;
     unsigned char gamemode = GAMEMODE_SURVIVAL;
     unsigned char prevGamemode = GAMEMODE_SURVIVAL;
 

@@ -6,6 +6,10 @@
 
 // ===== Generation & chunks ===== //
 
+#define GENERATION_SEED 4799
+#define GROUND_LEVEL 56
+#define WATER_LEVEL_DELTA 15
+
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
 
@@ -38,6 +42,18 @@
 #define SANDSTONE 13
 #define SNOW 14
 #define ICE 15
+#define AMETHYST 16
+#define SMOOTH_BASALT 17
+#define CALCITE 18
+#define ANDESITE 19
+#define BRAIN_CORAL 20
+#define BUBBLE_CORAL 21
+#define END_STONE 22
+#define MOSS 23
+#define MUSHROOM_STEM 24
+#define BROWN_MUSHROOM 25
+#define MYCELIUM 26
+#define RED_MUSHROOM 27
 
 #define ERROR_BLOC 255
 
@@ -55,6 +71,9 @@
 #define MOUNTAINS_BIOME 1
 #define DESERT_BIOME 2
 #define WATER_BIOME 3
+#define ICE_BIOME 4
+#define CRISTALPEAKS_BIOME 5
+#define MUSHROOM_BIOME 6
 
 // ===== Player ===== //
 

@@ -103,7 +103,7 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
 Character character = Character(
         Transform(
-                glm::vec3(32, 45, 32),
+                glm::vec3(14, 61, 14),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -362,7 +362,7 @@ int main(void) {
 
 
 
-        hud.render();
+        if(character.isHUDVisible()) hud.render();
 
 
         // Swap buffers

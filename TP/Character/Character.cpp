@@ -157,6 +157,12 @@ void Character::listenAction(float dt)
         }
     }
 
+    if(keyInput->isKeybindPressed(keybinds->toggleHUD))
+    {
+        std::cout << "[Character] Toggle HUD" << std::endl;
+        displayHUD = displayHUD == 0 ? 1 : 0;
+    }
+
     // ==== Debug binds ====
     if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes))
     {
@@ -184,10 +190,11 @@ void Character::listenAction(float dt)
         if (gamemode == GAMEMODE_SPECTATOR)
         {
             gamemode = prevGamemode;
-        
+            displayHUD = 1;
         } else {
             prevGamemode = gamemode;
             gamemode = GAMEMODE_SPECTATOR;
+            displayHUD = 0;
         }
         std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
         shouldToggleDebug = false;
@@ -603,4 +610,11 @@ void Character::resolveGravity(float &deltaTime)
 
     // Met à jour l’état de l’eau (sera utilisé dans listenAction)
     this->isInWater = detectedWater;
+}
+
+int Character::isHUDVisible()
+{
+    if (m_hud == nullptr) return 0;
+    if (gamemode == GAMEMODE_SPECTATOR) return 0;
+    return displayHUD;
 }

@@ -27,6 +27,7 @@ public:
     float solid = 1.0f; // True if the block is solid (can be walked on)
     bool breakable = false; // True if the block can be broken in survival
     int lightLevel = 0; // Light level of the block (0-15), 0 = no light, 15 = full light
+    bool ground = false; // True if the block is a ground block (dirt, grass, etc.)
 
     BlockData() = default;
 
@@ -34,12 +35,13 @@ public:
         int xTexSide, int yTexSide,
         int xTexTop, int yTexTop,
         int xTexBottom, int yTexBottom,
-        int opaque, int solid, int breakable, int lightLevel)
+        int opaque, int solid, int breakable, int lightLevel, int ground)
         : id(id), name(name),
             opaque(opaque),
             solid(solid),
             breakable(breakable),
-            lightLevel(lightLevel) {
+            lightLevel(lightLevel),
+            ground(ground) {
                 this->xTexSide = float(xTexSide) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
                 this->yTexSide = float(yTexSide) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
                 this->xTexTop = float(xTexTop) * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32;
@@ -69,24 +71,27 @@ private:
 
     BlocDatabase() {
         std::string database = "../database/Blocs.csv";
-        io::CSVReader<12> in(database);
-        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque", "Solid", "Breakable", "LightLevel");
+        io::CSVReader<13> in(database);
+        in.read_header(io::ignore_extra_column, "Id", "Name", "xTexSide", "yTexSide", "xTexTop", "yTexTop", "xTexBottom", "yTexBottom", "Opaque", "Solid", "Breakable", "LightLevel", "Ground");
         int id;
         std::string name;
         float xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom;
-        int opaque, solid, breakable, lightLevel;
+        int opaque, solid, breakable, lightLevel, ground;
         std::cout << "\nBloc database loading..." << std::endl;
-        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, solid, breakable, lightLevel)) {
-            std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", xTexSide: " << xTexSide << ", yTexSide: " << yTexSide << ", xTexTop: " << xTexTop << ", yTexTop: " << yTexTop << ", xTexBottom: " << xTexBottom << ", yTexBottom: " << yTexBottom << ", opaque: " << opaque << ", solid: " << solid << ", breakable: " << breakable << ", lightLevel: " << lightLevel << std::endl;
+        int count = 0;
+        while (in.read_row(id, name, xTexSide, yTexSide, xTexTop, yTexTop, xTexBottom, yTexBottom, opaque, solid, breakable, lightLevel, ground)) {
+            //std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", Side UV: (" << xTexSide << ", " << yTexSide << "), Top UV: (" << xTexTop << ", " << yTexTop << "), Bottom UV: (" << xTexBottom << ", " << yTexBottom << "), Opaque: " << opaque << ", Solid: " << solid << ", Breakable: " << breakable << ", LightLevel: " << lightLevel << ", Ground: " << ground << std::endl;
             BlockData blockData(
                 id, name,
                 xTexSide, yTexSide,
                 xTexTop, yTexTop,
                 xTexBottom, yTexBottom,
-                opaque, solid, breakable, lightLevel
+                opaque, solid, breakable, lightLevel, ground
             );
             m_blocs[id] = blockData;
+            count++;
         }
+        std::cout << "Bloc database loaded, " << count << " blocs loaded." << std::endl;
         m_blocs[ERROR_BLOC] = BlockData();
     }
 
@@ -142,7 +147,7 @@ public:
     }
 
     bool isPartOfGround(int id) {
-        return m_blocs[id].id==GRASS || m_blocs[id].id==DIRT || m_blocs[id].id==STONE || m_blocs[id].id==IRON_ORE || m_blocs[id].id==IRON_BLOCK || m_blocs[id].id==SAND || m_blocs[id].id==SANDSTONE || m_blocs[id].id==SNOW;
+        return m_blocs[id].ground;
     }
 
     /**

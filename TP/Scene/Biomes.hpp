@@ -1,15 +1,23 @@
 #pragma once
 
 #include <TP/Scene/VoxelChunk.hpp>
-
+#include <random>
 #include <Defines.hpp>
 class Biome {
     private:
         int groundLevel = 40;
         FastNoiseLite* noise;
         int id;
+        int seed;
+        std::mt19937 rng;
+        std::uniform_int_distribution<int> random1000;
+        std::uniform_real_distribution<float> randomFloat;
     public:
-        Biome(int groundLevel, FastNoiseLite* noise, int id) : groundLevel(groundLevel), noise(noise), id(id) {}
+        Biome(int groundLevel, FastNoiseLite* noise, int id, int seed) : groundLevel(groundLevel), noise(noise), id(id), seed(seed) {
+            rng.seed(seed+id);
+            random1000 = std::uniform_int_distribution<int>(0, 1000);
+            randomFloat = std::uniform_real_distribution<float>(0.0f, 1.0f);
+        }
         
         /**
          * @brief Calculate the height of the biome at the given coordinates.
@@ -40,7 +48,11 @@ class Biome {
          */
         inline int getId() const { return id; }
         inline int getGroundLevel() const { return groundLevel; }
+        inline int getSeed() const { return seed; }
+        inline int getRandom1000() { return random1000(rng); }
+        inline float getRandomFloat() { return randomFloat(rng); }
         inline FastNoiseLite* getNoise() const { return noise; }
+        inline std::mt19937& getRNG() { return rng; }
 };
 
 /// ================== ///
@@ -49,7 +61,7 @@ class Biome {
 
 class PlainsBiome : public Biome {
     public:
-        PlainsBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, PLAINS_BIOME) {}
+        PlainsBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, PLAINS_BIOME, seed) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
@@ -59,7 +71,7 @@ class MoutainsBiome : public Biome {
     private:
         FastNoiseLite* snowNoise;
     public:
-        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise) : Biome(groundLevel, noise, MOUNTAINS_BIOME), snowNoise(snowNoise) {}
+        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise, int seed) : Biome(groundLevel, noise, MOUNTAINS_BIOME, seed), snowNoise(snowNoise) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
@@ -68,23 +80,66 @@ class MoutainsBiome : public Biome {
 
 class DesertBiome : public Biome {
     public:
-        DesertBiome(int groundLevel, FastNoiseLite* noise) : Biome(groundLevel, noise, DESERT_BIOME) {}
+        DesertBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, DESERT_BIOME, seed) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
-        
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
 };
 
 class WaterBiome : public Biome {
     private:
         FastNoiseLite* waterNoise;
-        int getMinNeighborHeight(VoxelChunk *chunk, int x, int z, glm::ivec3 worldAABBMin);
-
     public :
-        WaterBiome(int groundLevel, FastNoiseLite *noise) : Biome(groundLevel, noise, WATER_BIOME) {}
+        WaterBiome(int groundLevel, FastNoiseLite *noise, int seed) : Biome(groundLevel, noise, WATER_BIOME, seed) {}
         float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+};
+
+class IceBiome : public Biome {
+    public:
+        IceBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, ICE_BIOME, seed) {}
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void addIceSpike(VoxelChunk* chunk, int x, int z, int baseHeight, int height, int radius);
+};
+
+class CristalPeaksBiome : public Biome {
+    private:
+        FastNoiseLite amethystNoise;
+    public:
+        CristalPeaksBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, CRISTALPEAKS_BIOME, seed) {
+            amethystNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+            amethystNoise.SetFrequency(0.05f);
+            amethystNoise.SetSeed(seed);
+            amethystNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+            amethystNoise.SetFractalOctaves(1);
+            amethystNoise.SetFractalLacunarity(5.0f);
+            amethystNoise.SetFractalGain(5.0f);
+            amethystNoise.SetFractalWeightedStrength(0.5f);
+        }
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+};
+
+class MushroomBiome : public Biome {
+    private:
+        FastNoiseLite coralVineNoise;
+    public:
+        MushroomBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, MUSHROOM_BIOME, seed) {
+            coralVineNoise = FastNoiseLite();
+            coralVineNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+            coralVineNoise.SetFrequency(0.25f);
+            coralVineNoise.SetSeed(seed);
+            coralVineNoise.SetFractalType(FastNoiseLite::FractalType_PingPong);
+        }
+        float calculateHeight(float x, float z) override;
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void addMushroomCup(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial);
+        void addMushroomReverseU(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial);
 };
 
 /// ======================== ///

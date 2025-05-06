@@ -21,22 +21,23 @@ private:
     FastNoiseLite waterHolesHeightNoise;
 
     std::mt19937 rng;
-    std::uniform_int_distribution<int> treeChance;
-    std::uniform_int_distribution<int> ironRodChance;
+    std::uniform_int_distribution<int> bedrockRng;
 
-    int groundLevel = 40;
+    int groundLevel = GROUND_LEVEL;
 
-    int seed = 7772870;
+    int seed = GENERATION_SEED;
 
     BiomeManager biomeManager = BiomeManager(groundLevel, seed);
 
     void setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
-    void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
+    void generateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel);
+    void decorateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
     void addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight);
 
 public:
     WorldGenerator();
 
-    void genereteProceduralChunk(VoxelChunk *world, int i, int j, int k);
+    void genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k);
+    void decorateProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k);
 };
