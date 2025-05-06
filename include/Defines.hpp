@@ -168,3 +168,4 @@ constexpr short AO_Bottom_deltas [4][3] = {
 const std::string PATH_PLAYER_FILE = "/playerData.bin";
 const std::string PATHSAVES = "../saves/";
 #define SAVE_DELAY 50 // seconds
+const std::string PATH_WORLD_FILE = "/worldData.bin";

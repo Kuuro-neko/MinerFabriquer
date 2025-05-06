@@ -67,26 +67,25 @@ public:
 
     // for the data that we know it,s going to change we go for a vector
     // for the data that we know it,s not going to change we go for a static array
-    struct ChunkColumnEntry
-    {
-        uint32_t offset; // Region position in the file
-        uint32_t length; // lenght of the region's data in the file
-    };
 
-    struct Chunk
+
+    struct ChunkEntry
     {
         std::vector<uint8_t> blocksID; // 16×16×16 of 1 octets = 4096 octets
-        std::vector<uint8_t> lightmap; // 16×16×16 of 1 octets   = 4096 octets
+        std::vector<std::vector<int>> lightmap; // 16×16×16 of 1 octets   = 4096 octets
     };
 
-    struct ChunkColumn
+    struct ChunkColumnEntry
     {
         int32_t worldX; // X global coordinate
         int32_t worldZ; // Z global coordinate
 
         int32_t heightmap[16][16]; // 1024 * 4 = 4096 octets
 
-        Chunk chunks[8]; // 8 niveaux verticaux
+        ChunkEntry chunks[8]; // 8 niveaux verticaux
+
+        uint32_t offset; // Region position in the file
+        uint32_t length; // lenght of the region's data in the file
     };
     void setWorld(World *worldInstance);
     void saveWorldFile();

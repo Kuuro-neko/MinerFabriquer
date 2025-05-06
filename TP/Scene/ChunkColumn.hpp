@@ -19,6 +19,10 @@ public:
         free();
     }
 
+
+    inline glm::ivec2 getChunkCoords() {
+        return m_chunkCoords;
+    }
     // Return the chunk at the given CHUNK y coordinate
     VoxelChunk* getChunk(int chunkCoordY);
     

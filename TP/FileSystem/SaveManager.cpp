@@ -278,13 +278,89 @@ void SaveManager::saveWorldFile()
         std::cerr << "World instance is not set. Cannot save world data." << std::endl;
         return;
     }
-    std::cout << "Saving world data..." << std::endl;
+    std::cout << "Begin saving world data..." << std::endl;
 
-   // test print the number of chunks
-    std::cout << "Number of chunks in the world: " << world->getAllChunks().size() << std::endl;
+    std::string saveFolder = generateSaveFolderPath();
+    std::string filePath = saveFolder + PATH_PLAYER_FILE;
 
+    // TODO pour le moment on ne fait que la region actuelle mais faudra ajouter un system pour szuvgarder de nouvelle region
+
+    // Creation du header de la region actuelle
+
+    std::ofstream out(filePath, std::ios::binary);
+    if (!out)
+    {
+        std::cerr << "Impossible to create the Saving file" << std::endl;
     }
 
+    // Header Part that will contains the offset and lenght but for now ir's empty
+    constexpr int REGION_WIDTH = GENERATION_SIZE_X;
+    constexpr int REGION_DEPTH = GENERATION_SIZE_Z;
+    constexpr int REGION_SIZE = REGION_WIDTH * REGION_DEPTH;
+
+    // 1. Write and reserve the space for the header file
+    std::vector<ChunkColumnEntry> toc(REGION_SIZE);                   // Table of Contents
+    out.seekp(REGION_SIZE * sizeof(ChunkColumnEntry), std::ios::beg); // we save the space for futur adresse and content
+
+    // 2. then we get all the data from the chunkColumn (posX, posY, heightmap, and the chunks)
+
+    for (int z = 0; z < REGION_DEPTH; ++z)
+    {
+        for (int x = 0; x < REGION_WIDTH; ++x)
+        {
+            int index = z * REGION_WIDTH + x;
+            ChunkColumn *column = world->getChunkColumn(x, z);
+            if (!column)
+                continue;
+
+            // 2.1 write the offset before writing new data
+            std::streampos offset = out.tellp();
+
+            // 2.2 save the data
+            int32_t worldX = column->getChunkCoords().x;
+            int32_t worldZ = column->getChunkCoords().y;
+            out.write(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
+            out.write(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
+
+            // 2.3 Sauvegarde heightmap
+            out.write(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(column->getSurfaceHeightMap()));
+
+            // 2.4 Sauvegarde des 8 chunks
+            std::vector<VoxelChunk *> allChunks = column->getChunks();
+
+            for (int i = 0; i < 8; ++i)
+            {
+                VoxelChunk *chunk = column->getChunk(i);
+                for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+                {
+                    for (int by = 0; by < CHUNK_SIZE; ++by)
+                    {
+                        for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                        {
+                            // blocID
+                            uint16_t blockID = chunk->getBloc(bx, by, bz);
+                            out.write(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
+
+                            // lightmap
+                            uint8_t light = chunk->getLightLevelIncludingNeighbors(bx, by, bz);
+                            out.write(reinterpret_cast<char *>(&light), sizeof(uint8_t));
+                        }
+                    }
+                }
+            }
+            
+            std::streampos end = out.tellp();
+            toc[index].offset = static_cast<uint32_t>(offset);
+            toc[index].length = static_cast<uint32_t>(end - offset);
+        }
+    }
+
+    // 3. Revenir au début et écrire la vraie table des matières
+    out.seekp(0, std::ios::beg);
+    out.write(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
+
+    std::cout << "World saved to: " << filePath << std::endl;
+}
 
 // TODO : pour l'oral parler des types de représentation qui existait avec pour t contre
 // JSON -> lisible mais pas optimisé quand il faut parcourir beaucoup de données + lourd
