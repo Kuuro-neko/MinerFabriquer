@@ -41,6 +41,8 @@ float zoom = 1.;
 
 int displayNormals = 0;
 
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+
 void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
     mesh.vertices.clear();
     mesh.triangles.clear();
@@ -175,7 +177,7 @@ int main(void) {
         return -1;
     }
     glfwMakeContextCurrent(window);
-
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     // Initialize GLEW
     glewExperimental = true; // Needed for core profile
     if (glewInit() != GLEW_OK) {
@@ -410,9 +412,7 @@ int main(void) {
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-    // marche pas : camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height, camera.getNearPlane(), camera.getFarPlane());
+    camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height, camera.getNearPlane(), camera.getFarPlane());
 }
 
