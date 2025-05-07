@@ -50,7 +50,6 @@ public:
     Inventory *inventory;
     glm::vec3 velocity = glm::vec3(0.f);
     glm::vec3 vecteurDirection = glm::vec3(0.f, 0.f, 0.f);
-    glm::vec3 previousPosition = glm::vec3(0.f, 0.f, 0.f);
     bool sneaking = false;
     bool sprinting = false;
 

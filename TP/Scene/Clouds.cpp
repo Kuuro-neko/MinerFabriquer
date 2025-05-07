@@ -73,10 +73,6 @@ void Clouds::draw(float time, Character &character)
 
     glUniform1f(glGetUniformLocation(programId, "time"), time);
 
-    glUniform3f(glGetUniformLocation(programId, "playerPos"), pos.x, pos.y, pos.z);
-
-    glUniform1f(glGetUniformLocation(programId, "playerSpeed"), character.getSpeed());
-
     texture->bind(programId);
 
     //glDisable(GL_DEPTH_TEST);
