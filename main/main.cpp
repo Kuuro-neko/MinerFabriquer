@@ -9,6 +9,7 @@
 #include "TP/Character/Character.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
+#include <TP/Scene/Clouds.hpp>
 #include <TP/GUI/HUD.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
 #include <Defines.hpp>
@@ -220,6 +221,8 @@ int main(void) {
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
     GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
+    GLuint cloudsProgramID = LoadShaders("clouds_vertex_shader.glsl", "clouds_fragment_shader.glsl");
+
 
 
     HUD hud = HUD(windowWidth, windowHeight);
@@ -227,9 +230,9 @@ int main(void) {
 
     GLint success;
     GLchar infoLog[512];
-    glGetShaderiv(programID, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(cloudsProgramID, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(programID, 512, NULL, infoLog);
+        glGetShaderInfoLog(cloudsProgramID, 512, NULL, infoLog);
         std::cerr << "Shader compile error: " << infoLog << std::endl;
     }
 
@@ -239,6 +242,8 @@ int main(void) {
     lightMap.bind(programID);
 
     CubemapTexture cubemapTexture = CubemapTexture(cubemapProgramID);
+
+
 
     // Get a handle for our "Model View Projection" matrices uniforms
 
@@ -263,6 +268,9 @@ int main(void) {
     root.addChild(&character);
     character.setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character.getWorldPosition());
+
+    Texture cloudTex = Texture("../textures/clouds.png");
+    Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
 
 /*     Entity* Mr_Vincell = new Entity();
     Mr_Vincell->generateHumanoidMesh(0.0f);
@@ -342,6 +350,15 @@ int main(void) {
 
         lightMap.bind(programID);
 
+        glUseProgram(cloudsProgramID);
+
+        GLuint viewMatrixIdC = glGetUniformLocation(cloudsProgramID, "ViewMatrix");
+        glUniformMatrix4fv(viewMatrixIdC, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
+        GLuint projectionMatrixIdC = glGetUniformLocation(cloudsProgramID, "ProjectionMatrix");
+        glUniformMatrix4fv(projectionMatrixIdC, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
+        
+        glUseProgram(programID);
+
         root.draw(programID);
 
         
@@ -359,6 +376,8 @@ int main(void) {
         
 
         character.drawBoundingBox();
+
+        clouds.draw(currentFrame, character);
 
 
 

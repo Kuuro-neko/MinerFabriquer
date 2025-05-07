@@ -232,6 +232,23 @@ void Character::listenAction(float dt)
     }
 }
 
+float Character::getSpeed()
+{
+    if (gamemode == GAMEMODE_SPECTATOR)
+    {
+        return this->speed;
+    }
+    if (sneaking)
+    {
+        return this->sneakSpeed;
+    }
+    if (sprinting)
+    {
+        return this->sprintSpeed;
+    }
+    return this->speed;
+}
+
 void Character::updateClosestBlock(BlocDatabase &db)
 {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));

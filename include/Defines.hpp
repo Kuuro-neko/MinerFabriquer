@@ -19,6 +19,7 @@
 #define GENERATION_SIZE_Y 8 // Y height of initial generation
 #define GENERATION_RADIUS_Z 8 // Z radius of initial generation
 
+
 // ===== Bloc database ===== //
 
 #define TEXTUREATLAS_COORD_UNIT 0.0625f

@@ -90,6 +90,8 @@ add_executable(MinerFabriquer
         TP/Scene/Biomes.hpp
         TP/Scene/ChunkColumn.cpp
         TP/Scene/ChunkColumn.hpp
+        TP/Scene/Clouds.cpp
+        TP/Scene/Clouds.hpp
         TP/Scene/Entity.hpp
         TP/Scene/Entity.cpp
         TP/Input/KeyInput.cpp
