@@ -15,9 +15,10 @@
 
 #define OUT_OF_BOUNDS_BLOC -2
 
-#define GENERATION_RADIUS_X 2 // X radius of initial generation
+#define GENERATION_RADIUS_X 8 // X radius of initial generation
 #define GENERATION_SIZE_Y 8 // Y height of initial generation
-#define GENERATION_RADIUS_Z 2 // Z radius of initial generation
+#define GENERATION_RADIUS_Z 8 // Z radius of initial generation
+
 
 // ===== Bloc database ===== //
 
