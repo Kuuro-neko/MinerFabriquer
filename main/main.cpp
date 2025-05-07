@@ -270,7 +270,7 @@ int main(void) {
     camera.setTarget(character.getWorldPosition());
 
     Texture cloudTex = Texture("../textures/clouds.png");
-    Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
+    Clouds clouds = Clouds(cloudTex, 0.00005f, cloudsProgramID);
 
 /*     Entity* Mr_Vincell = new Entity();
     Mr_Vincell->generateHumanoidMesh(0.0f);
@@ -377,7 +377,7 @@ int main(void) {
 
         character.drawBoundingBox();
 
-        clouds.draw(currentFrame, camera.getPosition());
+        clouds.draw(currentFrame, character);
 
 
 

@@ -56,8 +56,9 @@ Clouds::Clouds(Texture &cloudTex, float speed, GLuint programID)
     std::cout << "After GL state: " << glGetError() << std::endl;
 }
 
-void Clouds::draw(float time, glm::vec3 pos)
+void Clouds::draw(float time, Character &character)
 {
+    glm::vec3 pos = character.getWorldPosition();
     transform.m_translation = glm::vec3(pos.x, height, pos.z);
     ModelMatrix = glm::mat4(1.0f);
     ModelMatrix = glm::translate(ModelMatrix, transform.m_translation);
@@ -71,6 +72,10 @@ void Clouds::draw(float time, glm::vec3 pos)
     glUniform1f(glGetUniformLocation(programId, "scrollSpeed"), scrollSpeed);
 
     glUniform1f(glGetUniformLocation(programId, "time"), time);
+
+    glUniform3f(glGetUniformLocation(programId, "playerPos"), pos.x, pos.y, pos.z);
+
+    glUniform1f(glGetUniformLocation(programId, "playerSpeed"), character.getSpeed());
 
     texture->bind(programId);
 

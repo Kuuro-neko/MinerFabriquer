@@ -3,6 +3,7 @@
 #include <TP/Scene/Texture.hpp>
 #include <TP/Scene/MeshObject.hpp>  
 #include <utils/Transform.hpp>
+#include <TP/Character/Character.hpp>
 
 class Clouds
 {
@@ -17,5 +18,5 @@ private:
 public:
     Clouds(Texture &cloudTex, float speed, GLuint programID);
 
-    void draw(float time, glm::vec3 pos);
+    void draw(float time, Character &character);
 };
