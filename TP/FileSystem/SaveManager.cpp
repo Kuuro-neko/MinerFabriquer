@@ -449,23 +449,23 @@ void SaveManager::readWorldFile(std::ifstream &in)
         }
 
         // 2.3 Lecture des chunks
-        for (int i = 0; i < CHUNK_HEIGHT; ++i)
+        for (int i = 0; i < GENERATION_SIZE_Y; ++i)
         {
             VoxelChunk *chunk = new VoxelChunk({worldX, i, worldZ});
             column->addChunk(chunk);
 
-            for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+            for (int bz = 0; bz < CHUNK_SIZE; ++bz)
             {
                 for (int by = 0; by < CHUNK_SIZE; ++by)
                 {
-                    for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                    for (int bx = 0; bx < CHUNK_SIZE; ++bx)
                     {
                         // Bloc ID
                         uint16_t blockID;
                         in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
-                        chunk->setBloc(bx, by, bz, blockID);
-
-                        // Lumière
+                        chunk->generationSetBloc(bx, by, bz, blockID);
+                      
+                        // Lightmap
                         uint8_t light;
                         in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
                         chunk->setLightLevel(bx, by, bz, light);

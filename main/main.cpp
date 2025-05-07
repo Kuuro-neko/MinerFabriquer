@@ -242,24 +242,31 @@ int main(void)
     /****************************************/
 
     SceneNode root;
-    std::cout << "is World file exists ? " << saveManager.isWorldFileEmpty() << std::endl;
-    
-    if (saveManager.isWorldFileEmpty())
-    {
-       
-    }
-    else
-    {
-        std::cout << "Loading world data file..." << std::endl;
-        
-    }
-    World world= World();
+    World world = World();
     root.addChild(&world);
     world.setCamera(camera);
     world.setDoDaylightCycle(false);
 
+    // Passer l'instance du monde au SaveManager
     saveManager.setWorld(&world);
+
+    if (!saveManager.isWorldFileEmpty())
+    {
+        // Si le fichier n'existe pas, générer un nouveau monde
+        std::cout << "No world file found. Generating a new world..." << std::endl;
+        saveManager.saveWorldFile(); // Sauvegarder le monde après la génération
+    }
+    else
+    {
+        // Si le fichier existe, charger le monde
+        std::cout << "Loading world data file..." << std::endl;
+        saveManager.loadWorldFile();
+    }
+
+    // Associer le monde au personnage
     character.m_world = &world;
+
+    // Ajouter le personnage au monde
     Entity *characterModel = new Entity();
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
@@ -269,6 +276,7 @@ int main(void)
     root.addChild(&character);
     character.setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character.getWorldPosition());
+
 
     /*     Entity* Mr_Vincell = new Entity();
         Mr_Vincell->generateHumanoidMesh(0.0f);
