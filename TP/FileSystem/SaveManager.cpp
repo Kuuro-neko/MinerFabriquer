@@ -16,19 +16,18 @@ void SaveManager::loadPlayerData(Character &character)
     unsigned char gamemode;
     unsigned char prev;
     float position[3];
-
+    int id, quantity;
     // no actual data -> create the folder
     if (isSaveFolderEmpty())
     {
         std::cout << "Player data file does not exist..." << std::endl;
         std::cout << "Creating a new player data file..." << std::endl;
         std::string saveFolder = generateSaveFolderPath();
-      
+
         if (!std::filesystem::exists(saveFolder))
         {
             std::filesystem::create_directories(saveFolder);
         }
-    
 
         std::ofstream file(saveFolder + PATH_PLAYER_FILE);
         std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
@@ -68,6 +67,12 @@ void SaveManager::loadPlayerData(Character &character)
         ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
         ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
         ifs.read(reinterpret_cast<char *>(position), sizeof(position));
+        while (ifs.read(reinterpret_cast<char *>(&id), sizeof(id)))
+        {
+            ifs.read(reinterpret_cast<char *>(&quantity), sizeof(quantity));
+            // Add the item to the inventory
+            character.inventory->addItem(ItemStack(id, quantity));
+        }
 
         // Set the character's data
         character.setGamemode(gamemode);
@@ -83,7 +88,6 @@ void SaveManager::saveCharacterFile(Character &data)
 {
     std::string saveFolder = generateSaveFolderPath();
 
- 
     if (!std::filesystem::exists(saveFolder))
     {
         std::filesystem::create_directories(saveFolder);
@@ -106,10 +110,19 @@ void SaveManager::saveCharacterFile(Character &data)
         data.getWorldPosition().x,
         data.getWorldPosition().y,
         data.getWorldPosition().z};
+    int id,quantity;
+   
 
     ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
     ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
     ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
+    for (const auto &item : data.inventory->getItems())
+    {
+        id = item.getItemId();
+        quantity = item.getQuantity();
+        ofs.write(reinterpret_cast<const char *>(&id), sizeof(id));
+        ofs.write(reinterpret_cast<const char *>(&quantity), sizeof(quantity));
+    }
     ofs.close();
 
     std::cout << "Data saved at : " << filePath << std::endl;
@@ -134,10 +147,12 @@ void SaveManager::startAutoSave(Character &data)
                                          if (autoSaveRunning) // Check again to avoid race conditions
                                          {
                                              std::cout << "Auto-saving player data..." << std::endl;
+                                             //save all the file that we need (player data, world data)
                                              saveCharacterFile(data);
 
                                              std::cout << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
+                                    
                                      } });
 }
 
@@ -145,11 +160,18 @@ void SaveManager::stopAutoSave()
 {
     if (autoSaveRunning)
     {
-        autoSaveRunning = false;
+        autoSaveRunning = false; // Signal the thread to stop
+        autoSaveThread.detach();
         if (autoSaveThread.joinable())
         {
-            autoSaveThread.join();
+            std::cout << "Waiting for auto-save thread to finish..." << std::endl;
+            autoSaveThread.join(); // Wait for the thread to finish
         }
+        else
+        {
+            std::cerr << "Auto-save thread is not joinable." << std::endl;
+        }
+
         std::cout << "Auto-save stopped." << std::endl;
     }
 }
@@ -240,6 +262,11 @@ std::string SaveManager::getMostRecentSaveFolder()
 
     return mostRecentFolder;
 }
+
+// TODO : pour l'oral parler des types de représentation qui existait avec pour t contre
+// JSON -> lisible mais pas optimisé quand il faut parcourir beaucoup de données + lourd
+// NBT -> format standar créer par mojang pour le jeu Minecraft, il est optimisé pour la vitesse de lecture et d'écriture, mais pas lisible par l'homme mais hyper légéer
+// fonctionne via un arbre binaire de tag qui permet de stocker et de récupérer les données rapidement sans avoir a tout parcourir via les tag
 
 /* great way to test
 SaveManager &saveManager1 = SaveManager::getInstance();

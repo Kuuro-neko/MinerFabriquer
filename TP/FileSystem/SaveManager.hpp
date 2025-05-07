@@ -17,7 +17,9 @@ protected:
     ~SaveManager()
     {
         // Stop the auto-save thread if it's running
+
         stopAutoSave();
+    
     }
 
 public:
