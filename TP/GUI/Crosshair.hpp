@@ -25,7 +25,7 @@ public:
         };
         visible = true;
 
-        crosshairID = LoadShaders("vertex_shader_2D.glsl", "fragment_shader_crosshair.glsl");
+        crosshairID = LoadShaders("../shader/vertex_shader_2D.glsl", "../shader/fragment_shader_crosshair.glsl");
         
         initializeBuffers();
     }

@@ -215,13 +215,13 @@ int main(void) {
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
-    GLuint wireframeProgramID = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
+    GLuint programID = LoadShaders("../shader/vertex_shader.glsl", "../shader/fragment_shader.glsl");
+    GLuint wireframeProgramID = LoadShaders("../shader/vertex_shader_wireframe.glsl", "../shader/fragment_shader_wireframe.glsl");
     Renderer renderer = Renderer(wireframeProgramID);
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
-    GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
-    GLuint cloudsProgramID = LoadShaders("clouds_vertex_shader.glsl", "clouds_fragment_shader.glsl");
+    GLuint cubemapProgramID = LoadShaders("../shader/cubemap_vertex_shader.glsl", "../shader/cubemap_fragment_shader.glsl");
+    GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl", "../shader/clouds_fragment_shader.glsl");
 
 
 
