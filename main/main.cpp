@@ -26,8 +26,7 @@ using namespace glm;
 int windowWidth = 1280;
 int windowHeight = 720;
 
-// int windowWidth = 2560;
-// int windowHeight = 1440;
+HUD* hud = nullptr;
 
 Camera camera;
 // timing
@@ -227,8 +226,8 @@ int main(void) {
 
 
 
-    HUD hud = HUD(windowWidth, windowHeight);
-    character.setHUD(&hud);
+    hud = new HUD(windowWidth, windowHeight);
+    character.setHUD(hud);
 
     GLint success;
     GLchar infoLog[512];
@@ -379,11 +378,11 @@ int main(void) {
 
         character.drawBoundingBox();
 
+        if(character.isHUDVisible()) hud->render();
+        
         clouds.draw(currentFrame, character);
 
 
-
-        if(character.isHUDVisible()) hud.render();
 
 
         // Swap buffers
@@ -414,5 +413,6 @@ int main(void) {
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
     camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height, camera.getNearPlane(), camera.getFarPlane());
+    hud->updateWindowSize(width, height);
 }
 
