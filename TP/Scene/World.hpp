@@ -12,6 +12,7 @@
 #include <TP/Scene/ChunkColumn.hpp>
 
 #include <Defines.hpp>
+#include <utils/Math.hpp>
 
 class Character;
 

@@ -245,9 +245,9 @@ void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight
             }
         }
         float noiseValue = amethystNoise.GetNoise(x-136.0f,y,z-136.0f);
-        if (noiseValue < 0.1f) {
+        if (noiseValue < 0.05f) {
             chunk->m_world->generationSetBloc(wX, y, wZ, CALCITE);
-        } else if (noiseValue < 0.15f) {
+        } else if (noiseValue < 0.09f) {
             chunk->m_world->generationSetBloc(wX, y, wZ, AMETHYST);
         }
     }
