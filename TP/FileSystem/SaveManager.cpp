@@ -3,7 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
-#include <filesystem>
+
 // if the instance is null, create it else return the existing one -> thread safe
 SaveManager &SaveManager::getInstance()
 {
@@ -348,7 +348,7 @@ void SaveManager::saveWorldFile()
                     }
                 }
             }
-            
+
             std::streampos end = out.tellp();
             toc[index].offset = static_cast<uint32_t>(offset);
             toc[index].length = static_cast<uint32_t>(end - offset);
@@ -360,6 +360,125 @@ void SaveManager::saveWorldFile()
     out.write(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
 
     std::cout << "World saved to: " << filePath << std::endl;
+}
+
+void SaveManager::loadWorldFile()
+{
+
+    // if the file don't exists we create a new one
+    // if (isSaveFolderEmpty())
+    // {
+    //     std::cout << "World data file does not exist..." << std::endl;
+    //     std::cout << "Creating a new world data file..." << std::endl;
+    //     std::string saveFolder = generateSaveFolderPath();
+
+    //     if (!std::filesystem::exists(saveFolder))
+    //     {
+    //         std::filesystem::create_directories(saveFolder);
+    //     }
+
+    //     std::ofstream file(saveFolder + PATH_WORLD_FILE);
+    //     std::ofstream ofs(saveFolder + PATH_WORLD_FILE, std::ios::binary);
+    //     std::cout << "Creation of the brand new Save folder at  :" << saveFolder + PATH_WORLD_FILE << std::endl;
+
+    //     ofs.close();
+    //     std::cout << "World data file created." << std::endl;
+    // }
+    // else // the data already exists so we load the world based on the most recent save
+    // {
+    std::string motRecentFolder = getMostRecentSaveFolder();
+    std::string mostRecentWorldFilePath = motRecentFolder + PATH_WORLD_FILE;
+
+    std::cout << "World data file already exists." << std::endl;
+    std::cout << "Reading data from : " << motRecentFolder << std::endl;
+    std::ifstream ifs(mostRecentWorldFilePath, std::ios::binary);
+    if (!ifs)
+    {
+        std::cerr << "Error opening file: " << mostRecentWorldFilePath << std::endl;
+        return;
+    }
+
+    // Read the data from the file
+    // TODO : read the data and fill the world with it
+    readWorldFile(ifs);
+    // }
+}
+
+void SaveManager::readWorldFile(std::ifstream &in)
+{
+    if (!world)
+    {
+        std::cerr << "World instance is not set. Cannot load world data." << std::endl;
+        return;
+    }
+
+    constexpr int REGION_WIDTH = GENERATION_SIZE_X;
+    constexpr int REGION_DEPTH = GENERATION_SIZE_Z;
+    constexpr int REGION_SIZE = REGION_WIDTH * REGION_DEPTH;
+    constexpr int CHUNK_HEIGHT = 8;
+
+    // 1. Lire la table des matières (TOC)
+    std::vector<ChunkColumnEntry> toc(REGION_SIZE);
+    in.read(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
+
+    // 2. Parcours de chaque entrée du TOC
+    for (int index = 0; index < REGION_SIZE; ++index)
+    {
+        const ChunkColumnEntry &entry = toc[index];
+        if (entry.length == 0)
+            continue; // Aucun contenu pour cette colonne
+
+        in.seekg(entry.offset, std::ios::beg);
+
+        // 2.1 Lecture des coordonnées
+        int32_t worldX, worldZ;
+        in.read(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
+        in.read(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
+
+        // 2.2 Création de la colonne
+        ChunkColumn *column = new ChunkColumn({worldX, worldZ});
+        auto heightMap = column->getSurfaceHeightMap();
+        for (int x = 0; x < CHUNK_SIZE; ++x)
+        {
+            for (int z = 0; z < CHUNK_SIZE; ++z)
+            {
+                uint8_t height;
+                in.read(reinterpret_cast<char *>(&height), sizeof(uint8_t));
+                (*heightMap)[x][z] = static_cast<int>(height);
+            }
+        }
+
+        // 2.3 Lecture des chunks
+        for (int i = 0; i < CHUNK_HEIGHT; ++i)
+        {
+            VoxelChunk *chunk = new VoxelChunk({worldX, i, worldZ});
+            column->addChunk(chunk);
+
+            for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+            {
+                for (int by = 0; by < CHUNK_SIZE; ++by)
+                {
+                    for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                    {
+                        // Bloc ID
+                        uint16_t blockID;
+                        in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
+                        chunk->setBloc(bx, by, bz, blockID);
+
+                        // Lumière
+                        uint8_t light;
+                        in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
+                        chunk->setLightLevel(bx, by, bz, light);
+                    }
+                }
+            }
+        }
+
+        // 2.4 Ajout au monde
+        world->addChunkColumn(column);
+    }
+
+    std::cout << "World data successfully loaded from binary file." << std::endl;
 }
 
 // TODO : pour l'oral parler des types de représentation qui existait avec pour t contre

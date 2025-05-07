@@ -4,7 +4,7 @@
 #include <thread>
 #include <atomic>
 #include <chrono>
-
+#include <filesystem>
 class SaveManager
 {
 
@@ -89,5 +89,14 @@ public:
     };
     void setWorld(World *worldInstance);
     void saveWorldFile();
+    void loadWorldFile();
+    void readWorldFile(std::ifstream &in);
+    inline bool isWorldFileEmpty()
+    {
+        std::cout << "Checking if world file is empty..." << std::endl;
+        std::cout << "World file path: " <<  this->getMostRecentSaveFolder() + PATH_WORLD_FILE << std::endl;
+        return std::filesystem::exists(getMostRecentSaveFolder() + PATH_WORLD_FILE);
+    }
+
 
 };
