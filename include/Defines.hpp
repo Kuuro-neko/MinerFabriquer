@@ -98,6 +98,7 @@
 #define OBSIDIAN 68
 #define BLACKSTONE 69
 #define GILDED_BLACKSTONE 70
+#define PODZOL 71
 
 #define ERROR_BLOC 255
 

@@ -70,3 +70,4 @@ Id,Name,xTexSide,yTexSide,xTexTop,yTexTop,xTexBottom,yTexBottom,Opaque,Solid,Bre
 68,Obsidian,13,4,13,4,13,4,1,1,1,0,1
 69,Blackstone,14,4,14,4,14,4,1,1,1,0,1
 70,Gilded_Blackstone,15,4,15,4,15,4,1,1,1,0,1
+71,Podzol,0,5,1,5,1,0,1,1,1,0,1
