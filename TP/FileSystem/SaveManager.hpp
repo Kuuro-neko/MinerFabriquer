@@ -93,8 +93,6 @@ public:
     void readWorldFile(std::ifstream &in);
     inline bool isWorldFileEmpty()
     {
-        std::cout << "Checking if world file is empty..." << std::endl;
-        std::cout << "World file path: " <<  this->getMostRecentSaveFolder() + PATH_WORLD_FILE << std::endl;
         return std::filesystem::exists(getMostRecentSaveFolder() + PATH_WORLD_FILE);
     }
 

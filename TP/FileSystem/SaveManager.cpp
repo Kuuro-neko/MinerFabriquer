@@ -415,71 +415,63 @@ void SaveManager::readWorldFile(std::ifstream &in)
     constexpr int REGION_WIDTH = GENERATION_SIZE_X;
     constexpr int REGION_DEPTH = GENERATION_SIZE_Z;
     constexpr int REGION_SIZE = REGION_WIDTH * REGION_DEPTH;
-    constexpr int CHUNK_HEIGHT = 8;
 
-    // 1. Lire la table des matières (TOC)
+    //Read the header (table of contents)
     std::vector<ChunkColumnEntry> toc(REGION_SIZE);
     in.read(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
 
-    // 2. Parcours de chaque entrée du TOC
-    for (int index = 0; index < REGION_SIZE; ++index)
+    //Read the chunk column data
+    for (int z = 0; z < REGION_DEPTH; ++z)
     {
-        const ChunkColumnEntry &entry = toc[index];
-        if (entry.length == 0)
-            continue; // Aucun contenu pour cette colonne
-
-        in.seekg(entry.offset, std::ios::beg);
-
-        // 2.1 Lecture des coordonnées
-        int32_t worldX, worldZ;
-        in.read(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
-        in.read(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
-
-        // 2.2 Création de la colonne
-        ChunkColumn *column = new ChunkColumn({worldX, worldZ});
-        auto heightMap = column->getSurfaceHeightMap();
-        for (int x = 0; x < CHUNK_SIZE; ++x)
+        for (int x = 0; x < REGION_WIDTH; ++x)
         {
-            for (int z = 0; z < CHUNK_SIZE; ++z)
+            int index = z * REGION_WIDTH + x;
+            ChunkColumnEntry &entry = toc[index];
+
+            // Skip empty entries
+            if (entry.length == 0)
+                continue;
+
+            // Seek to the offset of the chunk column data
+            in.seekg(entry.offset, std::ios::beg);
+
+            // Read the chunk column metadata
+            int32_t worldX, worldZ;
+            in.read(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
+            in.read(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
+
+            // Create a new chunk column
+            ChunkColumn *column = new ChunkColumn(worldX, worldZ);
+            world->addChunkColumn(column);
+
+            // Read the heightmap data from the corresponding chunk column
+            in.read(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(column->getSurfaceHeightMap()));
+
+            // Write the 8 chunks of the current column
+            for (int i = 0; i < GENERATION_SIZE_Y; ++i)
             {
-                uint8_t height;
-                in.read(reinterpret_cast<char *>(&height), sizeof(uint8_t));
-                (*heightMap)[x][z] = static_cast<int>(height);
+                VoxelChunk *chunk = world->createEmptyChunk(worldX, i, worldZ);
+                for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+                {
+                    for (int by = 0; by < CHUNK_SIZE; ++by)
+                    {
+                        for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                        {
+                            // Read block ID
+                            uint16_t blockID;
+                            in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
+                            chunk->setBloc(bx, by, bz, blockID);
+
+                            // Read light level
+                            uint8_t light;
+                            in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
+                            chunk->setLightLevel(bx, by, bz, light);
+                        }
+                    }
+                }
             }
         }
-
-        // 2.3 Lecture des chunks
-        for (int i = 0; i < GENERATION_SIZE_Y; ++i)
-        {
-            for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
-                for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
-                    for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
-                        VoxelChunk *chunk = world->createEmptyChunk(x, y, z);
-
-                                    // blocID
-                                    uint16_t blockID;
-                                    in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
-                                    chunk->generationSetBloc(x, y, z, blockID);
-
-                                    // lightmap
-//                                    uint8_t light;
-//                                    in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
-//                                    chunk->setLightLevel(x, y, z, light);
-                                }
-                            }
-                        }
-
-
-
-
-
-        }
-
-        // 2.4 Ajout au monde
-        world->addChunkColumn(column);
     }
-
-    std::cout << "World data successfully loaded from binary file." << std::endl;
 }
 
 // TODO : pour l'oral parler des types de représentation qui existait avec pour t contre
