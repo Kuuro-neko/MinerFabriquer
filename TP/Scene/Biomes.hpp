@@ -182,6 +182,30 @@ class TaigaBiome : public Biome {
         void addSpruceTree(VoxelChunk* chunk, int x, int z, int baseHeight, int height);
 };
 
+class MesaBiome : public Biome {
+    private:
+        std::vector<int> terracottaPattern;
+    public:
+        MesaBiome(int groundLevel, int seed) : Biome(groundLevel, MESA_BIOME, seed) {
+            terracottaPattern = {
+                TERRACOTTA, ORANGE_TERRACOTTA, ORANGE_TERRACOTTA, BLACK_TERRACOTTA,
+                BLACK_TERRACOTTA, WHITE_TERRACOTTA, TERRACOTTA, TERRACOTTA,
+                YELLOW_TERRACOTTA, GRAY_TERRACOTTA, WHITE_TERRACOTTA, WHITE_TERRACOTTA,
+                BLACK_TERRACOTTA, BLACK_TERRACOTTA, ORANGE_TERRACOTTA, ORANGE_TERRACOTTA,
+                TERRACOTTA, TERRACOTTA, WHITE_TERRACOTTA, WHITE_TERRACOTTA,
+                YELLOW_TERRACOTTA, GRAY_TERRACOTTA, RED_TERRACOTTA, TERRACOTTA,
+                TERRACOTTA, TERRACOTTA, BROWN_TERRACOTTA, BROWN_TERRACOTTA,
+                ORANGE_TERRACOTTA, ORANGE_TERRACOTTA, BLACK_TERRACOTTA, BLACK_TERRACOTTA,
+                WHITE_TERRACOTTA, WHITE_TERRACOTTA, GRAY_TERRACOTTA, GRAY_TERRACOTTA,
+                TERRACOTTA, TERRACOTTA, YELLOW_TERRACOTTA, YELLOW_TERRACOTTA,
+                BROWN_TERRACOTTA, BROWN_TERRACOTTA, ORANGE_TERRACOTTA, ORANGE_TERRACOTTA,
+            };
+        }
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        int getTerracottaPatternAt(int y);
+};
+
 class DebugBiome : public Biome {
     public:
         DebugBiome(int groundLevel, int seed) : Biome(groundLevel, DEBUG_BIOME, seed) {

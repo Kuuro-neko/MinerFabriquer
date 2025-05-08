@@ -150,6 +150,10 @@ public:
         return m_blocs[id].ground;
     }
 
+    bool isStoneOrStoneOre(int id) {
+        return id == STONE || id == IRON_ORE || id == COAL_ORE || id == GOLD_ORE || id == DIAMOND_ORE || id == EMERALD_ORE;
+    }
+
     /**
      * @brief Get the Tex Coords object
      * 

@@ -43,6 +43,7 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
     biomeManager.addBiome(std::make_unique<FrozenBeachBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<FrozenOceanBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<TaigaBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<MesaBiome>(groundLevel, seed));
 }
 
 void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {
@@ -65,7 +66,7 @@ void WorldGenerator::decorateProceduralChunk(World *world, VoxelChunk *chunk, in
 
 void WorldGenerator::setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight) {
     for (int y = 0; y < CHUNK_SIZE; y++) {
-        if (y + worldAABBMin.y < baseHeight) {
+        if (y + worldAABBMin.y <= baseHeight) {
             chunk->generationSetBloc(x, y, z, STONE);
         } else if (y + worldAABBMin.y < WATER_LEVEL) {
             chunk->generationSetBloc(x, y, z, WATER);
@@ -125,7 +126,7 @@ void WorldGenerator::generateTerrain(World *world, VoxelChunk *chunk, int i, int
                                                                 (float) y + j * CHUNK_SIZE,
                                                                 (float) z + k * CHUNK_SIZE);
                     float value = caveNoiseValue + caveNoiseValue2;
-                    float check = CAVE_BASE_THRESHOLD + (worldAABBMin.y + y ) * CAVE_DEPTH_SCALING_FACTOR;
+                    float check = CAVE_BASE_THRESHOLD - (worldAABBMin.y + y ) * CAVE_DEPTH_SCALING_FACTOR;
                     if (worldAABBMin.y + y > groundLevel) {
                         check -= (worldAABBMin.y + y ) * 0.05f;
                     }

@@ -478,6 +478,43 @@ void TaigaBiome::addSpruceTree(VoxelChunk *chunk, int x, int z, int baseHeight, 
     }
 }
 
+/// ===================== ///
+/// ===== MesaBiome ===== ///
+/// ===================== ///
+
+void MesaBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    if (worldAABBMin.y + CHUNK_SIZE > MESA_START_TERRACOTTA) {
+        for (int y = 15; y >= 0; y--) {
+            if (worldAABBMin.y + y >= MESA_START_TERRACOTTA) {
+                int b = chunk->getBloc(x, y, z);
+                if ( b != AIR)
+                chunk->generationSetBloc(x, y, z, getTerracottaPatternAt(worldAABBMin.y + y - MESA_START_TERRACOTTA));
+            } else {
+                break;
+            }
+        }
+    }
+    if (BlocDatabase::getInstance().isStoneOrStoneOre(chunk->getBloc(x, baseHeight, z))) {
+        chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, RED_SANDSTONE);
+        chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, RED_SANDSTONE);
+        chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, RED_SAND);
+        chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, RED_SAND);
+        chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, RED_SAND);
+    }
+}
+
+void MesaBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+}
+
+int MesaBiome::getTerracottaPatternAt(int y)
+{
+    if (y < 0) return TERRACOTTA;
+    if (y >= terracottaPattern.size()) return TERRACOTTA;
+    return terracottaPattern[y];
+}
+
 /// ====================== ///
 /// ===== DebugBiome ===== ///
 /// ====================== ///
@@ -587,7 +624,7 @@ Biome* BiomeManager::getBiomeById(int id)
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
-    //return getBiomeById(TAIGA_BIOME);
+    return getBiomeById(MESA_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);
