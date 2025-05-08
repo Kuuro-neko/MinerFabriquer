@@ -31,14 +31,16 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
 
     rng.seed(seed);
 
-    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise, seed), 0.008f);
-    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise, seed), 0.01f);
-    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise, seed), 0.009f);
-    biomeManager.addBiome(std::make_unique<OceanBiome>(groundLevel, &baseHeightNoise, seed), 0.013f);
-    biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, &baseHeightNoise, seed), 0.009f);
-    biomeManager.addBiome(std::make_unique<CristalPeaksBiome>(groundLevel, &baseHeightNoise, seed), 0.012f);
-    biomeManager.addBiome(std::make_unique<MushroomBiome>(groundLevel, &baseHeightNoise, seed), 0.009f);
-    biomeManager.addBiome(std::make_unique<DebugBiome>(groundLevel, &baseHeightNoise, seed), 0.01f);
+    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<OceanBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<CristalPeaksBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<MushroomBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<DebugBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<BeachBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<FrozenBeachBiome>(groundLevel, &baseHeightNoise, seed));
 }
 
 void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {
@@ -63,7 +65,7 @@ void WorldGenerator::setBaseStone(VoxelChunk *chunk, int x, int z, const glm::iv
     for (int y = 0; y < CHUNK_SIZE; y++) {
         if (y + worldAABBMin.y < baseHeight) {
             chunk->generationSetBloc(x, y, z, STONE);
-        } else if (y + worldAABBMin.y < groundLevel-1) {
+        } else if (y + worldAABBMin.y < WATER_LEVEL) {
             chunk->generationSetBloc(x, y, z, WATER);
         }
     }
@@ -88,11 +90,6 @@ void WorldGenerator::generateTerrain(World *world, VoxelChunk *chunk, int i, int
                 j * CHUNK_SIZE,
                 k * CHUNK_SIZE
             );
-
-            // Compute the baseHeight : "heightmap" of the current biome based on its blend with other biomes
-            // std::vector<float> biomeWeights = biomeManager.getBiomeWeights(worldAABBMin.x + x, worldAABBMin.z + z);
-            // Biome* currentBiome = biomeManager.getDominantBiome(biomeWeights);
-            // int baseHeight = biomeManager.blendHeight(biomeWeights, x, z, worldAABBMin);
 
             Biome* currentBiome = biomeManager.getBiome(worldAABBMin.x + x, worldAABBMin.z + z);
             int baseHeight = biomeManager.getBaseHeight(worldAABBMin.x + x, worldAABBMin.z + z);

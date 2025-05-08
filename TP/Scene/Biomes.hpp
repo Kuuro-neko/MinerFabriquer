@@ -22,15 +22,6 @@ class Biome {
             random1000 = std::uniform_int_distribution<int>(0, 1000);
             randomFloat = std::uniform_real_distribution<float>(0.0f, 1.0f);
         }
-        
-        /**
-         * @brief Calculate the height of the biome at the given coordinates.
-         * 
-         * @param x World x coordinate
-         * @param z World z coordinate
-         * @return float 
-         */
-        virtual float calculateHeight(float x, float z) = 0;
 
         /**
          * @brief Apply the surface of the biome to the chunk at the given coordinates.
@@ -67,7 +58,6 @@ class PlainsBiome : public Biome {
     public:
         PlainsBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, PLAINS_BIOME, seed) {
         }
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
@@ -78,7 +68,6 @@ class MoutainsBiome : public Biome {
     public:
         MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise, int seed) : Biome(groundLevel, noise, MOUNTAINS_BIOME, seed), snowNoise(snowNoise) {
         }
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
         int getSnowHeight(float baseNoise);
@@ -88,7 +77,6 @@ class DesertBiome : public Biome {
     public:
         DesertBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, DESERT_BIOME, seed) {
         }
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
 };
@@ -98,7 +86,6 @@ class OceanBiome : public Biome {
         FastNoiseLite* waterNoise;
     public :
         OceanBiome(int groundLevel, FastNoiseLite *noise, int seed) : Biome(groundLevel, noise, OCEAN_BIOME, seed) {}
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
@@ -106,7 +93,6 @@ class OceanBiome : public Biome {
 class IceBiome : public Biome {
     public:
         IceBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, ICE_BIOME, seed) {}
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
         void addIceSpike(VoxelChunk* chunk, int x, int z, int baseHeight, int height, int radius);
@@ -126,7 +112,6 @@ class CristalPeaksBiome : public Biome {
             amethystNoise.SetFractalGain(5.0f);
             amethystNoise.SetFractalWeightedStrength(0.5f);
         }
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
@@ -142,18 +127,31 @@ class MushroomBiome : public Biome {
             coralVineNoise.SetSeed(seed);
             coralVineNoise.SetFractalType(FastNoiseLite::FractalType_PingPong);
         }
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
         void addMushroomCup(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial);
         void addMushroomReverseU(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial);
 };
 
+class BeachBiome : public Biome {
+    public:
+        BeachBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, BEACH_BIOME, seed) {}
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+};
+
+class FrozenBeachBiome : public Biome {
+    public:
+        FrozenBeachBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, FROZENBEACH_BIOME, seed) {
+        }
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+};
+
 class DebugBiome : public Biome {
     public:
         DebugBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, DEBUG_BIOME, seed) {
         }
-        float calculateHeight(float x, float z) override;
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
 };
@@ -164,11 +162,9 @@ class DebugBiome : public Biome {
 
 class BiomeManager {
     std::vector<std::unique_ptr<Biome>> biomes;
-    std::vector<FastNoiseLite> noises;
+
     int groundLevel;
     int seed;
-
-    FastNoiseLite surface;
 
     FastNoiseLite temperature;
     FastNoiseLite humidity;
@@ -176,16 +172,14 @@ class BiomeManager {
     FastNoiseLite continentalness;
     FastNoiseLite weirdness;
     FastNoiseLite peaksAndValleys;
+    FastNoiseLite biomeNoise;
 
     Spline continentalnessSpline;
     Spline erosionSpline;
     Spline PVSpline;
 public:
     BiomeManager(int groundLevel, int seed);
-    void addBiome(std::unique_ptr<Biome> biome, float cellularNoiseFrequency);
-    std::vector<float> getBiomeWeights(int x, int z);
-    Biome* getDominantBiome(const std::vector<float>& weights);
-    float blendHeight(const std::vector<float> &weights, int x, int z, glm::ivec3 worldAABBMin);
+    void addBiome(std::unique_ptr<Biome> biome);
 
     Biome* getBiomeById(int id);
     Biome* getBiome(int x, int z);

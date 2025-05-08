@@ -8,6 +8,7 @@
 
 #define GENERATION_SEED 111111
 #define GROUND_LEVEL 65.0f
+#define WATER_LEVEL 63
 
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
@@ -67,6 +68,7 @@
 
 // ===== Biomes ===== //
 
+
 #define PLAINS_BIOME 0
 #define MOUNTAINS_BIOME 1
 #define DESERT_BIOME 2
@@ -74,8 +76,9 @@
 #define ICE_BIOME 4
 #define CRISTALPEAKS_BIOME 5
 #define MUSHROOM_BIOME 6
-
 #define DEBUG_BIOME 7
+#define BEACH_BIOME 8
+#define FROZENBEACH_BIOME 9
 
 // ===== Player ===== //
 

@@ -9,11 +9,6 @@
 /// ===== PlainsBiome ===== ///
 /// ======================= ///
 
-float PlainsBiome::calculateHeight(float x, float z)
-{
-    return getGroundLevel() + std::max(getNoise()->GetNoise(x,z) * 5.0f + 1.f, 0.f);
-}
-
 void PlainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
@@ -52,12 +47,6 @@ void PlainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== MoutainsBiome ===== ///
 /// ========================= ///
 
-float MoutainsBiome::calculateHeight(float x, float z)
-{
-    float noiseValue = getNoise()->GetNoise(x,z);
-    return getGroundLevel() + std::max(noiseValue * noiseValue * 80.0f + 3.f, 0.f);
-}
-
 void MoutainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     int snowheight = 22 + snowNoise->GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) * 8;
@@ -86,12 +75,6 @@ int MoutainsBiome::getSnowHeight(float baseNoise)
 /// ===== DesertBiome ===== ///
 /// ======================= ///
 
-float DesertBiome::calculateHeight(float x, float z)
-{
-    float noiseValue = getNoise()->GetNoise(x,z);
-    return getGroundLevel() + std::max(noiseValue, 0.f);
-}
-
 void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 6 - worldAABBMin.y, z, SANDSTONE);
@@ -111,12 +94,6 @@ void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ========================= ///
 /// ===== OceanBiome ======== ///
 /// ========================= ///
-
-float OceanBiome::calculateHeight(float x, float z)
-{
-    return getGroundLevel() + std::min(getNoise()->GetNoise(x,z) * -10.0f - 35.f, 0.f);
-}
-
 
 void OceanBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
@@ -166,11 +143,6 @@ void OceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ==================== ///
 /// ===== IceBiome ===== ///
 /// ==================== ///
-
-float IceBiome::calculateHeight(float x, float z)
-{
-    return getGroundLevel() + std::max(getNoise()->GetNoise(x,z) * 5.0f + 1.f, 0.f);
-}
 
 void IceBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
@@ -235,12 +207,6 @@ void IceBiome::addIceSpike(VoxelChunk *chunk, int x, int z, int baseHeight, int 
 /// ===== CristalPeaksBiome ===== ///
 /// ============================= ///
 
-float CristalPeaksBiome::calculateHeight(float x, float z)
-{
-    float noiseValue = getNoise()->GetNoise(x,z);
-    return getGroundLevel() + std::max(noiseValue * noiseValue * 70.0f + 3.f, 0.f);
-}
-
 void CristalPeaksBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     int r = getRandom1000();
@@ -271,15 +237,9 @@ void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight
     }
 }
 
-/// ======================= ///
+/// ========================= ///
 /// ===== MushroomBiome ===== ///
-/// ======================= ///
-
-float MushroomBiome::calculateHeight(float x, float z)
-{
-    float noiseValue = getNoise()->GetNoise(x,z);
-    return getGroundLevel() + std::max(noiseValue, 0.f);
-}
+/// ========================= ///
 
 void MushroomBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
@@ -397,6 +357,67 @@ void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int bas
     }
 }
 
+/// ====================== ///
+/// ===== BeachBiome ===== ///
+/// ====================== ///
+
+void BeachBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
+}
+
+void BeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+}
+
+/// ============================ ///
+/// ===== FrozenBeachBiome ===== ///
+/// ============================ ///
+
+void FrozenBeachBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    int blocAbove = chunk->getBloc(x, baseHeight + 1, z);
+    std::cout << "coord bloc above: " << x << " " << baseHeight + 1 << " " << z << std::endl;
+    if (blocAbove == AIR) {
+        std::cout << "Bloc above: " << blocAbove << std::endl;
+        chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SNOW);
+        for (int y = 0; y < 3; y++) {
+            chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
+        }
+    }
+    if (blocAbove == WATER) {
+        std::cout << "Bloc above: " << blocAbove << std::endl;
+
+        chunk->generationSetBloc(x, WATER_LEVEL, z, ICE);
+        for (int y = 0; y < 3; y++) {
+            chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
+        }
+
+    }
+}
+
+void FrozenBeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+}
+
+
+/// ====================== ///
+/// ===== DebugBiome ===== ///
+/// ====================== ///
+
+void DebugBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, ERROR_BLOC);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, ERROR_BLOC);
+}
+
+void DebugBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+}
+
+
 /// ======================== ///
 /// ===== BiomeManager ===== ///
 /// ======================== ///
@@ -410,6 +431,7 @@ BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel)
     continentalness = FastNoiseLite();
     weirdness = FastNoiseLite();
     peaksAndValleys = FastNoiseLite();
+    biomeNoise = FastNoiseLite();
 
     temperature.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     temperature.SetFrequency(0.004f * freqScaling);
@@ -437,16 +459,20 @@ BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel)
     peaksAndValleys.SetFractalGain(0.0f);
     peaksAndValleys.SetFractalWeightedStrength(2.5f);
 
+    biomeNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    biomeNoise.SetFrequency(0.01f);
+
     temperature.SetSeed(seed);
     humidity.SetSeed(seed-1);
     erosion.SetSeed(seed-2);
     continentalness.SetSeed(seed-3);
     weirdness.SetSeed(seed-4);
     peaksAndValleys.SetSeed(seed-4);
+    biomeNoise.SetSeed(seed-5);
 
     continentalnessSpline = Spline(
-        {-1.2f, -0.5f, -0.15f,  0.11f, 0.35f, 0.6f, 1.2f},
-        {-50.0f,-40.0f,-3.0f,4.0f,10.0f,35.0f,50.0f}
+        {-1.2f, -0.6f, -0.15f,  0.11f, 0.35f, 0.6f, 1.2f},
+        {-50.0f,-40.0f,-3.0f,4.0f,10.0f,30.0f,40.0f}
     );
 
     erosionSpline = Spline(
@@ -466,111 +492,39 @@ BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel)
  * @param biome 
  * @param noise 
  */
-void BiomeManager::addBiome(std::unique_ptr<Biome> biome, float cellularNoiseFrequency) {
+void BiomeManager::addBiome(std::unique_ptr<Biome> biome) {
     biomes.push_back(std::move(biome));
-    FastNoiseLite noise;
-    noises.push_back(noise);
-    noises.back().SetNoiseType(FastNoiseLite::NoiseType_Cellular);
-    noises.back().SetFrequency(cellularNoiseFrequency);
-    noises.back().SetCellularReturnType(FastNoiseLite::CellularReturnType_Distance);
-    noises.back().SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Euclidean);
-    noises.back().SetCellularJitter(0.9f);
-    noises.back().SetSeed(seed);
-}
-
-/**
- * @brief Get the weights of the biomes at the given coordinates.
- * 
- * @param x 
- * @param z 
- * @return std::vector<float> 
- */
-std::vector<float> BiomeManager::getBiomeWeights(int x, int z)
-{
-    std::vector<float> weights;
-    for (int i = 0; i < biomes.size(); ++i) {
-        weights.push_back(noises[i].GetNoise((float) x + 150 * i,(float)  z - 150 * i));
-        weights[i] = 1.0f - std::abs(weights[i]);
-        weights[i] = std::pow(weights[i], 2.0f);
-    }
-
-    float sum = 0.0f;
-    for (float w : weights) sum += w;
-    for (float &w : weights) w /= sum;
-    return weights;
-}
-
-/**
- * @brief Get the dominant biome based on the weights.
- * 
- * @param weights computed using getBiomeWeights before !!!!
- * @return Biome* 
- */
-Biome *BiomeManager::getDominantBiome(const std::vector<float> &weights)
-{
-    float maxWeight = weights[0];
-    Biome* biome = biomes[0].get();
-    
-    for (int i = 1; i < weights.size(); ++i) {
-        if (weights[i] > maxWeight) {
-            maxWeight = weights[i];
-            biome = biomes[i].get();
-        }
-    }
-    return biome;
-}
-
-/**
- * @brief Blend the height of the biomes at the given coordinates and returns the result.
- * 
- * @param weights 
- * @param x 
- * @param z 
- * @param worldAABBMin 
- * @return float 
- */
-float BiomeManager::blendHeight(const std::vector<float> &weights, int x, int z, glm::ivec3 worldAABBMin)
-{
-    std::vector<float> heights;
-    for (int i = 0; i < biomes.size(); ++i) {
-        heights.push_back(biomes[i]->calculateHeight(x + worldAABBMin.x, z + worldAABBMin.z));
-    }
-    int baseHeight = 0;
-    for (int i = 0; i < biomes.size(); ++i) {
-        baseHeight += heights[i] * weights[i];
-    }
-    return baseHeight;
+    std::sort(biomes.begin(), biomes.end(), [](const std::unique_ptr<Biome>& a, const std::unique_ptr<Biome>& b) {
+        return a->getId() < b->getId();
+    });
 }
 
 Biome* BiomeManager::getBiomeById(int id)
 {
-    for (const auto& biome : biomes) {
-        if (biome->getId() == id) {
-            return biome.get();
-        }
-    }
+    return biomes[id].get();
 }
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
+    return getBiomeById(FROZENBEACH_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);
-    if (continentalnessSpline.intervals[0].isInInterval(continentalness)) {
-        return getBiomeById(OCEAN_BIOME); // Ocean
-    } else if (continentalnessSpline.intervals[1].isInInterval(continentalness)) {
-        return getBiomeById(DESERT_BIOME); // Ocean
-    } else if (continentalnessSpline.intervals[2].isInInterval(continentalness)) {
-        return getBiomeById(DESERT_BIOME); // Ice
-    } else if (continentalnessSpline.intervals[3].isInInterval(continentalness)) {
+    if (continentalnessSpline.intervals[0].isInInterval(continentalness)) { // DEEP OCEAN
+        return getBiomeById(OCEAN_BIOME);
+    } else if (continentalnessSpline.intervals[1].isInInterval(continentalness)) { // OCEAN
+        return getBiomeById(BEACH_BIOME);
+    } else if (continentalnessSpline.intervals[2].isInInterval(continentalness)) { // COAST
+        return getBiomeById(BEACH_BIOME);
+    } else if (continentalnessSpline.intervals[3].isInInterval(continentalness)) { // NEAR INLAND
         if (erosion > 0.75f) {
             return getBiomeById(DESERT_BIOME);
-        } else if (erosion > 0.05f) {
+        } else if (erosion > -0.25f) {
             return getBiomeById(PLAINS_BIOME);
         } else {
             return getBiomeById(MUSHROOM_BIOME);
         }
-    } else if (continentalnessSpline.intervals[4].isInInterval(continentalness)) {
+    } else if (continentalnessSpline.intervals[4].isInInterval(continentalness)) { // INLAND
         if (erosion > 0.75f) {
             return getBiomeById(PLAINS_BIOME);
         } else if (erosion > 0.05f) {
@@ -584,7 +538,7 @@ Biome *BiomeManager::getBiome(int x, int z)
         } else {
             return getBiomeById(MOUNTAINS_BIOME);
         }
-    } else if (continentalnessSpline.intervals[5].isInInterval(continentalness)) {
+    } else if (continentalnessSpline.intervals[5].isInInterval(continentalness)) { // FAR INLAND
         if (erosion > 0.75f) {
             return getBiomeById(MUSHROOM_BIOME);
         } else if (erosion > 0.05f) {
@@ -651,19 +605,4 @@ float BiomeManager::getWeirdness(int x, int z) {
 float BiomeManager::getPeaksAndValleys(int x, int z) {
     //return 1.0f - std::abs(3*std::abs(weirdness.GetNoise((float) x, (float) z))/2);
     return -1.0f*peaksAndValleys.GetNoise((float) x, (float) z)*peaksAndValleys.GetNoise((float) x, (float) z)+0.5f;
-}
-
-float DebugBiome::calculateHeight(float x, float z)
-{
-    return 0.0f;
-}
-
-void DebugBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
-{
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, ERROR_BLOC);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, ERROR_BLOC);
-}
-
-void DebugBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
-{
 }

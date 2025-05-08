@@ -231,8 +231,10 @@ unsigned short World::getLightLevel(int x, int y, int z) {
 int World::getBloc(int x, int y, int z) {
     VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
+        std::cout << "found chunk at " << x << ", " << y << ", " << z << " in world.getBloc" << std::endl;
         return chunk->getBloc(betterModulo(x, CHUNK_SIZE), betterModulo(y, CHUNK_SIZE), betterModulo(z, CHUNK_SIZE));
     } else {
+        std::cout << "chunk not found at " << x << ", " << y << ", " << z << " in world.getBloc" << std::endl;
         return OUT_OF_BOUNDS_BLOC;
     }
 }
