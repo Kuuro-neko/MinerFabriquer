@@ -455,29 +455,24 @@ void SaveManager::readWorldFile(std::ifstream &in)
                 for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
                     for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
                         VoxelChunk *chunk = world->createEmptyChunk(x, y, z);
-                        for (int bx = 0; bx < CHUNK_SIZE; ++bx)
-                        {
-                            for (int by = 0; by < CHUNK_SIZE; ++by)
-                            {
-                                for (int bz = 0; bz < CHUNK_SIZE; ++bz)
-                                {
+
                                     // blocID
                                     uint16_t blockID;
                                     in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
-                                    chunk->generationSetBloc(bx, by, bz, blockID);
+                                    chunk->generationSetBloc(x, y, z, blockID);
 
                                     // lightmap
-                                    uint8_t light;
-                                    in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
-                                    chunk->setLightLevel(bx, by, bz, light);
+//                                    uint8_t light;
+//                                    in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
+//                                    chunk->setLightLevel(x, y, z, light);
                                 }
                             }
                         }
 
-                    }
-                }
 
-            }
+
+
+
         }
 
         // 2.4 Ajout au monde
