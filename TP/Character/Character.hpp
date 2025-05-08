@@ -72,6 +72,8 @@ public:
         this->m_transform.m_translation = glm::vec3(x, y, z);
     }
 
+    float getSpeed();
+
 private:
 
     void updateClosestBlock(BlocDatabase &database);
