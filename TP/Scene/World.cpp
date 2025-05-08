@@ -580,6 +580,4 @@ void World::addChunkColumn(ChunkColumn *column)
     // Ajouter la colonne à la map des chunkColumns
     chunkColumns[columnCoords] = *column;
 
-    std::cout << "ChunkColumn added at coordinates ("
-              << columnCoords.x << ", " << columnCoords.y << ")." << std::endl;
 }

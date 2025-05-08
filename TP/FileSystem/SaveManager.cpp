@@ -365,31 +365,9 @@ void SaveManager::saveWorldFile()
 void SaveManager::loadWorldFile()
 {
 
-    // if the file don't exists we create a new one
-    // if (isSaveFolderEmpty())
-    // {
-    //     std::cout << "World data file does not exist..." << std::endl;
-    //     std::cout << "Creating a new world data file..." << std::endl;
-    //     std::string saveFolder = generateSaveFolderPath();
-
-    //     if (!std::filesystem::exists(saveFolder))
-    //     {
-    //         std::filesystem::create_directories(saveFolder);
-    //     }
-
-    //     std::ofstream file(saveFolder + PATH_WORLD_FILE);
-    //     std::ofstream ofs(saveFolder + PATH_WORLD_FILE, std::ios::binary);
-    //     std::cout << "Creation of the brand new Save folder at  :" << saveFolder + PATH_WORLD_FILE << std::endl;
-
-    //     ofs.close();
-    //     std::cout << "World data file created." << std::endl;
-    // }
-    // else // the data already exists so we load the world based on the most recent save
-    // {
     std::string motRecentFolder = getMostRecentSaveFolder();
     std::string mostRecentWorldFilePath = motRecentFolder + PATH_WORLD_FILE;
 
-    std::cout << "World data file already exists." << std::endl;
     std::cout << "Reading data from : " << motRecentFolder << std::endl;
     std::ifstream ifs(mostRecentWorldFilePath, std::ios::binary);
     if (!ifs)
@@ -398,10 +376,7 @@ void SaveManager::loadWorldFile()
         return;
     }
 
-    // Read the data from the file
-    // TODO : read the data and fill the world with it
     readWorldFile(ifs);
-    // }
 }
 
 void SaveManager::readWorldFile(std::ifstream &in)
@@ -414,7 +389,7 @@ void SaveManager::readWorldFile(std::ifstream &in)
 
     constexpr int REGION_WIDTH = GENERATION_SIZE_X;
     constexpr int REGION_DEPTH = GENERATION_SIZE_Z;
-    constexpr int REGION_SIZE = REGION_WIDTH * REGION_DEPTH;
+    constexpr int REGION_SIZE = REGION_WIDTH * REGION_DEPTH; // 16 * 16 = 256
 
     //Read the header (table of contents)
     std::vector<ChunkColumnEntry> toc(REGION_SIZE);

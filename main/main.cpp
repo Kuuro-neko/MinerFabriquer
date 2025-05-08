@@ -247,20 +247,18 @@ int main(void)
     world.setCamera(camera);
     world.setDoDaylightCycle(false);
 
-    // Passer l'instance du monde au SaveManager
+    //pass the world to the save manager
     saveManager.setWorld(&world);
 
     if (!saveManager.isWorldFileEmpty())
     {
-        world.generation();
-        // Si le fichier n'existe pas, générer un nouveau monde
         std::cout << "No world file found. Generating a new world..." << std::endl;
-        saveManager.saveWorldFile(); // Sauvegarder le monde après la génération
+        world.generation();
+        saveManager.saveWorldFile(); // Save the world data after generation
     }
     else
     {
-        // Si le fichier existe, charger le monde
-        std::cout << "Loading world data file..." << std::endl;
+        std::cout << "World file already exists, loading world data file..." << std::endl;
         saveManager.loadWorldFile();
     }
 
