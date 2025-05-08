@@ -18,7 +18,6 @@
 
 GLFWwindow *window;
 
-
 using namespace std;
 using namespace glm;
 
@@ -30,11 +29,11 @@ HUD* hud = nullptr;
 
 Camera camera;
 // timing
-float deltaTime = 0.0f;    // time between current frame and last frame
+float deltaTime = 0.0f; // time between current frame and last frame
 float lastFrame = 0.0f;
 float FPS = 0.0f;
 
-//rotation
+// rotation
 float angle = 0.;
 float zoom = 1.;
 
@@ -94,12 +93,18 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
         
     }
 
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
 }
 
 
@@ -114,8 +119,8 @@ Character character = Character(
 
 
 
-
-void UpdateFPS() {
+void UpdateFPS()
+{
     static double lastTime = glfwGetTime();
     static unsigned int counter = 0;
     counter++;
@@ -226,8 +231,8 @@ int main(void) {
 
 
 
-    hud = new HUD(windowWidth, windowHeight);
-    character.setHUD(hud);
+    HUD hud = HUD(windowWidth, windowHeight);
+    character.setHUD(&hud);
 
     GLint success;
     GLchar infoLog[512];
@@ -252,18 +257,34 @@ int main(void) {
 
 
     SceneNode root;
-
     World world = World();
     root.addChild(&world);
     world.setCamera(camera);
     world.setDoDaylightCycle(false);
 
+    //pass the world to the save manager
+    saveManager.setWorld(&world);
+
+    if (!saveManager.isWorldFileEmpty())
+    {
+        std::cout << "No world file found. Generating a new world..." << std::endl;
+        world.generation();
+        saveManager.saveWorldFile(); // Save the world data after generation
+    }
+    else
+    {
+        std::cout << "World file already exists, loading world data file..." << std::endl;
+        saveManager.loadWorldFile();
+    }
+
+    // Associer le monde au personnage
     character.m_world = &world;
 
-    Entity* characterModel = new Entity();
+    // Ajouter le personnage au monde
+    Entity *characterModel = new Entity();
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
-    Texture* playerTexture = new Texture("../textures/steve.png");
+    Texture *playerTexture = new Texture("../textures/steve.png");
     characterModel->setTexture(playerTexture);
     character.addChild(characterModel);
     root.addChild(&character);
@@ -357,7 +378,7 @@ int main(void) {
         glUniformMatrix4fv(viewMatrixIdC, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         GLuint projectionMatrixIdC = glGetUniformLocation(cloudsProgramID, "ProjectionMatrix");
         glUniformMatrix4fv(projectionMatrixIdC, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
-        
+
         glUseProgram(programID);
 
         root.draw(programID);
@@ -369,7 +390,8 @@ int main(void) {
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
-        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders)) {
+        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders))
+        {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
 
@@ -378,8 +400,10 @@ int main(void) {
 
         character.drawBoundingBox();
 
-        if(character.isHUDVisible()) hud->render();
-        
+        if (character.isHUDVisible())
+            hud.render();
+        if(character.isHUDVisible()) hud.render();
+
         clouds.draw(currentFrame, character);
 
 

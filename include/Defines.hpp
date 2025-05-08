@@ -18,6 +18,8 @@
 #define GENERATION_RADIUS_X 8 // X radius of initial generation
 #define GENERATION_SIZE_Y 8 // Y height of initial generation
 #define GENERATION_RADIUS_Z 8 // Z radius of initial generation
+#define GENERATION_SIZE_X  16
+#define GENERATION_SIZE_Z  16
 
 
 // ===== Bloc database ===== //
@@ -169,3 +171,4 @@ constexpr short AO_Bottom_deltas [4][3] = {
 const std::string PATH_PLAYER_FILE = "/playerData.bin";
 const std::string PATHSAVES = "../saves/";
 #define SAVE_DELAY 50 // seconds
+const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";

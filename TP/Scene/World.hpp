@@ -158,4 +158,6 @@ public:
 
     // Définit le niveau de lumière d'un bloc.
     void setLightLevel(int x, int y, int z, int lightLevel);
+
+    void addChunkColumn(ChunkColumn *column);
 };

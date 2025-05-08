@@ -47,7 +47,7 @@ void World::updateSkyLightsInColumn(int x, int z)
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
-    generation();
+// on génère pas ici
 }
 
 World::~World() {
@@ -580,4 +580,20 @@ void World::resolveCollisions(Character &character, World *world) {
 
     // Application du mouvement du personnage
     character.move(character.vecteurDirection);
+}
+
+void World::addChunkColumn(ChunkColumn *column)
+{
+    if (!column)
+    {
+        std::cerr << "Error: Attempted to add a null ChunkColumn to the world." << std::endl;
+        return;
+    }
+
+    // Récupérer les coordonnées de la colonne
+    glm::ivec2 columnCoords = column->getChunkCoords();
+
+    // Ajouter la colonne à la map des chunkColumns
+    chunkColumns[columnCoords] = *column;
+
 }
