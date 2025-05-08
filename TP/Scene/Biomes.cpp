@@ -18,28 +18,30 @@ void PlainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
 {
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, GRASS);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, DIRT);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, GRASS);
 }
 
 void PlainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight - 1, z) != GRASS) return;
+    if (chunk->getBloc(x, baseHeight, z) != GRASS) return;
+    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
 
     if (getRandom1000() < 10) { // 1% chance
-        chunk->generationSetBloc(x, baseHeight - 1, z, DIRT);
-        for (int y = 0; y < 3; y++) {
+        chunk->generationSetBloc(x, baseHeight, z, DIRT);
+        for (int y = 1; y < 4; y++) {
             chunk->generationSetBloc(x, baseHeight + y, z, LOG_OAK);
         }
         for (int dx = -2; dx <= 2; dx++) {
             for (int dz = -2; dz <= 2; dz++) {
                 if (std::abs(dx) + std::abs(dz) <= 3) { // Simple circular leaf pattern
-                    chunk->generationSetBloc(x + dx, baseHeight + 3, z + dz, LEAVES_OAK);
+                    chunk->generationSetBloc(x + dx, baseHeight + 4, z + dz, LEAVES_OAK);
                 }
                 if (std::abs(dx) + std::abs(dz) <= 2) { // Smaller circular leaf pattern for upper layer
-                    chunk->generationSetBloc(x + dx, baseHeight + 3 + 1, z + dz, LEAVES_OAK);
+                    chunk->generationSetBloc(x + dx, baseHeight + 4 + 1, z + dz, LEAVES_OAK);
                 }
                 if (std::abs(dx) + std::abs(dz) <= 1) { // Smallest circular leaf pattern for top layer
-                    chunk->generationSetBloc(x + dx, baseHeight + 3 + 2, z + dz, LEAVES_OAK);
+                    chunk->generationSetBloc(x + dx, baseHeight + 4 + 2, z + dz, LEAVES_OAK);
                 }
             }
         }
@@ -58,15 +60,16 @@ float MoutainsBiome::calculateHeight(float x, float z)
 
 void MoutainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    int snowheight = 15 + snowNoise->GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) * 8;
+    int snowheight = 22 + snowNoise->GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) * 8;
     if (baseHeight > getGroundLevel() + snowheight) {
         for (int y = 0; y < 3; y++) {
-            chunk->generationSetBloc(x, baseHeight - y - 2 - worldAABBMin.y, z, SNOW);
+            chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SNOW);
         }
     } else {
         chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, STONE);
         chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, STONE);
         chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, STONE);
+        chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, STONE);
     }
 }
 
@@ -97,55 +100,67 @@ void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SAND);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
 }
 
 void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight - 1, z) == AIR) return;
 
-    if (getRandom1000() < 1) {
-        int height = 3 + (getRandom1000() % 4); // Random height between 3 and 5
-        for (int y = 0; y < height; y++) {
-            chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK);
-            //std::cout << "Iron rod bloc result : " << chunk->generationSetBloc(x, baseHeight + y, z, IRON_BLOCK) << std::endl;
-        }
-        for (int dx = -2; dx <= 2; dx++) {
-            for (int dz = -2; dz <= 2; dz++) {
-                if (std::abs(dx) + std::abs(dz) <= 1) { // Smallest circular leaf pattern for top layer
-                    chunk->generationSetBloc(x + dx, baseHeight, z + dz, IRON_BLOCK);
-                    chunk->generationSetBloc(x + dx, baseHeight-1, z + dz, IRON_BLOCK);
-                }
-            }
-        }
-    }
 }
 
 /// ========================= ///
-/// ===== WaterBiome ======== ///
+/// ===== OceanBiome ======== ///
 /// ========================= ///
 
-float WaterBiome::calculateHeight(float x, float z)
+float OceanBiome::calculateHeight(float x, float z)
 {
     return getGroundLevel() + std::min(getNoise()->GetNoise(x,z) * -10.0f - 35.f, 0.f);
 }
 
 
-void WaterBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void OceanBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - 6 - worldAABBMin.y, z, SMOOTH_BASALT);
+    chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SMOOTH_BASALT);
+    chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, SMOOTH_BASALT);
+    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SMOOTH_BASALT);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
-
-    for (int y = 0; y < 16; y++) {
-        if (y + worldAABBMin.y < getGroundLevel()-WATER_LEVEL_DELTA && y + worldAABBMin.y >= baseHeight && chunk->getBloc(x, y, z) == AIR) {
-            chunk->generationSetBloc(x, y, z, WATER);
-        }
-    }
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
 }
 
-void WaterBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void OceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
-    // No decoration for water biome
+    if (chunk->getBloc(x, baseHeight, z) != SAND) return;
+    if (chunk->getBloc(x, baseHeight+1, z) != WATER) return;
+    if (getRandomFloat() < 0.998f) return;
+
+    if (getNoise()->GetNoise((float) x,(float) z) > 0.1f) {
+        chunk->generationSetBloc(x, baseHeight, z, BRAIN_CORAL);
+        chunk->generationSetBloc(x, baseHeight+1, z, BRAIN_CORAL);
+        chunk->generationSetBloc(x, baseHeight+2, z, BRAIN_CORAL);
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 || dz == 0) {
+                    if (dx == dz) continue;
+                    chunk->generationSetBloc(x + dx, baseHeight+3, z + dz, BRAIN_CORAL);
+                    chunk->generationSetBloc(x + dx, baseHeight+4, z + dz, BRAIN_CORAL);
+                    chunk->generationSetBloc(x + dx, baseHeight+5, z + dz, BRAIN_CORAL);
+                }
+            }
+        }
+    } else {
+        chunk->generationSetBloc(x, baseHeight, z, BUBBLE_CORAL);
+        chunk->generationSetBloc(x, baseHeight+1, z, BUBBLE_CORAL);
+        chunk->generationSetBloc(x, baseHeight+2, z, BUBBLE_CORAL);
+        for (int dx = -1; dx <= 1; dx+=2) {
+            for (int dz = -1; dz <= 1; dz+=2) {
+                chunk->generationSetBloc(x + dx, baseHeight+3, z + dz, BUBBLE_CORAL);
+                chunk->generationSetBloc(x + dx, baseHeight+4, z + dz, BUBBLE_CORAL);
+                chunk->generationSetBloc(x + dx, baseHeight+5, z + dz, BUBBLE_CORAL);
+            }
+        }
+    }
 }
 
 /// ==================== ///
@@ -164,11 +179,13 @@ void IceBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SNOW);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SNOW);
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SNOW);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SNOW);
 }
 
 void IceBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight - 1, z) == AIR) return;
+    if (chunk->getBloc(x, baseHeight, z) == AIR) return;
+    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
 
     float p = getRandomFloat();
 
@@ -232,6 +249,7 @@ void CristalPeaksBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHe
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SMOOTH_BASALT);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SMOOTH_BASALT);
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SMOOTH_BASALT);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SMOOTH_BASALT);
 }
 
 void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
@@ -269,30 +287,33 @@ void MushroomBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
     float noiseValue = coralVineNoise.GetNoise((float) x,(float) z);
     if(noiseValue < -0.4f) {
-        chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, MOSS);
+        chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, DIRT);
+        chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, MOSS);
         if (noiseValue > -0.44f) {
-            chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, GLOWSTONE);
+            chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, GLOWSTONE);
         } else {
-            chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, MOSS);
+            chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, MOSS);
         }
     } else {
         chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
-        chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, MYCELIUM);
+        chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, DIRT);
+        chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, MYCELIUM);
     }
 }
 
 void MushroomBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight - 1, z) == AIR) return;
+    if (chunk->getBloc(x, baseHeight, z) == AIR) return;
+    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
 
     if (getRandomFloat() >= 0.9975f) {
         int stemRadius = getRandom1000() % 2;
         float capRadius = stemRadius == 0 ? 1.0f + getRandomFloat() * 2.0f : 3.0f + getRandomFloat() * 2.0f;
-        addMushroomCup(chunk, x, z, baseHeight, getRandomFloat() * 5.0f + 3, stemRadius, capRadius, MUSHROOM_STEM, BROWN_MUSHROOM);
+        addMushroomCup(chunk, x, z, baseHeight+1, getRandomFloat() * 5.0f + 3, stemRadius, capRadius, MUSHROOM_STEM, BROWN_MUSHROOM);
     } else if (getRandomFloat() >= 0.9955f) {
         int h = getRandom1000() % 2 + 5;
         float r =  1.5f + getRandomFloat() * 2.0f;
-        addMushroomReverseU(chunk, x, z, baseHeight, h, r, MUSHROOM_STEM, RED_MUSHROOM);
+        addMushroomReverseU(chunk, x, z, baseHeight+1, h, r, MUSHROOM_STEM, RED_MUSHROOM);
     }
 }
 
@@ -356,7 +377,7 @@ void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int bas
     float distance;
     // Set the base of the mushroom
     for (int y = -2; y < capRadius; y++) {
-        chunk->generationSetBloc(x, baseHeight + y, z, stemMaterial);
+        chunk->setBloc(x, baseHeight + y, z, stemMaterial);
     }
     glm::ivec3 center = glm::ivec3(x, baseHeight + capRadius/2, z);
     for (int y = baseHeight + capRadius*3; y >= baseHeight + 2; y--) {
@@ -382,7 +403,61 @@ void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int bas
 
 BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel), seed(seed)
 {
-   
+    float freqScaling = 1.0f;
+    temperature = FastNoiseLite();
+    humidity = FastNoiseLite();
+    erosion = FastNoiseLite();
+    continentalness = FastNoiseLite();
+    weirdness = FastNoiseLite();
+    peaksAndValleys = FastNoiseLite();
+
+    temperature.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    temperature.SetFrequency(0.004f * freqScaling);
+
+    humidity.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    humidity.SetFrequency(0.005f * freqScaling);
+
+    erosion.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+    erosion.SetFrequency(0.0045f * freqScaling);
+    erosion.SetFractalType(FastNoiseLite::FractalType_FBm);
+
+    continentalness.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+    continentalness.SetFrequency(0.004f * freqScaling);
+    continentalness.SetFractalType(FastNoiseLite::FractalType_FBm);
+    continentalness.SetFractalOctaves(4);
+
+    weirdness.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    weirdness.SetFrequency(0.004f * freqScaling);
+
+    peaksAndValleys.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    peaksAndValleys.SetFrequency(0.0068f * freqScaling);
+    peaksAndValleys.SetFractalType(FastNoiseLite::FractalType_Ridged);
+    peaksAndValleys.SetFractalOctaves(2);
+    peaksAndValleys.SetFractalLacunarity(3.50f);
+    peaksAndValleys.SetFractalGain(0.0f);
+    peaksAndValleys.SetFractalWeightedStrength(2.5f);
+
+    temperature.SetSeed(seed);
+    humidity.SetSeed(seed-1);
+    erosion.SetSeed(seed-2);
+    continentalness.SetSeed(seed-3);
+    weirdness.SetSeed(seed-4);
+    peaksAndValleys.SetSeed(seed-4);
+
+    continentalnessSpline = Spline(
+        {-1.2f, -0.5f, -0.15f,  0.11f, 0.35f, 0.6f, 1.2f},
+        {-50.0f,-40.0f,-3.0f,4.0f,10.0f,35.0f,50.0f}
+    );
+
+    erosionSpline = Spline(
+        {-1.2f, -0.78f, -0.375f, -0.2225f, 0.05f, 0.4f, 0.6f, 1.0f, 1.2f},
+        {0.298f,0.349f,0.4f,0.447f,0.498f,0.549f,0.6f,0.647f,0.698f}
+    );
+
+    PVSpline = Spline(
+        {-1.2f, -0.5f, -0.1f,  0.1f, 0.5f, 1.2f},
+        {-1.0f,-0.9f,-0.1f,0.1f,0.9f,1.0f}
+    );
 }
 
 /**
@@ -465,4 +540,130 @@ float BiomeManager::blendHeight(const std::vector<float> &weights, int x, int z,
         baseHeight += heights[i] * weights[i];
     }
     return baseHeight;
+}
+
+Biome* BiomeManager::getBiomeById(int id)
+{
+    for (const auto& biome : biomes) {
+        if (biome->getId() == id) {
+            return biome.get();
+        }
+    }
+}
+
+Biome *BiomeManager::getBiome(int x, int z)
+{
+    float continentalness = getContinentalness(x, z);
+    float weirdness = getWeirdness(x, z);
+    float erosion = getErosion(x, z);
+    if (continentalnessSpline.intervals[0].isInInterval(continentalness)) {
+        return getBiomeById(OCEAN_BIOME); // Ocean
+    } else if (continentalnessSpline.intervals[1].isInInterval(continentalness)) {
+        return getBiomeById(DESERT_BIOME); // Ocean
+    } else if (continentalnessSpline.intervals[2].isInInterval(continentalness)) {
+        return getBiomeById(DESERT_BIOME); // Ice
+    } else if (continentalnessSpline.intervals[3].isInInterval(continentalness)) {
+        if (erosion > 0.75f) {
+            return getBiomeById(DESERT_BIOME);
+        } else if (erosion > 0.05f) {
+            return getBiomeById(PLAINS_BIOME);
+        } else {
+            return getBiomeById(MUSHROOM_BIOME);
+        }
+    } else if (continentalnessSpline.intervals[4].isInInterval(continentalness)) {
+        if (erosion > 0.75f) {
+            return getBiomeById(PLAINS_BIOME);
+        } else if (erosion > 0.05f) {
+            return getBiomeById(MUSHROOM_BIOME);
+        } else if (erosion > -0.5f) {
+            if (weirdness > -0.33f) {
+                return getBiomeById(ICE_BIOME);
+            } else {
+                return getBiomeById(CRISTALPEAKS_BIOME);
+            }
+        } else {
+            return getBiomeById(MOUNTAINS_BIOME);
+        }
+    } else if (continentalnessSpline.intervals[5].isInInterval(continentalness)) {
+        if (erosion > 0.75f) {
+            return getBiomeById(MUSHROOM_BIOME);
+        } else if (erosion > 0.05f) {
+            if (weirdness > -0.5f) {
+                return getBiomeById(MOUNTAINS_BIOME);
+            } else {
+                return getBiomeById(CRISTALPEAKS_BIOME);
+            }
+        } else {
+            if (weirdness > 0.0f) {
+                return getBiomeById(ICE_BIOME);
+            } else {
+                return getBiomeById(MOUNTAINS_BIOME);
+            }
+        }
+    }
+    return getBiomeById(DEBUG_BIOME); // Default to the first biome if none match
+}
+
+float BiomeManager::getBaseHeight(int x, int z)
+{
+    // float heightOffset = getContinentalness(x, z) * 5.0f;
+    // float verticalStretch = (getErosion(x, z) + 1.0f) / 2.0f;
+    // float pv = getPeaksAndValleys(x, z);
+    // switch (getPeaksAndValleysClass(pv)) {
+    //     case 0: heightOffset += verticalStretch * -15.0f; break;
+    //     case 1: heightOffset += verticalStretch * -1.0f; break;
+    //     case 2: heightOffset += verticalStretch * 5.0f; break;
+    //     case 3: heightOffset += verticalStretch * 10.0f; break;
+    //     case 4: heightOffset += verticalStretch * 30.0f; break;
+    // }
+    // return float(groundLevel) + heightOffset;
+    float cont = getContinentalness(x, z);
+    float ret = continentalnessSpline.getValue(cont);
+    ret += PVSpline.getValue(getPeaksAndValleys(x, z)) * PVSpline.getValue(getWeirdness(x, z)) * 20.0f;
+    if (cont > 0.0f) {
+        ret *= (0.5f+erosionSpline.getValue(getErosion(x,z)));
+    }
+    ret += groundLevel;
+    return ret;
+    
+    
+    //return groundLevel + PVSpline.getValue(getPeaksAndValleys(x, z)) * 20.0f;
+
+    //return groundLevel + continentalnessSpline.getValue(cont) + getPeaksAndValleys(x, z) * 20.0f;
+}
+
+float BiomeManager::getTemperature(int x, int z) {
+    return temperature.GetNoise((float) x, (float) z);
+}
+float BiomeManager::getHumidity(int x, int z)
+{
+    return humidity.GetNoise((float) x, (float) z);
+}
+float BiomeManager::getErosion(int x, int z) {
+    return erosion.GetNoise((float) x, (float) z);
+}
+float BiomeManager::getContinentalness(int x, int z) {
+    return continentalness.GetNoise((float) x, (float) z);
+}
+float BiomeManager::getWeirdness(int x, int z) {
+    return weirdness.GetNoise((float) x, (float) z);
+}
+float BiomeManager::getPeaksAndValleys(int x, int z) {
+    //return 1.0f - std::abs(3*std::abs(weirdness.GetNoise((float) x, (float) z))/2);
+    return -1.0f*peaksAndValleys.GetNoise((float) x, (float) z)*peaksAndValleys.GetNoise((float) x, (float) z)+0.5f;
+}
+
+float DebugBiome::calculateHeight(float x, float z)
+{
+    return 0.0f;
+}
+
+void DebugBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, ERROR_BLOC);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, ERROR_BLOC);
+}
+
+void DebugBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
 }

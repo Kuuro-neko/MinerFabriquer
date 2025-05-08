@@ -51,7 +51,7 @@ Clouds::Clouds(Texture &cloudTex, float speed, GLuint programID)
     transform = Transform(
         glm::vec3(0.0f, height, 0.0f),
         DEFAULT_ROTATION,
-        RENDERER_DISTANCE*5.0f
+        RENDERER_DISTANCE*width
     );
     std::cout << "After GL state: " << glGetError() << std::endl;
 }

@@ -6,9 +6,8 @@
 
 // ===== Generation & chunks ===== //
 
-#define GENERATION_SEED 4799
-#define GROUND_LEVEL 56
-#define WATER_LEVEL_DELTA 15
+#define GENERATION_SEED 111111
+#define GROUND_LEVEL 65.0f
 
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
@@ -71,10 +70,12 @@
 #define PLAINS_BIOME 0
 #define MOUNTAINS_BIOME 1
 #define DESERT_BIOME 2
-#define WATER_BIOME 3
+#define OCEAN_BIOME 3
 #define ICE_BIOME 4
 #define CRISTALPEAKS_BIOME 5
 #define MUSHROOM_BIOME 6
+
+#define DEBUG_BIOME 7
 
 // ===== Player ===== //
 
