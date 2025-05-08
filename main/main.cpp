@@ -252,6 +252,7 @@ int main(void)
 
     if (!saveManager.isWorldFileEmpty())
     {
+        world.generation();
         // Si le fichier n'existe pas, générer un nouveau monde
         std::cout << "No world file found. Generating a new world..." << std::endl;
         saveManager.saveWorldFile(); // Sauvegarder le monde après la génération

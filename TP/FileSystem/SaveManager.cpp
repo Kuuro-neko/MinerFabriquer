@@ -155,7 +155,7 @@ void SaveManager::startAutoSave(Character &data)
                                                      std::cout
                                                  << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
-                                    
+
                                      } });
 }
 
@@ -451,26 +451,32 @@ void SaveManager::readWorldFile(std::ifstream &in)
         // 2.3 Lecture des chunks
         for (int i = 0; i < GENERATION_SIZE_Y; ++i)
         {
-            VoxelChunk *chunk = new VoxelChunk({worldX, i, worldZ});
-            column->addChunk(chunk);
+            for (int x = 0; x <= GENERATION_SIZE_X; ++x) {
+                for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+                    for (int z = 0; z <= GENERATION_SIZE_Z; ++z) {
+                        VoxelChunk *chunk = world->createEmptyChunk(x, y, z);
+                        for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+                        {
+                            for (int by = 0; by < CHUNK_SIZE; ++by)
+                            {
+                                for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                                {
+                                    // blocID
+                                    uint16_t blockID;
+                                    in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
+                                    chunk->generationSetBloc(bx, by, bz, blockID);
 
-            for (int bz = 0; bz < CHUNK_SIZE; ++bz)
-            {
-                for (int by = 0; by < CHUNK_SIZE; ++by)
-                {
-                    for (int bx = 0; bx < CHUNK_SIZE; ++bx)
-                    {
-                        // Bloc ID
-                        uint16_t blockID;
-                        in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
-                        chunk->generationSetBloc(bx, by, bz, blockID);
-                      
-                        // Lightmap
-                        uint8_t light;
-                        in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
-                        chunk->setLightLevel(bx, by, bz, light);
+                                    // lightmap
+                                    uint8_t light;
+                                    in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
+                                    chunk->setLightLevel(bx, by, bz, light);
+                                }
+                            }
+                        }
+
                     }
                 }
+
             }
         }
 

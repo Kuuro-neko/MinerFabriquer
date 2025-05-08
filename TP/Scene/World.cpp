@@ -47,7 +47,7 @@ void World::updateSkyLightsInColumn(int x, int z)
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
-    generation();
+// on génère pas ici
 }
 
 World::~World() {

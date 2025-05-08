@@ -41,7 +41,7 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc)
 {
     if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ)
     {
-        std::cout << "Error: Out of bounds blocks at coords" << " " << x << " " << y << " " << z << std::endl;
+       // std::cout << "Error: Out of bounds blocks at coords" << " " << x << " " << y << " " << z << std::endl;
         return m_world->generationSetBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
     }
     m_cubes[x][y][z] = bloc;
