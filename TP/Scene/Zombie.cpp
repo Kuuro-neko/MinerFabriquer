@@ -16,7 +16,6 @@ Zombie::Zombie(Transform transform, World* world, Camera* camera) : Entity() {
 
     updateBoundingBox();
 
-    // Initialize target position
     targetPosition = transform.m_translation;
 }
 
@@ -47,7 +46,15 @@ void Zombie::move(glm::vec3 direction) {
 }
 
 void Zombie::update(float deltaTime) {
-    // Update target periodically
+    updateTargetPosition(deltaTime);
+    calculateMovementDirection(deltaTime);
+    updateJumpCooldown(deltaTime);
+    updateBoundingBox();
+    updateRenderers();
+    // std::cout<<"zombie isgrounded ?: "<<isGrounded<<std::endl;
+}
+
+void Zombie::updateTargetPosition(float deltaTime) {
     targetUpdateTimer += deltaTime;
     if (targetUpdateTimer >= targetUpdateInterval) {
         // Find a new target position (e.g., player position)
@@ -65,22 +72,71 @@ void Zombie::update(float deltaTime) {
         
         targetUpdateTimer = 0.0f;
     }
-    
-    // Calculate movement direction toward target
+}
+
+void Zombie::calculateMovementDirection(float deltaTime) {
     glm::vec3 direction = targetPosition - getWorldPosition();
-    direction.y = 0; // Keep movement on horizontal plane
+    direction.y = 0;
     
     if (glm::length(direction) > 0.1f) {
         direction = glm::normalize(direction) * moveSpeed * deltaTime;
         vecteurDirection = direction;
+        
+        detectAndHandleObstacles();
     } else {
         vecteurDirection = glm::vec3(0.0f);
     }
+}
+
+void Zombie::detectAndHandleObstacles() {
+    if (!canJump) return;
+
     
-    // Update bounding box
-    updateBoundingBox();
+    glm::vec3 position = getWorldPosition();
+    glm::vec3 normalizedDir = glm::normalize(vecteurDirection);
+
     
-    // Update AABB renderer if available
+    //on récupère le bloque devant la direction du zombie
+    glm::vec3 checkPos = position + normalizedDir;
+    int blockX = static_cast<int>(std::floor(checkPos.x));
+    int blockY = static_cast<int>(std::floor(position.y));
+    int blockZ = static_cast<int>(std::floor(checkPos.z));
+    
+    //si le bloc n'est pas de l'air ou de l'eau
+    int blockType = m_world->getBloc(blockX, blockY, blockZ);
+    if (blockType != AIR && blockType != WATER) {
+        // jump();
+
+        //on prend aussi le bloc au dessus car les humanoides font 2 de haut
+        int blockAboveType = m_world->getBloc(blockX, blockY + 1, blockZ);
+        int blockAbove2Type = m_world->getBloc(blockX, blockY + 2, blockZ);
+        
+        if (blockAboveType == AIR && blockAbove2Type == AIR) {
+            //si on peux on saute
+
+            if (velocity.y < 2.0f) {
+                jump();
+            }
+        }
+    }
+}
+
+void Zombie::jump() {
+    velocity.y = jumpForce;
+    canJump = false;
+    jumpCooldown = 0.0f;
+}
+
+void Zombie::updateJumpCooldown(float deltaTime) {
+    if (!canJump) {
+        jumpCooldown += deltaTime;
+        if (jumpCooldown >= jumpCooldownMax) {
+            canJump = true;
+        }
+    }
+}
+
+void Zombie::updateRenderers() {
     if (AABBRenderer != nullptr) {
         AABBRenderer->setHighlight(getMinBoundingBox());
     }

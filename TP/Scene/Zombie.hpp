@@ -16,22 +16,19 @@ public:
     void update(float deltaTime);
     void move(glm::vec3 direction);
     void generateZombieMesh(float groundHeight);
-    // New methods
     void updateBoundingBox();
     void drawBoundingBox();
     
-    // Updated methods to match Character class
+    
     glm::vec3 getMinBoundingBox();
     glm::vec3 getMaxBoundingBox();
 
-    // Public variables for collision resolution
     glm::vec3 velocity = glm::vec3(0.0f);
     glm::vec3 vecteurDirection = glm::vec3(0.0f);
     bool isInWater = false;
     Renderer* AABBRenderer = nullptr;
 
 
-    // Set wireframe renderer for bounding box visualization
     inline void setWireframeRenderer(GLuint wireframeProgramID) {
         this->AABBRenderer = new Renderer(wireframeProgramID);
     }
@@ -44,14 +41,28 @@ private:
     World* m_world;
     Camera* camera;
     std::vector<glm::vec3> boundingBox;
-    glm::vec3 size = glm::vec3(5.f / 8.f, 29.f / 16.f, 5.f / 8.f); // Similar to character size
+    glm::vec3 size = glm::vec3(5.f / 8.f, 29.f / 16.f, 5.f / 8.f); 
     bool isGrounded = false;
     float gravity = -9.81f;
     float moveSpeed = 1.0f;
     float targetUpdateTimer = 0.0f;
     float targetUpdateInterval = 2.0f;
     glm::vec3 targetPosition;
-    bool displayAABB = false; // Debug flag for rendering the bounding box
+    bool displayAABB = false; 
+
+
+    float jumpCooldown = 0.0f;
+    float jumpCooldownMax = 0.2f;
+    bool canJump = true;
+    float jumpForce = 5.0f;
+
+
+    void updateTargetPosition(float deltaTime);
+    void calculateMovementDirection(float deltaTime);
+    void detectAndHandleObstacles();
+    void jump();
+    void updateJumpCooldown(float deltaTime);
+    void updateRenderers();
     
 };
 
