@@ -124,6 +124,7 @@
 #define BEACH_BIOME 8
 #define FROZENBEACH_BIOME 9
 #define FROZENOCEAN_BIOME 10
+#define TAIGA_BIOME 11
 
 // ===== Player ===== //
 

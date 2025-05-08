@@ -430,6 +430,53 @@ void FrozenOceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
 }
 
+/// ====================== ///
+/// ===== TaigaBiome ===== ///
+/// ====================== ///
+
+void TaigaBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
+    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, DIRT);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, PODZOL);
+}
+
+void TaigaBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+    addSpruceTree(chunk, x, z, baseHeight, getRandom1000() % 2);
+}
+
+void TaigaBiome::addSpruceTree(VoxelChunk *chunk, int x, int z, int baseHeight, int height)
+{
+    if (chunk->getBloc(x, baseHeight, z) != PODZOL) return;
+    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
+
+    int actualHeight = 6 + 2 * height;
+    if (getRandom1000() < 10) { // 1% chance
+        chunk->generationSetBloc(x, baseHeight, z, DIRT);
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                if (std::abs(dx) + std::abs(dz) <= 1) {
+                    chunk->setBloc(x + dx, baseHeight + actualHeight - 1, z + dz, SPRUCE_LEAVES);
+                }
+                for (int i = 0; i <= height; i++) {
+                    if (std::abs(dx) + std::abs(dz) <= 2) {
+                        chunk->setBloc(x + dx, baseHeight + 4 + i * 2, z + dz, SPRUCE_LEAVES);
+                    }
+                    if (std::abs(dx) + std::abs(dz) <= 1) {
+                        chunk->setBloc(x + dx, baseHeight + 3 + i * 2, z + dz, SPRUCE_LEAVES);
+                    }
+                }
+                if (std::abs(dx) + std::abs(dz) <= 3) {
+                    chunk->setBloc(x + dx, baseHeight + 2, z + dz, SPRUCE_LEAVES);
+                }
+            }
+        }
+        for (int y = 1; y <= actualHeight-2; y++) chunk->generationSetBloc(x, baseHeight + y, z, SPRUCE_LOG);
+        chunk->setBloc(x, baseHeight + actualHeight, z, SPRUCE_LEAVES);
+    }
+}
 
 /// ====================== ///
 /// ===== DebugBiome ===== ///
@@ -540,7 +587,7 @@ Biome* BiomeManager::getBiomeById(int id)
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
-    //return getBiomeById(DEBUG_BIOME);
+    //return getBiomeById(TAIGA_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);
@@ -566,7 +613,11 @@ Biome *BiomeManager::getBiome(int x, int z)
     } else if (continentalnessSpline.intervals[3].isInInterval(continentalness)) { // NEAR INLAND
         switch(temperature) {
             case TEMPERATURE_COLD:
-                return getBiomeById(ICE_BIOME);
+                if(weirdness > 0.25f) {
+                    return getBiomeById(ICE_BIOME);
+                } else {
+                    return getBiomeById(TAIGA_BIOME);
+                }
             case TEMPERATURE_TEMPERATE:
                 return getBiomeById(PLAINS_BIOME);
             case TEMPERATURE_WARM:
@@ -576,7 +627,11 @@ Biome *BiomeManager::getBiome(int x, int z)
         if (erosion > -0.05f) {
             switch(temperature) {
                 case TEMPERATURE_COLD:
-                    return getBiomeById(ICE_BIOME);
+                    if(weirdness > -0.2f) {
+                        return getBiomeById(ICE_BIOME);
+                    } else {
+                        return getBiomeById(TAIGA_BIOME);
+                    }
                 case TEMPERATURE_TEMPERATE:
                     if(weirdness > 0.1f) {
                         return getBiomeById(MUSHROOM_BIOME);

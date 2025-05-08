@@ -42,6 +42,7 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
     biomeManager.addBiome(std::make_unique<BeachBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<FrozenBeachBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<FrozenOceanBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<TaigaBiome>(groundLevel, seed));
 }
 
 void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {

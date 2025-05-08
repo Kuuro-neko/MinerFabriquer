@@ -174,6 +174,14 @@ class FrozenOceanBiome : public Biome {
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
 };
 
+class TaigaBiome : public Biome {
+    public:
+        TaigaBiome(int groundLevel, int seed) : Biome(groundLevel, TAIGA_BIOME, seed) {}
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void addSpruceTree(VoxelChunk* chunk, int x, int z, int baseHeight, int height);
+};
+
 class DebugBiome : public Biome {
     public:
         DebugBiome(int groundLevel, int seed) : Biome(groundLevel, DEBUG_BIOME, seed) {
