@@ -32,8 +32,6 @@ private:
     void setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
     void generateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel);
     void decorateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel);
-    void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
-    void addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight);
 
 public:
     WorldGenerator();

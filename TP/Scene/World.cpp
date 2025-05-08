@@ -231,10 +231,10 @@ unsigned short World::getLightLevel(int x, int y, int z) {
 int World::getBloc(int x, int y, int z) {
     VoxelChunk *chunk = getChunkContaining(x, y, z);
     if (chunk) {
-        std::cout << "found chunk at " << x << ", " << y << ", " << z << " in world.getBloc" << std::endl;
+        // std::cout << "found chunk at " << x << ", " << y << ", " << z << " in world.getBloc" << std::endl;
         return chunk->getBloc(betterModulo(x, CHUNK_SIZE), betterModulo(y, CHUNK_SIZE), betterModulo(z, CHUNK_SIZE));
     } else {
-        std::cout << "chunk not found at " << x << ", " << y << ", " << z << " in world.getBloc" << std::endl;
+        // std::cout << "chunk not found at " << x << ", " << y << ", " << z << " in world.getBloc" << std::endl;
         return OUT_OF_BOUNDS_BLOC;
     }
 }
@@ -319,7 +319,7 @@ void World::generation() {
     int count = 0;
     int total = GENERATION_RADIUS_X * 2;
     for (int x = -GENERATION_RADIUS_X; x <= GENERATION_RADIUS_X; ++x) {
-        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+        for (int y = GENERATION_SIZE_Y -1; y >= 0; --y) {
             for (int z = -GENERATION_RADIUS_Z; z <= GENERATION_RADIUS_Z; ++z) {
                 VoxelChunk *chunk = createEmptyChunk(x, y, z);
                 worldGenerator.genereteProceduralChunk(this, chunk, x, y, z);

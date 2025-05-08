@@ -49,7 +49,7 @@ void PlainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 
 void MoutainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    int snowheight = 22 + snowNoise->GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) * 8;
+    int snowheight = 22 + snowNoise.GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) * 8;
     if (baseHeight > getGroundLevel() + snowheight) {
         for (int y = 0; y < 3; y++) {
             chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SNOW);
@@ -112,7 +112,7 @@ void OceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
     if (chunk->getBloc(x, baseHeight+1, z) != WATER) return;
     if (getRandomFloat() < 0.998f) return;
 
-    if (getNoise()->GetNoise((float) x,(float) z) > 0.1f) {
+    if (coralNoise.GetNoise((float) x,(float) z) > 0.1f) {
         chunk->generationSetBloc(x, baseHeight, z, BRAIN_CORAL);
         chunk->generationSetBloc(x, baseHeight+1, z, BRAIN_CORAL);
         chunk->generationSetBloc(x, baseHeight+2, z, BRAIN_CORAL);
@@ -228,7 +228,7 @@ void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight
                 continue;   
             }
         }
-        float noiseValue = amethystNoise.GetNoise(x-136.0f,y,z-136.0f);
+        float noiseValue = amethystNoise.GetNoise((float)x+chunk->m_chunkCoords.x * CHUNK_SIZE,(float) y, (float)z+chunk->m_chunkCoords.z * CHUNK_SIZE);
         if (noiseValue < 0.05f) {
             chunk->m_world->generationSetBloc(wX, y, wZ, CALCITE);
         } else if (noiseValue < 0.09f) {
@@ -378,20 +378,18 @@ void BeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 
 void FrozenBeachBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    int blocAbove = chunk->getBloc(x, baseHeight + 1, z);
-    std::cout << "coord bloc above: " << x << " " << baseHeight + 1 << " " << z << std::endl;
+    int blocAbove = chunk->getBloc(x, baseHeight+1, z);
+    int bloc = chunk->getBloc(x, baseHeight, z);
+    //std::cout << "coord bloc above: " << x << " " << baseHeight + 1 << " " << z << std::endl;
     if (blocAbove == AIR) {
-        std::cout << "Bloc above: " << blocAbove << std::endl;
         chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SNOW);
-        for (int y = 0; y < 3; y++) {
+        for (int y = 1; y < 3; y++) {
             chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
         }
     }
-    if (blocAbove == WATER) {
-        std::cout << "Bloc above: " << blocAbove << std::endl;
-
-        chunk->generationSetBloc(x, WATER_LEVEL, z, ICE);
-        for (int y = 0; y < 3; y++) {
+    if (blocAbove == WATER || bloc == WATER) {
+        chunk->generationSetBloc(x, WATER_LEVEL - 1 - worldAABBMin.y, z, ICE);
+        for (int y = 1; y < 3; y++) {
             chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
         }
 
@@ -402,6 +400,36 @@ void FrozenBeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 {
 }
 
+/// ============================ ///
+/// ===== FrozenOceanBiome ===== ///
+/// ============================ ///
+
+void FrozenOceanBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    int blocAbove = chunk->getBloc(x, baseHeight+1, z);
+    int bloc = chunk->getBloc(x, baseHeight, z);
+    //std::cout << "coord bloc above: " << x << " " << baseHeight + 1 << " " << z << std::endl;
+    if (blocAbove == AIR) {
+        chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SNOW);
+        for (int y = 1; y < 3; y++) {
+            chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
+        }
+    }
+    if (blocAbove == WATER || bloc == WATER) {
+        if (iceNoise.GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) > -0.4f) {
+            chunk->generationSetBloc(x, WATER_LEVEL - 1 - worldAABBMin.y, z, ICE);
+        }
+        for (int y = 1; y < 3; y++) {
+            chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
+        }
+
+    }
+}
+
+void FrozenOceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+{
+}
+
 
 /// ====================== ///
 /// ===== DebugBiome ===== ///
@@ -409,8 +437,8 @@ void FrozenBeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 
 void DebugBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, ERROR_BLOC);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, ERROR_BLOC);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, BEDROCK);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, BEDROCK);
 }
 
 void DebugBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
@@ -434,13 +462,13 @@ BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel)
     biomeNoise = FastNoiseLite();
 
     temperature.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    temperature.SetFrequency(0.004f * freqScaling);
+    temperature.SetFrequency(0.003f * freqScaling);
 
     humidity.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     humidity.SetFrequency(0.005f * freqScaling);
 
     erosion.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-    erosion.SetFrequency(0.0045f * freqScaling);
+    erosion.SetFrequency(0.0043f * freqScaling);
     erosion.SetFractalType(FastNoiseLite::FractalType_FBm);
 
     continentalness.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
@@ -477,12 +505,18 @@ BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel)
 
     erosionSpline = Spline(
         {-1.2f, -0.78f, -0.375f, -0.2225f, 0.05f, 0.4f, 0.6f, 1.0f, 1.2f},
-        {0.298f,0.349f,0.4f,0.447f,0.498f,0.549f,0.6f,0.647f,0.698f}
+        // {0.298f,0.349f,0.4f,0.447f,0.498f,0.549f,0.6f,0.647f,0.698f}
+        {0.198f,0.249f,0.4f,0.447f,0.498f,0.749f,0.6f,0.847f,0.898f}
     );
 
     PVSpline = Spline(
         {-1.2f, -0.5f, -0.1f,  0.1f, 0.5f, 1.2f},
-        {-1.0f,-0.9f,-0.1f,0.1f,0.9f,1.0f}
+        {-1.0f,-0.9f,-0.1f,0.5f,0.9f,1.0f}
+    );
+
+    temperatureSpline = Spline(
+        {-1.2f,-0.45f,-0.15f,0.2f,0.55f,1.2f},
+        {-1.0f,-0.5f,-0.25f,0.25f,0.5f,1.0f}
     );
 }
 
@@ -506,52 +540,88 @@ Biome* BiomeManager::getBiomeById(int id)
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
-    return getBiomeById(FROZENBEACH_BIOME);
+    //return getBiomeById(DEBUG_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);
+    int temperature = getTemperatureClass(getTemperature(x, z));
     if (continentalnessSpline.intervals[0].isInInterval(continentalness)) { // DEEP OCEAN
-        return getBiomeById(OCEAN_BIOME);
-    } else if (continentalnessSpline.intervals[1].isInInterval(continentalness)) { // OCEAN
-        return getBiomeById(BEACH_BIOME);
-    } else if (continentalnessSpline.intervals[2].isInInterval(continentalness)) { // COAST
-        return getBiomeById(BEACH_BIOME);
-    } else if (continentalnessSpline.intervals[3].isInInterval(continentalness)) { // NEAR INLAND
-        if (erosion > 0.75f) {
-            return getBiomeById(DESERT_BIOME);
-        } else if (erosion > -0.25f) {
-            return getBiomeById(PLAINS_BIOME);
+        if (temperature == TEMPERATURE_COLD) {
+            return getBiomeById(FROZENOCEAN_BIOME);
         } else {
-            return getBiomeById(MUSHROOM_BIOME);
+            return getBiomeById(OCEAN_BIOME);
+        }
+    } else if (continentalnessSpline.intervals[1].isInInterval(continentalness)) { // OCEAN
+        if (temperature == TEMPERATURE_COLD) {
+            return getBiomeById(FROZENOCEAN_BIOME);
+        } else {
+            return getBiomeById(BEACH_BIOME);
+        }
+    } else if (continentalnessSpline.intervals[2].isInInterval(continentalness)) { // COAST
+        if (temperature == TEMPERATURE_COLD) {
+            return getBiomeById(FROZENBEACH_BIOME);
+        } else {
+            return getBiomeById(BEACH_BIOME);
+        }
+    } else if (continentalnessSpline.intervals[3].isInInterval(continentalness)) { // NEAR INLAND
+        switch(temperature) {
+            case TEMPERATURE_COLD:
+                return getBiomeById(ICE_BIOME);
+            case TEMPERATURE_TEMPERATE:
+                return getBiomeById(PLAINS_BIOME);
+            case TEMPERATURE_WARM:
+                return getBiomeById(DESERT_BIOME);
         }
     } else if (continentalnessSpline.intervals[4].isInInterval(continentalness)) { // INLAND
-        if (erosion > 0.75f) {
-            return getBiomeById(PLAINS_BIOME);
-        } else if (erosion > 0.05f) {
-            return getBiomeById(MUSHROOM_BIOME);
-        } else if (erosion > -0.5f) {
-            if (weirdness > -0.33f) {
-                return getBiomeById(ICE_BIOME);
-            } else {
-                return getBiomeById(CRISTALPEAKS_BIOME);
+        if (erosion > -0.05f) {
+            switch(temperature) {
+                case TEMPERATURE_COLD:
+                    return getBiomeById(ICE_BIOME);
+                case TEMPERATURE_TEMPERATE:
+                    if(weirdness > 0.1f) {
+                        return getBiomeById(MUSHROOM_BIOME);
+                    } else {
+                        return getBiomeById(PLAINS_BIOME);
+                    }
+                case TEMPERATURE_WARM:
+                    return getBiomeById(DESERT_BIOME);
             }
         } else {
-            return getBiomeById(MOUNTAINS_BIOME);
+            switch(temperature) {
+                case TEMPERATURE_COLD:
+                    return getBiomeById(ICE_BIOME);
+                case TEMPERATURE_TEMPERATE:
+                    return getBiomeById(MOUNTAINS_BIOME);
+                case TEMPERATURE_WARM:
+                    return getBiomeById(CRISTALPEAKS_BIOME);
+            }
         }
     } else if (continentalnessSpline.intervals[5].isInInterval(continentalness)) { // FAR INLAND
-        if (erosion > 0.75f) {
-            return getBiomeById(MUSHROOM_BIOME);
-        } else if (erosion > 0.05f) {
-            if (weirdness > -0.5f) {
-                return getBiomeById(MOUNTAINS_BIOME);
-            } else {
-                return getBiomeById(CRISTALPEAKS_BIOME);
+        if (erosion > 0.55f) {
+            switch(temperature) {
+                case TEMPERATURE_COLD:
+                    return getBiomeById(ICE_BIOME);
+                case TEMPERATURE_TEMPERATE:
+                    if(weirdness > 0.3f) {
+                        return getBiomeById(MUSHROOM_BIOME);
+                    } else {
+                        return getBiomeById(PLAINS_BIOME);
+                    }
+                case TEMPERATURE_WARM:
+                    if(weirdness > 0.3f) {
+                        return getBiomeById(MUSHROOM_BIOME);
+                    } else {
+                        return getBiomeById(DESERT_BIOME);
+                    }
             }
         } else {
-            if (weirdness > 0.0f) {
-                return getBiomeById(ICE_BIOME);
-            } else {
-                return getBiomeById(MOUNTAINS_BIOME);
+            switch(temperature) {
+                case TEMPERATURE_COLD:
+                    return getBiomeById(ICE_BIOME);
+                case TEMPERATURE_TEMPERATE:
+                    return getBiomeById(MOUNTAINS_BIOME);
+                case TEMPERATURE_WARM:
+                    return getBiomeById(CRISTALPEAKS_BIOME);
             }
         }
     }
@@ -560,30 +630,22 @@ Biome *BiomeManager::getBiome(int x, int z)
 
 float BiomeManager::getBaseHeight(int x, int z)
 {
-    // float heightOffset = getContinentalness(x, z) * 5.0f;
-    // float verticalStretch = (getErosion(x, z) + 1.0f) / 2.0f;
-    // float pv = getPeaksAndValleys(x, z);
-    // switch (getPeaksAndValleysClass(pv)) {
-    //     case 0: heightOffset += verticalStretch * -15.0f; break;
-    //     case 1: heightOffset += verticalStretch * -1.0f; break;
-    //     case 2: heightOffset += verticalStretch * 5.0f; break;
-    //     case 3: heightOffset += verticalStretch * 10.0f; break;
-    //     case 4: heightOffset += verticalStretch * 30.0f; break;
-    // }
-    // return float(groundLevel) + heightOffset;
+    //return continentalnessSpline.getValue(getContinentalness(x, z)) * (erosionSpline.getValue(getErosion(x,z))) + groundLevel;
     float cont = getContinentalness(x, z);
     float ret = continentalnessSpline.getValue(cont);
-    ret += PVSpline.getValue(getPeaksAndValleys(x, z)) * PVSpline.getValue(getWeirdness(x, z)) * 20.0f;
+    ret += PVSpline.getValue(getPeaksAndValleys(x, z)) * PVSpline.getValue(getPeaksAndValleys(x, z)) * -8.0f ;
     if (cont > 0.0f) {
         ret *= (0.5f+erosionSpline.getValue(getErosion(x,z)));
     }
     ret += groundLevel;
     return ret;
-    
-    
-    //return groundLevel + PVSpline.getValue(getPeaksAndValleys(x, z)) * 20.0f;
+}
 
-    //return groundLevel + continentalnessSpline.getValue(cont) + getPeaksAndValleys(x, z) * 20.0f;
+int BiomeManager::getTemperatureClass(float temperature)
+{
+    if (temperature < -0.45f) return TEMPERATURE_COLD;
+    if (temperature < 0.45f) return TEMPERATURE_TEMPERATE;
+    return TEMPERATURE_WARM;
 }
 
 float BiomeManager::getTemperature(int x, int z) {

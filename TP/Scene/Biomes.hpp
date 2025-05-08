@@ -5,19 +5,20 @@
 #include <Defines.hpp>
 #include <utils/Math.hpp>
 
-
+#define TEMPERATURE_COLD 0
+#define TEMPERATURE_WARM 1
+#define TEMPERATURE_TEMPERATE 2
 
 class Biome {
     private:
         int groundLevel = 40;
-        FastNoiseLite* noise;
         int id;
         int seed;
         std::mt19937 rng;
         std::uniform_int_distribution<int> random1000;
         std::uniform_real_distribution<float> randomFloat;
     public:
-        Biome(int groundLevel, FastNoiseLite* noise, int id, int seed) : groundLevel(groundLevel), noise(noise), id(id), seed(seed) {
+        Biome(int groundLevel, int id, int seed) : groundLevel(groundLevel), id(id), seed(seed) {
             rng.seed(seed+id);
             random1000 = std::uniform_int_distribution<int>(0, 1000);
             randomFloat = std::uniform_real_distribution<float>(0.0f, 1.0f);
@@ -46,7 +47,6 @@ class Biome {
         inline int getSeed() const { return seed; }
         inline int getRandom1000() { return random1000(rng); }
         inline float getRandomFloat() { return randomFloat(rng); }
-        inline FastNoiseLite* getNoise() const { return noise; }
         inline std::mt19937& getRNG() { return rng; }
 };
 
@@ -56,17 +56,20 @@ class Biome {
 
 class PlainsBiome : public Biome {
     public:
-        PlainsBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, PLAINS_BIOME, seed) {
-        }
+        PlainsBiome(int groundLevel, int seed) : Biome(groundLevel, PLAINS_BIOME, seed) {}
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
 
 class MoutainsBiome : public Biome {
     private:
-        FastNoiseLite* snowNoise;
+        FastNoiseLite snowNoise;
     public:
-        MoutainsBiome(int groundLevel, FastNoiseLite* noise, FastNoiseLite* snowNoise, int seed) : Biome(groundLevel, noise, MOUNTAINS_BIOME, seed), snowNoise(snowNoise) {
+        MoutainsBiome(int groundLevel, int seed) : Biome(groundLevel, MOUNTAINS_BIOME, seed) {
+            snowNoise = FastNoiseLite();
+            snowNoise.SetSeed(getSeed());
+            snowNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+            snowNoise.SetFrequency(0.1f);
         }
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
@@ -75,24 +78,28 @@ class MoutainsBiome : public Biome {
 
 class DesertBiome : public Biome {
     public:
-        DesertBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, DESERT_BIOME, seed) {
-        }
+        DesertBiome(int groundLevel, int seed) : Biome(groundLevel, DESERT_BIOME, seed) {}
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
 };
 
 class OceanBiome : public Biome {
     private:
-        FastNoiseLite* waterNoise;
+    FastNoiseLite coralNoise;
     public :
-        OceanBiome(int groundLevel, FastNoiseLite *noise, int seed) : Biome(groundLevel, noise, OCEAN_BIOME, seed) {}
+        OceanBiome(int groundLevel, int seed) : Biome(groundLevel, OCEAN_BIOME, seed) {
+            coralNoise = FastNoiseLite();
+            coralNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+            coralNoise.SetFrequency(0.1f);
+            coralNoise.SetSeed(getSeed());
+        }
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
 };
 
 class IceBiome : public Biome {
     public:
-        IceBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, ICE_BIOME, seed) {}
+        IceBiome(int groundLevel, int seed) : Biome(groundLevel, ICE_BIOME, seed) {}
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
         void addIceSpike(VoxelChunk* chunk, int x, int z, int baseHeight, int height, int radius);
@@ -102,7 +109,7 @@ class CristalPeaksBiome : public Biome {
     private:
         FastNoiseLite amethystNoise;
     public:
-        CristalPeaksBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, CRISTALPEAKS_BIOME, seed) {
+        CristalPeaksBiome(int groundLevel, int seed) : Biome(groundLevel, CRISTALPEAKS_BIOME, seed) {
             amethystNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
             amethystNoise.SetFrequency(0.05f);
             amethystNoise.SetSeed(seed);
@@ -120,11 +127,11 @@ class MushroomBiome : public Biome {
     private:
         FastNoiseLite coralVineNoise;
     public:
-        MushroomBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, MUSHROOM_BIOME, seed) {
+        MushroomBiome(int groundLevel, int seed) : Biome(groundLevel, MUSHROOM_BIOME, seed) {
             coralVineNoise = FastNoiseLite();
             coralVineNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
             coralVineNoise.SetFrequency(0.25f);
-            coralVineNoise.SetSeed(seed);
+            coralVineNoise.SetSeed(getSeed());
             coralVineNoise.SetFractalType(FastNoiseLite::FractalType_PingPong);
         }
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
@@ -135,14 +142,33 @@ class MushroomBiome : public Biome {
 
 class BeachBiome : public Biome {
     public:
-        BeachBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, BEACH_BIOME, seed) {}
+        BeachBiome(int groundLevel, int seed) : Biome(groundLevel, BEACH_BIOME, seed) {}
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
 };
 
 class FrozenBeachBiome : public Biome {
     public:
-        FrozenBeachBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, FROZENBEACH_BIOME, seed) {
+        FrozenBeachBiome(int groundLevel, int seed) : Biome(groundLevel, FROZENBEACH_BIOME, seed) {
+        }
+        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+};
+
+class FrozenOceanBiome : public Biome {
+    private:
+        FastNoiseLite iceNoise;
+    public:
+        FrozenOceanBiome(int groundLevel, int seed) : Biome(groundLevel, FROZENOCEAN_BIOME, seed) {
+            iceNoise = FastNoiseLite();
+            iceNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+            iceNoise.SetFrequency(0.05f);
+            iceNoise.SetSeed(getSeed());
+            iceNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+            iceNoise.SetFractalOctaves(2);
+            iceNoise.SetFractalLacunarity(2.0f);
+            iceNoise.SetFractalGain(5.0f);
+            iceNoise.SetFractalWeightedStrength(5.0f);
         }
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
@@ -150,7 +176,7 @@ class FrozenBeachBiome : public Biome {
 
 class DebugBiome : public Biome {
     public:
-        DebugBiome(int groundLevel, FastNoiseLite* noise, int seed) : Biome(groundLevel, noise, DEBUG_BIOME, seed) {
+        DebugBiome(int groundLevel, int seed) : Biome(groundLevel, DEBUG_BIOME, seed) {
         }
         void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
@@ -177,6 +203,7 @@ class BiomeManager {
     Spline continentalnessSpline;
     Spline erosionSpline;
     Spline PVSpline;
+    Spline temperatureSpline;
 public:
     BiomeManager(int groundLevel, int seed);
     void addBiome(std::unique_ptr<Biome> biome);
@@ -184,6 +211,8 @@ public:
     Biome* getBiomeById(int id);
     Biome* getBiome(int x, int z);
     float getBaseHeight(int x, int z);
+
+    int getTemperatureClass(float temperature);
 
     float getTemperature(int x, int z);
     float getHumidity(int x, int z);

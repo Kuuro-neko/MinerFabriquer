@@ -6,7 +6,7 @@
 
 // ===== Generation & chunks ===== //
 
-#define GENERATION_SEED 111111
+#define GENERATION_SEED 110111
 #define GROUND_LEVEL 65.0f
 #define WATER_LEVEL 63
 
@@ -79,6 +79,7 @@
 #define DEBUG_BIOME 7
 #define BEACH_BIOME 8
 #define FROZENBEACH_BIOME 9
+#define FROZENOCEAN_BIOME 10
 
 // ===== Player ===== //
 

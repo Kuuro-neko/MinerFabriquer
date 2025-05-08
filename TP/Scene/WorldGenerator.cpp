@@ -31,16 +31,17 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
 
     rng.seed(seed);
 
-    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, &mountainHeightNoise, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<OceanBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<CristalPeaksBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<MushroomBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<DebugBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<BeachBiome>(groundLevel, &baseHeightNoise, seed));
-    biomeManager.addBiome(std::make_unique<FrozenBeachBiome>(groundLevel, &baseHeightNoise, seed));
+    biomeManager.addBiome(std::make_unique<PlainsBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<MoutainsBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<DesertBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<OceanBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<IceBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<CristalPeaksBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<MushroomBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<DebugBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<BeachBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<FrozenBeachBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<FrozenOceanBiome>(groundLevel, seed));
 }
 
 void WorldGenerator::genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k) {
