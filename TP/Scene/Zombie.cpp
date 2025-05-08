@@ -7,15 +7,11 @@
 Zombie::Zombie(Transform transform, World* world, Camera* camera) : Entity() {
     m_world = world;
     this->camera = camera;
-    
     m_transform = transform;
-    
     generateZombieMesh(0.0f);
-
     this->setFPSActive(new bool(true));
-
     updateBoundingBox();
-
+    currentState = ZOMBIE_IDLE;
     targetPosition = transform.m_translation;
 }
 
@@ -46,12 +42,74 @@ void Zombie::move(glm::vec3 direction) {
 }
 
 void Zombie::update(float deltaTime) {
+    updateState(deltaTime);
+
+    switch (currentState) {
+        case ZOMBIE_IDLE:
+            handleIdleState(deltaTime);
+            break;
+            
+        case ZOMBIE_PURSUIT:
+            handlePursuitState(deltaTime);
+            break;
+            
+        case ZOMBIE_ATTACK:
+            handleAttackState(deltaTime);
+            break;
+    }
+
+    updateJumpCooldown(deltaTime);
+    updateBoundingBox();
+    updateRenderers();
+}
+
+#define ZOMBIE_DISTANCE_FINDING_PLAYER 7.0f
+void Zombie::updateState(float deltaTime) {
+    // Trouver le joueur
+    Character* player = nullptr;
+    SceneNode* root = getRoot();
+    
+    if (root) {
+        for (auto child : root->getChildren()) {
+            if (typeid(*child) == typeid(Character)) {
+                player = static_cast<Character*>(child);
+                break;
+            }
+        }
+    }
+    
+    if (!player) {
+        setState(ZOMBIE_IDLE);
+        return;
+    }
+    
+    float distanceToPlayer = glm::length(player->getWorldPosition() - getWorldPosition());
+    
+    if (distanceToPlayer <= attackRange) {
+        setState(ZOMBIE_ATTACK);
+    } else if (distanceToPlayer <= ZOMBIE_DISTANCE_FINDING_PLAYER) {  // Distance de détection du joueur
+        setState(ZOMBIE_PURSUIT);
+    } else {
+        setState(ZOMBIE_IDLE);
+    }
+}
+
+void Zombie::handleIdleState(float deltaTime) {
+    vecteurDirection = glm::vec3(0.0f);
+}
+
+
+void Zombie::handlePursuitState(float deltaTime) {
+
+    /*
     updateTargetPosition(deltaTime);
     calculateMovementDirection(deltaTime);
     updateJumpCooldown(deltaTime);
     updateBoundingBox();
     updateRenderers();
-    // std::cout<<"zombie isgrounded ?: "<<isGrounded<<std::endl;
+    */
+    updateTargetPosition(deltaTime);
+    calculateMovementDirection(deltaTime);
 }
 
 void Zombie::updateTargetPosition(float deltaTime) {
@@ -134,6 +192,16 @@ void Zombie::updateJumpCooldown(float deltaTime) {
             canJump = true;
         }
     }
+}
+
+void Zombie::handleAttackState(float deltaTime) {
+    attackCooldown += deltaTime;
+    
+    if (attackCooldown >= attackCooldownMax) {
+        std::cout << "Zombie attacks!" << std::endl;
+        attackCooldown = 0.0f;
+    }
+    // updateTargetPosition(deltaTime);
 }
 
 void Zombie::updateRenderers() {
@@ -233,5 +301,22 @@ void Zombie::resolveGravity(float& deltaTime) {
         updateBoundingBox();
     } else {
         velocity.y = 0.0f;
+    }
+}
+
+void Zombie::setState(ZombieState newState) {
+    if (newState != currentState) {
+        currentState = newState;
+                switch (newState) {
+            case ZOMBIE_IDLE:
+                vecteurDirection = glm::vec3(0.0f);
+                break;
+                
+            case ZOMBIE_PURSUIT:
+                break;
+                
+            case ZOMBIE_ATTACK:
+                break;
+        }
     }
 }

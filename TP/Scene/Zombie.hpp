@@ -7,6 +7,12 @@
 class World;
 class Camera;
 
+enum ZombieState {
+    ZOMBIE_IDLE,
+    ZOMBIE_PURSUIT,
+    ZOMBIE_ATTACK
+};
+
 class Zombie : public Entity {
 public:
     Zombie(Transform transform, World* world, Camera* camera);
@@ -37,6 +43,10 @@ public:
         this->displayAABB = display;
     }
 
+    ZombieState getState() const { return currentState; }
+    void setState(ZombieState newState);
+    ZombieState currentState = ZOMBIE_IDLE;
+
 private:
     World* m_world;
     Camera* camera;
@@ -52,9 +62,15 @@ private:
 
 
     float jumpCooldown = 0.0f;
-    float jumpCooldownMax = 0.2f;
+    float jumpCooldownMax = 1.0f;
     bool canJump = true;
     float jumpForce = 5.0f;
+
+
+    float attackCooldown = 0.0f;
+    float attackCooldownMax = 1.0f;
+    float attackRange = 1.0f;
+    float attackDamage = 1.0f;
 
 
     void updateTargetPosition(float deltaTime);
@@ -63,6 +79,11 @@ private:
     void jump();
     void updateJumpCooldown(float deltaTime);
     void updateRenderers();
+    
+    void updateState(float deltaTime);
+    void handleIdleState(float deltaTime);
+    void handlePursuitState(float deltaTime);
+    void handleAttackState(float deltaTime);
     
 };
 
