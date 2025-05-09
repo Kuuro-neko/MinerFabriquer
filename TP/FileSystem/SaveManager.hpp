@@ -5,8 +5,8 @@
 #include <atomic>
 #include <chrono>
 #include <filesystem>
-class SaveManager
-{
+
+class SaveManager {
 
 private:
     World *world = nullptr; // Pointeur vers l'instance de World
@@ -17,8 +17,7 @@ protected:
     SaveManager() = default;
 
     // destructeur
-    ~SaveManager()
-    {
+    ~SaveManager() {
         // Stop the auto-save thread if it's running
 
         stopAutoSave();
@@ -30,7 +29,9 @@ public:
 
     // Disable copy constructor and assignment operator
     SaveManager(const SaveManager &) = delete;
+
     SaveManager &operator=(const SaveManager &) = delete;
+
     SaveManager(SaveManager &&) = delete;
 
     // Singleton instance -> if instance is null, create a new instance else return the existing one
@@ -49,12 +50,10 @@ public:
 
     // function that start the auto save thread and save the player data every X seconds
     void startAutoSave(Character &data);
+
     void stopAutoSave();
-    // Functions used to create/get the folder name YYYY-MM-DD based on the timestamp to get the most recent
-    std::string getDate(long timestamp);
-    long getTimestamp();
-    std::string generateSaveFolderPath();
-    std::string getMostRecentSaveFolder();
+
+    void createPlayerDataFile(Character &character);
 
     //-----world data---------//
 
@@ -69,14 +68,12 @@ public:
     // for the data that we know it,s not going to change we go for a static array
 
 
-    struct ChunkEntry
-    {
+    struct ChunkEntry {
         std::vector<uint8_t> blocksID; // 16×16×16 of 1 octets = 4096 octets
         std::vector<std::vector<int>> lightmap; // 16×16×16 of 1 octets   = 4096 octets
     };
 
-    struct ChunkColumnEntry
-    {
+    struct ChunkColumnEntry {
         int32_t worldX; // X global coordinate
         int32_t worldZ; // Z global coordinate
 
@@ -87,13 +84,25 @@ public:
         uint32_t offset; // Region position in the file
         uint32_t length; // lenght of the region's data in the file
     };
+
     void setWorld(World *worldInstance);
+
     void saveWorldFile();
+
     void loadWorldFile();
+
     void readWorldFile(std::ifstream &in);
-    inline bool isWorldFileEmpty()
-    {
-        return std::filesystem::exists(getMostRecentSaveFolder() + PATH_WORLD_FILE);
+
+
+    bool isDataFolderContainsOtherFolder();
+
+    std::string saveFolderPath;
+
+    inline void setSaveFolderPath(const std::string &path) {
+        saveFolderPath = path;
+    }
+    inline std::string getSaveFolderPath() {
+        return saveFolderPath;
     }
 
 

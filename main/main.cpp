@@ -7,6 +7,7 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
+#include "TP/Menu/Menu.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
 #include <TP/Scene/Clouds.hpp>
@@ -25,7 +26,7 @@ using namespace glm;
 int windowWidth = 1280;
 int windowHeight = 720;
 
-HUD* hud = nullptr;
+HUD *hud = nullptr;
 
 Camera camera;
 // timing
@@ -48,13 +49,13 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
     glm::vec3 p[] = {
             {-size.x, -size.y, -size.z},
-            { size.x, -size.y, -size.z},
-            { size.x,  size.y, -size.z},
-            {-size.x,  size.y, -size.z},
-            {-size.x, -size.y,  size.z},
-            { size.x, -size.y,  size.z},
-            { size.x,  size.y,  size.z},
-            {-size.x,  size.y,  size.z}
+            {size.x,  -size.y, -size.z},
+            {size.x,  size.y,  -size.z},
+            {-size.x, size.y,  -size.z},
+            {-size.x, -size.y, size.z},
+            {size.x,  -size.y, size.z},
+            {size.x,  size.y,  size.z},
+            {-size.x, size.y,  size.z}
     };
 
     // Définir les faces du cube avec 4 sommets par face
@@ -90,7 +91,7 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
         mesh.triangles.push_back(start + 2);
         mesh.triangles.push_back(start + 3);
 
-        
+
     }
 
     for (int i = 0; i < 4; ++i)
@@ -117,10 +118,7 @@ Character character = Character(
 );
 
 
-
-
-void UpdateFPS()
-{
+void UpdateFPS() {
     static double lastTime = glfwGetTime();
     static unsigned int counter = 0;
     counter++;
@@ -136,10 +134,10 @@ void UpdateFPS()
 }
 
 int main(void) {
+    Menu menu;
     SaveManager &saveManager = SaveManager::getInstance();
-    saveManager.loadPlayerData(character);
-    saveManager.startAutoSave(character);
-   
+
+
 
 
     // Initialise GLFW
@@ -149,8 +147,6 @@ int main(void) {
         return -1;
     }
 
-
-    
 
     camera.init();
     Frustrum frustum(camera, 4.0f / 3.0f, 0.1f, 100.f);
@@ -172,7 +168,6 @@ int main(void) {
     camera.setKeyInput(&characterInputManager);
 
 
-
     if (window == NULL) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -191,7 +186,7 @@ int main(void) {
         return -1;
     }
 
-    glEnable(GL_MULTISAMPLE);  
+    glEnable(GL_MULTISAMPLE);
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -222,13 +217,15 @@ int main(void) {
 
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("../shader/vertex_shader.glsl", "../shader/fragment_shader.glsl");
-    GLuint wireframeProgramID = LoadShaders("../shader/vertex_shader_wireframe.glsl", "../shader/fragment_shader_wireframe.glsl");
+    GLuint wireframeProgramID = LoadShaders("../shader/vertex_shader_wireframe.glsl",
+                                            "../shader/fragment_shader_wireframe.glsl");
     Renderer renderer = Renderer(wireframeProgramID);
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
-    GLuint cubemapProgramID = LoadShaders("../shader/cubemap_vertex_shader.glsl", "../shader/cubemap_fragment_shader.glsl");
-    GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl", "../shader/clouds_fragment_shader.glsl");
-
+    GLuint cubemapProgramID = LoadShaders("../shader/cubemap_vertex_shader.glsl",
+                                          "../shader/cubemap_fragment_shader.glsl");
+    GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl",
+                                         "../shader/clouds_fragment_shader.glsl");
 
 
     HUD hud = HUD(windowWidth, windowHeight);
@@ -265,17 +262,48 @@ int main(void) {
     //pass the world to the save manager
     saveManager.setWorld(&world);
 
-    if (!saveManager.isWorldFileEmpty())
-    {
-        std::cout << "No world file found. Generating a new world..." << std::endl;
+
+    if (!saveManager.isDataFolderContainsOtherFolder()) {
+        std::cout << "No world folder found. Generating a new world..." << std::endl;
+
+        std::string saveFolder = Menu::createWorld();
+        saveManager.setSaveFolderPath(saveFolder);
         world.generation();
         saveManager.saveWorldFile(); // Save the world data after generation
+        saveManager.createPlayerDataFile(character);
+
+    } else {
+        int choice = Menu::chooseLoadOrNewWorld();
+        switch (choice) {
+            case MENU_CREATE: {
+                std::string saveFolder = Menu::createWorld();
+                std::cout << "Creating world in: " << saveFolder << std::endl;
+                saveManager.setSaveFolderPath(saveFolder);
+                world.generation();
+                saveManager.saveWorldFile(); // Save the world data after generation
+                saveManager.createPlayerDataFile(character);
+                break;
+            }
+           case MENU_LOAD: {
+               std::string worldPath = menu.chooseWorld();
+               std::cout << "Loading world from: " << worldPath << std::endl;
+               saveManager.setSaveFolderPath(worldPath);
+               saveManager.loadWorldFile();
+               saveManager.loadPlayerData(character);
+               break;
+           }
+            default:
+                std::cerr << "Invalid choice. Exiting..." << std::endl;
+                glfwTerminate();
+                return -1;
+
+        }
+
     }
-    else
-    {
-        std::cout << "World file already exists, loading world data file..." << std::endl;
-        saveManager.loadWorldFile();
-    }
+    saveManager.loadPlayerData(character);
+    std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
+    saveManager.startAutoSave(character);
+
 
     // Associer le monde au personnage
     character.m_world = &world;
@@ -319,7 +347,7 @@ int main(void) {
     root.addChild(Akkuun); */
 
 
-    
+
 
 
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
@@ -329,7 +357,6 @@ int main(void) {
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-
 
 
     do {
@@ -383,26 +410,23 @@ int main(void) {
 
         root.draw(programID);
 
-        
+
 
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
         glUniformMatrix4fv(projectionMatrixId, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
 
-        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders))
-        {
+        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders)) {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
 
-
-        
 
         character.drawBoundingBox();
 
         if (character.isHUDVisible())
             hud.render();
-        if(character.isHUDVisible()) hud.render();
+        if (character.isHUDVisible()) hud.render();
 
         clouds.draw(currentFrame, character);
 
@@ -411,7 +435,7 @@ int main(void) {
 
         // Swap buffers
         glfwSwapBuffers(window);
-        
+
         // Update the input managers
         characterInputManager.update();
         menuInputManager.update();
@@ -436,7 +460,8 @@ int main(void) {
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
-    camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height, camera.getNearPlane(), camera.getFarPlane());
+    camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height,
+                                                 camera.getNearPlane(), camera.getFarPlane());
     hud->updateWindowSize(width, height);
 }
 

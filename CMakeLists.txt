@@ -102,6 +102,8 @@ add_executable(MinerFabriquer
         TP/GUI/Barre.cpp
         TP/FileSystem/SaveManager.cpp
         TP/FileSystem/SaveManager.hpp
+        TP/Menu/Menu.cpp
+        TP/Menu/Menu.hpp
 
 )
 target_link_libraries(MinerFabriquer
