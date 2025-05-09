@@ -108,11 +108,11 @@ int VoxelChunk::removeBlock(int x, int y, int z) {
 }
 
 bool opaqueNeighborCheck(int neighbor) {
-    return neighbor == AIR || !BlocDatabase::getInstance().isOpaque(neighbor) || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
+    return neighbor == AIR || !BlocDatabase::getInstance().isOpaque(neighbor); // || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
 bool transparentNeighborCheck(int neighbor, int current, unsigned char face) {
-    return neighbor == AIR || neighbor == OUT_OF_BOUNDS_BLOC || (current == WATER && face & FACE_TOP && BlocDatabase::getInstance().isSolid(neighbor));
+    return neighbor == AIR || (current == WATER && face & FACE_TOP && BlocDatabase::getInstance().isSolid(neighbor)); //  || neighbor == OUT_OF_BOUNDS_BLOC;
 }
 
 
