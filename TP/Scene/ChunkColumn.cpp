@@ -1,16 +1,19 @@
 #include "ChunkColumn.hpp"
+#include <TP/Scene/WorldGenerator.hpp>
+#include <TP/Scene/World.hpp>
+#include <TP/Scene/VoxelChunk.hpp>
 
 // sort from highest to lowest
 void ChunkColumn::sortChunks()
 {
-    std::sort(m_chunks.begin(), m_chunks.end(), [](const VoxelChunk* a, const VoxelChunk* b) {
+    std::sort(m_chunks.begin(), m_chunks.end(), [](const std::shared_ptr<VoxelChunk> a, const std::shared_ptr<VoxelChunk> b) {
         return a->m_chunkCoords.y > b->m_chunkCoords.y;
     });
 }
 
-VoxelChunk *ChunkColumn::getChunk(int chunkCoordY)
+std::shared_ptr<VoxelChunk> ChunkColumn::getChunk(int chunkCoordY)
 {
-    for (VoxelChunk *chunk : m_chunks) {
+    for (std::shared_ptr<VoxelChunk> chunk : m_chunks) {
         if (chunk->m_chunkCoords.y == chunkCoordY) {
             return chunk;
         }
@@ -18,18 +21,18 @@ VoxelChunk *ChunkColumn::getChunk(int chunkCoordY)
     return nullptr;
 }
 
-std::vector<VoxelChunk*> ChunkColumn::getChunks()
+std::vector<std::shared_ptr<VoxelChunk>> ChunkColumn::getChunks()
 {
-    std::vector<VoxelChunk*> chunks;
+    std::vector<std::shared_ptr<VoxelChunk>> chunks;
     for (auto &chunk : m_chunks) {
         chunks.push_back(chunk);
     }
     return chunks;
 }
 
-VoxelChunk *ChunkColumn::getChunkContainingHeight(int y)
+std::shared_ptr<VoxelChunk> ChunkColumn::getChunkContainingHeight(int y)
 {
-    for (VoxelChunk *chunk : m_chunks) {
+    for (std::shared_ptr<VoxelChunk> chunk : m_chunks) {
         if (chunk->m_chunkCoords.y == y) {
             return chunk;
         }
@@ -37,7 +40,7 @@ VoxelChunk *ChunkColumn::getChunkContainingHeight(int y)
     return nullptr;
 }
 
-void ChunkColumn::addChunk(VoxelChunk* chunk)
+void ChunkColumn::addChunk(std::shared_ptr<VoxelChunk> chunk)
 {
     m_chunks.push_back(chunk);
     sortChunks();
@@ -56,7 +59,7 @@ void ChunkColumn::updateSkyLights()
 
 void ChunkColumn::updateSkyLights(int x, int z) {
     bool touchedGround = false;
-    for (VoxelChunk *chunk: m_chunks) {
+    for (std::shared_ptr<VoxelChunk> chunk: m_chunks) {
         for (int y = CHUNK_SIZE - 1; y >= 0; y--) {
             if (chunk->getBloc(x, y, z) == AIR) {
                 chunk->m_lights[x][y][z] = MAX_LIGHT;
@@ -69,6 +72,39 @@ void ChunkColumn::updateSkyLights(int x, int z) {
         }
         if (touchedGround) break;
     }
+}
+
+void ChunkColumn::checkForUngeneratedBlocks(ChunkColumn *neighbor) {
+    if (!neighbor) return;
+    std::vector<std::shared_ptr<VoxelChunk>> nChunks = neighbor->getChunks();
+    for (std::shared_ptr<VoxelChunk> chunk : nChunks) {
+        std::vector<UngeneratedBlock> unGeneratedBlocks = chunk->m_unGeneratedBlocks;
+        for (auto &block : unGeneratedBlocks) {
+            if (block.chunkX == m_chunkCoords.x && block.chunkZ == m_chunkCoords.y) {
+                chunk->setBloc(block.x, block.y, block.z, block.bloc);
+            }
+        }
+    }
+}
+
+void ChunkColumn::generate(World &world, ChunkColumn *westNeighbor, ChunkColumn *eastNeighbor, ChunkColumn *southNeighbor, ChunkColumn *northNeighbor)
+{
+    WorldGenerator worldGenerator;
+    // Generate the world
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; --y) {
+        std::shared_ptr<VoxelChunk>chunk = getChunk(y);
+        worldGenerator.genereteProceduralChunk(world, chunk, m_chunkCoords.x, y, m_chunkCoords.y);
+    }
+
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; --y) {
+        std::shared_ptr<VoxelChunk>chunk = getChunk(y);
+        worldGenerator.decorateProceduralChunk(world, chunk, m_chunkCoords.x, y, m_chunkCoords.y);
+    }
+
+    // checkForUngeneratedBlocks(westNeighbor);
+    // checkForUngeneratedBlocks(eastNeighbor);
+    // checkForUngeneratedBlocks(southNeighbor);
+    // checkForUngeneratedBlocks(northNeighbor);
 }
 
 void ChunkColumn::allocateSurfaceHeightMap()
@@ -92,10 +128,17 @@ void ChunkColumn::free()
 
 bool ChunkColumn::isDirty()
 {
-    for (VoxelChunk *chunk : m_chunks) {
+    for (std::shared_ptr<VoxelChunk>chunk : m_chunks) {
         if (chunk->dirty) {
             return true;
         }
     }
     return false;
+}
+
+void ChunkColumn::markAsDirty()
+{
+    for (std::shared_ptr<VoxelChunk>chunk : m_chunks) {
+        chunk->dirty = true;
+    }
 }

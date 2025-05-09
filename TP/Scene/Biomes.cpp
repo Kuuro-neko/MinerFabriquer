@@ -9,7 +9,7 @@
 /// ===== PlainsBiome ===== ///
 /// ======================= ///
 
-void PlainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void PlainsBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
@@ -17,7 +17,7 @@ void PlainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, GRASS);
 }
 
-void PlainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void PlainsBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     if (chunk->getBloc(x, baseHeight, z) != GRASS) return;
     if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
@@ -47,7 +47,7 @@ void PlainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== MoutainsBiome ===== ///
 /// ========================= ///
 
-void MoutainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void MoutainsBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     int snowheight = 22 + snowNoise.GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) * 8;
     if (baseHeight > getGroundLevel() + snowheight) {
@@ -62,7 +62,7 @@ void MoutainsBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight
     }
 }
 
-void MoutainsBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void MoutainsBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
 }
 
@@ -75,7 +75,7 @@ int MoutainsBiome::getSnowHeight(float baseNoise)
 /// ===== DesertBiome ===== ///
 /// ======================= ///
 
-void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void DesertBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 6 - worldAABBMin.y, z, SANDSTONE);
     chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SANDSTONE);
@@ -86,7 +86,7 @@ void DesertBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, 
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
 }
 
-void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void DesertBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
 
 }
@@ -95,7 +95,7 @@ void DesertBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== OceanBiome ======== ///
 /// ========================= ///
 
-void OceanBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void OceanBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 6 - worldAABBMin.y, z, SMOOTH_BASALT);
     chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SMOOTH_BASALT);
@@ -106,7 +106,7 @@ void OceanBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, g
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
 }
 
-void OceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void OceanBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     if (chunk->getBloc(x, baseHeight, z) != SAND) return;
     if (chunk->getBloc(x, baseHeight+1, z) != WATER) return;
@@ -144,7 +144,7 @@ void OceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== IceBiome ===== ///
 /// ==================== ///
 
-void IceBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void IceBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, DIRT);
     chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, DIRT);
@@ -154,7 +154,7 @@ void IceBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SNOW);
 }
 
-void IceBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void IceBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     if (chunk->getBloc(x, baseHeight, z) == AIR) return;
     if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
@@ -168,7 +168,7 @@ void IceBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
     }
 }
 
-void IceBiome::addIceSpike(VoxelChunk *chunk, int x, int z, int baseHeight, int height, int radius)
+void IceBiome::addIceSpike(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height, int radius)
 {
     int y = -2;
     int rings = getRandom1000() % 4 + 3;
@@ -207,7 +207,7 @@ void IceBiome::addIceSpike(VoxelChunk *chunk, int x, int z, int baseHeight, int 
 /// ===== CristalPeaksBiome ===== ///
 /// ============================= ///
 
-void CristalPeaksBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void CristalPeaksBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     int r = getRandom1000();
     if (r % 23 < 10) chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SMOOTH_BASALT);
@@ -218,7 +218,7 @@ void CristalPeaksBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHe
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SMOOTH_BASALT);
 }
 
-void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void CristalPeaksBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     int wX = chunk->m_chunkCoords.x * CHUNK_SIZE + x;
     int wZ = chunk->m_chunkCoords.z * CHUNK_SIZE + z;
@@ -241,7 +241,7 @@ void CristalPeaksBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight
 /// ===== MushroomBiome ===== ///
 /// ========================= ///
 
-void MushroomBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void MushroomBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, DIRT);
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
@@ -261,7 +261,7 @@ void MushroomBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight
     }
 }
 
-void MushroomBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void MushroomBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     if (chunk->getBloc(x, baseHeight, z) == AIR) return;
     if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
@@ -277,7 +277,7 @@ void MushroomBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
     }
 }
 
-void MushroomBiome::addMushroomCup(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial)
+void MushroomBiome::addMushroomCup(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial)
 {
     for (int dx = -stemRadius-1; dx <= stemRadius; dx+=stemRadius+1) {
         for (int dz = -stemRadius-1; dz <= stemRadius; dz+=stemRadius+1) {
@@ -332,7 +332,7 @@ void MushroomBiome::addMushroomCup(VoxelChunk *chunk, int x, int z, int baseHeig
     chunk->generationSetBloc(x, baseHeight + y, z, stemMaterial);
 }
 
-void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial)
+void MushroomBiome::addMushroomReverseU(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial)
 {
     float distance;
     // Set the base of the mushroom
@@ -361,14 +361,14 @@ void MushroomBiome::addMushroomReverseU(VoxelChunk *chunk, int x, int z, int bas
 /// ===== BeachBiome ===== ///
 /// ====================== ///
 
-void BeachBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void BeachBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
 }
 
-void BeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void BeachBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
 }
 
@@ -376,7 +376,7 @@ void BeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== FrozenBeachBiome ===== ///
 /// ============================ ///
 
-void FrozenBeachBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void FrozenBeachBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     int blocAbove = chunk->getBloc(x, baseHeight+1, z);
     int bloc = chunk->getBloc(x, baseHeight, z);
@@ -396,7 +396,7 @@ void FrozenBeachBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHei
     }
 }
 
-void FrozenBeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void FrozenBeachBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
 }
 
@@ -404,7 +404,7 @@ void FrozenBeachBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== FrozenOceanBiome ===== ///
 /// ============================ ///
 
-void FrozenOceanBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void FrozenOceanBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     int blocAbove = chunk->getBloc(x, baseHeight+1, z);
     int bloc = chunk->getBloc(x, baseHeight, z);
@@ -426,7 +426,7 @@ void FrozenOceanBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHei
     }
 }
 
-void FrozenOceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void FrozenOceanBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
 }
 
@@ -434,7 +434,7 @@ void FrozenOceanBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
 /// ===== TaigaBiome ===== ///
 /// ====================== ///
 
-void TaigaBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void TaigaBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
     chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
@@ -442,12 +442,12 @@ void TaigaBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, g
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, PODZOL);
 }
 
-void TaigaBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void TaigaBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     addSpruceTree(chunk, x, z, baseHeight, getRandom1000() % 2);
 }
 
-void TaigaBiome::addSpruceTree(VoxelChunk *chunk, int x, int z, int baseHeight, int height)
+void TaigaBiome::addSpruceTree(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height)
 {
     if (chunk->getBloc(x, baseHeight, z) != PODZOL) return;
     if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
@@ -482,7 +482,7 @@ void TaigaBiome::addSpruceTree(VoxelChunk *chunk, int x, int z, int baseHeight, 
 /// ===== MesaBiome ===== ///
 /// ===================== ///
 
-void MesaBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void MesaBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     if (worldAABBMin.y + CHUNK_SIZE > MESA_START_TERRACOTTA) {
         for (int y = 15; y >= 0; y--) {
@@ -504,7 +504,7 @@ void MesaBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, gl
     }
 }
 
-void MesaBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void MesaBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
 }
 
@@ -519,13 +519,13 @@ int MesaBiome::getTerracottaPatternAt(int y)
 /// ===== DebugBiome ===== ///
 /// ====================== ///
 
-void DebugBiome::applySurface(VoxelChunk *chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+void DebugBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
     chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, BEDROCK);
     chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, BEDROCK);
 }
 
-void DebugBiome::decorate(VoxelChunk *chunk, int x, int z, int baseHeight)
+void DebugBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
 }
 

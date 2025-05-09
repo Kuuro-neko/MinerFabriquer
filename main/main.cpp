@@ -224,18 +224,8 @@ int main(void) {
     GLuint cubemapProgramID = LoadShaders("../shader/cubemap_vertex_shader.glsl", "../shader/cubemap_fragment_shader.glsl");
     GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl", "../shader/clouds_fragment_shader.glsl");
 
-
-
     hud = new HUD(windowWidth, windowHeight);
     character.setHUD(hud);
-
-    GLint success;
-    GLchar infoLog[512];
-    glGetShaderiv(cloudsProgramID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(cloudsProgramID, 512, NULL, infoLog);
-        std::cerr << "Shader compile error: " << infoLog << std::endl;
-    }
 
     Texture lightMap = Texture("../textures/lightmap.png");
     lightMap.setSamplerName("LightmapSampler");
@@ -326,6 +316,7 @@ int main(void) {
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
+        world.updateLoadedChunks();
         frustum.update();
         world.updateVisibleChunk(frustum);
 

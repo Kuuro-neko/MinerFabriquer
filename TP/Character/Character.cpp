@@ -252,7 +252,7 @@ float Character::getSpeed()
 void Character::updateClosestBlock(BlocDatabase &db)
 {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
-    std::vector<VoxelChunk *> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
+    std::vector<std::shared_ptr<VoxelChunk>> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
     intersection = false;
     if (chunks.empty())
     {

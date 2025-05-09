@@ -143,7 +143,7 @@ public:
     }
 
     float solidValue(int id) {
-        return m_blocs[id].solid;
+        return id != -2 && m_blocs[id].solid;
     }
 
     bool isPartOfGround(int id) {

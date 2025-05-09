@@ -4,6 +4,11 @@
 
 #define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
 
+// ===== Fast access ===== //
+
+#define RENDERER_DISTANCE 16
+#define GENERATION_DISTANCE 4
+
 // ===== Generation & chunks ===== //
 
 #define GENERATION_SEED 110111
@@ -16,9 +21,9 @@
 
 #define OUT_OF_BOUNDS_BLOC -2
 
-#define GENERATION_RADIUS_X 8 // X radius of initial generation
+#define GENERATION_RADIUS_X 4 // X radius of initial generation
 #define GENERATION_SIZE_Y 8 // Y height of initial generation
-#define GENERATION_RADIUS_Z 8 // Z radius of initial generation
+#define GENERATION_RADIUS_Z 4 // Z radius of initial generation
 
 
 // ===== Bloc database ===== //
@@ -159,8 +164,6 @@
 
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
-
-#define RENDERER_DISTANCE 32.0f
 
 // ===== Lights ===== //
 

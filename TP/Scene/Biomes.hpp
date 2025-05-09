@@ -33,8 +33,8 @@ class Biome {
          * @param baseHeight Computed using the BiomerManager.blendHeight function before
          * @param worldAABBMin The chunks' world coordinates of it's min corner
          */
-        virtual void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) = 0;
-        virtual void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) = 0;
+        virtual void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) = 0;
+        virtual void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) = 0;
         virtual ~Biome() = default;
 
         /**
@@ -57,8 +57,8 @@ class Biome {
 class PlainsBiome : public Biome {
     public:
         PlainsBiome(int groundLevel, int seed) : Biome(groundLevel, PLAINS_BIOME, seed) {}
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
 };
 
 class MoutainsBiome : public Biome {
@@ -71,16 +71,16 @@ class MoutainsBiome : public Biome {
             snowNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
             snowNoise.SetFrequency(0.1f);
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
         int getSnowHeight(float baseNoise);
 };
 
 class DesertBiome : public Biome {
     public:
         DesertBiome(int groundLevel, int seed) : Biome(groundLevel, DESERT_BIOME, seed) {}
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override; 
 };
 
 class OceanBiome : public Biome {
@@ -93,16 +93,16 @@ class OceanBiome : public Biome {
             coralNoise.SetFrequency(0.1f);
             coralNoise.SetSeed(getSeed());
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
 };
 
 class IceBiome : public Biome {
     public:
         IceBiome(int groundLevel, int seed) : Biome(groundLevel, ICE_BIOME, seed) {}
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
-        void addIceSpike(VoxelChunk* chunk, int x, int z, int baseHeight, int height, int radius);
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
+        void addIceSpike(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height, int radius);
 };
 
 class CristalPeaksBiome : public Biome {
@@ -119,8 +119,8 @@ class CristalPeaksBiome : public Biome {
             amethystNoise.SetFractalGain(5.0f);
             amethystNoise.SetFractalWeightedStrength(0.5f);
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
 };
 
 class MushroomBiome : public Biome {
@@ -134,25 +134,25 @@ class MushroomBiome : public Biome {
             coralVineNoise.SetSeed(getSeed());
             coralVineNoise.SetFractalType(FastNoiseLite::FractalType_PingPong);
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
-        void addMushroomCup(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial);
-        void addMushroomReverseU(VoxelChunk *chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial);
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
+        void addMushroomCup(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial);
+        void addMushroomReverseU(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int stemHeight, float capRadius, int stemMaterial, int capMaterial);
 };
 
 class BeachBiome : public Biome {
     public:
         BeachBiome(int groundLevel, int seed) : Biome(groundLevel, BEACH_BIOME, seed) {}
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override; 
 };
 
 class FrozenBeachBiome : public Biome {
     public:
         FrozenBeachBiome(int groundLevel, int seed) : Biome(groundLevel, FROZENBEACH_BIOME, seed) {
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override; 
 };
 
 class FrozenOceanBiome : public Biome {
@@ -170,16 +170,16 @@ class FrozenOceanBiome : public Biome {
             iceNoise.SetFractalGain(5.0f);
             iceNoise.SetFractalWeightedStrength(5.0f);
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override; 
 };
 
 class TaigaBiome : public Biome {
     public:
         TaigaBiome(int groundLevel, int seed) : Biome(groundLevel, TAIGA_BIOME, seed) {}
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
-        void addSpruceTree(VoxelChunk* chunk, int x, int z, int baseHeight, int height);
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
+        void addSpruceTree(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height);
 };
 
 class MesaBiome : public Biome {
@@ -201,8 +201,8 @@ class MesaBiome : public Biome {
                 BROWN_TERRACOTTA, BROWN_TERRACOTTA, ORANGE_TERRACOTTA, ORANGE_TERRACOTTA,
             };
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override;
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
         int getTerracottaPatternAt(int y);
 };
 
@@ -210,8 +210,8 @@ class DebugBiome : public Biome {
     public:
         DebugBiome(int groundLevel, int seed) : Biome(groundLevel, DEBUG_BIOME, seed) {
         }
-        void applySurface(VoxelChunk* chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(VoxelChunk* chunk, int x, int z, int baseHeight) override; 
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override; 
 };
 
 /// ======================== ///

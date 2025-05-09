@@ -7,7 +7,7 @@ class ChunkColumn
 private:
     glm::ivec2 m_chunkCoords;
     // sorted from highest y to lowest y
-    std::vector<VoxelChunk*> m_chunks;
+    std::vector<std::shared_ptr<VoxelChunk>> m_chunks;
     // Map of the surface height for each chunk-relative x,z in the chunk column
     std::vector<std::vector<int>> surfaceHeightmap;
 public:
@@ -20,16 +20,16 @@ public:
     }
 
     // Return the chunk at the given CHUNK y coordinate
-    VoxelChunk* getChunk(int chunkCoordY);
+    std::shared_ptr<VoxelChunk> getChunk(int chunkCoordY);
     
     // Return the chunk at the given WORLD y coordinate
-    VoxelChunk* getChunkContainingHeight(int y);
+    std::shared_ptr<VoxelChunk> getChunkContainingHeight(int y);
 
     // Return a vector of pointer to all chunks in the column
-    std::vector<VoxelChunk*> getChunks();
+    std::vector<std::shared_ptr<VoxelChunk>> getChunks();
 
     // Add a chunk to the column and sort the column's chunks
-    void addChunk(VoxelChunk* chunk);
+    void addChunk(std::shared_ptr<VoxelChunk> chunk);
     
     // Update the sky lights for all chunks in the column
     void updateSkyLights();
@@ -39,9 +39,18 @@ public:
 
     // Get the surfaceHeightmap : a map of the surface height for each chunk-relative x,z in the chunk column
     std::vector<std::vector<int>> *getSurfaceHeightMap();
+
+    inline glm::ivec2 getChunkCoords() { return m_chunkCoords; }
+
+
+    void checkForUngeneratedBlocks(ChunkColumn *neighbor);
+    void generate(World &world, ChunkColumn *westNeighbor, ChunkColumn *eastNeighbor, ChunkColumn *southNeighbor, ChunkColumn *northNeighbor);
+
+
     
     void allocateSurfaceHeightMap();
     void free();
     bool isDirty();
+    void markAsDirty();
     void sortChunks();
 };

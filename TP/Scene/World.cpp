@@ -33,7 +33,7 @@ void World::updateSkyLightsInColumn(int x, int z)
         for (int z = 0; z < CHUNK_SIZE; z++) {
             int y = (*surfaceHeightmap)[x][z];
             if (y != -1) {
-                VoxelChunk *chunk = column->getChunkContainingHeight(y);
+                std::shared_ptr<VoxelChunk> chunk = column->getChunkContainingHeight(y);
                 if(chunk) lightFloodfill(
                     x + chunk->m_chunkCoords.x * CHUNK_SIZE,
                     y + chunk->m_chunkCoords.y * CHUNK_SIZE + 1,
@@ -47,20 +47,24 @@ void World::updateSkyLightsInColumn(int x, int z)
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
-    generation();
+    initialGeneration();
 }
 
 World::~World() {
 }
 
-VoxelChunk *World::createEmptyChunk(int x, int y, int z) {
+std::shared_ptr<VoxelChunk> World::createEmptyChunk(int x, int y, int z) {
     ChunkColumn *column = getChunkColumn(x, z);
     if (!column) {
         chunkColumns.emplace(glm::ivec2(x, z), ChunkColumn(x, z));
     }
     column = getChunkColumn(x, z);
-    chunks.emplace(glm::ivec3(x, y, z), VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
-    VoxelChunk *chunk = &chunks.at(glm::ivec3(x, y, z));
+    std::shared_ptr<VoxelChunk> chunk = getChunk(x, y, z);
+    if (chunk) {
+        return chunk;
+    }
+    chunks.emplace(glm::ivec3(x, y, z), std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
+    chunk = chunks.at(glm::ivec3(x, y, z));
     chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
     chunk->m_world = this;
     chunk->m_chunkCoords = glm::ivec3(x, y, z);
@@ -73,10 +77,17 @@ void World::removeChunkColumn(int x, int z) {
     if (!column) {
         return;
     }
+    for (std::shared_ptr<VoxelChunk> chunk : column->getChunks()) {
+        auto it = chunks.find(chunk->m_chunkCoords);
+        if (it != chunks.end()) {
+            chunks.erase(it);
+        }
+    }
     column->free();
     auto it = chunkColumns.find({x, z});
     if (it != chunkColumns.end()) {
         chunkColumns.erase(it);
+        std::cout << "found"    << std::endl;
     }
 }
 
@@ -88,7 +99,7 @@ ChunkColumn *World::getChunkColumn(int x, int z) {
     return nullptr;
 }
 
-VoxelChunk *World::getChunk(int x, int y, int z) {
+std::shared_ptr<VoxelChunk> World::getChunk(int x, int y, int z) {
     ChunkColumn *column = getChunkColumn(x, z);
     if (column) {
         return column->getChunk(y);
@@ -97,7 +108,7 @@ VoxelChunk *World::getChunk(int x, int y, int z) {
 }
 
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column) return -1;
     if (chunk) {
@@ -132,7 +143,7 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
 }
 
 int World::removeBlock(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column) return -1;
     if (chunk) {
@@ -167,7 +178,7 @@ int World::removeBlock(int x, int y, int z) {
 }
 
 bool World::setBloc(int x, int y, int z, int bloc) {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk) {
         glm::ivec3 localCoords = glm::ivec3(
             betterModulo(x, CHUNK_SIZE),
@@ -206,7 +217,7 @@ bool World::setBloc(int x, int y, int z, int bloc) {
 }
 
 bool World::generationSetBloc(int x, int y, int z, int bloc) {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk) {
         glm::ivec3 localCoords = glm::ivec3(
             betterModulo(x, CHUNK_SIZE),
@@ -220,7 +231,7 @@ bool World::generationSetBloc(int x, int y, int z, int bloc) {
 }
 
 unsigned short World::getLightLevel(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk) {
         return chunk->getLightLevelIncludingNeighbors(betterModulo(x, CHUNK_SIZE), betterModulo(y, CHUNK_SIZE), betterModulo(z, CHUNK_SIZE));
     } else {
@@ -229,7 +240,7 @@ unsigned short World::getLightLevel(int x, int y, int z) {
 }
 
 int World::getBloc(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk) {
         // std::cout << "found chunk at " << x << ", " << y << ", " << z << " in world.getBloc" << std::endl;
         return chunk->getBloc(betterModulo(x, CHUNK_SIZE), betterModulo(y, CHUNK_SIZE), betterModulo(z, CHUNK_SIZE));
@@ -239,7 +250,7 @@ int World::getBloc(int x, int y, int z) {
     }
 }
 
-VoxelChunk *World::getChunkContaining(int x, int y, int z) {
+std::shared_ptr<VoxelChunk> World::getChunkContaining(int x, int y, int z) {
     int chunkCoordX = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
     int chunkCoordY = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
     int chunkCoordZ = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
@@ -252,17 +263,17 @@ VoxelChunk *World::getChunkContaining(int x, int y, int z) {
     return column->getChunk(chunkCoordY);
 }
 
-VoxelChunk *World::getChunkContaining(glm::vec3 position) {
+std::shared_ptr<VoxelChunk> World::getChunkContaining(glm::vec3 position) {
     int x = static_cast<int>(position.x);
     int y = static_cast<int>(position.y);
     int z = static_cast<int>(position.z);
     return getChunkContaining(x, y, z);
 }
 
-std::vector<VoxelChunk *> World::getAllChunks() {
-    std::vector<VoxelChunk *> allChunks;
+std::vector<std::shared_ptr<VoxelChunk> > World::getAllChunks() {
+    std::vector<std::shared_ptr<VoxelChunk> > allChunks;
     for (auto &[key, column]: chunkColumns) {
-        std::vector<VoxelChunk *> chunks = column.getChunks();
+        std::vector<std::shared_ptr<VoxelChunk> > chunks = column.getChunks();
         for (auto &chunk: chunks) {
             allChunks.push_back(chunk);
         }
@@ -270,9 +281,9 @@ std::vector<VoxelChunk *> World::getAllChunks() {
     return allChunks;
 }
 
-std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance) {
-    std::vector<VoxelChunk *> intersectedChunks;
-    std::vector<VoxelChunk *> chunks = getAllChunks();
+std::vector<std::shared_ptr<VoxelChunk> > World::getIntersectedChunks(Ray ray, float maxDistance) {
+    std::vector<std::shared_ptr<VoxelChunk> > intersectedChunks;
+    std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
     for (auto &chunk: chunks) {
         if (chunk->intersects(ray, maxDistance)) {
             intersectedChunks.push_back(chunk);
@@ -281,8 +292,37 @@ std::vector<VoxelChunk *> World::getIntersectedChunks(Ray ray, float maxDistance
     return intersectedChunks;
 }
 
-void World::draw(GLuint programID) {
+void World::updateLoadedChunks() {
+    glm::vec3 pos = camera->getPosition();
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(pos);
+    if (!chunk) {
+        std::cout << "No chunk found at camera position" << std::endl;
+        return;
+    }
+    int chunkX = chunk->m_chunkCoords.x;
+    int chunkY = chunk->m_chunkCoords.y;
+    int chunkZ = chunk->m_chunkCoords.z;
 
+    // look for all the columns around, and remove those too far. Initialize those not found that should exist.
+    int count = 0;
+    for (int x = chunkX - GENERATION_RADIUS_X; x <= chunkX + GENERATION_RADIUS_X; ++x) {
+        for (int z = chunkZ - GENERATION_RADIUS_Z; z <= chunkZ + GENERATION_RADIUS_Z; ++z) {
+            int distance = std::abs(chunkX - x) + std::abs(chunkZ - z);
+            if (distance > GENERATION_RADIUS_X) {
+                removeChunkColumn(x, z);
+                continue;
+            }
+            ChunkColumn *column = getChunkColumn(x, z);
+            if (!column) {
+                generateChunkColumn(x, z);
+                count ++;
+            }
+        }
+    }
+    if(count) std::cout << "Generated " << count << " chunk columns pos(" << chunkX << ", " << chunkZ << ") " << chunks.size() << " chunks in total" << std::endl;
+}
+
+void World::draw(GLuint programID) {
     std::set<std::pair<int, int>> dirtyColumns = getDirtyColumns();
     // update lights for each dirtyColumn, ITERATE THROUGH THE SET OMG !!
     for (auto &[x, z]: dirtyColumns) {
@@ -290,17 +330,27 @@ void World::draw(GLuint programID) {
     }
 
     glEnable(GL_CULL_FACE);
+    int count = 0;
     for (auto &[key, chunk]: visibleChunks) {
+        if(!chunk) continue;
         //si la distance de rendu est depassee, on ne dessine pas le chunk
         float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
         if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
             chunk->draw(programID);
+            count++;
         }
     }
+    std::cout << "Drawn " << count << " chunks" << std::endl;
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    for (auto &[key, chunk]: visibleChunks) {
+    //sort visible chunks by distance to camera
+    std::vector<std::pair<glm::ivec3, std::shared_ptr<VoxelChunk>>> sortedChunks(visibleChunks.begin(), visibleChunks.end());
+    std::sort(sortedChunks.begin(), sortedChunks.end(), [this](const auto &a, const auto &b) {
+        return glm::length(a.second->getWorldPosition() - camera->getPosition()) < glm::length(b.second->getWorldPosition() - camera->getPosition());
+    });
+    for (auto &[key, chunk]: sortedChunks) {
+        if(!chunk) continue;
         //si la distance de rendu est depassee, on ne dessine pas le chunk
         float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
         if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
@@ -311,45 +361,24 @@ void World::draw(GLuint programID) {
     
 }
 
-void World::generation() {
-    WorldGenerator worldGenerator;
-    // Generate the world
-    std::cout << "Generating base shape... 0%" << std::flush;
-    auto start = std::chrono::high_resolution_clock::now();
+void World::initialGeneration() {
     int count = 0;
     int total = GENERATION_RADIUS_X * 2;
+    auto start = std::chrono::high_resolution_clock::now();
+    std::cout << "Generation of the world..." << std::flush;
     for (int x = -GENERATION_RADIUS_X; x <= GENERATION_RADIUS_X; ++x) {
-        for (int y = GENERATION_SIZE_Y -1; y >= 0; --y) {
-            for (int z = -GENERATION_RADIUS_Z; z <= GENERATION_RADIUS_Z; ++z) {
-                VoxelChunk *chunk = createEmptyChunk(x, y, z);
-                worldGenerator.genereteProceduralChunk(this, chunk, x, y, z);
-            }
+        for (int z = -GENERATION_RADIUS_Z; z <= GENERATION_RADIUS_Z; ++z) {
+            generateChunkColumn(x, z);
         }
-        count ++;
-        std::cout << "\rGenerating base shape... " << int((count * 100) / total) << "%" << std::flush;
+        count++;
+        std::cout << "\rGeneration of the world... " << int((count * 100) / total) << "%" << std::flush;
     }
+
     auto end = std::chrono::high_resolution_clock::now();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "\rGenerating base shape...  done ! (" << ms << " ms) \n";
+    std::cout << "\rGeneration of the world... done ! (" << ms << " ms) \n";
 
-    std::cout << "Generating decorations... 0%" << std::flush;
-    start = std::chrono::high_resolution_clock::now();
-    count = 0;
-    for (int x = -GENERATION_RADIUS_X; x <= GENERATION_RADIUS_X; ++x) {
-        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
-            for (int z = -GENERATION_RADIUS_Z; z <= GENERATION_RADIUS_Z; ++z) {
-                VoxelChunk *chunk = getChunk(x, y, z);
-                worldGenerator.decorateProceduralChunk(this, chunk, x, y, z);
-            }
-        }
-        count ++;
-        std::cout << "\rGenerating decorations... " << int((count * 100) / total) << "%" << std::flush;
-    }
-    end = std::chrono::high_resolution_clock::now();
-    ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "\rGenerating decorations...  done ! (" << ms << " ms) \n";
-
-    // Update all lights levels
+        // Update all lights levels
     //  ->  First set the sky lights to 15 for all air blocks
     std::cout << "Updating lights... " << std::flush;
     start = std::chrono::high_resolution_clock::now();
@@ -382,22 +411,41 @@ void World::generation() {
     }
     end = std::chrono::high_resolution_clock::now();
     ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "  done ! (" << ms << " ms) \n";
+    std::cout << "\rUpdating lights... done ! (" << ms << " ms) \n";
 
-    // Generate meshes for first draw calls
-    std::cout << "Generating meshes..." << std::flush;
     start = std::chrono::high_resolution_clock::now();
-    std::vector<VoxelChunk *> chunks = getAllChunks();
+    std::cout << "Generation of the meshes..." << std::flush;
+    std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
     for (auto chunk : chunks) {
         chunk->generateMesh();
     }
     end = std::chrono::high_resolution_clock::now();
     ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << " done ! (" << ms << " ms) \n";
+    std::cout << "\rGeneration of the meshes... done ! (" << ms << " ms) \n";
+}
+
+void World::generateChunkColumn(int x, int z) {
+    std::cout << "Generating column " << x << ", " << z << std::endl;
+    // Column initialisation
+    for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+        std::shared_ptr<VoxelChunk> chunk = createEmptyChunk(x, y, z);
+    }
+    // Column generation
+    ChunkColumn *column = getChunkColumn(x, z);
+    if (column) {
+        column->generate(
+            *this,
+            getChunkColumn(x-1, z),
+            getChunkColumn(x+1, z),
+            getChunkColumn(x, z-1),
+            getChunkColumn(x, z+1)
+        );
+    }
+    column->markAsDirty();
 }
 
 void World::cleanupBuffers() {
-    std::vector<VoxelChunk *> chunks = getAllChunks();
+    std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
     for (auto chunk : chunks) {
         chunk->cleanupBuffers();
     }
@@ -406,10 +454,12 @@ void World::cleanupBuffers() {
 void World::updateVisibleChunk(Frustrum &frustum) {
 
     // on parcourt tous les chunks et on les ajoute à la liste des chunks visibles s'ils sont dans le frustum
-    std::vector<VoxelChunk *> chunks = getAllChunks();
+    std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
     for (auto chunk: chunks) {
+        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
         if (frustum.isBoundingBoxInFrustum(chunk->getWorldPosition(),
-                                           chunk->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
+                                           chunk->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))
+                                        && distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
             visibleChunks[chunk->m_chunkCoords] = chunk;
         } else {
             // si le chunk n'est pas visible, on le supprime de la liste des chunks visibles
@@ -474,7 +524,7 @@ void World::update(float deltaTime) {
 }
 
 void World::updateLightFloodfill(int x, int y, int z) {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk == nullptr) return;
     lightFloodfill(x, y, z, chunk->m_lights[betterModulo(x, CHUNK_SIZE)][betterModulo(y, CHUNK_SIZE)][betterModulo(z, CHUNK_SIZE)]);
 }
@@ -513,7 +563,7 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
         uint64_t key = encodePos(x, y, z);
         if (!visited.insert(key).second) continue;
         
-        VoxelChunk *chunk = getChunkContaining(x, y, z);
+        std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
         if (chunk == nullptr) continue;
         
         int localX = betterModulo(x, CHUNK_SIZE);
@@ -543,7 +593,7 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
 
 void World::setLightLevel(int x, int y, int z, int lightLevel)
 {
-    VoxelChunk *chunk = getChunkContaining(x, y, z);
+    std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk == nullptr) return;
 
     chunk->m_lights[betterModulo(x, CHUNK_SIZE)][betterModulo(y, CHUNK_SIZE)][betterModulo(z, CHUNK_SIZE)] = lightLevel;

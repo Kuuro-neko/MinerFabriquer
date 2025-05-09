@@ -29,13 +29,13 @@ private:
 
     BiomeManager biomeManager = BiomeManager(groundLevel, seed);
 
-    void setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
-    void generateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel);
-    void decorateTerrain(World *world, VoxelChunk *chunk, int i, int j, int k, int groundLevel);
+    void setBaseStone(std::shared_ptr<VoxelChunk> , int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
+    void generateTerrain(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
+    void decorateTerrain(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
 
 public:
     WorldGenerator();
 
-    void genereteProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k);
-    void decorateProceduralChunk(World *world, VoxelChunk *chunk, int i, int j, int k);
+    void genereteProceduralChunk(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k);
+    void decorateProceduralChunk(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k);
 };

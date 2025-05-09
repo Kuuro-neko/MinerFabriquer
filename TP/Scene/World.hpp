@@ -31,8 +31,8 @@ struct IVec3Hash {
 class World : public SceneNode {
 private:
     std::unordered_map<glm::ivec2, ChunkColumn, IVec2Hash> chunkColumns;
-    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
-    std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> visibleChunks;
+    std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> chunks;
+    std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> visibleChunks;
     Camera *camera;
     float time = 12.0f;
     bool doDaylightCycle = true;
@@ -47,10 +47,12 @@ public:
 
     ~World();
 
-    void generation();
+    void initialGeneration();
+
+    void generateChunkColumn(int x, int z);
 
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
-    VoxelChunk *createEmptyChunk(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> createEmptyChunk(int x, int y, int z);
 
     // Remove a chunk at the given CHUNK coordinates.
     void removeChunkColumn(int x, int z);
@@ -59,16 +61,16 @@ public:
     ChunkColumn *getChunkColumn(int x, int z);
     
     // Return all chunks in the world
-    std::vector<VoxelChunk *> getAllChunks();
+    std::vector<std::shared_ptr<VoxelChunk> > getAllChunks();
 
     // Get a pointer to the chunk at the given CHUNK coordinates
-    VoxelChunk *getChunk(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> getChunk(int x, int y, int z);
 
     // Get a pointer to the chunk at the given WORLD coordinates
-    VoxelChunk *getChunkContaining(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> getChunkContaining(int x, int y, int z);
 
     // Get a pointer to the chunk at the given WORLD coordinates (float version)
-    VoxelChunk *getChunkContaining(glm::vec3 position);
+    std::shared_ptr<VoxelChunk> getChunkContaining(glm::vec3 position);
 
     /**
      * @brief Get all the chunks that intersect with the given ray and max distance.
@@ -77,8 +79,9 @@ public:
      * @param maxDistance 
      * @return std::vector<VoxelChunk*> 
      */
-    std::vector<VoxelChunk *> getIntersectedChunks(Ray ray, float maxDistance);
+    std::vector<std::shared_ptr<VoxelChunk> > getIntersectedChunks(Ray ray, float maxDistance);
 
+    void updateLoadedChunks();
     void draw(GLuint programID) override;
 
     /**
