@@ -559,6 +559,8 @@ BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel)
     continentalness.SetFrequency(0.004f * freqScaling);
     continentalness.SetFractalType(FastNoiseLite::FractalType_FBm);
     continentalness.SetFractalOctaves(4);
+    continentalness.SetFractalLacunarity(2.1f);
+    continentalness.SetFractalGain(0.55f);
 
     weirdness.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     weirdness.SetFrequency(0.004f * freqScaling);
