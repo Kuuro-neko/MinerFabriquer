@@ -446,6 +446,7 @@ int main(void) {
 
     // Cleanup VBO and shader
     saveManager.saveWorldFile();
+    saveManager.saveCharacterFile();
     root.cleanupBuffers();
     cubemapTexture.cleanupBuffers();
 
