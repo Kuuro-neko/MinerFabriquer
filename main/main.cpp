@@ -274,20 +274,28 @@ int main(void) {
 
     } else {
         int choice = Menu::chooseLoadOrNewWorld();
-        if (choice == MENU_CREATE) {
-
-            std::string saveFolder = Menu::createWorld();
-            std::cout << "Creating world in: " << saveFolder << std::endl;
-            saveManager.setSaveFolderPath(saveFolder);
-            world.generation();
-            saveManager.saveWorldFile(); // Save the world data after generation
-            saveManager.createPlayerDataFile(character);
-        } else if (choice == MENU_LOAD) {
-            std::string worldPath = menu.chooseWorld();
-            std::cout << "Loading world from: " << worldPath << std::endl;
-            saveManager.setSaveFolderPath(worldPath);
-            saveManager.loadWorldFile();
-            saveManager.loadPlayerData(character);
+        switch (choice) {
+            case MENU_CREATE: {
+                std::string saveFolder = Menu::createWorld();
+                std::cout << "Creating world in: " << saveFolder << std::endl;
+                saveManager.setSaveFolderPath(saveFolder);
+                world.generation();
+                saveManager.saveWorldFile(); // Save the world data after generation
+                saveManager.createPlayerDataFile(character);
+                break;
+            }
+           case MENU_LOAD: {
+               std::string worldPath = menu.chooseWorld();
+               std::cout << "Loading world from: " << worldPath << std::endl;
+               saveManager.setSaveFolderPath(worldPath);
+               saveManager.loadWorldFile();
+               saveManager.loadPlayerData(character);
+               break;
+           }
+            default:
+                std::cerr << "Invalid choice. Exiting..." << std::endl;
+                glfwTerminate();
+                return -1;
 
         }
 

@@ -6,7 +6,7 @@ namespace fs = std::filesystem;
 std::string Menu::chooseWorld() {
     std::vector<std::string> worldNames;
 
-    std::cout << "=== Menu de sélection de monde ===\n";
+    std::cout << "=== Menu of worlds selection ===\n";
 
     // Parcourt les sous-dossiers
     for (const auto& entry : fs::directory_iterator(PATHSAVES)) {
@@ -17,7 +17,7 @@ std::string Menu::chooseWorld() {
     }
 
     if (worldNames.empty()) {
-        std::cerr << "Aucun monde trouvé dans 'saves/'\n";
+        std::cerr << "No wordls founds in 'saves/'\n";
         exit(1);
     }
 
@@ -29,13 +29,13 @@ std::string Menu::chooseWorld() {
     // Demande de sélection
     size_t choice = 0;
     while (true) {
-        std::cout << "Sélectionnez un monde (1-" << worldNames.size() << "): ";
+        std::cout << "Select a world (1-" << worldNames.size() << "): ";
         std::cin >> choice;
 
         if (choice >= 1 && choice <= worldNames.size()) {
             break;
         } else {
-            std::cout << "Choix invalide. Réessayez.\n";
+            std::cout << "Wrong input. Retry agin.\n";
         }
     }
 
@@ -44,23 +44,22 @@ std::string Menu::chooseWorld() {
 
 std::string Menu::createWorld() {
     std::string worldName;
-    std::cout << "=== Création d'un nouveau monde ===\n";
-    std::cout << "Entrez un nom pour le nouveau monde : ";
+    std::cout << "=== Creation of a new world ===\n";
+    std::cout << "Enter the new world name : ";
     std::cin >> worldName;
 
     std::string savePath = PATHSAVES + worldName;
 
     // Vérifie si le dossier existe déjà
     if (std::filesystem::exists(savePath)) {
-        std::cerr << "Erreur : un monde avec ce nom existe déjà.\n";
+        std::cerr << "Error : name already exists .\n";
     }
 
     // Crée le dossier
     try {
         std::filesystem::create_directories(savePath);
-        std::cout << "Monde '" << worldName << "' créé avec succès dans : " << savePath << "\n";
     } catch (const std::exception& e) {
-        std::cerr << "Erreur lors de la création du monde : " << e.what() << "\n";
+        std::cerr << "Error when trying to create the new world save : " << e.what() << "\n";
     }
     return savePath;
 }
@@ -68,10 +67,10 @@ std::string Menu::createWorld() {
 
 int Menu::chooseLoadOrNewWorld() {
     int choice;
-    std::cout << "=== Menu de sélection ===\n";
-    std::cout << "1. Créer un nouveau monde\n";
-    std::cout << "2. Charger un monde existant\n";
-    std::cout << "Choisissez une option (1 ou 2) : ";
+    std::cout << "=== World Selection ===\n";
+    std::cout << "1. Create a new world\n";
+    std::cout << "2. Load an existing world \n";
+    std::cout << "Choose an option (1 or 2) : ";
     std::cin >> choice;
 
     return choice;
