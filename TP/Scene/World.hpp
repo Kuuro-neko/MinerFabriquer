@@ -14,6 +14,12 @@
 #include <Defines.hpp>
 #include <utils/Math.hpp>
 
+#include <queue>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+
 class Character;
 
 struct IVec2Hash {
@@ -42,6 +48,14 @@ private:
 
     // Update the sky lights for a given chunk x,z in the chunk column
     void updateSkyLightsInColumn(int x, int z);
+
+    std::thread generationThread;
+    std::queue<std::pair<int, int>> generationQueue;
+    std::mutex queueMutex;
+    std::condition_variable queueCV;
+    std::atomic<bool> running = true;
+
+    void generationLoop();
 public:
     World();
 
@@ -50,6 +64,10 @@ public:
     void initialGeneration();
 
     void generateChunkColumn(int x, int z);
+
+    void enqueueChunkGeneration(int x, int z);
+    void startGenerationThread();
+    void stopGenerationThread();
 
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
     std::shared_ptr<VoxelChunk> createEmptyChunk(int x, int y, int z);

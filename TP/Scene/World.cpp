@@ -9,6 +9,41 @@
 #include <chrono>
 #include <iostream>
 
+void World::generationLoop() {
+    while (running) {
+        std::unique_lock<std::mutex> lock(queueMutex);
+        queueCV.wait(lock, [&] { return !generationQueue.empty() || !running; });
+
+        if (!running) break;
+
+        auto [x, z] = generationQueue.front();
+        generationQueue.pop();
+        lock.unlock();
+
+        generateChunkColumn(x, z);  // Actual chunk generation
+    }
+}
+
+void World::enqueueChunkGeneration(int x, int z) {
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        generationQueue.push({x, z});
+    }
+    queueCV.notify_one();
+}
+
+void World::startGenerationThread() {
+    generationThread = std::thread(&World::generationLoop, this);
+}
+
+void World::stopGenerationThread() {
+    running = false;
+    queueCV.notify_all();
+    if (generationThread.joinable())
+        generationThread.join();
+}
+
+
 std::set<std::pair<int, int>> World::getDirtyColumns()
 {
     std::set<std::pair<int, int>> dirtyColumns;
@@ -49,10 +84,12 @@ void World::updateSkyLightsInColumn(int x, int z)
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
+    startGenerationThread();
     initialGeneration();
 }
 
 World::~World() {
+    stopGenerationThread();
 }
 
 std::shared_ptr<VoxelChunk> World::createEmptyChunk(int x, int y, int z) {
@@ -325,7 +362,7 @@ void World::updateLoadedChunks() {
             std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
             int distance = std::abs(x - chunkX) + std::abs(z - chunkZ);
             if (!column && distance < GENERATION_DISTANCE) {
-                generateChunkColumn(x, z);
+                enqueueChunkGeneration(x, z);
                 count ++;
             }
         }
