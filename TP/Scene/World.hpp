@@ -30,7 +30,7 @@ struct IVec3Hash {
 
 class World : public SceneNode {
 private:
-    std::unordered_map<glm::ivec2, ChunkColumn, IVec2Hash> chunkColumns;
+    std::unordered_map<glm::ivec2, std::shared_ptr<ChunkColumn>, IVec2Hash> chunkColumns;
     std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> chunks;
     std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> visibleChunks;
     Camera *camera;
@@ -58,7 +58,7 @@ public:
     void removeChunkColumn(int x, int z);
 
     // Get a chunk column at the given CHUNK coordinates
-    ChunkColumn *getChunkColumn(int x, int z);
+    std::shared_ptr<ChunkColumn> getChunkColumn(int x, int z);
     
     // Return all chunks in the world
     std::vector<std::shared_ptr<VoxelChunk> > getAllChunks();

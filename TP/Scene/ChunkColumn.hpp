@@ -43,8 +43,8 @@ public:
     inline glm::ivec2 getChunkCoords() { return m_chunkCoords; }
 
 
-    void checkForUngeneratedBlocks(ChunkColumn *neighbor);
-    void generate(World &world, ChunkColumn *westNeighbor, ChunkColumn *eastNeighbor, ChunkColumn *southNeighbor, ChunkColumn *northNeighbor);
+    void checkForUngeneratedBlocks(std::shared_ptr<ChunkColumn> neighbor);
+    void generate(World &world, std::shared_ptr<ChunkColumn> westNeighbor, std::shared_ptr<ChunkColumn> eastNeighbor, std::shared_ptr<ChunkColumn> southNeighbor, std::shared_ptr<ChunkColumn> northNeighbor);
 
 
     

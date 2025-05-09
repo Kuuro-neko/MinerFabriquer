@@ -72,7 +72,7 @@ public:
      * 
      * @param programID 
      */
-    void draw(GLuint programID) override;
+    int drawOpaque(GLuint programID);
     void drawTransparent(GLuint programID);
 
     void cleanupBuffers() override;

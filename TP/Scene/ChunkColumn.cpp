@@ -74,7 +74,7 @@ void ChunkColumn::updateSkyLights(int x, int z) {
     }
 }
 
-void ChunkColumn::checkForUngeneratedBlocks(ChunkColumn *neighbor) {
+void ChunkColumn::checkForUngeneratedBlocks(std::shared_ptr<ChunkColumn> neighbor) {
     if (!neighbor) return;
     std::vector<std::shared_ptr<VoxelChunk>> nChunks = neighbor->getChunks();
     for (std::shared_ptr<VoxelChunk> chunk : nChunks) {
@@ -87,7 +87,7 @@ void ChunkColumn::checkForUngeneratedBlocks(ChunkColumn *neighbor) {
     }
 }
 
-void ChunkColumn::generate(World &world, ChunkColumn *westNeighbor, ChunkColumn *eastNeighbor, ChunkColumn *southNeighbor, ChunkColumn *northNeighbor)
+void ChunkColumn::generate(World &world, std::shared_ptr<ChunkColumn> westNeighbor, std::shared_ptr<ChunkColumn> eastNeighbor, std::shared_ptr<ChunkColumn> southNeighbor, std::shared_ptr<ChunkColumn> northNeighbor)
 {
     WorldGenerator worldGenerator;
     // Generate the world

@@ -13,7 +13,7 @@ std::set<std::pair<int, int>> World::getDirtyColumns()
 {
     std::set<std::pair<int, int>> dirtyColumns;
     for (auto &[key, column]: chunkColumns) {
-        if (column.isDirty()) {
+        if (column->isDirty()) {
             dirtyColumns.insert({key.x, key.y});
         }
     }
@@ -22,7 +22,7 @@ std::set<std::pair<int, int>> World::getDirtyColumns()
 
 void World::updateSkyLightsInColumn(int x, int z)
 {
-    ChunkColumn *column = getChunkColumn(x, z);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
     if (!column) return;
     
     column->updateSkyLights();
@@ -54,11 +54,15 @@ World::~World() {
 }
 
 std::shared_ptr<VoxelChunk> World::createEmptyChunk(int x, int y, int z) {
-    ChunkColumn *column = getChunkColumn(x, z);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
     if (!column) {
-        chunkColumns.emplace(glm::ivec2(x, z), ChunkColumn(x, z));
+        chunkColumns.emplace(glm::ivec2(x, z), std::make_shared<ChunkColumn>(x, z));
+        column = getChunkColumn(x, z);
+        if (!column) {
+            std::cerr << "[createEmptyChunk] Failed to create ChunkColumn at (" << x << ", " << z << ")" << std::endl;
+            return nullptr;
+        }
     }
-    column = getChunkColumn(x, z);
     std::shared_ptr<VoxelChunk> chunk = getChunk(x, y, z);
     if (chunk) {
         return chunk;
@@ -73,34 +77,29 @@ std::shared_ptr<VoxelChunk> World::createEmptyChunk(int x, int y, int z) {
 }
 
 void World::removeChunkColumn(int x, int z) {
-    ChunkColumn *column = getChunkColumn(x, z);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
     if (!column) {
+        std::cerr << "[removeChunkColumn] Attempted to remove a non-existent ChunkColumn at (" << x << ", " << z << ")" << std::endl;
         return;
     }
     for (std::shared_ptr<VoxelChunk> chunk : column->getChunks()) {
-        auto it = chunks.find(chunk->m_chunkCoords);
-        if (it != chunks.end()) {
-            chunks.erase(it);
-        }
+        chunks.erase(glm::ivec3(chunk->m_chunkCoords.x, chunk->m_chunkCoords.y, chunk->m_chunkCoords.z));
     }
     column->free();
-    auto it = chunkColumns.find({x, z});
-    if (it != chunkColumns.end()) {
-        chunkColumns.erase(it);
-        std::cout << "found"    << std::endl;
-    }
+    chunkColumns.erase(glm::ivec2(x, z));
 }
 
-ChunkColumn *World::getChunkColumn(int x, int z) {
+std::shared_ptr<ChunkColumn> World::getChunkColumn(int x, int z) {
     auto it = chunkColumns.find({x, z});
-    if (it != chunkColumns.end()) {
-        return &it->second;
+    if (it != chunkColumns.end() && it->second) {
+        return it->second;
     }
+    //std::cerr << "[getChunkColumn] ChunkColumn at (" << x << ", " << z << ") is invalid or not found" << std::endl;
     return nullptr;
 }
 
 std::shared_ptr<VoxelChunk> World::getChunk(int x, int y, int z) {
-    ChunkColumn *column = getChunkColumn(x, z);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
     if (column) {
         return column->getChunk(y);
     }
@@ -109,7 +108,7 @@ std::shared_ptr<VoxelChunk> World::getChunk(int x, int y, int z) {
 
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
-    ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column) return -1;
     if (chunk) {
         glm::ivec3 localCoords = glm::ivec3(
@@ -144,7 +143,7 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode) {
 
 int World::removeBlock(int x, int y, int z) {
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
-    ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column) return -1;
     if (chunk) {
         glm::ivec3 localCoords = glm::ivec3(
@@ -187,7 +186,7 @@ bool World::setBloc(int x, int y, int z, int bloc) {
         );
         bool err = chunk->setBloc(localCoords.x, localCoords.y, localCoords.z, bloc);
         if (!err) {
-            ChunkColumn *column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
+            std::shared_ptr<ChunkColumn> column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
             auto& heightmap = column->getSurfaceHeightMap()->at(localCoords.x).at(localCoords.z);
             if (y > heightmap) {
                 for (int i = heightmap; i < y; i++) {
@@ -255,7 +254,7 @@ std::shared_ptr<VoxelChunk> World::getChunkContaining(int x, int y, int z) {
     int chunkCoordY = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
     int chunkCoordZ = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
     
-    ChunkColumn *column = getChunkColumn(chunkCoordX, chunkCoordZ);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(chunkCoordX, chunkCoordZ);
     if (!column) {
         //std::cout << "Chunk coords : " << chunkCoordX << ", " << chunkCoordY << ", " << chunkCoordZ << std::endl;
         return nullptr;
@@ -273,7 +272,7 @@ std::shared_ptr<VoxelChunk> World::getChunkContaining(glm::vec3 position) {
 std::vector<std::shared_ptr<VoxelChunk> > World::getAllChunks() {
     std::vector<std::shared_ptr<VoxelChunk> > allChunks;
     for (auto &[key, column]: chunkColumns) {
-        std::vector<std::shared_ptr<VoxelChunk> > chunks = column.getChunks();
+        std::vector<std::shared_ptr<VoxelChunk> > chunks = column->getChunks();
         for (auto &chunk: chunks) {
             allChunks.push_back(chunk);
         }
@@ -283,8 +282,8 @@ std::vector<std::shared_ptr<VoxelChunk> > World::getAllChunks() {
 
 std::vector<std::shared_ptr<VoxelChunk> > World::getIntersectedChunks(Ray ray, float maxDistance) {
     std::vector<std::shared_ptr<VoxelChunk> > intersectedChunks;
-    std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
-    for (auto &chunk: chunks) {
+    for (const auto &[key, chunk]: chunks) {
+        if (!chunk) continue;
         if (chunk->intersects(ray, maxDistance)) {
             intersectedChunks.push_back(chunk);
         }
@@ -303,17 +302,27 @@ void World::updateLoadedChunks() {
     int chunkY = chunk->m_chunkCoords.y;
     int chunkZ = chunk->m_chunkCoords.z;
 
-    // look for all the columns around, and remove those too far. Initialize those not found that should exist.
+    // look for all the columns around, and remove those too far.
+    std::vector<glm::ivec2> toRemove;
+    for (const auto &[key, column]: chunkColumns) {
+        if (!column) continue; // Ensure the column is valid
+        if (key.x == 0 && key.y == 0) continue; // Example validation (adjust as needed)
+        int distance = std::abs(key.x - chunkX) + std::abs(key.y - chunkZ);
+        if (distance > GENERATION_DISTANCE) {
+            toRemove.push_back(key);
+        }
+    }
+    for (const auto &key : toRemove) {
+        removeChunkColumn(key.x, key.y);
+    }
+
+    // Initialize those not found that should exist.
     int count = 0;
-    for (int x = chunkX - GENERATION_RADIUS_X; x <= chunkX + GENERATION_RADIUS_X; ++x) {
-        for (int z = chunkZ - GENERATION_RADIUS_Z; z <= chunkZ + GENERATION_RADIUS_Z; ++z) {
-            int distance = std::abs(chunkX - x) + std::abs(chunkZ - z);
-            if (distance > GENERATION_RADIUS_X) {
-                removeChunkColumn(x, z);
-                continue;
-            }
-            ChunkColumn *column = getChunkColumn(x, z);
-            if (!column) {
+    for (int x = chunkX - GENERATION_DISTANCE; x <= chunkX + GENERATION_DISTANCE; ++x) {
+        for (int z = chunkZ - GENERATION_DISTANCE; z <= chunkZ + GENERATION_DISTANCE; ++z) {
+            std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
+            int distance = std::abs(x - chunkX) + std::abs(z - chunkZ);
+            if (!column && distance < GENERATION_DISTANCE) {
                 generateChunkColumn(x, z);
                 count ++;
             }
@@ -333,14 +342,9 @@ void World::draw(GLuint programID) {
     int count = 0;
     for (auto &[key, chunk]: visibleChunks) {
         if(!chunk) continue;
-        //si la distance de rendu est depassee, on ne dessine pas le chunk
-        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
-        if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
-            chunk->draw(programID);
-            count++;
-        }
+        count += chunk->drawOpaque(programID);
     }
-    std::cout << "Drawn " << count << " chunks" << std::endl;
+    std::cout << "Drawn " << count << " chunks out of " << chunks.size() << std::endl;
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -351,11 +355,7 @@ void World::draw(GLuint programID) {
     });
     for (auto &[key, chunk]: sortedChunks) {
         if(!chunk) continue;
-        //si la distance de rendu est depassee, on ne dessine pas le chunk
-        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
-        if (distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
-            chunk->drawTransparent(programID);
-        }
+        chunk->drawTransparent(programID);
     }
     glDisable(GL_BLEND);
     
@@ -389,12 +389,12 @@ void World::initialGeneration() {
     }
     //  ->  Then floodfill the lights
     for (auto column : chunkColumns) {
-        for (auto chunk : column.second.getChunks()) {
+        for (auto chunk : column.second->getChunks()) {
             glm::ivec3 chunkCoords = chunk->m_chunkCoords;
             for (int i = 0; i < CHUNK_SIZE; ++i) {
                 for (int k = 0; k < CHUNK_SIZE; ++k) {
                     // Bloc column is completely above the surface, skip it
-                    if(chunk->m_chunkCoords.y * CHUNK_SIZE >= column.second.getSurfaceHeightMap()->at(i).at(k)) continue;
+                    if(chunk->m_chunkCoords.y * CHUNK_SIZE >= column.second->getSurfaceHeightMap()->at(i).at(k)) continue;
                     for (int j = CHUNK_SIZE - 1; j >= 0; --j) {
                         int lightLevel = chunk->m_lights[i][j][k];
                         if (lightLevel < 15) continue;
@@ -431,7 +431,7 @@ void World::generateChunkColumn(int x, int z) {
         std::shared_ptr<VoxelChunk> chunk = createEmptyChunk(x, y, z);
     }
     // Column generation
-    ChunkColumn *column = getChunkColumn(x, z);
+    std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
     if (column) {
         column->generate(
             *this,
@@ -455,18 +455,17 @@ void World::updateVisibleChunk(Frustrum &frustum) {
 
     // on parcourt tous les chunks et on les ajoute à la liste des chunks visibles s'ils sont dans le frustum
     std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
-    for (auto chunk: chunks) {
-        float distance = glm::length(chunk->getWorldPosition() - camera->getPosition());
-        if (frustum.isBoundingBoxInFrustum(chunk->getWorldPosition(),
-                                           chunk->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))
-                                        && distance <= (RENDERER_DISTANCE * CHUNK_SIZE)) {
-            visibleChunks[chunk->m_chunkCoords] = chunk;
-        } else {
-            // si le chunk n'est pas visible, on le supprime de la liste des chunks visibles
-            auto it = visibleChunks.find(chunk->m_chunkCoords);
-            if (it != visibleChunks.end()) {
-                it->second->cleanupBuffers();
-                visibleChunks.erase(it);
+    visibleChunks.clear();
+    for(const auto &column : chunkColumns) {
+        std::shared_ptr<ChunkColumn> chunkColumn = column.second;
+        int distance = std::abs(chunkColumn->getChunkCoords().x - camera->getPosition().x / CHUNK_SIZE) +
+                        std::abs(chunkColumn->getChunkCoords().y - camera->getPosition().z / CHUNK_SIZE);
+        if (distance<= RENDERER_DISTANCE) {
+            for (auto &chunk : chunkColumn->getChunks()) {
+                if (chunk && frustum.isBoundingBoxInFrustum(chunk->getWorldPosition(),
+                                                             chunk->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
+                    visibleChunks[chunk->m_chunkCoords] = chunk;
+                }
             }
         }
     }
