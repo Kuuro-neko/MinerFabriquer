@@ -12,7 +12,7 @@ SaveManager &SaveManager::getInstance()
 }
 
 
-void SaveManager::createPlayerDataFile(Character &character)
+void SaveManager::createPlayerDataFile()
 {
     std::string saveFolder = getSaveFolderPath();
 
@@ -24,12 +24,12 @@ void SaveManager::createPlayerDataFile(Character &character)
         return;
     }
 
-    unsigned char gamemode = character.getGamemode();
-    unsigned char prev = character.GetprevGamemode();
+    unsigned char gamemode = character->getGamemode();
+    unsigned char prev = character->GetprevGamemode();
     float position[3] = {
-            character.getWorldPosition().x,
-            character.getWorldPosition().y,
-            character.getWorldPosition().z};
+            character->getWorldPosition().x,
+            character->getWorldPosition().y,
+            character->getWorldPosition().z};
 
     ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
     ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
@@ -39,7 +39,7 @@ void SaveManager::createPlayerDataFile(Character &character)
 }
 
 
-void SaveManager::loadPlayerData(Character &character)
+void SaveManager::loadPlayerData()
 {
     std::string mostRecentPlayerFilePath = getSaveFolderPath() + PATH_PLAYER_FILE;
 
@@ -61,17 +61,17 @@ void SaveManager::loadPlayerData(Character &character)
     while (ifs.read(reinterpret_cast<char *>(&id), sizeof(id)))
     {
         ifs.read(reinterpret_cast<char *>(&quantity), sizeof(quantity));
-        character.inventory->addItem(ItemStack(id, quantity));
+        character->inventory->addItem(ItemStack(id, quantity));
     }
 
-    character.setGamemode(gamemode);
-    character.SetprevGamemode(prev);
-    character.setWorldPosition(position[0], position[1], position[2]);
+    character->setGamemode(gamemode);
+    character->SetprevGamemode(prev);
+    character->setWorldPosition(position[0], position[1], position[2]);
     ifs.close();
 }
 
 // create the correct folder based on time with the playerData.bin file
-void SaveManager::saveCharacterFile(Character &data)
+void SaveManager::saveCharacterFile()
 {
     std::string saveFolder = getSaveFolderPath();
 
@@ -91,18 +91,18 @@ void SaveManager::saveCharacterFile(Character &data)
         return;
     }
 
-    unsigned char gamemode = data.getGamemode();
-    unsigned char prev = data.GetprevGamemode();
+    unsigned char gamemode = character->getGamemode();
+    unsigned char prev = character->GetprevGamemode();
     float position[3] = {
-        data.getWorldPosition().x,
-        data.getWorldPosition().y,
-        data.getWorldPosition().z};
+            character->getWorldPosition().x,
+            character->getWorldPosition().y,
+            character->getWorldPosition().z};
     int id, quantity;
 
     ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
     ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
     ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
-    for (const auto &item : data.inventory->getItems())
+    for (const auto &item : character->inventory->getItems())
     {
         id = item.getItemId();
         quantity = item.getQuantity();
@@ -114,7 +114,7 @@ void SaveManager::saveCharacterFile(Character &data)
    std::cout << "Data saved at : " << filePath << std::endl;
 }
 
-void SaveManager::startAutoSave(Character &data)
+void SaveManager::startAutoSave()
 {
     if (autoSaveRunning)
     {
@@ -125,9 +125,8 @@ void SaveManager::startAutoSave(Character &data)
     autoSaveRunning = true;
     const std::string autoPlayerFilePath = getSaveFolderPath() + PATH_PLAYER_FILE;
     int saveDelayFortheThread = SAVE_DELAY;
-
     // for the tread we have to define the lambda function and pass the data by reference
-    autoSaveThread = std::thread([this, autoPlayerFilePath, &data, saveDelayFortheThread]()
+    autoSaveThread = std::thread([this, autoPlayerFilePath, saveDelayFortheThread]()
                                  {
                                      while (autoSaveRunning)
                                      {
@@ -136,10 +135,9 @@ void SaveManager::startAutoSave(Character &data)
                                          {
                                              std::cout << "Auto-saving player data..." << std::endl;
                                              //save all the file that we need (player data, world data)
-                                             saveCharacterFile(data);
                                              std::cout << "Auto-saving world data..." << std::endl;
                                              saveWorldFile();
-
+                                             saveCharacterFile();
                                              std::cout
                                                      << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
@@ -171,6 +169,10 @@ void SaveManager::setWorld(World *worldInstance)
 {
     this->world = worldInstance;
 }
+void SaveManager::setCharacter(Character *characterInstance)
+{
+    this->character = characterInstance;
+}
 
 void SaveManager::saveWorldFile()
 {
@@ -179,20 +181,19 @@ void SaveManager::saveWorldFile()
         std::cerr << "World instance is not set. Cannot save world data." << std::endl;
         return;
     }
-
+    std::cout << "Begin saving world data..." << std::endl;
 
 
     std::string filePath = getSaveFolderPath() + PATH_WORLD_FILE;
-    std::cout << "Saving world data to: " << filePath << std::endl;
 
     // TODO pour le moment on ne fait que la region actuelle mais faudra ajouter un system pour szuvgarder de nouvelle region
 
-    // Header creation
+    // Creation du header de la region actuelle
 
     std::ofstream out(filePath, std::ios::binary);
     if (!out)
     {
-        std::cerr << "Impossible to create the Saving file at " << filePath << std::endl;
+        std::cerr << "Impossible to create the Saving file" << std::endl;
     }
 
     // Header Part that will contains the offset and lenght but for now ir's empty
@@ -261,7 +262,8 @@ void SaveManager::saveWorldFile()
     out.seekp(0, std::ios::beg);
     out.write(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
 
-   std::cout << "World saved to: " << filePath << std::endl;
+    std::cout << "World saved to: " << filePath << std::endl;
+    std::cout<< "Number of chunks saved : " << world->getAllChunks().size() << std::endl;
 }
 
 void SaveManager::loadWorldFile()
@@ -280,6 +282,7 @@ void SaveManager::loadWorldFile()
     }
 
     readWorldFile(ifs);
+    std::cout<< "Number of chunks read : " << world->getAllChunks().size() << std::endl;
 }
 
 void SaveManager::readWorldFile(std::ifstream &in)

@@ -10,6 +10,7 @@ class SaveManager {
 
 private:
     World *world = nullptr; // Pointeur vers l'instance de World
+    Character *character = nullptr; // Pointeur vers l'instance de Character
 
 protected:
     static SaveManager *instance;
@@ -43,17 +44,17 @@ public:
     bool isSaveFolderEmpty();
 
     // load the player data from the file -> default values if the file does not exist, file's values if it does
-    void loadPlayerData(Character &character);
+    void loadPlayerData();
 
     // character data save
-    void saveCharacterFile(Character &data);
+    void saveCharacterFile();
 
     // function that start the auto save thread and save the player data every X seconds
-    void startAutoSave(Character &data);
+    void startAutoSave();
 
     void stopAutoSave();
 
-    void createPlayerDataFile(Character &character);
+    void createPlayerDataFile();
 
     //-----world data---------//
 
@@ -86,6 +87,7 @@ public:
     };
 
     void setWorld(World *worldInstance);
+    void setCharacter(Character *characterInstance);
 
     void saveWorldFile();
 
