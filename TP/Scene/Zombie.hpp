@@ -84,6 +84,11 @@ private:
     void handleIdleState(float deltaTime);
     void handlePursuitState(float deltaTime);
     void handleAttackState(float deltaTime);
+
+    void faceTarget(glm::vec3 targetPos, float& deltaTime);
+
+    float currentRotationAngle = 0.0f;
+    float rotationSpeed = 2.0f;
     
 };
 

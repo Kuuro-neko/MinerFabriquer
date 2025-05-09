@@ -109,6 +109,7 @@ void Zombie::handlePursuitState(float deltaTime) {
     updateRenderers();
     */
     updateTargetPosition(deltaTime);
+    faceTarget(targetPosition, deltaTime);
     calculateMovementDirection(deltaTime);
 }
 
@@ -195,6 +196,8 @@ void Zombie::updateJumpCooldown(float deltaTime) {
 }
 
 void Zombie::handleAttackState(float deltaTime) {
+
+    faceTarget(targetPosition, deltaTime);
     attackCooldown += deltaTime;
     
     if (attackCooldown >= attackCooldownMax) {
@@ -318,5 +321,28 @@ void Zombie::setState(ZombieState newState) {
             case ZOMBIE_ATTACK:
                 break;
         }
+    }
+}
+
+void Zombie::faceTarget(glm::vec3 targetPos, float& deltaTime) {
+    glm::vec3 direction = targetPos - getWorldPosition();
+    direction.y = 0; 
+    if (glm::length(direction) > 0.001f) {
+        direction = glm::normalize(direction);
+        
+        float targetAngle = atan2(direction.x, direction.z);        
+        float angleDiff = targetAngle - currentRotationAngle;
+        
+        // Interpolation:
+        float step = rotationSpeed * deltaTime;
+        
+        if (abs(angleDiff) < step) {
+            currentRotationAngle = targetAngle;
+        } else {
+            currentRotationAngle += (angleDiff > 0) ? step : -step;
+        }
+
+        m_transform.m_rotation = DEFAULT_ROTATION;
+        rotate(currentRotationAngle, AXIS_Y);
     }
 }
