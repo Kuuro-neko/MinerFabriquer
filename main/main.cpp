@@ -261,6 +261,7 @@ int main(void) {
 
     //pass the world to the save manager
     saveManager.setWorld(&world);
+    saveManager.setCharacter(&character);
 
 
     if (!saveManager.isDataFolderContainsOtherFolder()) {
@@ -270,7 +271,7 @@ int main(void) {
         saveManager.setSaveFolderPath(saveFolder);
         world.generation();
         saveManager.saveWorldFile(); // Save the world data after generation
-        saveManager.createPlayerDataFile(character);
+        saveManager.createPlayerDataFile();
 
     } else {
         int choice = Menu::chooseLoadOrNewWorld();
@@ -281,7 +282,7 @@ int main(void) {
                 saveManager.setSaveFolderPath(saveFolder);
                 world.generation();
                 saveManager.saveWorldFile(); // Save the world data after generation
-                saveManager.createPlayerDataFile(character);
+                saveManager.createPlayerDataFile();
                 break;
             }
            case MENU_LOAD: {
@@ -289,7 +290,7 @@ int main(void) {
                std::cout << "Loading world from: " << worldPath << std::endl;
                saveManager.setSaveFolderPath(worldPath);
                saveManager.loadWorldFile();
-               saveManager.loadPlayerData(character);
+               saveManager.loadPlayerData();
                break;
            }
             default:
@@ -300,9 +301,9 @@ int main(void) {
         }
 
     }
-    saveManager.loadPlayerData(character);
+    saveManager.loadPlayerData();
     std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
-    saveManager.startAutoSave(character);
+    saveManager.startAutoSave();
 
 
     // Associer le monde au personnage
