@@ -89,6 +89,9 @@ private:
 
     float currentRotationAngle = 0.0f;
     float rotationSpeed = 2.0f;
+
+    glm::vec3 directionToTarget;
+    float distanceToTarget;
     
 };
 

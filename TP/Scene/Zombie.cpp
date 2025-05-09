@@ -44,6 +44,8 @@ void Zombie::move(glm::vec3 direction) {
 void Zombie::update(float deltaTime) {
     updateState(deltaTime);
 
+    
+
     switch (currentState) {
         case ZOMBIE_IDLE:
             handleIdleState(deltaTime);
@@ -82,12 +84,15 @@ void Zombie::updateState(float deltaTime) {
         setState(ZOMBIE_IDLE);
         return;
     }
+
+    // float distanceToPlayer = glm::length(player->getWorldPosition() - getWorldPosition());
+    targetPosition = player->getWorldPosition();
+    directionToTarget = targetPosition - getWorldPosition();
+    distanceToTarget = glm::length(directionToTarget);
     
-    float distanceToPlayer = glm::length(player->getWorldPosition() - getWorldPosition());
-    
-    if (distanceToPlayer <= attackRange) {
+    if (distanceToTarget <= attackRange) {
         setState(ZOMBIE_ATTACK);
-    } else if (distanceToPlayer <= ZOMBIE_DISTANCE_FINDING_PLAYER) {  // Distance de détection du joueur
+    } else if (distanceToTarget <= ZOMBIE_DISTANCE_FINDING_PLAYER) {  // Distance de détection du joueur
         setState(ZOMBIE_PURSUIT);
     } else {
         setState(ZOMBIE_IDLE);
@@ -134,12 +139,12 @@ void Zombie::updateTargetPosition(float deltaTime) {
 }
 
 void Zombie::calculateMovementDirection(float deltaTime) {
-    glm::vec3 direction = targetPosition - getWorldPosition();
-    direction.y = 0;
+    glm::vec3 horizontalDir = directionToTarget;
+    horizontalDir.y = 0;
     
-    if (glm::length(direction) > 0.1f) {
-        direction = glm::normalize(direction) * moveSpeed * deltaTime;
-        vecteurDirection = direction;
+    if (glm::length(horizontalDir) > 0.1f) {
+        horizontalDir = glm::normalize(horizontalDir) * moveSpeed * deltaTime;
+        vecteurDirection = horizontalDir;
         
         detectAndHandleObstacles();
     } else {
@@ -325,16 +330,20 @@ void Zombie::setState(ZombieState newState) {
 }
 
 void Zombie::faceTarget(glm::vec3 targetPos, float& deltaTime) {
-    glm::vec3 direction = targetPos - getWorldPosition();
-    direction.y = 0; 
-    if (glm::length(direction) > 0.001f) {
-        direction = glm::normalize(direction);
+    glm::vec3 horizontalDir = directionToTarget;
+    horizontalDir.y = 0;
+    if (glm::length(horizontalDir) > 0.001f) {
+        horizontalDir = glm::normalize(horizontalDir);
         
-        float targetAngle = atan2(direction.x, direction.z);        
+        float targetAngle = atan2(horizontalDir.x, horizontalDir.z);        
         float angleDiff = targetAngle - currentRotationAngle;
         
         // Interpolation:
         float step = rotationSpeed * deltaTime;
+
+        //mettre l'angle entre -pi et pi car sinon il fait des 360° no scope
+        while (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
+        while (angleDiff < -M_PI) angleDiff += 2.0f * M_PI;
         
         if (abs(angleDiff) < step) {
             currentRotationAngle = targetAngle;
