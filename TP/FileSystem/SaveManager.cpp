@@ -20,8 +20,8 @@ void SaveManager::loadPlayerData(Character &character)
     // no actual data -> create the folder
     if (isSaveFolderEmpty())
     {
-        std::cout << "Player data file does not exist..." << std::endl;
-        std::cout << "Creating a new player data file..." << std::endl;
+      //  std::cout << "Player data file does not exist..." << std::endl;
+       // std::cout << "Creating a new player data file..." << std::endl;
         std::string saveFolder = generateSaveFolderPath();
 
         if (!std::filesystem::exists(saveFolder))
@@ -31,7 +31,9 @@ void SaveManager::loadPlayerData(Character &character)
 
         std::ofstream file(saveFolder + PATH_PLAYER_FILE);
         std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
-        std::cout << "Creation of the brand new Save folder at  :" << saveFolder + PATH_PLAYER_FILE << std::endl;
+
+
+      //  std::cout << "Creation of the brand new Save folder at  :" << saveFolder + PATH_PLAYER_FILE << std::endl;
 
         // Default values from main.cpp
         gamemode = character.getGamemode();
@@ -46,16 +48,16 @@ void SaveManager::loadPlayerData(Character &character)
         ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
         ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
         ofs.close();
-        std::cout << "Player data file created and filled with default values." << std::endl;
+      //  std::cout << "Player data file created and filled with default values." << std::endl;
     }
     else // the file is already created -> we load the data from the file
     {
         std::string motRecentFolder = getMostRecentSaveFolder();
         std::string mostRecentPlayerFilePath = motRecentFolder + PATH_PLAYER_FILE;
 
-        std::cout
-            << "Player data file already exists." << std::endl;
-        std::cout << "Reading data from : " << motRecentFolder << std::endl;
+     //   std::cout
+      //      << "Player data file already exists." << std::endl;
+     //   std::cout << "Reading data from : " << motRecentFolder << std::endl;
         std::ifstream ifs(mostRecentPlayerFilePath, std::ios::binary);
         if (!ifs)
         {
@@ -79,7 +81,7 @@ void SaveManager::loadPlayerData(Character &character)
         character.SetprevGamemode(prev);
         character.setWorldPosition(position[0], position[1], position[2]);
         ifs.close();
-        std::cout << "Player data loaded from file." << std::endl;
+       // std::cout << "Player data loaded from file." << std::endl;
     }
 }
 
@@ -95,7 +97,7 @@ void SaveManager::saveCharacterFile(Character &data)
 
     // File path
     std::string filePath = saveFolder + PATH_PLAYER_FILE;
-    std::cout << "Creation of a new most Recent save folder : " << saveFolder + PATH_PLAYER_FILE << std::endl;
+  //  std::cout << "Creation of a new most Recent save folder : " << saveFolder + PATH_PLAYER_FILE << std::endl;
 
     std::ofstream ofs(filePath, std::ios::binary);
     if (!ofs)
@@ -124,7 +126,7 @@ void SaveManager::saveCharacterFile(Character &data)
     }
     ofs.close();
 
-    std::cout << "Data saved at : " << filePath << std::endl;
+   // std::cout << "Data saved at : " << filePath << std::endl;
 }
 
 void SaveManager::startAutoSave(Character &data)
@@ -278,7 +280,7 @@ void SaveManager::saveWorldFile()
         std::cerr << "World instance is not set. Cannot save world data." << std::endl;
         return;
     }
-    std::cout << "Begin saving world data..." << std::endl;
+ //   std::cout << "Begin saving world data..." << std::endl;
 
     std::string saveFolder = generateSaveFolderPath();
     std::string filePath = saveFolder + PATH_WORLD_FILE;
@@ -290,7 +292,7 @@ void SaveManager::saveWorldFile()
     std::ofstream out(filePath, std::ios::binary);
     if (!out)
     {
-        std::cerr << "Impossible to create the Saving file" << std::endl;
+        std::cerr << "Impossible to create the Saving file at " << filePath << std::endl;
     }
 
     // Header Part that will contains the offset and lenght but for now ir's empty
@@ -359,7 +361,7 @@ void SaveManager::saveWorldFile()
     out.seekp(0, std::ios::beg);
     out.write(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
 
-    std::cout << "World saved to: " << filePath << std::endl;
+  //  std::cout << "World saved to: " << filePath << std::endl;
 }
 
 void SaveManager::loadWorldFile()
@@ -368,7 +370,8 @@ void SaveManager::loadWorldFile()
     std::string motRecentFolder = getMostRecentSaveFolder();
     std::string mostRecentWorldFilePath = motRecentFolder + PATH_WORLD_FILE;
 
-    std::cout << "Reading data from : " << motRecentFolder << std::endl;
+  //
+  //  std::cout << "Reading data from : " << motRecentFolder << std::endl;
     std::ifstream ifs(mostRecentWorldFilePath, std::ios::binary);
     if (!ifs)
     {
@@ -447,6 +450,17 @@ void SaveManager::readWorldFile(std::ifstream &in)
             }
         }
     }
+}
+
+bool SaveManager::isDataFolderContainsOtherFolder() {
+    for (const auto &entry: std::filesystem::directory_iterator(PATHSAVES)) {
+        if (entry.is_directory()) {
+            std::cout << "Found folder: " << entry.path().filename().string() << std::endl;
+            return true;
+        }
+    }
+    std::cout << "No folders found in PATHSAVES." << std::endl;
+    return false;
 }
 
 // TODO : pour l'oral parler des types de représentation qui existait avec pour t contre
