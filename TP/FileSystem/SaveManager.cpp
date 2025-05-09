@@ -11,84 +11,69 @@ SaveManager &SaveManager::getInstance()
     return instance;
 }
 
-void SaveManager::loadPlayerData(Character &character)
+
+void SaveManager::createPlayerDataFile(Character &character)
 {
-    unsigned char gamemode;
-    unsigned char prev;
-    float position[3];
-    int id, quantity;
-    // no actual data -> create the folder
-    if (isSaveFolderEmpty())
+    std::string saveFolder = getSaveFolderPath();
+
+    std::cout << "Creation of a new save folder for character : " << saveFolder + PATH_PLAYER_FILE << std::endl;
+    std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
+    if (!ofs)
     {
-      //  std::cout << "Player data file does not exist..." << std::endl;
-       // std::cout << "Creating a new player data file..." << std::endl;
-        std::string saveFolder = generateSaveFolderPath();
+        std::cerr << "Error creating player data file." << std::endl;
+        return;
+    }
 
-        if (!std::filesystem::exists(saveFolder))
-        {
-            std::filesystem::create_directories(saveFolder);
-        }
-
-        std::ofstream file(saveFolder + PATH_PLAYER_FILE);
-        std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
-
-
-      //  std::cout << "Creation of the brand new Save folder at  :" << saveFolder + PATH_PLAYER_FILE << std::endl;
-
-        // Default values from main.cpp
-        gamemode = character.getGamemode();
-        prev = character.GetprevGamemode();
-        float position[3] = {
+    unsigned char gamemode = character.getGamemode();
+    unsigned char prev = character.GetprevGamemode();
+    float position[3] = {
             character.getWorldPosition().x,
             character.getWorldPosition().y,
             character.getWorldPosition().z};
 
-        // Write the data to the file
-        ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
-        ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
-        ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
-        ofs.close();
-      //  std::cout << "Player data file created and filled with default values." << std::endl;
-    }
-    else // the file is already created -> we load the data from the file
+    ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
+    ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
+    ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
+    ofs.close();
+    std::cout << "Player data file created at: " << saveFolder + PATH_PLAYER_FILE << std::endl;
+}
+
+
+void SaveManager::loadPlayerData(Character &character)
+{
+    std::string mostRecentPlayerFilePath = getSaveFolderPath() + PATH_PLAYER_FILE;
+
+    std::ifstream ifs(mostRecentPlayerFilePath, std::ios::binary);
+    if (!ifs)
     {
-        std::string motRecentFolder = getMostRecentSaveFolder();
-        std::string mostRecentPlayerFilePath = motRecentFolder + PATH_PLAYER_FILE;
-
-     //   std::cout
-      //      << "Player data file already exists." << std::endl;
-     //   std::cout << "Reading data from : " << motRecentFolder << std::endl;
-        std::ifstream ifs(mostRecentPlayerFilePath, std::ios::binary);
-        if (!ifs)
-        {
-            std::cerr << "Error opening file: " << mostRecentPlayerFilePath << std::endl;
-            return;
-        }
-
-        // Read the data from the file
-        ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
-        ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
-        ifs.read(reinterpret_cast<char *>(position), sizeof(position));
-        while (ifs.read(reinterpret_cast<char *>(&id), sizeof(id)))
-        {
-            ifs.read(reinterpret_cast<char *>(&quantity), sizeof(quantity));
-            // Add the item to the inventory
-            character.inventory->addItem(ItemStack(id, quantity));
-        }
-
-        // Set the character's data
-        character.setGamemode(gamemode);
-        character.SetprevGamemode(prev);
-        character.setWorldPosition(position[0], position[1], position[2]);
-        ifs.close();
-       // std::cout << "Player data loaded from file." << std::endl;
+        std::cerr << "Error opening file: " << mostRecentPlayerFilePath << std::endl;
+        return;
     }
+
+    unsigned char gamemode;
+    unsigned char prev;
+    float position[3];
+    int id, quantity;
+
+    ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
+    ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
+    ifs.read(reinterpret_cast<char *>(position), sizeof(position));
+    while (ifs.read(reinterpret_cast<char *>(&id), sizeof(id)))
+    {
+        ifs.read(reinterpret_cast<char *>(&quantity), sizeof(quantity));
+        character.inventory->addItem(ItemStack(id, quantity));
+    }
+
+    character.setGamemode(gamemode);
+    character.SetprevGamemode(prev);
+    character.setWorldPosition(position[0], position[1], position[2]);
+    ifs.close();
 }
 
 // create the correct folder based on time with the playerData.bin file
 void SaveManager::saveCharacterFile(Character &data)
 {
-    std::string saveFolder = generateSaveFolderPath();
+    std::string saveFolder = getSaveFolderPath();
 
     if (!std::filesystem::exists(saveFolder))
     {
@@ -97,7 +82,7 @@ void SaveManager::saveCharacterFile(Character &data)
 
     // File path
     std::string filePath = saveFolder + PATH_PLAYER_FILE;
-  //  std::cout << "Creation of a new most Recent save folder : " << saveFolder + PATH_PLAYER_FILE << std::endl;
+    std::cout << "Creation of a new save for character : " << filePath << std::endl;
 
     std::ofstream ofs(filePath, std::ios::binary);
     if (!ofs)
@@ -126,7 +111,7 @@ void SaveManager::saveCharacterFile(Character &data)
     }
     ofs.close();
 
-   // std::cout << "Data saved at : " << filePath << std::endl;
+   std::cout << "Data saved at : " << filePath << std::endl;
 }
 
 void SaveManager::startAutoSave(Character &data)
@@ -138,7 +123,7 @@ void SaveManager::startAutoSave(Character &data)
     }
 
     autoSaveRunning = true;
-    const std::string autoPlayerFilePath = generateSaveFolderPath() + PATH_PLAYER_FILE;
+    const std::string autoPlayerFilePath = getSaveFolderPath() + PATH_PLAYER_FILE;
     int saveDelayFortheThread = SAVE_DELAY;
 
     // for the tread we have to define the lambda function and pass the data by reference
@@ -154,8 +139,8 @@ void SaveManager::startAutoSave(Character &data)
                                              saveCharacterFile(data);
                                              saveWorldFile();
 
-                                                     std::cout
-                                                 << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
+                                             std::cout
+                                                     << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
 
                                      } });
@@ -181,93 +166,6 @@ void SaveManager::stopAutoSave()
     }
 }
 
-bool SaveManager::isSaveFolderEmpty()
-{
-    const std::string saveDirectory = PATHSAVES;
-    namespace fs = std::filesystem;
-
-    fs::path dirPath(saveDirectory);
-
-    if (!fs::exists(dirPath) || !fs::is_directory(dirPath))
-    {
-        return false;
-    }
-
-    for (const auto &entry : fs::directory_iterator(dirPath))
-    {
-        if (entry.is_regular_file() || entry.is_directory())
-        {
-            return false; // On a trouvé au moins un fichier ou sous-dossier
-        }
-    }
-
-    return true; // Aucun fichier utile
-}
-
-std::string SaveManager::getDate(long timestamp)
-{
-    std::time_t time = static_cast<std::time_t>(timestamp);
-    std::tm *tm = std::localtime(&time);
-
-    char buffer[17]; // YYYY-MM-DD-HH-MM is 16 characters + null terminator
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d-%H-%M", tm);
-
-    return std::string(buffer);
-}
-
-long SaveManager::getTimestamp()
-{
-    return static_cast<long>(std::time(nullptr));
-}
-
-std::string SaveManager::generateSaveFolderPath()
-{
-    std::string folderName = "save-" + getDate(getTimestamp());
-    std::filesystem::path fullPath = std::filesystem::path(PATHSAVES) / folderName;
-    return fullPath.string(); // convert to std::string
-}
-
-std::string SaveManager::getMostRecentSaveFolder()
-{
-    const std::string saveDirectory = PATHSAVES;
-    namespace fs = std::filesystem;
-
-    fs::path dirPath(saveDirectory);
-    if (!fs::exists(dirPath) || !fs::is_directory(dirPath))
-    {
-        return ""; // Return an empty string if the directory doesn't exist
-    }
-
-    std::string mostRecentFolder;
-    std::time_t mostRecentTime = 0;
-
-    for (const auto &entry : fs::directory_iterator(dirPath))
-    {
-        if (entry.is_directory())
-        {
-            std::string folderName = entry.path().filename().string();
-            if (folderName.rfind("save-", 0) == 0) // Check if the folder name starts with "save-"
-            {
-                std::string timestampStr = folderName.substr(5); // Extract the timestamp part
-                std::tm tm = {};
-                std::istringstream ss(timestampStr);
-                ss >> std::get_time(&tm, "%Y-%m-%d-%H-%M");
-                if (!ss.fail())
-                {
-                    std::time_t folderTime = std::mktime(&tm);
-                    if (folderTime > mostRecentTime)
-                    {
-                        mostRecentTime = folderTime;
-                        mostRecentFolder = entry.path().string();
-                    }
-                }
-            }
-        }
-    }
-
-    return mostRecentFolder;
-}
-
 void SaveManager::setWorld(World *worldInstance)
 {
     this->world = worldInstance;
@@ -280,14 +178,15 @@ void SaveManager::saveWorldFile()
         std::cerr << "World instance is not set. Cannot save world data." << std::endl;
         return;
     }
- //   std::cout << "Begin saving world data..." << std::endl;
 
-    std::string saveFolder = generateSaveFolderPath();
-    std::string filePath = saveFolder + PATH_WORLD_FILE;
+
+
+    std::string filePath = getSaveFolderPath() + PATH_WORLD_FILE;
+    std::cout << "Saving world data to: " << filePath << std::endl;
 
     // TODO pour le moment on ne fait que la region actuelle mais faudra ajouter un system pour szuvgarder de nouvelle region
 
-    // Creation du header de la region actuelle
+    // Header creation
 
     std::ofstream out(filePath, std::ios::binary);
     if (!out)
@@ -361,13 +260,13 @@ void SaveManager::saveWorldFile()
     out.seekp(0, std::ios::beg);
     out.write(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
 
-  //  std::cout << "World saved to: " << filePath << std::endl;
+   std::cout << "World saved to: " << filePath << std::endl;
 }
 
 void SaveManager::loadWorldFile()
 {
 
-    std::string motRecentFolder = getMostRecentSaveFolder();
+    std::string motRecentFolder = getSaveFolderPath();
     std::string mostRecentWorldFilePath = motRecentFolder + PATH_WORLD_FILE;
 
   //
@@ -462,6 +361,8 @@ bool SaveManager::isDataFolderContainsOtherFolder() {
     std::cout << "No folders found in PATHSAVES." << std::endl;
     return false;
 }
+
+
 
 // TODO : pour l'oral parler des types de représentation qui existait avec pour t contre
 // JSON -> lisible mais pas optimisé quand il faut parcourir beaucoup de données + lourd

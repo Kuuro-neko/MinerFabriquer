@@ -136,8 +136,7 @@ void UpdateFPS() {
 int main(void) {
     Menu menu;
     SaveManager &saveManager = SaveManager::getInstance();
-    saveManager.loadPlayerData(character);
-    saveManager.startAutoSave(character);
+
 
 
 
@@ -268,31 +267,35 @@ int main(void) {
         std::cout << "No world folder found. Generating a new world..." << std::endl;
 
         std::string saveFolder = Menu::createWorld();
-        std::cout << saveFolder << std::endl;
+        saveManager.setSaveFolderPath(saveFolder);
+        world.generation();
+        saveManager.saveWorldFile(); // Save the world data after generation
+        saveManager.createPlayerDataFile(character);
 
     } else {
-        std::cout << "chooe to create world or load existing world" << std::endl;
-        int choice = menu.chooseLoadOrNewWorld();
+        int choice = Menu::chooseLoadOrNewWorld();
         if (choice == MENU_CREATE) {
 
             std::string saveFolder = Menu::createWorld();
+            std::cout << "Creating world in: " << saveFolder << std::endl;
+            saveManager.setSaveFolderPath(saveFolder);
+            world.generation();
+            saveManager.saveWorldFile(); // Save the world data after generation
+            saveManager.createPlayerDataFile(character);
         } else if (choice == MENU_LOAD) {
             std::string worldPath = menu.chooseWorld();
             std::cout << "Loading world from: " << worldPath << std::endl;
+            saveManager.setSaveFolderPath(worldPath);
+            saveManager.loadWorldFile();
+            saveManager.loadPlayerData(character);
 
         }
 
     }
+    saveManager.loadPlayerData(character);
+    std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
+    saveManager.startAutoSave(character);
 
-
-    if (!saveManager.isWorldFileEmpty()) {
-        // std::cout << "No world file found. Generating a new world..." << std::endl;
-        world.generation();
-        saveManager.saveWorldFile(); // Save the world data after generation
-    } else {
-        //    std::cout << "World file already exists, loading world data file..." << std::endl;
-        saveManager.loadWorldFile();
-    }
 
     // Associer le monde au personnage
     character.m_world = &world;

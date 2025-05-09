@@ -39,7 +39,7 @@ std::string Menu::chooseWorld() {
         }
     }
 
-    return PATHSAVES + "/" + worldNames[choice - 1];
+    return PATHSAVES  + worldNames[choice - 1];
 }
 
 std::string Menu::createWorld() {

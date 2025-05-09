@@ -53,14 +53,7 @@ public:
 
     void stopAutoSave();
 
-    // Functions used to create/get the folder name YYYY-MM-DD based on the timestamp to get the most recent
-    std::string getDate(long timestamp);
-
-    long getTimestamp();
-
-    std::string generateSaveFolderPath();
-
-    std::string getMostRecentSaveFolder();
+    void createPlayerDataFile(Character &character);
 
     //-----world data---------//
 
@@ -100,15 +93,17 @@ public:
 
     void readWorldFile(std::ifstream &in);
 
-    inline bool isWorldFileEmpty() {
-        return std::filesystem::exists(getMostRecentSaveFolder() + PATH_WORLD_FILE);
-    }
 
     bool isDataFolderContainsOtherFolder();
 
     std::string saveFolderPath;
 
-    void setSaveFolderPath(const std::string &path) {
+    inline void setSaveFolderPath(const std::string &path) {
         saveFolderPath = path;
     }
+    inline std::string getSaveFolderPath() {
+        return saveFolderPath;
+    }
+
+
 };
