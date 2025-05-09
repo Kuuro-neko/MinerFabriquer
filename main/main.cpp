@@ -444,8 +444,10 @@ int main(void) {
            glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
+    saveManager.saveWorldFile();
     root.cleanupBuffers();
     cubemapTexture.cleanupBuffers();
+
     // delete &hud;
 
     glDeleteProgram(programID);

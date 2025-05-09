@@ -136,10 +136,9 @@ void SaveManager::startAutoSave(Character &data)
                                          {
                                              std::cout << "Auto-saving player data..." << std::endl;
                                              //save all the file that we need (player data, world data)
-                                             saveCharacterFile(data);
                                              std::cout << "Auto-saving world data..." << std::endl;
                                              saveWorldFile();
-
+                                             saveCharacterFile(data);
                                              std::cout
                                                      << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
@@ -179,20 +178,19 @@ void SaveManager::saveWorldFile()
         std::cerr << "World instance is not set. Cannot save world data." << std::endl;
         return;
     }
-
+    std::cout << "Begin saving world data..." << std::endl;
 
 
     std::string filePath = getSaveFolderPath() + PATH_WORLD_FILE;
-    std::cout << "Saving world data to: " << filePath << std::endl;
 
     // TODO pour le moment on ne fait que la region actuelle mais faudra ajouter un system pour szuvgarder de nouvelle region
 
-    // Header creation
+    // Creation du header de la region actuelle
 
     std::ofstream out(filePath, std::ios::binary);
     if (!out)
     {
-        std::cerr << "Impossible to create the Saving file at " << filePath << std::endl;
+        std::cerr << "Impossible to create the Saving file" << std::endl;
     }
 
     // Header Part that will contains the offset and lenght but for now ir's empty
@@ -261,7 +259,8 @@ void SaveManager::saveWorldFile()
     out.seekp(0, std::ios::beg);
     out.write(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
 
-   std::cout << "World saved to: " << filePath << std::endl;
+    std::cout << "World saved to: " << filePath << std::endl;
+    std::cout<< "Number of chunks saved : " << world->getAllChunks().size() << std::endl;
 }
 
 void SaveManager::loadWorldFile()
@@ -280,6 +279,7 @@ void SaveManager::loadWorldFile()
     }
 
     readWorldFile(ifs);
+    std::cout<< "Number of chunks read : " << world->getAllChunks().size() << std::endl;
 }
 
 void SaveManager::readWorldFile(std::ifstream &in)
