@@ -626,7 +626,7 @@ Biome* BiomeManager::getBiomeById(int id)
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
-    return getBiomeById(MESA_BIOME);
+    //return getBiomeById(MESA_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);
@@ -678,7 +678,11 @@ Biome *BiomeManager::getBiome(int x, int z)
                         return getBiomeById(PLAINS_BIOME);
                     }
                 case TEMPERATURE_WARM:
-                    return getBiomeById(DESERT_BIOME);
+                    if(weirdness > 0.0f) {
+                        return getBiomeById(DESERT_BIOME);
+                    } else {
+                        return getBiomeById(MESA_BIOME);
+                    }
             }
         } else {
             switch(temperature) {
@@ -702,10 +706,10 @@ Biome *BiomeManager::getBiome(int x, int z)
                         return getBiomeById(PLAINS_BIOME);
                     }
                 case TEMPERATURE_WARM:
-                    if(weirdness > 0.3f) {
-                        return getBiomeById(MUSHROOM_BIOME);
-                    } else {
+                    if(weirdness > 0.5f) {
                         return getBiomeById(DESERT_BIOME);
+                    } else {
+                        return getBiomeById(MESA_BIOME);
                     }
             }
         } else {

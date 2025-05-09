@@ -13,7 +13,7 @@ std::set<std::pair<int, int>> World::getDirtyColumns()
 {
     std::set<std::pair<int, int>> dirtyColumns;
     for (auto &[key, column]: chunkColumns) {
-        if (column->isDirty()) {
+        if (column->isSkylightDirty()) {
             dirtyColumns.insert({key.x, key.y});
         }
     }
@@ -43,6 +43,8 @@ void World::updateSkyLightsInColumn(int x, int z)
             }
         }
     }
+
+    column->markSkylightDirty(false);
 }
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
@@ -425,7 +427,6 @@ void World::initialGeneration() {
 }
 
 void World::generateChunkColumn(int x, int z) {
-    std::cout << "Generating column " << x << ", " << z << std::endl;
     // Column initialisation
     for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
         std::shared_ptr<VoxelChunk> chunk = createEmptyChunk(x, y, z);
@@ -441,7 +442,8 @@ void World::generateChunkColumn(int x, int z) {
             getChunkColumn(x, z+1)
         );
     }
-    column->markAsDirty();
+    column->markChunksAsDirty();
+    column->markSkylightDirty(true);
 }
 
 void World::cleanupBuffers() {

@@ -10,6 +10,7 @@ private:
     std::vector<std::shared_ptr<VoxelChunk>> m_chunks;
     // Map of the surface height for each chunk-relative x,z in the chunk column
     std::vector<std::vector<int>> surfaceHeightmap;
+    bool skyLightdirty = true;
 public:
     ChunkColumn(int chunkCoordX, int chunkCoordZ) {
         m_chunkCoords = glm::ivec2(chunkCoordX, chunkCoordZ);
@@ -50,7 +51,8 @@ public:
     
     void allocateSurfaceHeightMap();
     void free();
-    bool isDirty();
-    void markAsDirty();
+    bool isSkylightDirty();
+    void markSkylightDirty(bool value);
+    void markChunksAsDirty();
     void sortChunks();
 };

@@ -126,17 +126,17 @@ void ChunkColumn::free()
     surfaceHeightmap.clear();
 }
 
-bool ChunkColumn::isDirty()
+bool ChunkColumn::isSkylightDirty()
 {
-    for (std::shared_ptr<VoxelChunk>chunk : m_chunks) {
-        if (chunk->dirty) {
-            return true;
-        }
-    }
-    return false;
+    return skyLightdirty;
 }
 
-void ChunkColumn::markAsDirty()
+void ChunkColumn::markSkylightDirty(bool value)
+{
+    skyLightdirty = value;
+}
+
+void ChunkColumn::markChunksAsDirty()
 {
     for (std::shared_ptr<VoxelChunk>chunk : m_chunks) {
         chunk->dirty = true;

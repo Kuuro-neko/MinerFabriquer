@@ -18,6 +18,14 @@
 
 GLFWwindow *window;
 
+void printTime(std::chrono::high_resolution_clock::time_point &start, std::string name) {
+    return;
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    std::cout << name << " took " << duration << " microseconds" << std::endl;
+    start = std::chrono::high_resolution_clock::now();
+}
+
 
 using namespace std;
 using namespace glm;
@@ -308,20 +316,30 @@ int main(void) {
         lastFrame = currentFrame;
         world.update(deltaTime);
 
+        
         // Poll inputs
         glfwPollEvents();
+        
+        auto time_a = std::chrono::high_resolution_clock::now();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
         character.listenAction(deltaTime);
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
+        printTime(time_a, "Camera update");
+
         world.updateLoadedChunks();
         frustum.update();
         world.updateVisibleChunk(frustum);
 
+        printTime(time_a, "Chunk update");
+
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
+
+        printTime(time_a, "Gravity update");
+
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         cubemapTexture.draw(camera);
@@ -351,9 +369,11 @@ int main(void) {
         
         glUseProgram(programID);
 
+        printTime(time_a, "GLuniforms");
+
         root.draw(programID);
 
-        
+        printTime(time_a, "Root draw");
 
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
