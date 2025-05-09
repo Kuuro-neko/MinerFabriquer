@@ -10,39 +10,90 @@
 #include <iostream>
 
 void World::generationLoop() {
-    while (running) {
-        std::unique_lock<std::mutex> lock(queueMutex);
-        queueCV.wait(lock, [&] { return !generationQueue.empty() || !running; });
+    while (generationRunning) {
+        std::unique_lock<std::mutex> lock(generationQueueMutex);
+        generationQueueCV.wait(lock, [&] { return !generationQueue.empty() || !generationRunning; });
 
-        if (!running) break;
+        if (!generationRunning) break;
 
         auto [x, z] = generationQueue.front();
         generationQueue.pop();
         lock.unlock();
 
-        generateChunkColumn(x, z);  // Actual chunk generation
+        {
+            std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
+            generateChunkColumn(x, z);  // Actual chunk generation
+        }
+    }
+}
+
+void World::suppressionLoop() {
+    while (suppressionRunning) {
+        std::unique_lock<std::mutex> lock(suppressionQueueMutex);
+        suppressionQueueCV.wait(lock, [&] { return !suppressionQueue.empty() || !suppressionRunning; });
+
+        if (!suppressionRunning) break;
+
+        auto [x, z] = suppressionQueue.front();
+        suppressionQueue.pop();
+        lock.unlock();
+
+        {
+            std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
+            removeChunkColumn(x, z);  // Actual column suppression
+        }
     }
 }
 
 void World::enqueueChunkGeneration(int x, int z) {
     {
-        std::lock_guard<std::mutex> lock(queueMutex);
+        std::lock_guard<std::mutex> lock(generationQueueMutex);
         generationQueue.push({x, z});
     }
-    queueCV.notify_one();
+    generationQueueCV.notify_one();
+}
+
+void World::enqueueColumnSuppression(int x, int z) {
+    {
+        std::lock_guard<std::mutex> lock(suppressionQueueMutex);
+        suppressionQueue.push({x, z});
+    }
+    suppressionQueueCV.notify_one();
 }
 
 void World::startGenerationThread() {
     generationThread = std::thread(&World::generationLoop, this);
 }
 
+void World::startSuppressionThread() {
+    suppressionThread = std::thread(&World::suppressionLoop, this);
+}
+
 void World::stopGenerationThread() {
-    running = false;
-    queueCV.notify_all();
+    generationRunning = false;
+    generationQueueCV.notify_all();
     if (generationThread.joinable())
         generationThread.join();
 }
 
+void World::stopSuppressionThread() {
+    suppressionRunning = false;
+    suppressionQueueCV.notify_all();
+    if (suppressionThread.joinable())
+        suppressionThread.join();
+}
+
+World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
+{
+    startGenerationThread();
+    startSuppressionThread();
+    initialGeneration();
+}
+
+World::~World() {
+    stopGenerationThread();
+    stopSuppressionThread();
+}
 
 std::set<std::pair<int, int>> World::getDirtyColumns()
 {
@@ -82,15 +133,7 @@ void World::updateSkyLightsInColumn(int x, int z)
     column->markSkylightDirty(false);
 }
 
-World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
-{
-    startGenerationThread();
-    initialGeneration();
-}
 
-World::~World() {
-    stopGenerationThread();
-}
 
 std::shared_ptr<VoxelChunk> World::createEmptyChunk(int x, int y, int z) {
     std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
@@ -352,7 +395,7 @@ void World::updateLoadedChunks() {
         }
     }
     for (const auto &key : toRemove) {
-        removeChunkColumn(key.x, key.y);
+        enqueueColumnSuppression(key.x, key.y);
     }
 
     // Initialize those not found that should exist.
@@ -371,30 +414,33 @@ void World::updateLoadedChunks() {
 }
 
 void World::draw(GLuint programID) {
-    std::set<std::pair<int, int>> dirtyColumns = getDirtyColumns();
-    // update lights for each dirtyColumn, ITERATE THROUGH THE SET OMG !!
-    for (auto &[x, z]: dirtyColumns) {
-        updateSkyLightsInColumn(x, z);
-    }
-
     glEnable(GL_CULL_FACE);
-    int count = 0;
-    for (auto &[key, chunk]: visibleChunks) {
-        if(!chunk) continue;
-        count += chunk->drawOpaque(programID);
-    }
-    std::cout << "Drawn " << count << " chunks out of " << chunks.size() << std::endl;
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //sort visible chunks by distance to camera
-    std::vector<std::pair<glm::ivec3, std::shared_ptr<VoxelChunk>>> sortedChunks(visibleChunks.begin(), visibleChunks.end());
-    std::sort(sortedChunks.begin(), sortedChunks.end(), [this](const auto &a, const auto &b) {
-        return glm::length(a.second->getWorldPosition() - camera->getPosition()) < glm::length(b.second->getWorldPosition() - camera->getPosition());
-    });
-    for (auto &[key, chunk]: sortedChunks) {
-        if(!chunk) continue;
-        chunk->drawTransparent(programID);
+    {
+        std::lock_guard<std::recursive_mutex> lock(worldMutex);
+        std::set<std::pair<int, int>> dirtyColumns = getDirtyColumns();
+        for (auto &[x, z]: dirtyColumns) {
+            updateSkyLightsInColumn(x, z);
+        }
+
+        int count = 0;
+        for (auto &[key, chunk]: visibleChunks) {
+            if(!chunk) continue;
+            count += chunk->drawOpaque(programID);
+        }
+    
+        std::cout << "Drawn " << count << " chunks out of " << chunks.size() << std::endl;
+        glDisable(GL_CULL_FACE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //sort visible chunks by distance to camera
+        std::vector<std::pair<glm::ivec3, std::shared_ptr<VoxelChunk>>> sortedChunks(visibleChunks.begin(), visibleChunks.end());
+        std::sort(sortedChunks.begin(), sortedChunks.end(), [this](const auto &a, const auto &b) {
+            return glm::length(a.second->getWorldPosition() - camera->getPosition()) < glm::length(b.second->getWorldPosition() - camera->getPosition());
+        });
+        for (auto &[key, chunk]: sortedChunks) {
+            if(!chunk) continue;
+            chunk->drawTransparent(programID);
+        }
     }
     glDisable(GL_BLEND);
     
@@ -465,6 +511,7 @@ void World::initialGeneration() {
 
 void World::generateChunkColumn(int x, int z) {
     // Column initialisation
+    std::lock_guard<std::recursive_mutex> lock(worldMutex);
     for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
         std::shared_ptr<VoxelChunk> chunk = createEmptyChunk(x, y, z);
     }
@@ -493,22 +540,24 @@ void World::cleanupBuffers() {
 void World::updateVisibleChunk(Frustrum &frustum) {
 
     // on parcourt tous les chunks et on les ajoute à la liste des chunks visibles s'ils sont dans le frustum
-    std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
     visibleChunks.clear();
-    for(const auto &column : chunkColumns) {
-        std::shared_ptr<ChunkColumn> chunkColumn = column.second;
-        int distance = std::abs(chunkColumn->getChunkCoords().x - camera->getPosition().x / CHUNK_SIZE) +
-                        std::abs(chunkColumn->getChunkCoords().y - camera->getPosition().z / CHUNK_SIZE);
-        if (distance<= RENDERER_DISTANCE) {
-            for (auto &chunk : chunkColumn->getChunks()) {
-                if (chunk && frustum.isBoundingBoxInFrustum(chunk->getWorldPosition(),
-                                                             chunk->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
-                    visibleChunks[chunk->m_chunkCoords] = chunk;
+    {
+        std::lock_guard<std::recursive_mutex> lock(worldMutex);
+        std::vector<std::shared_ptr<VoxelChunk> > chunks = getAllChunks();
+        for(const auto &column : chunkColumns) {
+            std::shared_ptr<ChunkColumn> chunkColumn = column.second;
+            int distance = std::abs(chunkColumn->getChunkCoords().x - camera->getPosition().x / CHUNK_SIZE) +
+                            std::abs(chunkColumn->getChunkCoords().y - camera->getPosition().z / CHUNK_SIZE);
+            if (distance<= RENDERER_DISTANCE) {
+                for (auto &chunk : chunkColumn->getChunks()) {
+                    if (chunk && frustum.isBoundingBoxInFrustum(chunk->getWorldPosition(),
+                                                                chunk->getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))) {
+                        visibleChunks[chunk->m_chunkCoords] = chunk;
+                    }
                 }
             }
         }
     }
-
 }
 
 void World::setCamera(Camera &camera) {
@@ -601,23 +650,27 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
         uint64_t key = encodePos(x, y, z);
         if (!visited.insert(key).second) continue;
         
-        std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
-        if (chunk == nullptr) continue;
-        
-        int localX = betterModulo(x, CHUNK_SIZE);
-        int localY = betterModulo(y, CHUNK_SIZE);
-        int localZ = betterModulo(z, CHUNK_SIZE);
+        {
+            std::lock_guard<std::recursive_mutex> lock(worldMutex);
 
-        int bloc = chunk->getBloc(localX, localY, localZ);
+            std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
+            if (chunk == nullptr) continue;
+            
+            int localX = betterModulo(x, CHUNK_SIZE);
+            int localY = betterModulo(y, CHUNK_SIZE);
+            int localZ = betterModulo(z, CHUNK_SIZE);
 
-        if (BlocDatabase::getInstance().isOpaque(bloc)) continue;
+            int bloc = chunk->getBloc(localX, localY, localZ);
 
-        int currentLight = chunk->m_lights[localX][localY][localZ];
-        //std::cout << "Light floodfill at " << x << ", " << y << ", " << z << " with level " << lightLevel << " Current is " << currentLight << std::endl;
-        if (currentLight > lightLevel) continue;
-        if (currentLight < lightLevel) chunk->dirty = true;
-        
-        chunk->m_lights[localX][localY][localZ] = lightLevel;
+            if (BlocDatabase::getInstance().isOpaque(bloc)) continue;
+
+            int currentLight = chunk->m_lights[localX][localY][localZ];
+            //std::cout << "Light floodfill at " << x << ", " << y << ", " << z << " with level " << lightLevel << " Current is " << currentLight << std::endl;
+            if (currentLight > lightLevel) continue;
+            if (currentLight < lightLevel) chunk->dirty = true;
+            
+            chunk->m_lights[localX][localY][localZ] = lightLevel;
+        }
 
         // Propagation dans les 6 directions
         queue.emplace(x + 1, y, z, lightLevel - 1);
@@ -631,6 +684,7 @@ void World::lightFloodfill(int startX, int startY, int startZ, int startLightLev
 
 void World::setLightLevel(int x, int y, int z, int lightLevel)
 {
+    std::lock_guard<std::recursive_mutex> lock(worldMutex);
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk == nullptr) return;
 

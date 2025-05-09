@@ -12,7 +12,7 @@ VoxelChunk::VoxelChunk() : VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE) {
     allocateCubes();
 }
 VoxelChunk::~VoxelChunk() {
-    cleanup();
+    //cleanup();
 }
 
 bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
@@ -108,7 +108,7 @@ int VoxelChunk::removeBlock(int x, int y, int z) {
 }
 
 bool opaqueNeighborCheck(int neighbor) {
-    return neighbor == AIR || !BlocDatabase::getInstance().isOpaque(neighbor); // || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
+    return neighbor == AIR || !BlocDatabase::getInstance().isOpaque(neighbor) || neighbor == OUT_OF_BOUNDS_BLOC; // to display chunk sides even if it's out of bounds
 }
 
 bool transparentNeighborCheck(int neighbor, int current, unsigned char face) {
@@ -432,7 +432,7 @@ void VoxelChunk::allocateCubes() {
 
 void VoxelChunk::cleanup() {
     m_cubes.clear();
-    cleanupBuffers();
+    //cleanupBuffers();
 }
 
 void VoxelChunk::markDirtyNeighbors(int x, int y, int z) {

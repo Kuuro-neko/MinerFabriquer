@@ -49,13 +49,22 @@ private:
     // Update the sky lights for a given chunk x,z in the chunk column
     void updateSkyLightsInColumn(int x, int z);
 
-    std::thread generationThread;
+    std::recursive_mutex worldMutex; // Mutex to lock the chunks data
+
+    std::thread generationThread; // Thread for chunk generation
     std::queue<std::pair<int, int>> generationQueue;
-    std::mutex queueMutex;
-    std::condition_variable queueCV;
-    std::atomic<bool> running = true;
+    std::mutex generationQueueMutex;
+    std::condition_variable generationQueueCV;
+    std::atomic<bool> generationRunning = true;
+
+    std::thread suppressionThread; // Thread for chunk suppression
+    std::queue<std::pair<int, int>> suppressionQueue;
+    std::mutex suppressionQueueMutex;
+    std::condition_variable suppressionQueueCV;
+    std::atomic<bool> suppressionRunning = true;
 
     void generationLoop();
+    void suppressionLoop();
 public:
     World();
 
@@ -66,8 +75,11 @@ public:
     void generateChunkColumn(int x, int z);
 
     void enqueueChunkGeneration(int x, int z);
+    void enqueueColumnSuppression(int x, int z);
     void startGenerationThread();
+    void startSuppressionThread();
     void stopGenerationThread();
+    void stopSuppressionThread();
 
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
     std::shared_ptr<VoxelChunk> createEmptyChunk(int x, int y, int z);
