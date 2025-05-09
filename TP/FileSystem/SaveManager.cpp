@@ -137,6 +137,7 @@ void SaveManager::startAutoSave(Character &data)
                                              std::cout << "Auto-saving player data..." << std::endl;
                                              //save all the file that we need (player data, world data)
                                              saveCharacterFile(data);
+                                             std::cout << "Auto-saving world data..." << std::endl;
                                              saveWorldFile();
 
                                              std::cout
