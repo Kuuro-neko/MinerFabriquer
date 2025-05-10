@@ -281,7 +281,8 @@ void MushroomBiome::addMushroomCup(std::shared_ptr<VoxelChunk> chunk, int x, int
 {
     for (int dx = -stemRadius-1; dx <= stemRadius; dx+=stemRadius+1) {
         for (int dz = -stemRadius-1; dz <= stemRadius; dz+=stemRadius+1) {
-            if (chunk->getBloc(x + dx, baseHeight + 2, z + dz) != AIR) {
+            int b = chunk->getBloc(x + dx, baseHeight + 2, z + dz);
+            if (b != AIR) {
                 return;
             }
         }

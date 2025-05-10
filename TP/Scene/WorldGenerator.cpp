@@ -67,9 +67,9 @@ void WorldGenerator::decorateProceduralChunk(World &world, std::shared_ptr<Voxel
 void WorldGenerator::setBaseStone(std::shared_ptr<VoxelChunk> chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight) {
     for (int y = 0; y < CHUNK_SIZE; y++) {
         if (y + worldAABBMin.y <= baseHeight) {
-            chunk->generationSetBloc(x, y, z, STONE);
+            chunk->generationSetBloc(x, y, z, STONE, false, false);
         } else if (y + worldAABBMin.y < WATER_LEVEL) {
-            chunk->generationSetBloc(x, y, z, WATER);
+            chunk->generationSetBloc(x, y, z, WATER, false, false);
         }
     }
 }

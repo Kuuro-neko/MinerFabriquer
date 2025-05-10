@@ -6,10 +6,11 @@
 
 #include <Defines.hpp>
 
+#include <Exceptions.hpp>
 
 
 class World;
-
+class ChunkColumn;
 struct UngeneratedBlock {
     int x;
     int y;
@@ -36,7 +37,7 @@ public:
      * @return true 
      * @return false 
      */
-    bool setBloc(int x, int y, int z, int bloc);
+    bool setBloc(int x, int y, int z, int bloc, bool columnFallback = true, bool worldFallback = true);
 
     /**
      * @brief Set a block in the chunk, used for generation so it bypasses some checks
@@ -48,14 +49,19 @@ public:
      * @return true 
      * @return false 
      */
-    bool generationSetBloc(int x, int y, int z, int bloc);
+    bool generationSetBloc(int x, int y, int z, int bloc, bool columnFallback = true, bool worldFallback = true);
 
-    int getBloc(int x, int y, int z);
+    // Allow to save an out of bound bloc to be generated later. Given the coordinates as they are in local with OOB, this functions computes the correction.
+    bool saveUngeneratedBlock(int x, int y, int z, int bloc);
+
+    int getBloc(int x, int y, int z, bool columnFallback = true, bool worldFallback = true);
     int getBlocIncludingNeighbors(int x, int y, int z);
 
-    unsigned short getLightLevelIncludingNeighbors(int x, int y, int z);
+    int getLightLevelIncludingNeighbors(int x, int y, int z);
 
-    unsigned short getFaceLight(int x, int y, int z, int face);
+    int getLightLevel(int x, int y, int z);
+
+    int getFaceLight(int x, int y, int z, int face);
 
     int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
@@ -96,6 +102,7 @@ public:
     std::vector<UngeneratedBlock> m_unGeneratedBlocks;
     glm::ivec3 m_chunkCoords;
     World *m_world;
+    std::shared_ptr<ChunkColumn> m_chunkColumn;
     VoxelMeshObject m_opaqueMesh;
     VoxelMeshObject m_transparentMesh;
 

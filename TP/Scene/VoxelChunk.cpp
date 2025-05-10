@@ -1,5 +1,6 @@
 #include <TP/Scene/VoxelChunk.hpp>
 #include <TP/Scene/World.hpp>
+#include <TP/Scene/ChunkColumn.hpp>
 #include <TP/Character/Character.hpp>
 #include "VoxelChunk.hpp"
 
@@ -15,11 +16,21 @@ VoxelChunk::~VoxelChunk() {
     //cleanup();
 }
 
-bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
+bool VoxelChunk::setBloc(int x, int y, int z, int bloc, bool columnFallback, bool worldFallback) {
     //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
-    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-        //std::cout << "Error: Out of bounds" << std::endl;
-        return m_world->setBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
+    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+        if (worldFallback) {
+            return m_world->setBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
+        } else {
+            return false;
+        }
+    }
+    if (y < 0 || y >= m_sizeY) {
+        if (columnFallback) {
+            return m_chunkColumn->setBloc(x, y, z, bloc);
+        } else {
+            return false;
+        }
     }
     if (m_cubes[x][y][z] != AIR) {
         //std::cout << "Error: Block already set" << std::endl;
@@ -32,25 +43,56 @@ bool VoxelChunk::setBloc(int x, int y, int z, int bloc) {
     return true;
 }
 
-bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
-    if (y < 0 || y >= m_sizeY) {
-        return m_world->generationSetBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
-    }
+bool VoxelChunk::saveUngeneratedBlock(int x, int y, int z, int bloc) {
+    int targetX = x;
+    int targetZ = z;
+    int chunkX = m_chunkCoords.x;
+    int chunkZ = m_chunkCoords.z;
     if (x < 0) {
-        m_unGeneratedBlocks.push_back({betterModulo(x, CHUNK_SIZE), y, z, m_chunkCoords.x -1, m_chunkCoords.z, bloc});
-        return false;
+        while(targetX < 0) {
+            targetX += m_sizeX;
+            chunkX--;
+        }
     }
     if (x >= m_sizeX) {
-        m_unGeneratedBlocks.push_back({betterModulo(x, CHUNK_SIZE), y, z, m_chunkCoords.x +1, m_chunkCoords.z, bloc});
-        return false;
+        while(targetX >= m_sizeX) {
+            targetX -= m_sizeX;
+            chunkX++;
+        }
     }
     if (z < 0) {
-        m_unGeneratedBlocks.push_back({x, y, betterModulo(z, CHUNK_SIZE), m_chunkCoords.x, m_chunkCoords.z -1, bloc});
-        return false;
+        while(targetZ < 0) {
+            targetZ += m_sizeZ;
+            chunkZ--;
+        }
     }
     if (z >= m_sizeZ) {
-        m_unGeneratedBlocks.push_back({x, y, betterModulo(z, CHUNK_SIZE), m_chunkCoords.x, m_chunkCoords.z +1, bloc});
-        return false;
+        while(targetZ >= m_sizeZ) {
+            targetZ -= m_sizeZ;
+            chunkZ++;
+        }
+    }
+    m_unGeneratedBlocks.push_back({
+        targetX,
+        y,
+        targetZ,
+        chunkX,
+        chunkZ,
+        bloc
+    });
+    return true;
+}
+
+bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc, bool columnFallback, bool worldFallback) {
+    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+        saveUngeneratedBlock(x, y, z, bloc);
+    }
+    if (y < 0 || y >= m_sizeY) {
+        if (columnFallback) {
+            return m_chunkColumn->generationSetBloc(x, y, z, bloc);
+        } else {
+            throw ChunkOOBException(x, y, z, m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z);
+        }
     }
     m_cubes[x][y][z] = bloc;
     m_lights[x][y][z] = BlocDatabase::getInstance().defaultLightLevel(bloc);
@@ -58,26 +100,45 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc) {
     return true;
 }
 
-int VoxelChunk::getBloc(int x, int y, int z) {
-    //quand on sort du chunk, on renvoie -1
-    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-        return m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+int VoxelChunk::getBloc(int x, int y, int z, bool columnFallback, bool worldFallback) {
+    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+        throw ChunkOOBException(x, y, z, m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z);
+    }
+    if (y < 0 || y >= m_sizeY) {
+        if (columnFallback) {
+            return m_chunkColumn->getBloc(x, y + m_chunkCoords.y * m_sizeY, z);
+        } else {
+            throw ChunkOOBException(x, y, z, m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z);
+        } 
     }
     return m_cubes[x][y][z];
 }
 
 int VoxelChunk::getBlocIncludingNeighbors(int x, int y, int z) {
-    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-        int a = m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
-        return a;
+    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+        return m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+    }
+    if (y < 0 || y >= m_sizeY) {
+        return m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+        //return m_chunkColumn->getBloc(x, y + m_chunkCoords.y * m_sizeY, z); TODO make this work, not critical
     }
     return m_cubes[x][y][z];
 }
 
-unsigned short VoxelChunk::getLightLevelIncludingNeighbors(int x, int y, int z) {
-    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ) {
-        int a = m_world->getLightLevel(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
-        return a;
+int VoxelChunk::getLightLevelIncludingNeighbors(int x, int y, int z) {
+    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+        return m_world->getLightLevel(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+    }
+    if (y < 0 || y >= m_sizeY) {
+        //return m_world->getLightLevel(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+        return m_chunkColumn->getLightLevel(x, y + m_chunkCoords.y * m_sizeY, z);
+    }
+    return getLightLevel(x, y, z);
+}
+
+int VoxelChunk::getLightLevel(int x, int y, int z) {
+    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ || y < 0 || y >= m_sizeY) {
+        throw ChunkOOBException(x, y, z, m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z);
     }
     return m_lights[x][y][z];
 }
@@ -115,10 +176,8 @@ bool transparentNeighborCheck(int neighbor, int current, unsigned char face) {
     return neighbor == AIR || (current == WATER && face & FACE_TOP && BlocDatabase::getInstance().isSolid(neighbor)); //  || neighbor == OUT_OF_BOUNDS_BLOC;
 }
 
-
-
-unsigned short VoxelChunk::getFaceLight(int x, int y, int z, int face) {
-    unsigned short light = 0;
+int VoxelChunk::getFaceLight(int x, int y, int z, int face) {
+    int light = 15;
     if (face & FACE_EAST) {
         light = this->getLightLevelIncludingNeighbors(x - 1, y, z);
     }
@@ -435,8 +494,8 @@ void VoxelChunk::cleanup() {
     //cleanupBuffers();
 }
 
+// Mark neighboring chunks as dirty if the block is on the edge of the chunk
 void VoxelChunk::markDirtyNeighbors(int x, int y, int z) {
-    // Mark neighboring chunks as dirty if the block is on the edge of the chunk
     if (x == 0 || x == m_sizeX - 1 || y == 0 || y == m_sizeY - 1 || z == 0 || z == m_sizeZ - 1) {
         std::vector<std::shared_ptr<VoxelChunk>> neighbors;
         if (x == 0) {

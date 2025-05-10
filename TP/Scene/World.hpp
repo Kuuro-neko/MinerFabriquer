@@ -81,6 +81,8 @@ public:
     void stopGenerationThread();
     void stopSuppressionThread();
 
+    void addColumn(std::shared_ptr<ChunkColumn> column);
+
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
     std::shared_ptr<VoxelChunk> createEmptyChunk(int x, int y, int z);
 
@@ -88,7 +90,7 @@ public:
     void removeChunkColumn(int x, int z);
 
     // Get a chunk column at the given CHUNK coordinates
-    std::shared_ptr<ChunkColumn> getChunkColumn(int x, int z);
+    std::shared_ptr<ChunkColumn> getChunkColumn(int x, int z) const;
     
     // Return all chunks in the world
     std::vector<std::shared_ptr<VoxelChunk> > getAllChunks();
@@ -97,10 +99,10 @@ public:
     std::shared_ptr<VoxelChunk> getChunk(int x, int y, int z);
 
     // Get a pointer to the chunk at the given WORLD coordinates
-    std::shared_ptr<VoxelChunk> getChunkContaining(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> getChunkContaining(int x, int y, int z) const;
 
     // Get a pointer to the chunk at the given WORLD coordinates (float version)
-    std::shared_ptr<VoxelChunk> getChunkContaining(glm::vec3 position);
+    std::shared_ptr<VoxelChunk> getChunkContaining(glm::vec3 position) const;
 
     /**
      * @brief Get all the chunks that intersect with the given ray and max distance.
