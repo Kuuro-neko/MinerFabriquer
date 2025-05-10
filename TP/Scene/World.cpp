@@ -655,6 +655,7 @@ void World::resolveCollisionForBlock(Zombie &zombie, glm::vec3 blockPosition) {
     }
 }
 
+
 void World::addChunkColumn(ChunkColumn *column)
 {
     if (!column)

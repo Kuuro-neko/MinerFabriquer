@@ -443,8 +443,7 @@ void Entity::setCurrentSequence(const std::string& sequenceName) {
 
 
 void Entity::updateAnimation(float deltaTime) {
-    std::cout << "Updating animation, state: " << m_currentState << ", sequence: " 
-              << (m_currentSequence ? "active" : "null") << std::endl;
+    // std::cout << "Updating animation, state: " << m_currentState << ", sequence: " << (m_currentSequence ? "active" : "null") << std::endl;
     updatePoseAnimation(deltaTime);
 }
 

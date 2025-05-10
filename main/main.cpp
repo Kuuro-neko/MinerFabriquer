@@ -325,7 +325,7 @@ int main(void) {
 
     Zombie* zombie = new Zombie(
         Transform(
-            glm::vec3(32, 36, 32),
+            glm::vec3(0, 61, 0),
             DEFAULT_ROTATION,
             1),
         &world,
