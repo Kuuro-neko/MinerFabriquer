@@ -32,6 +32,11 @@ Character::Character(Transform transform, Camera *camera, World *world, MeshObje
     // on setHightlight la bounding box
 }
 
+void Character::setCharacterModel(Entity* model) {
+    m_characterModel = model;
+    initializePlayerAnimations(m_characterModel);
+}
+
 void Character::move(glm::vec3 direction)
 {
     translate(direction);
@@ -54,7 +59,7 @@ void Character::listenAction(float dt)
     cameraRightNoUp = normalize(cameraRightNoUp);
     vecteurDirection = glm::vec3(0.f);
 
-    alignWithCamera(cameraFrontNoUp);
+    // alignWithCamera(cameraFrontNoUp); 
 
     glm::vec3 currentPosition = getWorldPosition();
     int currentBlock = m_world->getBloc(static_cast<int>(currentPosition.x),
@@ -457,6 +462,24 @@ void Character::update(float dt)
     {
         placeCooldown += dt;
     }
+
+    if (m_characterModel) {
+        if (sprinting) {
+            m_characterModel->setState(WALKING); 
+        } else if (glm::length(vecteurDirection) > 0.01f) {
+            m_characterModel->setState(WALKING);
+        } else {
+            m_characterModel->setState(IDLE);
+        }
+        
+        if (glm::length(vecteurDirection) > 0.01f) {
+            glm::vec3 cameraFront = camera->getRotation() * VEC_FRONT;
+            cameraFront.y = 0;
+            // alignWithCamera(cameraFront);
+        }
+
+        m_characterModel->updateAnimation(dt);
+    }
     updateBoundingBox();
     AABBRenderer->setHighlight(getMinBoundingBox());
 }
@@ -608,13 +631,72 @@ void Character::resolveGravity(float &deltaTime)
 }
 
 void Character::alignWithCamera(const glm::vec3& cameraDirection) {
-    if (gamemode == GAMEMODE_SPECTATOR)
+    if (gamemode == GAMEMODE_SPECTATOR|| !m_characterModel)
         return;
         
     float targetAngle = atan2(cameraDirection.x, cameraDirection.z);
     
-    m_transform.m_rotation = DEFAULT_ROTATION;
-    rotate(-targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+    m_characterModel->m_transform.m_rotation = DEFAULT_ROTATION;
+    m_characterModel->rotate(-targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     
-    updateModelMatrix();
+    m_characterModel->updateModelMatrix();
+}
+
+// Ajoutez cette méthode
+void Character::initializePlayerAnimations(Entity* characterModel) {
+    characterModel->initializeBasePose();
+    createWalkingPoses(characterModel);
+    
+    std::vector<std::string> idlePoses = {"base"};
+    std::vector<float> idleDurations = {1.0f};
+    characterModel->createAnimationSequence("idle", idlePoses, idleDurations, true);
+    
+    std::vector<std::string> walkPoses = {"walk_left", "base", "walk_right", "base"};
+    std::vector<float> walkDurations = {0.3f, 0.15f, 0.3f, 0.15f};
+    characterModel->createAnimationSequence("walking", walkPoses, walkDurations, true);
+    
+    characterModel->setCurrentSequence("idle");
+}
+
+void Character::createWalkingPoses(Entity* characterModel) {
+    EntityPose& basePose = characterModel->m_poses["base"];
+    
+    // Pose de marche - jambe gauche avant
+    EntityPose walkLeft("walk_left");
+    walkLeft = basePose;
+    
+    // Rotation de la jambe gauche vers l'avant
+    glm::mat3x3 rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.leftLegTransform.m_rotation = rotMatX * walkLeft.leftLegTransform.m_rotation;
+    
+    // Rotation de la jambe droite vers l'arrière
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-15.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.rightLegTransform.m_rotation = rotMatX * walkLeft.rightLegTransform.m_rotation;
+    
+    // Balancer des bras opposés aux jambes
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.leftArmTransform.m_rotation = rotMatX * walkLeft.leftArmTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.rightArmTransform.m_rotation = rotMatX * walkLeft.rightArmTransform.m_rotation;
+    
+    characterModel->addPose("walk_left", walkLeft);
+    
+    // Pose de marche - jambe droite avant (miroir de la première pose)
+    EntityPose walkRight("walk_right");
+    walkRight = basePose;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-15.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.leftLegTransform.m_rotation = rotMatX * walkRight.leftLegTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.rightLegTransform.m_rotation = rotMatX * walkRight.rightLegTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.leftArmTransform.m_rotation = rotMatX * walkRight.leftArmTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.rightArmTransform.m_rotation = rotMatX * walkRight.rightArmTransform.m_rotation;
+    
+    characterModel->addPose("walk_right", walkRight);
 }

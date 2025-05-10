@@ -250,10 +250,11 @@ int main(void) {
 
     Entity* characterModel = new Entity();
     characterModel->setFPSActive(&camera.m_attached);
-    characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
+    characterModel->generateHumanoidMesh(-0.38f);
     Texture* playerTexture = new Texture("../textures/steve.png");
     characterModel->setTexture(playerTexture);
     character.addChild(characterModel);
+    character.setCharacterModel(characterModel);
     root.addChild(&character);
     character.setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character.getWorldPosition());

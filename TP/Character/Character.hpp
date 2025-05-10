@@ -15,6 +15,8 @@
 #include "vector"
 #include <TP/GUI/HUD.hpp>
 #include <Defines.hpp>
+#include "TP/Scene/Entity.hpp"
+
 
 class Character : public SceneNode {
 
@@ -56,6 +58,8 @@ public:
     bool isInWater = false;
 
     void setHUD(HUD* hud) { m_hud = hud; }
+
+    void setCharacterModel(Entity* model);
 
 private:
 
@@ -102,6 +106,9 @@ private:
     HUD* m_hud = nullptr;
 
     void alignWithCamera(const glm::vec3& cameraDirection);
+    void initializePlayerAnimations(Entity* characterModel);
+    void createWalkingPoses(Entity* characterModel);
+    Entity* m_characterModel = nullptr;
 };
 
 #endif // CHARACTER_HPP

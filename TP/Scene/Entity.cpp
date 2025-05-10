@@ -365,7 +365,6 @@ void Entity::setTexture(Texture* texture) {
 
 
 void EntityPose::initFromEntity(Entity* entity) {
-    // Implementation details
     headTransform = entity->getHead()->m_transform;
     torsoTransform = entity->m_transform;
     leftArmTransform = entity->getLeftArm()->m_transform;
@@ -444,6 +443,8 @@ void Entity::setCurrentSequence(const std::string& sequenceName) {
 
 
 void Entity::updateAnimation(float deltaTime) {
+    std::cout << "Updating animation, state: " << m_currentState << ", sequence: " 
+              << (m_currentSequence ? "active" : "null") << std::endl;
     updatePoseAnimation(deltaTime);
 }
 
