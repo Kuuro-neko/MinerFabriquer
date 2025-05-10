@@ -19,10 +19,10 @@ void PlainsBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, 
 
 void PlainsBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight, z) != GRASS) return;
-    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
+    // if (chunk->getBloc(x, baseHeight, z) != GRASS) return;
+    if (chunk->getBloc(x, baseHeight+2, z) != AIR) return;
 
-    if (getRandom1000() < 10) { // 1% chance
+    if (getRandom1000() < 5) {
         chunk->generationSetBloc(x, baseHeight, z, DIRT);
         for (int y = 1; y < 4; y++) {
             chunk->generationSetBloc(x, baseHeight + y, z, LOG_OAK);
@@ -108,8 +108,8 @@ void OceanBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, i
 
 void OceanBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight, z) != SAND) return;
-    if (chunk->getBloc(x, baseHeight+1, z) != WATER) return;
+    //if (chunk->getBloc(x, baseHeight, z) != SAND) return;
+    if (chunk->getBloc(x, baseHeight+3, z) != WATER) return;
     if (getRandomFloat() < 0.998f) return;
 
     if (coralNoise.GetNoise((float) x,(float) z) > 0.1f) {
@@ -156,8 +156,8 @@ void IceBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int
 
 void IceBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight, z) == AIR) return;
-    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
+    //if (chunk->getBloc(x, baseHeight, z) == AIR) return;
+    if (chunk->getBloc(x, baseHeight+2, z) != AIR) return;
 
     float p = getRandomFloat();
 
@@ -175,7 +175,7 @@ void IceBiome::addIceSpike(std::shared_ptr<VoxelChunk> chunk, int x, int z, int 
     for (; y < 0; y++) {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
-                if (std::abs(dx) + std::abs(dz) <= radius) chunk->setBloc(x + dx, baseHeight + y, z + dz, ICE); // Set the base of the spike
+                if (std::abs(dx) + std::abs(dz) <= radius) chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, ICE); // Set the base of the spike
             }
         }
     }
@@ -184,7 +184,7 @@ void IceBiome::addIceSpike(std::shared_ptr<VoxelChunk> chunk, int x, int z, int 
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dz = -radius; dz <= radius; dz++) {
                     int delta = std::abs(dx) + std::abs(dz);
-                    if(getRandomFloat() <= 1.0f - float(delta)/float(5*radius)) chunk->setBloc(x + dx, baseHeight + y, z + dz, ICE); // Repetitive rings
+                    if(getRandomFloat() <= 1.0f - float(delta)/float(5*radius)) chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, ICE); // Repetitive rings
                 }
             }
         } else {
@@ -230,9 +230,9 @@ void CristalPeaksBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z
         }
         float noiseValue = amethystNoise.GetNoise((float)x+chunk->m_chunkCoords.x * CHUNK_SIZE,(float) y, (float)z+chunk->m_chunkCoords.z * CHUNK_SIZE);
         if (noiseValue < 0.05f) {
-            chunk->m_world->generationSetBloc(wX, y, wZ, CALCITE);
+            chunk->generationSetBloc(wX, y, wZ, AMETHYST);
         } else if (noiseValue < 0.09f) {
-            chunk->m_world->generationSetBloc(wX, y, wZ, AMETHYST);
+            chunk->generationSetBloc(wX, y, wZ, CALCITE);
         }
     }
 }
@@ -263,8 +263,8 @@ void MushroomBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z
 
 void MushroomBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
-    if (chunk->getBloc(x, baseHeight, z) == AIR) return;
-    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
+    if (chunk->getBloc(x, baseHeight, z, true, false) == AIR) return;
+    if (chunk->getBloc(x, baseHeight + 2, z, true, false) != AIR) return;
 
     if (getRandomFloat() >= 0.9975f) {
         int stemRadius = getRandom1000() % 2;
@@ -279,14 +279,6 @@ void MushroomBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, in
 
 void MushroomBiome::addMushroomCup(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int stemHeight, int stemRadius, float capRadius, int stemMaterial, int capMaterial)
 {
-    for (int dx = -stemRadius-1; dx <= stemRadius; dx+=stemRadius+1) {
-        for (int dz = -stemRadius-1; dz <= stemRadius; dz+=stemRadius+1) {
-            int b = chunk->getBloc(x + dx, baseHeight + 2, z + dz);
-            if (b != AIR) {
-                return;
-            }
-        }
-    }
     int distance;
     for (int dx = -stemRadius; dx <= stemRadius; dx++) {
         for (int dz = -stemRadius; dz <= stemRadius; dz++) {
@@ -294,7 +286,7 @@ void MushroomBiome::addMushroomCup(std::shared_ptr<VoxelChunk> chunk, int x, int
             // Set the base of the mushroom
             for (int y = -2; y < 0; y++) {
                 if (distance <= stemRadius) {
-                    chunk->setBloc(x + dx, baseHeight + y, z + dz, stemMaterial);
+                    chunk->generationSetBloc(x + dx, baseHeight + y, z + dz, stemMaterial);
                 }
             }
             // Set the stem of the mushroom
@@ -338,7 +330,7 @@ void MushroomBiome::addMushroomReverseU(std::shared_ptr<VoxelChunk> chunk, int x
     float distance;
     // Set the base of the mushroom
     for (int y = -2; y < capRadius; y++) {
-        chunk->setBloc(x, baseHeight + y, z, stemMaterial);
+        chunk->generationSetBloc(x, baseHeight + y, z, stemMaterial);
     }
     glm::ivec3 center = glm::ivec3(x, baseHeight + capRadius/2, z);
     for (int y = baseHeight + capRadius*3; y >= baseHeight + 2; y--) {
@@ -445,37 +437,39 @@ void TaigaBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, i
 
 void TaigaBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
-    addSpruceTree(chunk, x, z, baseHeight, getRandom1000() % 2);
+    if (chunk->getBloc(x, baseHeight + 2, z, true, false) != AIR) return;
+
+    if(getRandom1000() < 5) addSpruceTree(chunk, x, z, baseHeight, getRandom1000() % 2);
 }
 
 void TaigaBiome::addSpruceTree(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height)
 {
-    if (chunk->getBloc(x, baseHeight, z) != PODZOL) return;
-    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
+    /*int floor = chunk->getBloc(x, baseHeight-1, z);
+    int floorAbove = chunk->getBloc(x, baseHeight, z);
+    if (floor != PODZOL) return;
+    if (floorAbove != AIR) return;*/
 
     int actualHeight = 6 + 2 * height;
-    if (getRandom1000() < 10) { // 1% chance
-        chunk->generationSetBloc(x, baseHeight, z, DIRT);
-        for (int dx = -3; dx <= 3; dx++) {
-            for (int dz = -3; dz <= 3; dz++) {
+    chunk->generationSetBloc(x, baseHeight, z, DIRT);
+    for (int dx = -3; dx <= 3; dx++) {
+        for (int dz = -3; dz <= 3; dz++) {
+            if (std::abs(dx) + std::abs(dz) <= 1) {
+                chunk->generationSetBloc(x + dx, baseHeight + actualHeight - 1, z + dz, SPRUCE_LEAVES);
+            }
+            for (int i = 0; i <= height; i++) {
+                if (std::abs(dx) + std::abs(dz) <= 2) {
+                    chunk->generationSetBloc(x + dx, baseHeight + 4 + i * 2, z + dz, SPRUCE_LEAVES);
+                }
                 if (std::abs(dx) + std::abs(dz) <= 1) {
-                    chunk->setBloc(x + dx, baseHeight + actualHeight - 1, z + dz, SPRUCE_LEAVES);
+                    chunk->generationSetBloc(x + dx, baseHeight + 3 + i * 2, z + dz, SPRUCE_LEAVES);
                 }
-                for (int i = 0; i <= height; i++) {
-                    if (std::abs(dx) + std::abs(dz) <= 2) {
-                        chunk->setBloc(x + dx, baseHeight + 4 + i * 2, z + dz, SPRUCE_LEAVES);
-                    }
-                    if (std::abs(dx) + std::abs(dz) <= 1) {
-                        chunk->setBloc(x + dx, baseHeight + 3 + i * 2, z + dz, SPRUCE_LEAVES);
-                    }
-                }
-                if (std::abs(dx) + std::abs(dz) <= 3) {
-                    chunk->setBloc(x + dx, baseHeight + 2, z + dz, SPRUCE_LEAVES);
-                }
+            }
+            if (std::abs(dx) + std::abs(dz) <= 3) {
+                chunk->generationSetBloc(x + dx, baseHeight + 2, z + dz, SPRUCE_LEAVES);
             }
         }
         for (int y = 1; y <= actualHeight-2; y++) chunk->generationSetBloc(x, baseHeight + y, z, SPRUCE_LOG);
-        chunk->setBloc(x, baseHeight + actualHeight, z, SPRUCE_LEAVES);
+        chunk->generationSetBloc(x, baseHeight + actualHeight, z, SPRUCE_LEAVES);
     }
 }
 

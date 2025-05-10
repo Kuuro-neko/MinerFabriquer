@@ -177,7 +177,7 @@ bool transparentNeighborCheck(int neighbor, int current, unsigned char face) {
 }
 
 int VoxelChunk::getFaceLight(int x, int y, int z, int face) {
-    int light = 15;
+    int light = 0;
     if (face & FACE_EAST) {
         light = this->getLightLevelIncludingNeighbors(x - 1, y, z);
     }
@@ -272,6 +272,14 @@ void VoxelChunk::addAOValues(int x, int y, int z, unsigned char face, std::vecto
         }
     }
 
+void VoxelChunk::addLightValues(int x, int y, int z, unsigned char face, std::vector<int> &lights) {
+    int value = getFaceLight(x, y, z, face);
+    for (int i = 0; i < 4; i++) {
+        lights.push_back(value);
+    }
+    
+}
+
 void VoxelChunk::generateMesh() {
     //std::cout << "Generating mesh at chunk coords (" << m_chunkCoords.x << ", " << m_chunkCoords.y << ", " << m_chunkCoords.z << ")" << std::endl;
     m_opaqueMesh.vertices.clear();
@@ -292,55 +300,37 @@ void VoxelChunk::generateMesh() {
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_EAST, x, y, z);
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
+                        addLightValues(x, y, z, FACE_EAST, m_opaqueMesh.lights);
                         addAOValues(x, y, z, FACE_EAST, m_opaqueMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_WEST, x, y, z);
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
+                        addLightValues(x, y, z, FACE_WEST, m_opaqueMesh.lights);
                         addAOValues(x, y, z, FACE_WEST, m_opaqueMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_BOTTOM, x, y, z);
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
+                        addLightValues(x, y, z, FACE_BOTTOM, m_opaqueMesh.lights);
                         addAOValues(x, y, z, FACE_BOTTOM, m_opaqueMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_TOP, x, y, z);
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
+                        addLightValues(x, y, z, FACE_TOP, m_opaqueMesh.lights);
                         addAOValues(x, y, z, FACE_TOP, m_opaqueMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_SOUTH, x, y, z);
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
+                        addLightValues(x, y, z, FACE_SOUTH, m_opaqueMesh.lights);
                         addAOValues(x, y, z, FACE_SOUTH, m_opaqueMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (opaqueNeighborCheck(neighbor)) {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_NORTH, x, y, z);
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
-                        m_opaqueMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
+                        addLightValues(x, y, z, FACE_NORTH, m_opaqueMesh.lights);
                         addAOValues(x, y, z, FACE_NORTH, m_opaqueMesh.ao);
                     }
                 }
@@ -365,55 +355,37 @@ void VoxelChunk::generateMesh() {
                     neighbor = getBlocIncludingNeighbors(x - 1, y, z);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_EAST)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_EAST, x, y, z);
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_EAST));
+                        addLightValues(x, y, z, FACE_EAST, m_transparentMesh.lights);
                         addAOValues(x, y, z, FACE_EAST, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_WEST)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_WEST, x, y, z);
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_WEST));
+                        addLightValues(x, y, z, FACE_WEST, m_transparentMesh.lights);
                         addAOValues(x, y, z, FACE_WEST, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_BOTTOM)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_BOTTOM, x, y, z);
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_BOTTOM));
+                        addLightValues(x, y, z, FACE_BOTTOM, m_transparentMesh.lights);
                         addAOValues(x, y, z, FACE_BOTTOM, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_TOP)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_TOP, x, y, z, m_cubes[x][y][z] == WATER && getBlocIncludingNeighbors(x, y + 1, z) != WATER);
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_TOP));
+                        addLightValues(x, y, z, FACE_TOP, m_transparentMesh.lights);
                         addAOValues(x, y, z, FACE_TOP, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_SOUTH)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_SOUTH, x, y, z);
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_SOUTH));
+                        addLightValues(x, y, z, FACE_SOUTH, m_transparentMesh.lights);
                         addAOValues(x, y, z, FACE_SOUTH, m_transparentMesh.ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_NORTH)) {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_NORTH, x, y, z);
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
-                        m_transparentMesh.lights.push_back(getFaceLight(x, y, z, FACE_NORTH));
+                        addLightValues(x, y, z, FACE_NORTH, m_transparentMesh.lights);
                         addAOValues(x, y, z, FACE_NORTH, m_transparentMesh.ao);
                     }
                 }

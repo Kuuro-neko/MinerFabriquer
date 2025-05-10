@@ -45,7 +45,8 @@ public:
 
 
     void checkForUngeneratedBlocks(std::shared_ptr<ChunkColumn> neighbor);
-    void generate(World &world);
+    bool generate();
+    void assignWorld(World *world);
 
     int getLightLevel(int x, int y, int z);
     bool getBloc(int x, int y, int z);

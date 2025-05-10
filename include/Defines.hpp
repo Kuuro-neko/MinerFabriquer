@@ -7,11 +7,11 @@
 // ===== Fast access ===== //
 
 #define RENDERER_DISTANCE 16
-#define GENERATION_DISTANCE 4
+#define GENERATION_DISTANCE 8
 
 // ===== Generation & chunks ===== //
 
-#define GENERATION_SEED 110111
+#define GENERATION_SEED 115111
 #define GROUND_LEVEL 65.0f
 #define WATER_LEVEL 63
 #define MESA_START_TERRACOTTA 68
@@ -21,9 +21,9 @@
 
 #define OUT_OF_BOUNDS_BLOC -2
 
-#define GENERATION_RADIUS_X 4 // X radius of initial generation
+#define GENERATION_RADIUS_X 8 // X radius of initial generation
 #define GENERATION_SIZE_Y 8 // Y height of initial generation
-#define GENERATION_RADIUS_Z 4 // Z radius of initial generation
+#define GENERATION_RADIUS_Z 8 // Z radius of initial generation
 
 
 // ===== Bloc database ===== //

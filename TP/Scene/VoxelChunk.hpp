@@ -128,4 +128,6 @@ private:
     void markDirtyNeighbors(int x, int y, int z);
 
     void addAOValues(int x, int y, int z, unsigned char face, std::vector<float> &ao);
+
+    void addLightValues(int x, int y, int z, unsigned char face, std::vector<int> &lights);
 };

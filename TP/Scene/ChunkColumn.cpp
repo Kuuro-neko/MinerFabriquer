@@ -94,19 +94,16 @@ void ChunkColumn::checkForUngeneratedBlocks(std::shared_ptr<ChunkColumn> neighbo
     }
 }
 
-void ChunkColumn::generate(World &world)
+bool ChunkColumn::generate()
 {
     WorldGenerator worldGenerator;
 
-    if (m_chunks.size() > 0) {
-        std::cerr << "Tried to generate a column that is already generated at " << m_chunkCoords.x << ", " << m_chunkCoords.y << std::endl;
-        exit(1);
-    }
+    free();
+    allocateSurfaceHeightMap();
 
-    for (int y = GENERATION_SIZE_Y-1; y >= 0; --y) {
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; y--) {
         m_chunks.emplace_back(std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
         m_chunks.back()->translate(glm::vec3(m_chunkCoords.x * CHUNK_SIZE, y * CHUNK_SIZE, m_chunkCoords.y * CHUNK_SIZE));
-        m_chunks.back()->m_world = &world;
         m_chunks.back()->m_chunkCoords = glm::ivec3(m_chunkCoords.x, y, m_chunkCoords.y);
         m_chunks.back()->m_chunkColumn = shared_from_this();
     }
@@ -114,20 +111,29 @@ void ChunkColumn::generate(World &world)
     sortChunks();
 
     // Generate the world
-    for (int y = GENERATION_SIZE_Y-1; y >= 0; --y) {
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; y--) {
         std::shared_ptr<VoxelChunk> chunk = getChunk(y);
-        worldGenerator.genereteProceduralChunk(world, chunk, m_chunkCoords.x, y, m_chunkCoords.y);
+        worldGenerator.genereteProceduralChunk(chunk, m_chunkCoords.x, y, m_chunkCoords.y);
     }
 
-    for (int y = GENERATION_SIZE_Y-1; y >= 0; --y) {
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; y--) {
         std::shared_ptr<VoxelChunk>chunk = getChunk(y);
-        worldGenerator.decorateProceduralChunk(world, chunk, m_chunkCoords.x, y, m_chunkCoords.y);
+        worldGenerator.decorateProceduralChunk(chunk, m_chunkCoords.x, y, m_chunkCoords.y);
     }
 
     // checkForUngeneratedBlocks(westNeighbor);
     // checkForUngeneratedBlocks(eastNeighbor);
     // checkForUngeneratedBlocks(southNeighbor);
     // checkForUngeneratedBlocks(northNeighbor);
+
+    return true;
+}
+
+void ChunkColumn::assignWorld(World *world)
+{
+    for (std::shared_ptr<VoxelChunk> chunk : m_chunks) {
+        chunk->m_world = world;
+    }
 }
 
 int ChunkColumn::getLightLevel(int x, int y, int z)

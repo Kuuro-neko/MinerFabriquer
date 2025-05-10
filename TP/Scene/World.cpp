@@ -20,24 +20,34 @@ void World::generationLoop() {
         generationQueue.pop();
         lock.unlock();
 
-        /*auto newColumn = std::make_shared<ChunkColumn>(x, z);
+        {
+            // check if column exists 
+            std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
+            auto it = chunkColumns.find(glm::ivec2(x, z));
+            if (it != chunkColumns.end()) {
+                // Column already exists, skip generation
+                continue;
+            }
+        }
+
+        auto newColumn = std::make_shared<ChunkColumn>(x, z);
         for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
             auto newChunk = std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
             newChunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
-            newChunk->m_world = this;
             newChunk->m_chunkCoords = glm::ivec3(x, y, z);
             newColumn->addChunk(newChunk);
         }
 
-        newColumn->generate(*this);*/
+        newColumn->generate();
 
         {
             std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
-            /*chunkColumns.emplace(glm::ivec2(x, z), newColumn);
+            chunkColumns.emplace(glm::ivec2(x, z), newColumn);
+            newColumn->assignWorld(this);
             for (auto &chunk : newColumn->getChunks()) {
                 chunks.emplace(glm::ivec3(chunk->m_chunkCoords.x, chunk->m_chunkCoords.y, chunk->m_chunkCoords.z), chunk);
-            }*/
-            generateChunkColumn(x, z);  // Actual column generation 
+            }
+            //generateChunkColumn(x, z);  // Actual column generation 
         }
     }
 }
@@ -408,7 +418,7 @@ void World::updateLoadedChunks() {
         if (!column) continue; // Ensure the column is valid
         if (key.x == 0 && key.y == 0) continue; // Example validation (adjust as needed)
         int distance = std::abs(key.x - chunkX) + std::abs(key.y - chunkZ);
-        if (distance > GENERATION_DISTANCE) {
+        if (distance > GENERATION_DISTANCE+4) {
             toRemove.push_back(key);
         }
     }
@@ -417,18 +427,16 @@ void World::updateLoadedChunks() {
     }
 
     // Initialize those not found that should exist.
-    int count = 0;
     for (int x = chunkX - GENERATION_DISTANCE; x <= chunkX + GENERATION_DISTANCE; ++x) {
         for (int z = chunkZ - GENERATION_DISTANCE; z <= chunkZ + GENERATION_DISTANCE; ++z) {
             std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
             int distance = std::abs(x - chunkX) + std::abs(z - chunkZ);
             if (!column && distance < GENERATION_DISTANCE) {
                 enqueueChunkGeneration(x, z);
-                count ++;
             }
         }
     }
-    if(count) std::cout << "Generated " << count << " chunk columns pos(" << chunkX << ", " << chunkZ << ") " << chunks.size() << " chunks in total" << std::endl;
+    //if(count) std::cout << "Generated " << count << " chunk columns pos(" << chunkX << ", " << chunkZ << ") " << chunks.size() << " chunks in total" << std::endl;
 }
 
 void World::draw(GLuint programID) {
@@ -532,9 +540,10 @@ void World::generateChunkColumn(int x, int z) {
     std::lock_guard<std::recursive_mutex> lock(worldMutex);
     // Column generation
     std::shared_ptr<ChunkColumn> newColumn = std::make_shared<ChunkColumn>(x, z);
-    newColumn->generate(*this);
+    newColumn->generate();
     newColumn->markChunksAsDirty();
     newColumn->markSkylightDirty(true);
+    newColumn->assignWorld(this);
     addColumn(newColumn);
 }
 
