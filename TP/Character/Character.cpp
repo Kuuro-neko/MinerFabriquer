@@ -59,7 +59,7 @@ void Character::listenAction(float dt)
     cameraRightNoUp = normalize(cameraRightNoUp);
     vecteurDirection = glm::vec3(0.f);
 
-    // alignWithCamera(cameraFrontNoUp); 
+    alignWithCamera(cameraFrontNoUp); 
 
     glm::vec3 currentPosition = getWorldPosition();
     int currentBlock = m_world->getBloc(static_cast<int>(currentPosition.x),
@@ -499,7 +499,7 @@ void Character::update(float dt)
         if (glm::length(vecteurDirection) > 0.01f) {
             glm::vec3 cameraFront = camera->getRotation() * VEC_FRONT;
             cameraFront.y = 0;
-            // alignWithCamera(cameraFront);
+            alignWithCamera(cameraFront);
         }
 
         m_characterModel->updateAnimation(dt);
@@ -655,15 +655,33 @@ void Character::resolveGravity(float &deltaTime)
 }
 
 void Character::alignWithCamera(const glm::vec3& cameraDirection) {
-    if (gamemode == GAMEMODE_SPECTATOR|| !m_characterModel)
+    if (gamemode == GAMEMODE_SPECTATOR || !m_characterModel)
         return;
         
-    float targetAngle = atan2(cameraDirection.x, cameraDirection.z);
+    float targetAngle;
     
-    m_characterModel->m_transform.m_rotation = DEFAULT_ROTATION;
-    m_characterModel->rotate(-targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-    
-    m_characterModel->updateModelMatrix();
+    if (camera->m_attached) { // Mode F5 (vue à la troisième personne)
+        // Calculer une position "regardée" devant la caméra
+        // La distance est fournie par la caméra
+        glm::vec3 camPosCentered = camera->getPosition() + glm::normalize(camera->getRotation() * VEC_FRONT) * 10.0f;
+        glm::vec3 directionToLookAt = camPosCentered - getWorldPosition();
+        directionToLookAt.y = 0.0f;
+        
+        if (glm::length(directionToLookAt) > 0.01f) {
+            directionToLookAt = glm::normalize(directionToLookAt);
+            targetAngle = atan2(directionToLookAt.x, directionToLookAt.z);
+            
+            m_characterModel->m_transform.m_rotation = DEFAULT_ROTATION;
+            m_characterModel->rotate(targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+            m_characterModel->updateModelMatrix();
+        }
+    } else { // Mode FPS (vue à la première personne)
+        targetAngle = atan2(cameraDirection.x, cameraDirection.z);
+        
+        m_characterModel->m_transform.m_rotation = DEFAULT_ROTATION;
+        m_characterModel->rotate(-targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+        m_characterModel->updateModelMatrix();
+    }
 }
 
 void Character::initializePlayerAnimations(Entity* characterModel) {
