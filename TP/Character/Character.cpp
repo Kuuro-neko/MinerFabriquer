@@ -642,7 +642,6 @@ void Character::alignWithCamera(const glm::vec3& cameraDirection) {
     m_characterModel->updateModelMatrix();
 }
 
-// Ajoutez cette méthode
 void Character::initializePlayerAnimations(Entity* characterModel) {
     characterModel->initializeBasePose();
     createWalkingPoses(characterModel);
