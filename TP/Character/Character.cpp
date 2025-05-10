@@ -54,6 +54,8 @@ void Character::listenAction(float dt)
     cameraRightNoUp = normalize(cameraRightNoUp);
     vecteurDirection = glm::vec3(0.f);
 
+    alignWithCamera(cameraFrontNoUp);
+
     glm::vec3 currentPosition = getWorldPosition();
     int currentBlock = m_world->getBloc(static_cast<int>(currentPosition.x),
                                         static_cast<int>(currentPosition.y),
@@ -603,4 +605,16 @@ void Character::resolveGravity(float &deltaTime)
 
     // Met à jour l’état de l’eau (sera utilisé dans listenAction)
     this->isInWater = detectedWater;
+}
+
+void Character::alignWithCamera(const glm::vec3& cameraDirection) {
+    if (gamemode == GAMEMODE_SPECTATOR)
+        return;
+        
+    float targetAngle = atan2(cameraDirection.x, cameraDirection.z);
+    
+    m_transform.m_rotation = DEFAULT_ROTATION;
+    rotate(-targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+    
+    updateModelMatrix();
 }

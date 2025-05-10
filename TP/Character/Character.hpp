@@ -100,6 +100,8 @@ private:
     unsigned char prevGamemode = GAMEMODE_SURVIVAL;
 
     HUD* m_hud = nullptr;
+
+    void alignWithCamera(const glm::vec3& cameraDirection);
 };
 
 #endif // CHARACTER_HPP

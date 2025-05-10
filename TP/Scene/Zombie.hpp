@@ -7,43 +7,11 @@
 class World;
 class Camera;
 
-struct ZombiePose {
-    std::string name;
-    
-    // Transformation pour chaque partie
-    Transform headTransform;
-    Transform torsoTransform; 
-    Transform leftArmTransform;
-    Transform rightArmTransform;
-    Transform leftLegTransform;
-    Transform rightLegTransform;
-    
-    ZombiePose(std::string poseName = "") : name(poseName) {}
-    
-    // Initialiser la pose à partir de l'état actuel d'un zombie
-    void initFromEntity(Entity* entity) {
-        headTransform = entity->m_head->m_transform;
-        // Pour le torse, on utilise la transform du zombie lui-même
-        torsoTransform = entity->m_transform;
-        leftArmTransform = entity->m_leftArm->m_transform;
-        rightArmTransform = entity->m_rightArm->m_transform;
-        leftLegTransform = entity->m_leftLeg->m_transform;
-        rightLegTransform = entity->m_rightLeg->m_transform;
-    }
-};
-
-struct ZombieSequence {
-    std::vector<ZombiePose> keyPoses;
-    std::vector<float> durations;
-    bool loop;
-    
-    ZombieSequence() : loop(true) {}
-};
 
 enum ZombieState {
-    ZOMBIE_IDLE,
-    ZOMBIE_PURSUIT,
-    ZOMBIE_ATTACK
+    ZOMBIE_IDLE = IDLE,
+    ZOMBIE_PURSUIT = WALKING,
+    ZOMBIE_ATTACK = ATTACKING
 };
 
 class Zombie : public Entity {
@@ -76,7 +44,7 @@ public:
         this->displayAABB = display;
     }
 
-    ZombieState getState() const { return currentState; }
+    ZombieState getState() const { return static_cast<ZombieState>(m_currentState); }
     void setState(ZombieState newState);
     ZombieState currentState = ZOMBIE_IDLE;
 
@@ -126,37 +94,10 @@ private:
     glm::vec3 directionToTarget;
     float distanceToTarget;
 
-    float animationTimer = 0.0f;
-    float walkCycle = 0.0f;
-    float attackPhase = 0.0f;
-    bool isLeftLegForward = true;
-    void updateAnimations(float deltaTime);
-    void applyIdleAnimation(float deltaTime);
-    void applyWalkAnimation(float deltaTime);
-    void applyAttackAnimation(float deltaTime);
-
-    std::map<std::string, ZombiePose> poses;
-
-    ZombieSequence idleSequence;
-    ZombieSequence walkSequence;
-    ZombieSequence attackSequence;
-    
-    ZombieSequence* currentSequence = nullptr;
-    int currentPoseIndex = 0;
-    float timeInCurrentPose = 0.0f;
-
-    ZombiePose currentInterpolatedPose;
-    ZombiePose* sourcePose = nullptr;
-    ZombiePose* targetPose = nullptr;
-    float interpolationProgress = 0.0f;
-
-    void initializePoses();
-    void createIdlePoses(const ZombiePose& basePose);
-    void createWalkingPoses(const ZombiePose& basePose);
-    void createAttackPoses(const ZombiePose& basePose);
-    void initializeAnimationSequences();
-    void updatePoseAnimation(float deltaTime);
-    void interpolateBetweenPoses(const ZombiePose& pose1, const ZombiePose& pose2, float factor);
+    void initializeZombieAnimations();
+    void createIdlePoses();
+    void createWalkingPoses();
+    void createAttackPoses();
 };
 
 #endif

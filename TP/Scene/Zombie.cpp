@@ -9,8 +9,8 @@ Zombie::Zombie(Transform transform, World* world, Camera* camera) : Entity() {
     this->camera = camera;
     m_transform = transform;
     generateZombieMesh(0.0f);
-    initializePoses();
-    initializeAnimationSequences();
+    initializeZombieAnimations();
+    setState(ZOMBIE_IDLE);
     this->setFPSActive(new bool(true));
     updateBoundingBox();
     currentState = ZOMBIE_IDLE;
@@ -62,7 +62,7 @@ void Zombie::update(float deltaTime) {
             break;
     }
 
-    updatePoseAnimation(deltaTime);
+    Entity::updateAnimation(deltaTime);
     updateJumpCooldown(deltaTime);
     updateBoundingBox();
     updateRenderers();
@@ -318,21 +318,28 @@ void Zombie::resolveGravity(float& deltaTime) {
 void Zombie::setState(ZombieState newState) {
     if (newState != currentState) {
         currentState = newState;
-        timeInCurrentPose = 0.0f;
-        currentPoseIndex = 0;
-                switch (newState) {
+        m_timeInCurrentPose = 0.0f;
+        m_currentPoseIndex = 0;
+        
+        switch (newState) {
             case ZOMBIE_IDLE:
-                currentSequence = &idleSequence;
+                m_currentSequence = &m_sequences["idle"];
                 vecteurDirection = glm::vec3(0.0f);
                 break;
                 
             case ZOMBIE_PURSUIT:
-                currentSequence = &walkSequence;
+                m_currentSequence = &m_sequences["walking"];
                 break;
                 
             case ZOMBIE_ATTACK:
-                currentSequence = &attackSequence;
+                m_currentSequence = &m_sequences["attacking"];
                 break;
+        }
+        
+        if (m_currentSequence && !m_currentSequence->keyPoses.empty()) {
+            m_sourcePose = &m_currentSequence->keyPoses[0];
+            int targetIndex = (m_currentPoseIndex + 1) % m_currentSequence->keyPoses.size();
+            m_targetPose = &m_currentSequence->keyPoses[targetIndex];
         }
     }
 }
@@ -364,37 +371,56 @@ void Zombie::faceTarget(glm::vec3 targetPos, float& deltaTime) {
     }
 }
 
-void Zombie::initializePoses() {
-    //Pose initiale dupliquer
-    ZombiePose idleStandard("idle_standard");
-    idleStandard.initFromEntity(this);
-    poses["idle_standard"] = idleStandard;
+void Zombie::initializeZombieAnimations() {
+    // Initialiser la pose de base à partir de l'état actuel
+    initializeBasePose();
     
-    //créé les pose pour les animations
-    createIdlePoses(idleStandard);
-    createWalkingPoses(idleStandard);
-    createAttackPoses(idleStandard);
+    // Créer les poses spécifiques au zombie
+    createIdlePoses();
+    createWalkingPoses();
+    createAttackPoses();
+    
+    // Créer les séquences d'animation
+    std::vector<std::string> idlePoses = {"base", "idle_sway", "base"};
+    std::vector<float> idleDurations = {1.0f, 1.0f, 1.0f};
+    createAnimationSequence("idle", idlePoses, idleDurations, true);
+    
+    std::vector<std::string> walkPoses = {"walk_left", "base", "walk_right", "base"};
+    std::vector<float> walkDurations = {0.3f, 0.15f, 0.3f, 0.15f};
+    createAnimationSequence("walking", walkPoses, walkDurations, true);
+    
+    std::vector<std::string> attackPoses = {"attack_prepare", "attack_strike", "base"};
+    std::vector<float> attackDurations = {0.2f, 0.1f, 0.4f};
+    createAnimationSequence("attacking", attackPoses, attackDurations, false);
+    
+    // Définir la séquence par défaut
+    setCurrentSequence("idle");
 }
 
-void Zombie::createIdlePoses(const ZombiePose& basePose) {
-    ZombiePose idleSway("idle_sway");
+void Zombie::createIdlePoses() {
+    EntityPose& basePose = m_poses["base"];
+    
+    EntityPose idleSway("idle_sway");
     idleSway = basePose;
-
+    
     //bras gauche
     glm::mat3x3 leftArmRot = idleSway.leftArmTransform.m_rotation;
     glm::mat3x3 rotMatZ = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-10.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
     idleSway.leftArmTransform.m_rotation = rotMatZ * leftArmRot;
     
-    //bras droist
+    //bras droit
     glm::mat3x3 rightArmRot = idleSway.rightArmTransform.m_rotation;
     rotMatZ = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
     idleSway.rightArmTransform.m_rotation = rotMatZ * rightArmRot;
     
-    poses["idle_sway"] = idleSway;
+    addPose("idle_sway", idleSway);
 }
 
-void Zombie::createWalkingPoses(const ZombiePose& basePose) {
-    ZombiePose walkLeft("walk_left");
+void Zombie::createWalkingPoses() {
+    EntityPose& basePose = m_poses["base"];
+    
+    // Pose de marche - jambe gauche avant
+    EntityPose walkLeft("walk_left");
     walkLeft = basePose;
     
     // Rotation de la jambe gauche de 30° vers l'avant
@@ -413,9 +439,10 @@ void Zombie::createWalkingPoses(const ZombiePose& basePose) {
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-110.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkLeft.rightArmTransform.m_rotation = rotMatX;
     
-    poses["walk_left"] = walkLeft;
+    addPose("walk_left", walkLeft);
     
-    ZombiePose walkRight("walk_right");
+    // Pose de marche - jambe droite avant
+    EntityPose walkRight("walk_right");
     walkRight = basePose;
     
     // Symétrique de walk_left
@@ -431,11 +458,14 @@ void Zombie::createWalkingPoses(const ZombiePose& basePose) {
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-70.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkRight.rightArmTransform.m_rotation = rotMatX;
     
-    poses["walk_right"] = walkRight;
+    addPose("walk_right", walkRight);
 }
 
-void Zombie::createAttackPoses(const ZombiePose& basePose) {
-    ZombiePose attackPrepare("attack_prepare");
+void Zombie::createAttackPoses() {
+    EntityPose& basePose = m_poses["base"];
+    
+    // Pose d'attaque - préparation
+    EntityPose attackPrepare("attack_prepare");
     attackPrepare = basePose;
     
     // Bras vers l'arrière pour préparer l'attaque
@@ -443,10 +473,10 @@ void Zombie::createAttackPoses(const ZombiePose& basePose) {
     attackPrepare.leftArmTransform.m_rotation = rotMatX;
     attackPrepare.rightArmTransform.m_rotation = rotMatX;
     
-    poses["attack_prepare"] = attackPrepare;
+    addPose("attack_prepare", attackPrepare);
     
     // Pose d'attaque - frappe
-    ZombiePose attackStrike("attack_strike");
+    EntityPose attackStrike("attack_strike");
     attackStrike = basePose;
     
     // Bras tendus vers l'avant pour la frappe
@@ -454,120 +484,5 @@ void Zombie::createAttackPoses(const ZombiePose& basePose) {
     attackStrike.leftArmTransform.m_rotation = rotMatX;
     attackStrike.rightArmTransform.m_rotation = rotMatX;
     
-    poses["attack_strike"] = attackStrike;
-}
-
-void Zombie::initializeAnimationSequences() {
-    //IDLE
-    idleSequence.keyPoses = { poses["idle_standard"], poses["idle_sway"], poses["idle_standard"] };
-    idleSequence.durations = { 1.0f, 1.0f, 1.0f };
-    idleSequence.loop = true;
-    
-    //MARCHE
-    walkSequence.keyPoses = { poses["walk_left"], poses["idle_standard"], poses["walk_right"], poses["idle_standard"] };
-    walkSequence.durations = { 0.3f, 0.15f, 0.3f, 0.15f };
-    walkSequence.loop = true;
-    
-    //ATTAQUE
-    attackSequence.keyPoses = { poses["attack_prepare"], poses["attack_strike"], poses["idle_standard"] };
-    attackSequence.durations = { 0.2f, 0.1f, 0.4f };
-    attackSequence.loop = false;
-    
-    currentSequence = &idleSequence;
-    currentPoseIndex = 0;
-    timeInCurrentPose = 0.0f;
-    
-    // Initialiser avec la première pose
-    sourcePose = &currentSequence->keyPoses[0];
-    targetPose = &currentSequence->keyPoses[0];
-}
-
-void Zombie::updatePoseAnimation(float deltaTime) {
-    if (!currentSequence || currentSequence->keyPoses.empty()) {
-        return;
-    }
-    timeInCurrentPose += deltaTime;
-    int targetIndex = (currentPoseIndex + 1) % currentSequence->keyPoses.size();
-    if (timeInCurrentPose >= currentSequence->durations[currentPoseIndex]) { //si on a dépassé la durée de la pose actuelle alors on change de pose
-        timeInCurrentPose = 0.0f;
-        currentPoseIndex = targetIndex;
-        
-        if (currentPoseIndex == 0 && !currentSequence->loop) {
-            //si la séquence ne doit pas boucler, revenir à l'animation idle
-            setState(ZOMBIE_IDLE);
-            return;
-        }
-        
-        //mettre à jour les poses source et cible
-        sourcePose = &currentSequence->keyPoses[currentPoseIndex];
-        targetIndex = (currentPoseIndex + 1) % currentSequence->keyPoses.size();
-        targetPose = &currentSequence->keyPoses[targetIndex];
-    }
-    
-    float factor = timeInCurrentPose / currentSequence->durations[currentPoseIndex];
-    interpolateBetweenPoses(*sourcePose, *targetPose, factor);
-}
-
-void Zombie::interpolateBetweenPoses(const ZombiePose& pose1, const ZombiePose& pose2, float factor) {
-    factor = glm::clamp(factor, 0.0f, 1.0f);
-    
-    // Interpolation des rotations avec quaternions
-    // Tête
-    glm::quat sourceRot = glm::quat_cast(glm::mat4(pose1.headTransform.m_rotation));
-    glm::quat targetRot = glm::quat_cast(glm::mat4(pose2.headTransform.m_rotation));
-    glm::quat interpRot = glm::slerp(sourceRot, targetRot, factor);
-    m_head->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
-    
-    // Translation de la tête 
-    glm::vec3 sourcePos = pose1.headTransform.m_translation;
-    glm::vec3 targetPos = pose2.headTransform.m_translation;
-    m_head->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
-    
-    // Torse - pas de modification ici car c'est le noeud racine
-    
-    // Bras gauche
-    sourceRot = glm::quat_cast(glm::mat4(pose1.leftArmTransform.m_rotation));
-    targetRot = glm::quat_cast(glm::mat4(pose2.leftArmTransform.m_rotation));
-    interpRot = glm::slerp(sourceRot, targetRot, factor);
-    m_leftArm->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
-    
-    sourcePos = pose1.leftArmTransform.m_translation;
-    targetPos = pose2.leftArmTransform.m_translation;
-    m_leftArm->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
-    
-    // Bras droit
-    sourceRot = glm::quat_cast(glm::mat4(pose1.rightArmTransform.m_rotation));
-    targetRot = glm::quat_cast(glm::mat4(pose2.rightArmTransform.m_rotation));
-    interpRot = glm::slerp(sourceRot, targetRot, factor);
-    m_rightArm->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
-    
-    sourcePos = pose1.rightArmTransform.m_translation;
-    targetPos = pose2.rightArmTransform.m_translation;
-    m_rightArm->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
-    
-    // Jambe gauche
-    sourceRot = glm::quat_cast(glm::mat4(pose1.leftLegTransform.m_rotation));
-    targetRot = glm::quat_cast(glm::mat4(pose2.leftLegTransform.m_rotation));
-    interpRot = glm::slerp(sourceRot, targetRot, factor);
-    m_leftLeg->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
-    
-    sourcePos = pose1.leftLegTransform.m_translation;
-    targetPos = pose2.leftLegTransform.m_translation;
-    m_leftLeg->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
-    
-    // Jambe droite
-    sourceRot = glm::quat_cast(glm::mat4(pose1.rightLegTransform.m_rotation));
-    targetRot = glm::quat_cast(glm::mat4(pose2.rightLegTransform.m_rotation));
-    interpRot = glm::slerp(sourceRot, targetRot, factor);
-    m_rightLeg->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
-    
-    sourcePos = pose1.rightLegTransform.m_translation;
-    targetPos = pose2.rightLegTransform.m_translation;
-    m_rightLeg->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
-    
-    m_head->updateModelMatrix();
-    m_leftArm->updateModelMatrix();
-    m_rightArm->updateModelMatrix();
-    m_leftLeg->updateModelMatrix();
-    m_rightLeg->updateModelMatrix();
+    addPose("attack_strike", attackStrike);
 }
