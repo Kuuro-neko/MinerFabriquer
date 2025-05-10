@@ -265,7 +265,7 @@ void SaveManager::saveWorldFile()
     std::cout << "World saved to: " << filePath << std::endl;
     std::cout<< "Number of chunks saved : " << world->getAllChunks().size() << std::endl;
 }
-
+// TODO fix why not all chunks is loadings
 void SaveManager::loadWorldFile()
 {
 
