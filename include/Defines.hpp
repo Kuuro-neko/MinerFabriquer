@@ -1,19 +1,26 @@
 #pragma once
-
+#include <string>
 // ===== Maths ===== //
 
 #define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
 
 // ===== Generation & chunks ===== //
 
+#define GENERATION_SEED 4799
+#define GROUND_LEVEL 56
+#define WATER_LEVEL_DELTA 15
+
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
 
 #define OUT_OF_BOUNDS_BLOC -2
 
-#define GENERATION_SIZE_X 16 // X size of initial generation
-#define GENERATION_SIZE_Y 8 // Y size of initial generation
-#define GENERATION_SIZE_Z 16 // Z size of initial generation
+#define GENERATION_RADIUS_X 8 // X radius of initial generation
+#define GENERATION_SIZE_Y 8 // Y height of initial generation
+#define GENERATION_RADIUS_Z 8 // Z radius of initial generation
+#define GENERATION_SIZE_X  16
+#define GENERATION_SIZE_Z  16
+
 
 // ===== Bloc database ===== //
 
@@ -38,6 +45,18 @@
 #define SANDSTONE 13
 #define SNOW 14
 #define ICE 15
+#define AMETHYST 16
+#define SMOOTH_BASALT 17
+#define CALCITE 18
+#define ANDESITE 19
+#define BRAIN_CORAL 20
+#define BUBBLE_CORAL 21
+#define END_STONE 22
+#define MOSS 23
+#define MUSHROOM_STEM 24
+#define BROWN_MUSHROOM 25
+#define MYCELIUM 26
+#define RED_MUSHROOM 27
 
 #define ERROR_BLOC 255
 
@@ -55,6 +74,9 @@
 #define MOUNTAINS_BIOME 1
 #define DESERT_BIOME 2
 #define WATER_BIOME 3
+#define ICE_BIOME 4
+#define CRISTALPEAKS_BIOME 5
+#define MUSHROOM_BIOME 6
 
 // ===== Player ===== //
 
@@ -142,3 +164,16 @@ constexpr short AO_Bottom_deltas [4][3] = {
     { -1, -1,  1 },
     { -1, -1, -1 }
 };
+
+
+// ===== FileManager ===== //
+
+const std::string PATH_PLAYER_FILE = "/playerData.bin";
+const std::string PATHSAVES = "../saves/";
+#define SAVE_DELAY 20 // seconds
+const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
+
+// ===== Menu ===== //
+#define MENU_CREATE 1
+#define MENU_LOAD 2
+

@@ -11,6 +11,7 @@ private:
     // Map of the surface height for each chunk-relative x,z in the chunk column
     std::vector<std::vector<int>> surfaceHeightmap;
 public:
+    ChunkColumn() = default; // Constructeur par défaut
     ChunkColumn(int chunkCoordX, int chunkCoordZ) {
         m_chunkCoords = glm::ivec2(chunkCoordX, chunkCoordZ);
         allocateSurfaceHeightMap();
@@ -19,6 +20,10 @@ public:
         free();
     }
 
+
+    inline glm::ivec2 getChunkCoords() {
+        return m_chunkCoords;
+    }
     // Return the chunk at the given CHUNK y coordinate
     VoxelChunk* getChunk(int chunkCoordY);
     

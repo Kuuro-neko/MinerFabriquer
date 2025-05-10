@@ -7,7 +7,7 @@
 Barre::Barre(int windowWidth, int windowHeight)
     : m_windowWidth(windowWidth), m_windowHeight(windowHeight)
 {
-    shaderID = LoadShaders("barre_vertex_shader.glsl", "barre_fragment_shader.glsl");
+    shaderID = LoadShaders("../shader/barre_vertex_shader.glsl", "../shader/barre_fragment_shader.glsl");
     initSlots();
     initBuffers();
 }

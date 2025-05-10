@@ -128,20 +128,21 @@ public:
 
 class PBRTextureAtlas {
 private:
-    PBRTextureAtlas() {
-        m_texture = Texture("../textures/texture_atlas_x32.png");
+    PBRTextureAtlas(int resolution = 32) {
+        std::string resolutionStr = std::to_string(resolution);
+        m_texture = Texture(("../textures/texture_atlas_x" + resolutionStr + ".png").c_str());
         m_texture.genTexture();
         m_texture.setSamplerName("TextureSampler");
 
-        m_normals = Texture("../textures/normal_atlas_x32.png");
+        m_normals = Texture(("../textures/normal_atlas_x" + resolutionStr + ".png").c_str());
         m_normals.genTexture();
         m_normals.setSamplerName("NormalsSampler");
 
-        m_roughness = Texture("../textures/roughness_atlas_x32.png");
+        m_roughness = Texture(("../textures/roughness_atlas_x" + resolutionStr + ".png").c_str());
         m_roughness.genTexture();
         m_roughness.setSamplerName("RoughnessSampler");
 
-        m_metallic = Texture("../textures/metallic_atlas_x32.png");
+        m_metallic = Texture(("../textures/metallic_atlas_x" + resolutionStr + ".png").c_str());
         m_metallic.genTexture();
         m_metallic.setSamplerName("MetallicSampler");
     }

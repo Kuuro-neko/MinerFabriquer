@@ -164,6 +164,12 @@ void Character::listenAction(float dt)
         }
     }
 
+    if(keyInput->isKeybindPressed(keybinds->toggleHUD))
+    {
+        std::cout << "[Character] Toggle HUD" << std::endl;
+        displayHUD = displayHUD == 0 ? 1 : 0;
+    }
+
     // ==== Debug binds ====
     if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes))
     {
@@ -191,10 +197,11 @@ void Character::listenAction(float dt)
         if (gamemode == GAMEMODE_SPECTATOR)
         {
             gamemode = prevGamemode;
-        
+            displayHUD = 1;
         } else {
             prevGamemode = gamemode;
             gamemode = GAMEMODE_SPECTATOR;
+            displayHUD = 0;
         }
         std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
         shouldToggleDebug = false;
@@ -230,6 +237,23 @@ void Character::listenAction(float dt)
             shouldToggleDebug = true;
         }
     }
+}
+
+float Character::getSpeed()
+{
+    if (gamemode == GAMEMODE_SPECTATOR)
+    {
+        return this->speed;
+    }
+    if (sneaking)
+    {
+        return this->sneakSpeed;
+    }
+    if (sprinting)
+    {
+        return this->sprintSpeed;
+    }
+    return this->speed;
 }
 
 void Character::updateClosestBlock(BlocDatabase &db)
@@ -698,4 +722,11 @@ void Character::createWalkingPoses(Entity* characterModel) {
     walkRight.rightArmTransform.m_rotation = rotMatX * walkRight.rightArmTransform.m_rotation;
     
     characterModel->addPose("walk_right", walkRight);
+}
+
+int Character::isHUDVisible()
+{
+    if (m_hud == nullptr) return 0;
+    if (gamemode == GAMEMODE_SPECTATOR) return 0;
+    return displayHUD;
 }

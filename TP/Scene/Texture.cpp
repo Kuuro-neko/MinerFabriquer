@@ -31,6 +31,7 @@ void Texture::loadTexture(const char* filename) {
         std::cout << "Loaded texture " << filename << " with size " << width << "x" << height << " (" << nrChannels << " channels)" << std::endl;
     } else {
         std::cerr << "Failed to load texture " << filename << std::endl;
+        std::cerr << "stbi_failure_reason(): " << stbi_failure_reason() << "\n";
     }
 }
 

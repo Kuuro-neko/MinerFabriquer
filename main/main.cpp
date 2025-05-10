@@ -7,12 +7,14 @@
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/VoxelChunk.hpp>
 #include "TP/Character/Character.hpp"
+#include "TP/Menu/Menu.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
 #include <TP/Scene/Zombie.hpp>
+#include <TP/Scene/Clouds.hpp>
 #include <TP/GUI/HUD.hpp>
-
-
+#include <TP/FileSystem/SaveManager.hpp>
+#include <Defines.hpp>
 
 #define CHUNK_SIZE 16
 
@@ -25,20 +27,21 @@ using namespace glm;
 int windowWidth = 1280;
 int windowHeight = 720;
 
-// int windowWidth = 2560;
-// int windowHeight = 1440;
+HUD *hud = nullptr;
 
 Camera camera;
 // timing
-float deltaTime = 0.0f;    // time between current frame and last frame
+float deltaTime = 0.0f; // time between current frame and last frame
 float lastFrame = 0.0f;
 float FPS = 0.0f;
 
-//rotation
+// rotation
 float angle = 0.;
 float zoom = 1.;
 
 int displayNormals = 0;
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
     mesh.vertices.clear();
@@ -47,13 +50,13 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 
     glm::vec3 p[] = {
             {-size.x, -size.y, -size.z},
-            { size.x, -size.y, -size.z},
-            { size.x,  size.y, -size.z},
-            {-size.x,  size.y, -size.z},
-            {-size.x, -size.y,  size.z},
-            { size.x, -size.y,  size.z},
-            { size.x,  size.y,  size.z},
-            {-size.x,  size.y,  size.z}
+            {size.x,  -size.y, -size.z},
+            {size.x,  size.y,  -size.z},
+            {-size.x, size.y,  -size.z},
+            {-size.x, -size.y, size.z},
+            {size.x,  -size.y, size.z},
+            {size.x,  size.y,  size.z},
+            {-size.x, size.y,  size.z}
     };
 
     // Définir les faces du cube avec 4 sommets par face
@@ -89,28 +92,31 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
         mesh.triangles.push_back(start + 2);
         mesh.triangles.push_back(start + 3);
 
-        
+
     }
 
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
-    for (int i = 0; i < 4; ++i) mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
+    for (int i = 0; i < 4; ++i)
+        mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
 }
 
 
 Character character = Character(
         Transform(
-                glm::vec3(32, 36, 32),
+                glm::vec3(0, 61, 0),
                 DEFAULT_ROTATION,
                 1),
         &camera
 );
-
-
-
 
 
 void UpdateFPS() {
@@ -129,6 +135,12 @@ void UpdateFPS() {
 }
 
 int main(void) {
+    Menu menu;
+    SaveManager &saveManager = SaveManager::getInstance();
+
+
+
+
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -136,8 +148,6 @@ int main(void) {
         return -1;
     }
 
-
-    
 
     camera.init();
     Frustrum frustum(camera, 4.0f / 3.0f, 0.1f, 100.f);
@@ -159,7 +169,6 @@ int main(void) {
     camera.setKeyInput(&characterInputManager);
 
 
-
     if (window == NULL) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -168,7 +177,7 @@ int main(void) {
         return -1;
     }
     glfwMakeContextCurrent(window);
-
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     // Initialize GLEW
     glewExperimental = true; // Needed for core profile
     if (glewInit() != GLEW_OK) {
@@ -178,7 +187,7 @@ int main(void) {
         return -1;
     }
 
-    glEnable(GL_MULTISAMPLE);  
+    glEnable(GL_MULTISAMPLE);
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -208,12 +217,16 @@ int main(void) {
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
-    GLuint wireframeProgramID = LoadShaders("vertex_shader_wireframe.glsl", "fragment_shader_wireframe.glsl");
+    GLuint programID = LoadShaders("../shader/vertex_shader.glsl", "../shader/fragment_shader.glsl");
+    GLuint wireframeProgramID = LoadShaders("../shader/vertex_shader_wireframe.glsl",
+                                            "../shader/fragment_shader_wireframe.glsl");
     Renderer renderer = Renderer(wireframeProgramID);
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
     rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
-    GLuint cubemapProgramID = LoadShaders("cubemap_vertex_shader.glsl", "cubemap_fragment_shader.glsl");
+    GLuint cubemapProgramID = LoadShaders("../shader/cubemap_vertex_shader.glsl",
+                                          "../shader/cubemap_fragment_shader.glsl");
+    GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl",
+                                         "../shader/clouds_fragment_shader.glsl");
 
 
     HUD hud = HUD(windowWidth, windowHeight);
@@ -221,9 +234,9 @@ int main(void) {
 
     GLint success;
     GLchar infoLog[512];
-    glGetShaderiv(programID, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(cloudsProgramID, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(programID, 512, NULL, infoLog);
+        glGetShaderInfoLog(cloudsProgramID, 512, NULL, infoLog);
         std::cerr << "Shader compile error: " << infoLog << std::endl;
     }
 
@@ -234,21 +247,71 @@ int main(void) {
 
     CubemapTexture cubemapTexture = CubemapTexture(cubemapProgramID);
 
+
+
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
 
 
     SceneNode root;
-
     World world = World();
     root.addChild(&world);
     world.setCamera(camera);
     world.setDoDaylightCycle(false);
 
+    //pass the world to the save manager
+    saveManager.setWorld(&world);
+    saveManager.setCharacter(&character);
+
+
+    if (!saveManager.isDataFolderContainsOtherFolder()) {
+        std::cout << "No world folder found. Generating a new world..." << std::endl;
+
+        std::string saveFolder = Menu::createWorld();
+        saveManager.setSaveFolderPath(saveFolder);
+        world.generation();
+        saveManager.saveWorldFile(); // Save the world data after generation
+        saveManager.createPlayerDataFile();
+
+    } else {
+        int choice = Menu::chooseLoadOrNewWorld();
+        switch (choice) {
+            case MENU_CREATE: {
+                std::string saveFolder = Menu::createWorld();
+                std::cout << "Creating world in: " << saveFolder << std::endl;
+                saveManager.setSaveFolderPath(saveFolder);
+                world.generation();
+                saveManager.saveWorldFile(); // Save the world data after generation
+                saveManager.createPlayerDataFile();
+                break;
+            }
+           case MENU_LOAD: {
+               std::string worldPath = menu.chooseWorld();
+               std::cout << "Loading world from: " << worldPath << std::endl;
+               saveManager.setSaveFolderPath(worldPath);
+               saveManager.loadWorldFile();
+               saveManager.loadPlayerData();
+               break;
+           }
+            default:
+                std::cerr << "Invalid choice. Exiting..." << std::endl;
+                glfwTerminate();
+                return -1;
+
+        }
+
+    }
+    saveManager.loadPlayerData();
+    std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
+    saveManager.startAutoSave();
+
+
+    // Associer le monde au personnage
     character.m_world = &world;
 
-    Entity* characterModel = new Entity();
+    // Ajouter le personnage au monde
+    Entity *characterModel = new Entity();
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f);
     Texture* playerTexture = new Texture("../textures/steve.png");
@@ -279,6 +342,10 @@ int main(void) {
 
     
 
+    Texture cloudTex = Texture("../textures/clouds.png");
+    Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
+
+
 /*     Entity* Mr_Vincell = new Entity();
     Mr_Vincell->generateHumanoidMesh(0.0f);
     Texture* playerTexture2 = new Texture("../textures/Mr_Vincell.png");
@@ -304,7 +371,7 @@ int main(void) {
     root.addChild(Akkuun); */
 
 
-    
+
 
 
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
@@ -314,7 +381,6 @@ int main(void) {
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-
 
 
     do {
@@ -362,8 +428,16 @@ int main(void) {
 
         lightMap.bind(programID);
 
+        glUseProgram(cloudsProgramID);
+
+        GLuint viewMatrixIdC = glGetUniformLocation(cloudsProgramID, "ViewMatrix");
+        glUniformMatrix4fv(viewMatrixIdC, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
+        GLuint projectionMatrixIdC = glGetUniformLocation(cloudsProgramID, "ProjectionMatrix");
+        glUniformMatrix4fv(projectionMatrixIdC, 1, GL_FALSE, &camera.m_projectionMatrix[0][0]);
+
+        glUseProgram(programID);
+
         root.draw(programID);
-        
 
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
@@ -375,22 +449,25 @@ int main(void) {
         }
 
 
-        
-
         character.drawBoundingBox();
 
         zombie->drawBoundingBox();
 
+        if (character.isHUDVisible())
+            hud.render();
+        if (character.isHUDVisible()) hud.render();
+
+        clouds.draw(currentFrame, character);
 
 
-        hud.render();
+
 
 
 
 
         // Swap buffers
         glfwSwapBuffers(window);
-        
+
         // Update the input managers
         characterInputManager.update();
         menuInputManager.update();
@@ -399,15 +476,17 @@ int main(void) {
            glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
+    saveManager.saveWorldFile();
+    saveManager.saveCharacterFile();
     root.cleanupBuffers();
     cubemapTexture.cleanupBuffers();
+
     // delete &hud;
 
     glDeleteProgram(programID);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
-
     return 0;
 }
 
@@ -415,9 +494,9 @@ int main(void) {
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-    // marche pas : camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height, camera.getNearPlane(), camera.getFarPlane());
+    camera.m_projectionMatrix = glm::perspective(glm::radians(camera.getFOV()), (float) width / (float) height,
+                                                 camera.getNearPlane(), camera.getFarPlane());
+    hud->updateWindowSize(width, height);
 }
 

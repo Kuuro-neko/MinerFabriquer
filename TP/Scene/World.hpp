@@ -15,6 +15,7 @@
 
 
 #include <Defines.hpp>
+#include <utils/Math.hpp>
 
 class Character;
 class Zombie;
@@ -108,6 +109,14 @@ public:
      */
     bool setBloc(int x, int y, int z, int bloc);
 
+        /**
+     * @brief Set a block at the given WORLD coordinates. Does not update the lights (useful for faster generation).
+     * 
+     * 
+     * @return bool True if the block was set, else false
+     */
+    bool generationSetBloc(int x, int y, int z, int bloc);
+
     unsigned short getLightLevel(int x, int y, int z);
 
     /**
@@ -158,4 +167,6 @@ public:
 
     // Définit le niveau de lumière d'un bloc.
     void setLightLevel(int x, int y, int z, int lightLevel);
+
+    void addChunkColumn(ChunkColumn *column);
 };

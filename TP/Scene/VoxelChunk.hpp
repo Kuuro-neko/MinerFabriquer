@@ -99,14 +99,16 @@ public:
     // Copy Assignment Operator
     VoxelChunk& operator=(const VoxelChunk& other) = delete;
 
-
+    void setLightLevel(int x, int y, int z, unsigned char lightLevel);
+    
 
 private:
     void allocateCubes();
-
+   
     void cleanup();
 
     void markDirtyNeighbors(int x, int y, int z);
 
     void addAOValues(int x, int y, int z, unsigned char face, std::vector<float> &ao);
+
 };
