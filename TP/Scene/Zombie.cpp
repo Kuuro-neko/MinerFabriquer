@@ -68,7 +68,6 @@ void Zombie::update(float deltaTime) {
     updateRenderers();
 }
 
-#define ZOMBIE_DISTANCE_FINDING_PLAYER 7.0f
 void Zombie::updateState(float deltaTime) {
     // Trouver le joueur
     Character* player = nullptr;
