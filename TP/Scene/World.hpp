@@ -11,10 +11,14 @@
 
 #include <TP/Scene/ChunkColumn.hpp>
 
+
+
+
 #include <Defines.hpp>
 #include <utils/Math.hpp>
 
 class Character;
+class Zombie;
 
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2 &vec) const {
@@ -131,7 +135,12 @@ public:
 
     void resolveCollisions(Character &character, World *world);
 
+    void resolveCollisions(Zombie& zombie, World* world);
+
     void resolveCollisionForBlock(Character &character, glm::vec3 blockPosition);
+
+    void resolveCollisionForBlock(Zombie& zombie, glm::vec3 blockPosition);
+
 
     void update(float deltaTime);
 

@@ -10,6 +10,7 @@
 #include "TP/Menu/Menu.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
+#include <TP/Scene/Zombie.hpp>
 #include <TP/Scene/Clouds.hpp>
 #include <TP/GUI/HUD.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
@@ -312,16 +313,38 @@ int main(void) {
     // Ajouter le personnage au monde
     Entity *characterModel = new Entity();
     characterModel->setFPSActive(&camera.m_attached);
-    characterModel->generateHumanoidMesh(-0.38f); // Position à 0 car il sera enfant du Character
-    Texture *playerTexture = new Texture("../textures/steve.png");
+    characterModel->generateHumanoidMesh(-0.38f);
+    Texture* playerTexture = new Texture("../textures/steve.png");
     characterModel->setTexture(playerTexture);
     character.addChild(characterModel);
+    character.setCharacterModel(characterModel);
     root.addChild(&character);
     character.setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character.getWorldPosition());
 
+
+    Zombie* zombie = new Zombie(
+        Transform(
+            glm::vec3(0, 61, 0),
+            DEFAULT_ROTATION,
+            1),
+        &world,
+        &camera
+    );
+    Texture* zombieTexture = new Texture("../textures/zombie.png");
+    zombie->setTexture(zombieTexture);
+    zombie->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
+    root.addChild(zombie);
+    // After creating the zombie in main.cpp, add:
+
+    zombie->setWireframeRenderer(wireframeProgramID);
+    zombie->setDisplayAABB(true);
+
+    
+
     Texture cloudTex = Texture("../textures/clouds.png");
     Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
+
 
 /*     Entity* Mr_Vincell = new Entity();
     Mr_Vincell->generateHumanoidMesh(0.0f);
@@ -380,6 +403,11 @@ int main(void) {
 
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
+
+        zombie->resolveGravity(deltaTime);
+        world.resolveCollisions(*zombie, &world);
+        zombie->update(deltaTime);
+
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         cubemapTexture.draw(camera);
@@ -411,8 +439,6 @@ int main(void) {
 
         root.draw(programID);
 
-
-
         // Restore shader program and matrices for the scene
         glUseProgram(programID);
         glUniformMatrix4fv(viewMatrixId, 1, GL_FALSE, &camera.m_viewMatrix[0][0]);
@@ -425,11 +451,16 @@ int main(void) {
 
         character.drawBoundingBox();
 
+        zombie->drawBoundingBox();
+
         if (character.isHUDVisible())
             hud.render();
         if (character.isHUDVisible()) hud.render();
 
         clouds.draw(currentFrame, character);
+
+
+
 
 
 

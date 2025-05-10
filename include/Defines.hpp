@@ -177,3 +177,5 @@ const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 #define MENU_CREATE 1
 #define MENU_LOAD 2
 
+// ===== Zombie ===== //
+#define ZOMBIE_DISTANCE_FINDING_PLAYER 7.0f

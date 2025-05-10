@@ -92,6 +92,8 @@ add_executable(MinerFabriquer
         TP/Scene/Clouds.hpp
         TP/Scene/Entity.hpp
         TP/Scene/Entity.cpp
+        TP/Scene/Zombie.hpp
+        TP/Scene/Zombie.cpp
         TP/Input/KeyInput.cpp
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
