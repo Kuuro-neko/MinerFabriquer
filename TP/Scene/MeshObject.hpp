@@ -21,7 +21,7 @@ public:
 
     MeshObject() : vertexbuffer(0), elementbuffer(0), uvbuffer(0), normalbuffer(0), vao(0) {}
     ~MeshObject() {
-        cleanupBuffers();
+        //cleanupBuffers();
     }
 
     /**

@@ -2,7 +2,7 @@
 
 #include <TP/Scene/VoxelChunk.hpp>
 
-class ChunkColumn
+class ChunkColumn : public std::enable_shared_from_this<ChunkColumn>
 {
 private:
     glm::ivec2 m_chunkCoords;
@@ -45,9 +45,13 @@ public:
 
 
     void checkForUngeneratedBlocks(std::shared_ptr<ChunkColumn> neighbor);
-    void generate(World &world, std::shared_ptr<ChunkColumn> westNeighbor, std::shared_ptr<ChunkColumn> eastNeighbor, std::shared_ptr<ChunkColumn> southNeighbor, std::shared_ptr<ChunkColumn> northNeighbor);
+    bool generate();
+    void assignWorld(World *world);
 
-
+    int getLightLevel(int x, int y, int z);
+    bool getBloc(int x, int y, int z);
+    bool setBloc(int x, int y, int z, int bloc);
+    bool generationSetBloc(int x, int y, int z, int bloc);
     
     void allocateSurfaceHeightMap();
     void free();

@@ -6,7 +6,7 @@
 #include <TP/Scene/World.hpp>
 #include <TP/Scene/Biomes.hpp>
 
-#define CAVE_BASE_THRESHOLD -0.1f
+#define CAVE_BASE_THRESHOLD -10.1f
 #define CAVE_DEPTH_SCALING_FACTOR 0.015f
 
 #define IRON_THRESHOLD 0.28f
@@ -30,12 +30,12 @@ private:
     BiomeManager biomeManager = BiomeManager(groundLevel, seed);
 
     void setBaseStone(std::shared_ptr<VoxelChunk> , int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
-    void generateTerrain(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
-    void decorateTerrain(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
+    void generateTerrain(std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
+    void decorateTerrain(std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
 
 public:
     WorldGenerator();
 
-    void genereteProceduralChunk(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k);
-    void decorateProceduralChunk(World &world, std::shared_ptr<VoxelChunk> , int i, int j, int k);
+    void genereteProceduralChunk(std::shared_ptr<VoxelChunk> , int i, int j, int k);
+    void decorateProceduralChunk(std::shared_ptr<VoxelChunk> , int i, int j, int k);
 };

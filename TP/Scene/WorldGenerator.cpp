@@ -46,30 +46,30 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
     biomeManager.addBiome(std::make_unique<MesaBiome>(groundLevel, seed));
 }
 
-void WorldGenerator::genereteProceduralChunk(World &world, std::shared_ptr<VoxelChunk> chunk, int i, int j, int k) {
+void WorldGenerator::genereteProceduralChunk(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k) {
     //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
     if (groundLevel + CHUNK_SIZE * 3 < j * CHUNK_SIZE) {
         // Skipping chunks too high to have any generated bloc
         return;
     }
-    generateTerrain(world, chunk, i, j, k, groundLevel);
+    generateTerrain(chunk, i, j, k, groundLevel);
 }
 
-void WorldGenerator::decorateProceduralChunk(World &world, std::shared_ptr<VoxelChunk> chunk, int i, int j, int k) {
+void WorldGenerator::decorateProceduralChunk(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k) {
     //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
-    if (groundLevel + CHUNK_SIZE * 2 < j * CHUNK_SIZE) {
+    if (groundLevel + CHUNK_SIZE * 3 < j * CHUNK_SIZE) {
         // Skipping chunks too high to have any generated bloc
         return;
     }
-    decorateTerrain(world, chunk, i, j, k, groundLevel);
+    decorateTerrain(chunk, i, j, k, groundLevel);
 }
 
 void WorldGenerator::setBaseStone(std::shared_ptr<VoxelChunk> chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight) {
     for (int y = 0; y < CHUNK_SIZE; y++) {
         if (y + worldAABBMin.y <= baseHeight) {
-            chunk->generationSetBloc(x, y, z, STONE);
+            chunk->generationSetBloc(x, y, z, STONE, false, false);
         } else if (y + worldAABBMin.y < WATER_LEVEL) {
-            chunk->generationSetBloc(x, y, z, WATER);
+            chunk->generationSetBloc(x, y, z, WATER, false, false);
         }
     }
 }
@@ -83,7 +83,7 @@ void WorldGenerator::setBaseStone(std::shared_ptr<VoxelChunk> chunk, int x, int 
  * @param k 
  * @param groundLevel 
  */
-void WorldGenerator::generateTerrain(World &world, std::shared_ptr<VoxelChunk> chunk, int i, int j, int k, int groundLevel) {
+void WorldGenerator::generateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k, int groundLevel) {
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk
@@ -139,7 +139,7 @@ void WorldGenerator::generateTerrain(World &world, std::shared_ptr<VoxelChunk> c
     }
 }
 
-void WorldGenerator::decorateTerrain(World &world, std::shared_ptr<VoxelChunk> chunk, int i, int j, int k, int groundLevel) {
+void WorldGenerator::decorateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k, int groundLevel) {
     for (int x = 0; x < chunk->m_sizeX; ++x) {
         for (int z = 0; z < chunk->m_sizeZ; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk

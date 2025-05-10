@@ -223,7 +223,24 @@ void Character::listenAction(float dt)
     {
         if (shouldToggleDebug)
         {
-            std::cout << "[Character] Toggle debug mode (not implemented)" << std::endl;
+            std::cout << "[Character] Position : " << getWorldPosition().x << ", " << getWorldPosition().y << ", " << getWorldPosition().z << std::endl;
+            std::shared_ptr<VoxelChunk> chunk = m_world->getChunkContaining(getWorldPosition());
+            if (chunk)
+            {
+                int intX = static_cast<int>(getWorldPosition().x);
+                int intY = static_cast<int>(getWorldPosition().y);
+                int intZ = static_cast<int>(getWorldPosition().z);
+                std::cout << "[Character] Integer position : " << intX << ", " << intY << ", " << intZ << std::endl;
+                std::cout << "[Character] Chunk : " << chunk->m_chunkCoords.x << ", " << chunk->m_chunkCoords.y << ", " << chunk->m_chunkCoords.z << std::endl;
+                int id = m_world->getBloc(intX, intY, intZ);
+                std::cout << "[Character] Block containing player : " << BlocDatabase::getInstance().getBloc(id)->name << " (id : " << id << ")" << std::endl;
+                                                                                            
+                std::cout << "[Character] Light level in that block : " << m_world->getLightLevel(intX, intY, intZ) << std::endl;
+            }
+            else
+            {
+                std::cout << "[Character] No chunk found" << std::endl;
+            }
         }
         else
         {

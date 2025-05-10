@@ -14,6 +14,12 @@
 #include <Defines.hpp>
 #include <utils/Math.hpp>
 
+#include <queue>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+
 class Character;
 
 struct IVec2Hash {
@@ -42,6 +48,23 @@ private:
 
     // Update the sky lights for a given chunk x,z in the chunk column
     void updateSkyLightsInColumn(int x, int z);
+
+    std::recursive_mutex worldMutex; // Mutex to lock the chunks data
+
+    std::thread generationThread; // Thread for chunk generation
+    std::queue<std::pair<int, int>> generationQueue;
+    std::mutex generationQueueMutex;
+    std::condition_variable generationQueueCV;
+    std::atomic<bool> generationRunning = true;
+
+    std::thread suppressionThread; // Thread for chunk suppression
+    std::queue<std::pair<int, int>> suppressionQueue;
+    std::mutex suppressionQueueMutex;
+    std::condition_variable suppressionQueueCV;
+    std::atomic<bool> suppressionRunning = true;
+
+    void generationLoop();
+    void suppressionLoop();
 public:
     World();
 
@@ -51,6 +74,15 @@ public:
 
     void generateChunkColumn(int x, int z);
 
+    void enqueueChunkGeneration(int x, int z);
+    void enqueueColumnSuppression(int x, int z);
+    void startGenerationThread();
+    void startSuppressionThread();
+    void stopGenerationThread();
+    void stopSuppressionThread();
+
+    void addColumn(std::shared_ptr<ChunkColumn> column);
+
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
     std::shared_ptr<VoxelChunk> createEmptyChunk(int x, int y, int z);
 
@@ -58,7 +90,7 @@ public:
     void removeChunkColumn(int x, int z);
 
     // Get a chunk column at the given CHUNK coordinates
-    std::shared_ptr<ChunkColumn> getChunkColumn(int x, int z);
+    std::shared_ptr<ChunkColumn> getChunkColumn(int x, int z) const;
     
     // Return all chunks in the world
     std::vector<std::shared_ptr<VoxelChunk> > getAllChunks();
@@ -67,10 +99,10 @@ public:
     std::shared_ptr<VoxelChunk> getChunk(int x, int y, int z);
 
     // Get a pointer to the chunk at the given WORLD coordinates
-    std::shared_ptr<VoxelChunk> getChunkContaining(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> getChunkContaining(int x, int y, int z) const;
 
     // Get a pointer to the chunk at the given WORLD coordinates (float version)
-    std::shared_ptr<VoxelChunk> getChunkContaining(glm::vec3 position);
+    std::shared_ptr<VoxelChunk> getChunkContaining(glm::vec3 position) const;
 
     /**
      * @brief Get all the chunks that intersect with the given ray and max distance.
