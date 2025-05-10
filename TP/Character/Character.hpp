@@ -15,6 +15,8 @@
 #include "vector"
 #include <TP/GUI/HUD.hpp>
 #include <Defines.hpp>
+#include "TP/Scene/Entity.hpp"
+
 
 class Character : public SceneNode {
 
@@ -74,6 +76,8 @@ public:
 
     float getSpeed();
 
+    void setCharacterModel(Entity* model);
+
 private:
 
     void updateClosestBlock(BlocDatabase &database);
@@ -120,6 +124,11 @@ private:
     unsigned char prevGamemode = GAMEMODE_SURVIVAL;
 
     HUD* m_hud = nullptr;
+
+    void alignWithCamera(const glm::vec3& cameraDirection);
+    void initializePlayerAnimations(Entity* characterModel);
+    void createWalkingPoses(Entity* characterModel);
+    Entity* m_characterModel = nullptr;
 };
 
 #endif // CHARACTER_HPP

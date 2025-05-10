@@ -11,6 +11,9 @@
 
 #include <TP/Scene/ChunkColumn.hpp>
 
+
+
+
 #include <Defines.hpp>
 #include <utils/Math.hpp>
 
@@ -21,6 +24,7 @@
 #include <atomic>
 
 class Character;
+class Zombie;
 
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2 &vec) const {
@@ -73,6 +77,7 @@ public:
     void initialGeneration();
 
     void generateChunkColumn(int x, int z);
+    void emplaceChunk(std::shared_ptr<VoxelChunk> &chunk);
 
     void enqueueChunkGeneration(int x, int z);
     void enqueueColumnSuppression(int x, int z);
@@ -166,7 +171,12 @@ public:
 
     void resolveCollisions(Character &character, World *world);
 
+    void resolveCollisions(Zombie& zombie, World* world);
+
     void resolveCollisionForBlock(Character &character, glm::vec3 blockPosition);
+
+    void resolveCollisionForBlock(Zombie& zombie, glm::vec3 blockPosition);
+
 
     void update(float deltaTime);
 
@@ -193,4 +203,6 @@ public:
 
     // Définit le niveau de lumière d'un bloc.
     void setLightLevel(int x, int y, int z, int lightLevel);
+
+    void addChunkColumn(std::shared_ptr<ChunkColumn> column);
 };

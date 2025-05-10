@@ -356,3 +356,189 @@ void Entity::setTexture(Texture* texture) {
     m_leftLeg->m_texture = texture;
     m_rightLeg->m_texture = texture;
 }
+
+
+
+
+
+
+
+
+void EntityPose::initFromEntity(Entity* entity) {
+    headTransform = entity->getHead()->m_transform;
+    torsoTransform = entity->m_transform;
+    leftArmTransform = entity->getLeftArm()->m_transform;
+    rightArmTransform = entity->getRightArm()->m_transform;
+    leftLegTransform = entity->getLeftLeg()->m_transform;
+    rightLegTransform = entity->getRightLeg()->m_transform;
+}
+
+void Entity::setState(EntityState newState) {
+    if (newState != m_currentState) {
+        m_currentState = newState;
+        m_timeInCurrentPose = 0.0f;
+        m_currentPoseIndex = 0;
+        
+        switch (newState) {
+            case IDLE:
+                setCurrentSequence("idle");
+                break;
+            case WALKING:
+                setCurrentSequence("walking");
+                break;
+            case ATTACKING:
+                setCurrentSequence("attacking");
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void Entity::initializeBasePose() {
+    EntityPose basePose("base");
+    basePose.initFromEntity(this);
+    m_poses["base"] = basePose;
+}
+
+void Entity::addPose(const std::string& name, const EntityPose& pose) {
+    m_poses[name] = pose;
+}
+void Entity::createAnimationSequence(const std::string& name, const std::vector<std::string>& poseNames, 
+                                  const std::vector<float>& durations, bool loop) {
+    if (poseNames.size() != durations.size()) {
+        std::cerr << "Error: Number of poses and durations must match" << std::endl;
+        return;
+    }
+    
+    AnimationSequence sequence;
+    sequence.loop = loop;
+    
+    for (size_t i = 0; i < poseNames.size(); i++) {
+        if (m_poses.find(poseNames[i]) != m_poses.end()) {
+            sequence.keyPoses.push_back(m_poses[poseNames[i]]);
+            sequence.durations.push_back(durations[i]);
+        } else {
+            std::cerr << "Warning: Pose '" << poseNames[i] << "' not found" << std::endl;
+        }
+    }
+    
+    m_sequences[name] = sequence;
+}
+void Entity::setCurrentSequence(const std::string& sequenceName) {
+    if (m_sequences.find(sequenceName) != m_sequences.end()) {
+        m_currentSequence = &m_sequences[sequenceName];
+        m_currentPoseIndex = 0;
+        m_timeInCurrentPose = 0.0f;
+        
+        if (!m_currentSequence->keyPoses.empty()) {
+            m_sourcePose = &m_currentSequence->keyPoses[0];
+            int targetIndex = (m_currentPoseIndex + 1) % m_currentSequence->keyPoses.size();
+            m_targetPose = &m_currentSequence->keyPoses[targetIndex];
+        }
+    } else {
+        std::cerr << "Warning: Animation sequence '" << sequenceName << "' not found" << std::endl;
+    }
+}
+
+
+void Entity::updateAnimation(float deltaTime) {
+    // std::cout << "Updating animation, state: " << m_currentState << ", sequence: " << (m_currentSequence ? "active" : "null") << std::endl;
+    updatePoseAnimation(deltaTime);
+}
+
+void Entity::updatePoseAnimation(float deltaTime) {
+    if (!m_currentSequence || m_currentSequence->keyPoses.empty()) {
+        return;
+    }
+    
+    m_timeInCurrentPose += deltaTime;
+    
+    int targetIndex = (m_currentPoseIndex + 1) % m_currentSequence->keyPoses.size();
+    
+    if (m_timeInCurrentPose >= m_currentSequence->durations[m_currentPoseIndex]) {
+        m_timeInCurrentPose = 0.0f;
+        m_currentPoseIndex = targetIndex;
+        
+        if (m_currentPoseIndex == 0 && !m_currentSequence->loop) {
+            // Si la séquence ne doit pas boucler, revenir à l'animation idle
+            setState(IDLE);
+            return;
+        }
+        
+        m_sourcePose = &m_currentSequence->keyPoses[m_currentPoseIndex];
+        targetIndex = (m_currentPoseIndex + 1) % m_currentSequence->keyPoses.size();
+        m_targetPose = &m_currentSequence->keyPoses[targetIndex];
+    }
+    
+    float factor = m_timeInCurrentPose / m_currentSequence->durations[m_currentPoseIndex];
+    
+    interpolateBetweenPoses(*m_sourcePose, *m_targetPose, factor);
+}
+
+void Entity::interpolateBetweenPoses(const EntityPose& pose1, const EntityPose& pose2, float factor) {
+    factor = glm::clamp(factor, 0.0f, 1.0f);
+    
+    // Interpolation des rotations avec quaternions
+    // Tête
+    glm::quat sourceRot = glm::quat_cast(glm::mat4(pose1.headTransform.m_rotation));
+    glm::quat targetRot = glm::quat_cast(glm::mat4(pose2.headTransform.m_rotation));
+    glm::quat interpRot = glm::slerp(sourceRot, targetRot, factor);
+    m_head->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
+    
+    // Translation de la tête 
+    glm::vec3 sourcePos = pose1.headTransform.m_translation;
+    glm::vec3 targetPos = pose2.headTransform.m_translation;
+    m_head->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
+    
+    // Bras gauche
+    sourceRot = glm::quat_cast(glm::mat4(pose1.leftArmTransform.m_rotation));
+    targetRot = glm::quat_cast(glm::mat4(pose2.leftArmTransform.m_rotation));
+    interpRot = glm::slerp(sourceRot, targetRot, factor);
+    m_leftArm->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
+    
+    sourcePos = pose1.leftArmTransform.m_translation;
+    targetPos = pose2.leftArmTransform.m_translation;
+    m_leftArm->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
+    
+    // Bras droit
+    sourceRot = glm::quat_cast(glm::mat4(pose1.rightArmTransform.m_rotation));
+    targetRot = glm::quat_cast(glm::mat4(pose2.rightArmTransform.m_rotation));
+    interpRot = glm::slerp(sourceRot, targetRot, factor);
+    m_rightArm->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
+    
+    sourcePos = pose1.rightArmTransform.m_translation;
+    targetPos = pose2.rightArmTransform.m_translation;
+    m_rightArm->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
+    
+    // Jambe gauche
+    sourceRot = glm::quat_cast(glm::mat4(pose1.leftLegTransform.m_rotation));
+    targetRot = glm::quat_cast(glm::mat4(pose2.leftLegTransform.m_rotation));
+    interpRot = glm::slerp(sourceRot, targetRot, factor);
+    m_leftLeg->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
+    
+    sourcePos = pose1.leftLegTransform.m_translation;
+    targetPos = pose2.leftLegTransform.m_translation;
+    m_leftLeg->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
+    
+    // Jambe droite
+    sourceRot = glm::quat_cast(glm::mat4(pose1.rightLegTransform.m_rotation));
+    targetRot = glm::quat_cast(glm::mat4(pose2.rightLegTransform.m_rotation));
+    interpRot = glm::slerp(sourceRot, targetRot, factor);
+    m_rightLeg->m_transform.m_rotation = glm::mat3x3(glm::mat4_cast(interpRot));
+    
+    sourcePos = pose1.rightLegTransform.m_translation;
+    targetPos = pose2.rightLegTransform.m_translation;
+    m_rightLeg->m_transform.m_translation = glm::mix(sourcePos, targetPos, factor);
+    
+    // Mettre à jour les matrices de modèle après l'interpolation
+    m_head->updateModelMatrix();
+    m_leftArm->updateModelMatrix();
+    m_rightArm->updateModelMatrix();
+    m_leftLeg->updateModelMatrix();
+    m_rightLeg->updateModelMatrix();
+}
+
+void Entity::update(float deltaTime) {
+    updateAnimation(deltaTime);
+}

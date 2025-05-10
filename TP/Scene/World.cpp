@@ -5,9 +5,14 @@
 #include <algorithm>
 #include "World.hpp"
 #include <unordered_set>
+#include <TP/Scene/Zombie.hpp>
 
 #include <chrono>
 #include <iostream>
+
+void World::emplaceChunk(std::shared_ptr<VoxelChunk> &chunk) {
+    chunks.emplace(chunk->m_chunkCoords, chunk);
+}
 
 void World::generationLoop() {
     while (generationRunning) {
@@ -45,7 +50,7 @@ void World::generationLoop() {
             chunkColumns.emplace(glm::ivec2(x, z), newColumn);
             newColumn->assignWorld(this);
             for (auto &chunk : newColumn->getChunks()) {
-                chunks.emplace(glm::ivec3(chunk->m_chunkCoords.x, chunk->m_chunkCoords.y, chunk->m_chunkCoords.z), chunk);
+                emplaceChunk(chunk);
             }
             //generateChunkColumn(x, z);  // Actual column generation 
         }
@@ -112,7 +117,6 @@ World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
     startGenerationThread();
     startSuppressionThread();
-    initialGeneration();
 }
 
 World::~World() {
@@ -156,7 +160,6 @@ void World::updateSkyLightsInColumn(int x, int z)
 
     column->markSkylightDirty(false);
 }
-
 
 void World::addColumn(std::shared_ptr<ChunkColumn> column) {
     chunkColumns.emplace(column->getChunkCoords(), column);
@@ -741,4 +744,93 @@ void World::resolveCollisions(Character &character, World *world) {
 
     // Application du mouvement du personnage
     character.move(character.vecteurDirection);
+}
+
+void World::resolveCollisions(Zombie& zombie, World* world) {
+    // Logique de collision similaire à celle utilisée pour Character
+    // Récupérer la boîte englobante
+    glm::vec3 minBB = zombie.getMinBoundingBox();
+    glm::vec3 maxBB = zombie.getMaxBoundingBox();
+    
+    // Récupérer la direction de déplacement
+    glm::vec3& direction = zombie.vecteurDirection;
+    
+    // Traiter les collisions avec les blocs dans la boîte englobante
+    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x) {
+        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y) {
+            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z) {
+                int blockType = world->getBloc(x, y, z);
+                
+                // Ignorer l'air et l'eau
+                if (blockType == AIR || blockType == WATER) {
+                    continue;
+                }
+                
+                // Résoudre les collisions avec les blocs solides
+                resolveCollisionForBlock(zombie, glm::vec3(x, y, z));
+            }
+        }
+    }
+    
+    // Appliquer le mouvement
+    zombie.move(zombie.vecteurDirection);
+}
+
+void World::resolveCollisionForBlock(Zombie &zombie, glm::vec3 blockPosition) {
+    // Bounding box du zombie
+    glm::vec3 minBB = zombie.getMinBoundingBox();
+    glm::vec3 maxBB = zombie.getMaxBoundingBox();
+
+    // Position minimale et maximale du bloc intersecté
+    glm::vec3 blockMin = blockPosition;
+    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+
+    // Vérification si la bounding box du zombie intersecte celle du bloc
+    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
+        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
+        maxBB.z > blockMin.z && minBB.z < blockMax.z) {
+
+        // Calcul des overlaps sur chaque axe
+        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
+        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
+        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
+
+        // Détermination de l'axe avec la plus petite profondeur de collision
+        if (overlapX < overlapY && overlapX < overlapZ) { // Axe X
+            if (zombie.vecteurDirection.x > 0 && zombie.getWorldPosition().x < blockPosition.x) {
+                zombie.vecteurDirection.x = 0; // Bloque le mouvement vers la droite
+            } else if (zombie.vecteurDirection.x < 0 && zombie.getWorldPosition().x > blockPosition.x) {
+                zombie.vecteurDirection.x = 0; // Bloque le mouvement vers la gauche
+            }
+        } else if (overlapY < overlapX && overlapY < overlapZ) { // Axe Y
+            if (zombie.vecteurDirection.y > 0 && zombie.getWorldPosition().y < blockPosition.y) {
+                zombie.vecteurDirection.y = 0; // Bloque le mouvement vers le haut
+            } else if (zombie.vecteurDirection.y < 0 && zombie.getWorldPosition().y > blockPosition.y) {
+                zombie.vecteurDirection.y = 0; // Bloque le mouvement vers le bas
+            }
+        } else { // Axe Z
+            if (zombie.vecteurDirection.z > 0 && zombie.getWorldPosition().z < blockPosition.z) {
+                zombie.vecteurDirection.z = 0; // Bloque le mouvement vers l'avant
+            } else if (zombie.vecteurDirection.z < 0 && zombie.getWorldPosition().z > blockPosition.z) {
+                zombie.vecteurDirection.z = 0; // Bloque le mouvement vers l'arrière
+            }
+        }
+    }
+}
+
+
+void World::addChunkColumn(std::shared_ptr<ChunkColumn> column)
+{
+    if (!column)
+    {
+        std::cerr << "Error: Attempted to add a null ChunkColumn to the world." << std::endl;
+        return;
+    }
+
+    // Récupérer les coordonnées de la colonne
+    glm::ivec2 columnCoords = column->getChunkCoords();
+
+    // Ajouter la colonne à la map des chunkColumns
+    chunkColumns[columnCoords] = column;
+
 }

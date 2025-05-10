@@ -12,6 +12,7 @@ private:
     std::vector<std::vector<int>> surfaceHeightmap;
     bool skyLightdirty = true;
 public:
+    ChunkColumn() = default; // Constructeur par défaut
     ChunkColumn(int chunkCoordX, int chunkCoordZ) {
         m_chunkCoords = glm::ivec2(chunkCoordX, chunkCoordZ);
         allocateSurfaceHeightMap();
@@ -19,6 +20,8 @@ public:
     ~ChunkColumn() {
         free();
     }
+
+    void initializeChunks();
 
     // Return the chunk at the given CHUNK y coordinate
     std::shared_ptr<VoxelChunk> getChunk(int chunkCoordY);
