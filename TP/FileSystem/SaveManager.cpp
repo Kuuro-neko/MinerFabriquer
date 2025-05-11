@@ -226,12 +226,12 @@ void SaveManager::saveWorldFile()
                     for (int bz = 0; bz < CHUNK_SIZE; ++bz)
                     {
                         // blocID
-                        int32_t blockID = chunk->getBloc(bx, by, bz);
-                        out.write(reinterpret_cast<char *>(&blockID), sizeof(int32_t));
+                        int8_t blockID = chunk->getBloc(bx, by, bz);
+                        out.write(reinterpret_cast<char *>(&blockID), sizeof(int8_t));
     
                         // lightmap
-                        int32_t light = chunk->getLightLevel(bx, by, bz);
-                        out.write(reinterpret_cast<char *>(&light), sizeof(int32_t));
+                        int8_t light = chunk->getLightLevel(bx, by, bz);
+                        out.write(reinterpret_cast<char *>(&light), sizeof(int8_t));
                     }
                 }
             }
@@ -325,8 +325,8 @@ std::vector<SaveManager::ChunkColumnEntry> SaveManager::readWorldFile(std::ifstr
                     for (int bz = 0; bz < CHUNK_SIZE; ++bz)
                     {
                         // Read block ID
-                        int32_t blockID;
-                        if (!in.read(reinterpret_cast<char *>(&blockID), sizeof(int32_t))) {
+                        int8_t blockID;
+                        if (!in.read(reinterpret_cast<char *>(&blockID), sizeof(int8_t))) {
                             std::cerr << "Failed to read block ID at chunk " << i 
                                       << " position (" << bx << "," << by << "," << bz << ")" << std::endl;
                             chunkReadError = true;
@@ -335,8 +335,8 @@ std::vector<SaveManager::ChunkColumnEntry> SaveManager::readWorldFile(std::ifstr
                         chunkEntry.blocksID.push_back(blockID);
 
                         // Read light level
-                        int32_t light;
-                        if (!in.read(reinterpret_cast<char *>(&light), sizeof(int32_t))) {
+                        int8_t light;
+                        if (!in.read(reinterpret_cast<char *>(&light), sizeof(int8_t))) {
                             std::cerr << "Failed to read light level at chunk " << i 
                                       << " position (" << bx << "," << by << "," << bz << ")" << std::endl;
                             chunkReadError = true;

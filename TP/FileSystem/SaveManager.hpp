@@ -70,8 +70,8 @@ public:
 
 
     struct ChunkEntry {
-        std::vector<int32_t> blocksID; // 16×16×16 of 1 octets = 4096 octets
-        std::vector<int32_t> lightmap; // 16×16×16 of 1 octets   = 4096 octets
+        std::vector<int8_t> blocksID; // 16×16×16 of 1 octets = 4096 octets
+        std::vector<int8_t> lightmap; // 16×16×16 of 1 octets   = 4096 octets
     };
 
     struct ChunkColumnEntry {

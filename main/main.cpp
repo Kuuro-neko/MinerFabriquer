@@ -302,8 +302,9 @@ int main(void) {
                             for (int bx = 0; bx < CHUNK_SIZE; ++bx) {
                                 for (int by = 0; by < CHUNK_SIZE; ++by) {
                                     for (int bz = 0; bz < CHUNK_SIZE; ++bz) {
-                                        newChunk->generationSetBloc(bx, by, bz, chunkEntry.blocksID[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
-                                        newChunk->setLightLevel(bx, by, bz, chunkEntry.lightmap[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
+                                        newChunk->generationSetBloc(bx, by, bz, (int) chunkEntry.blocksID[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
+                                        // cast from int8 to int
+                                        newChunk->setLightLevel(bx, by, bz, (int) chunkEntry.lightmap[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
                                     }
                                 }
                             }
