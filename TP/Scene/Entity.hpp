@@ -51,15 +51,17 @@ class Entity : public SceneNode {
     SceneNode* getLeftLeg() { return m_leftLeg; }
     SceneNode* getRightLeg() { return m_rightLeg; }
     
-    void setHeadMesh(MeshObject* mesh);
-    void setTorsoMesh(MeshObject* mesh);
-    void setLeftArmMesh(MeshObject* mesh);
-    void setRightArmMesh(MeshObject* mesh);
-    void setLeftLegMesh(MeshObject* mesh);
-    void setRightLegMesh(MeshObject* mesh);
-    void setTexture(Texture* texture);
-    void draw(GLuint programID) override;
+    void setHeadMesh(VoxelMeshObject* mesh);
+    void setTorsoMesh(VoxelMeshObject* mesh);
+    void setLeftArmMesh(VoxelMeshObject* mesh);
+    void setRightArmMesh(VoxelMeshObject* mesh);
+    void setLeftLegMesh(VoxelMeshObject* mesh);
+    void setRightLegMesh(VoxelMeshObject* mesh);
+    void setTexture(PBRTexture* texture);
+    virtual void draw(GLuint programID) override;
     void cleanupBuffers() override;
+
+    PBRTexture* m_pbr_texture = nullptr;
 
     inline void setIsFPS(bool* FPSActive) { this->FPSActive = FPSActive; }
 
@@ -71,12 +73,12 @@ class Entity : public SceneNode {
     SceneNode* m_leftLeg;
     SceneNode* m_rightLeg;
 
-    MeshObject *m_torsoMesh;
-    MeshObject *m_headMesh;
-    MeshObject *m_leftArmMesh;
-    MeshObject *m_rightArmMesh;
-    MeshObject *m_leftLegMesh;
-    MeshObject *m_rightLegMesh;
+    VoxelMeshObject *m_torsoMesh;
+    VoxelMeshObject *m_headMesh;
+    VoxelMeshObject *m_leftArmMesh;
+    VoxelMeshObject *m_rightArmMesh;
+    VoxelMeshObject *m_leftLegMesh;
+    VoxelMeshObject *m_rightLegMesh;
 
     bool *FPSActive = nullptr;
     void generateHumanoidMesh(float ground);

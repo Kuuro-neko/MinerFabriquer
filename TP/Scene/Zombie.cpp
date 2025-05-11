@@ -314,7 +314,14 @@ void Zombie::resolveGravity(float& deltaTime) {
     }
 }
 
-void Zombie::setState(ZombieState newState) {
+void Zombie::draw(GLuint programID)
+{
+    if(m_pbr_texture) m_pbr_texture->bind(programID);
+    SceneNode::draw(programID);
+}
+
+void Zombie::setState(ZombieState newState)
+{
     if (newState != currentState) {
         currentState = newState;
         m_timeInCurrentPose = 0.0f;

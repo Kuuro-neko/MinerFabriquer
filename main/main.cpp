@@ -111,7 +111,7 @@ void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
 }
 
 
-Character character = Character(
+Character* character = new Character(
         Transform(
                 glm::vec3(0, 61, 0),
                 DEFAULT_ROTATION,
@@ -166,7 +166,7 @@ int main(void) {
     KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
     menuInputManager.setIsEnabled(false);
     KeyInput::setupKeyInputs(*window);
-    character.setKeyInput(&characterInputManager);
+    character->setKeyInput(&characterInputManager);
     camera.setKeyInput(&characterInputManager);
 
 
@@ -224,14 +224,14 @@ int main(void) {
                                             "../shader/fragment_shader_wireframe.glsl");
     Renderer renderer = Renderer(wireframeProgramID);
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
-    rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
+    rendererCharacterBoundingBox.setHighlight(character->getMinBoundingBox());
     GLuint cubemapProgramID = LoadShaders("../shader/cubemap_vertex_shader.glsl",
                                           "../shader/cubemap_fragment_shader.glsl");
     GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl",
                                          "../shader/clouds_fragment_shader.glsl");
 
     hud = new HUD(windowWidth, windowHeight);
-    character.setHUD(hud);
+    character->setHUD(hud);
 
     Texture lightMap = Texture("../textures/lightmap.png");
     lightMap.setSamplerName("LightmapSampler");
@@ -255,7 +255,7 @@ int main(void) {
 
     //pass the world to the save manager
     saveManager.setWorld(&world);
-    saveManager.setCharacter(&character);
+    saveManager.setCharacter(character);
 
 
     if (!saveManager.isDataFolderContainsOtherFolder()) {
@@ -339,19 +339,22 @@ int main(void) {
     world.startWorkerThread();
 
     // Associer le monde au personnage
-    character.m_world = &world;
+    character->m_world = &world;
 
     // Ajouter le personnage au monde
     Entity *characterModel = new Entity();
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f);
-    Texture* playerTexture = new Texture("../textures/steve.png");
+    PBRTexture* playerTexture = new PBRTexture("../textures/steve/steve.png", 
+                                             "../textures/steve/steve_normal.png",
+                                             "../textures/steve/steve_roughness.png",
+                                             "../textures/steve/steve_metallic.png");
     characterModel->setTexture(playerTexture);
-    character.addChild(characterModel);
-    character.setCharacterModel(characterModel);
-    root.addChild(&character);
-    character.setWireframeRenderers(wireframeProgramID);
-    camera.setTarget(character.getWorldPosition());
+    character->addChild(characterModel);
+    character->setCharacterModel(characterModel);
+    
+    character->setWireframeRenderers(wireframeProgramID);
+    camera.setTarget(character->getWorldPosition());
 
 
     Zombie* zombie = new Zombie(
@@ -362,10 +365,14 @@ int main(void) {
         &world,
         &camera
     );
-    Texture* zombieTexture = new Texture("../textures/zombie.png");
+    PBRTexture* zombieTexture = new PBRTexture("../textures/zombie/zombie.png",
+                                             "../textures/zombie/zombie_normal.png",
+                                             "../textures/zombie/zombie_roughness.png",
+                                             "../textures/zombie/zombie_metallic.png");
     zombie->setTexture(zombieTexture);
     zombie->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
     root.addChild(zombie);
+    root.addChild(character);
     // After creating the zombie in main.cpp, add:
 
     zombie->setWireframeRenderer(wireframeProgramID);
@@ -406,7 +413,7 @@ int main(void) {
 
 
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
-        character.scrollCallback(window, xOffset, yOffset);
+        character->scrollCallback(window, xOffset, yOffset);
     });
 
     // Get a handle for our "LightPosition" uniform
@@ -428,8 +435,8 @@ int main(void) {
         auto time_a = std::chrono::high_resolution_clock::now();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
-        character.listenAction(deltaTime);
-        camera.updateTarget(character.getWorldPosition());
+        character->listenAction(deltaTime);
+        camera.updateTarget(character->getWorldPosition());
         camera.update(deltaTime, window);
 
 
@@ -438,8 +445,8 @@ int main(void) {
         world.updateVisibleChunk(frustum);
 
 
-        world.resolveCollisions(character, &world);
-        character.resolveGravity(deltaTime);
+        world.resolveCollisions(*character, &world);
+        character->resolveGravity(deltaTime);
 
         zombie->resolveGravity(deltaTime);
         world.resolveCollisions(*zombie, &world);
@@ -495,17 +502,17 @@ int main(void) {
         }
 
 
-        character.drawBoundingBox();
+        character->drawBoundingBox();
 
         zombie->drawBoundingBox();
 
-        if (character.isHUDVisible())
+        if (character->isHUDVisible())
             hud->render();
-        if (character.isHUDVisible()) hud->render();
+        if (character->isHUDVisible()) hud->render();
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        clouds.draw(currentFrame, character);
+        clouds.draw(currentFrame, *character);
 
 
 
