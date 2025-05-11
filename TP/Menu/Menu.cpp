@@ -44,9 +44,28 @@ std::string Menu::chooseWorld() {
 
 std::string Menu::createWorld() {
     std::string worldName;
-    std::cout << "=== Creation of a new world ===\n";
-    std::cout << "Enter the new world name : ";
-    std::cin >> worldName;
+
+    bool worldNameValid = false;
+    // verify if the name is valid and if the folder does not exist
+    while(!worldNameValid) {
+        std::cout << "=== Creation of a new world ===\n";
+        std::cout << "Enter the new world name : ";
+        std::cin >> worldName;
+
+        // Vérifie si le nom est valide
+        if (worldName.empty() || worldName.find_first_of("/\\:*?\"<>|") != std::string::npos) {
+            std::cerr << "Error: Invalid world name. Please avoid special characters.\n";
+            continue;
+        }
+
+        // Vérifie si le dossier existe déjà
+        if (std::filesystem::exists(PATHSAVES + worldName)) {
+            std::cerr << "Error: World name already exists. Please choose another name.\n";
+            continue;
+        }
+
+        worldNameValid = true;
+    }
 
     std::string savePath = PATHSAVES + worldName;
 
