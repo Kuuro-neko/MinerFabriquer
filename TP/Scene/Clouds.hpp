@@ -9,7 +9,8 @@ class Clouds
 {
 private:
     float scrollSpeed;
-    float height = 100.0f;
+    float height = 138.3f;
+    float width = 9.0f;
     Texture *texture;
     GLuint programId;
     MeshObject mesh;

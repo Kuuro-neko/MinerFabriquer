@@ -4,11 +4,16 @@
 
 #define EPSILON 0.001f // To slightly move the texture coordinates to avoid neighboring textures bleeding into each other, doesn't work well
 
+// ===== Fast access ===== //
+
+#define RENDERER_DISTANCE 12
+#define GENERATION_DISTANCE 8
+
 // ===== Generation & chunks ===== //
 
-#define GENERATION_SEED 4799
-#define GROUND_LEVEL 56
-#define WATER_LEVEL_DELTA 15
+#define GROUND_LEVEL 65.0f
+#define WATER_LEVEL 63
+#define MESA_START_TERRACOTTA 68
 
 #define CHUNK_SIZE 16
 #define BLOC_SIZE 1
@@ -18,8 +23,8 @@
 #define GENERATION_RADIUS_X 8 // X radius of initial generation
 #define GENERATION_SIZE_Y 8 // Y height of initial generation
 #define GENERATION_RADIUS_Z 8 // Z radius of initial generation
-#define GENERATION_SIZE_X  16
-#define GENERATION_SIZE_Z  16
+#define GENERATION_SIZE_X  8
+#define GENERATION_SIZE_Z  8
 
 
 // ===== Bloc database ===== //
@@ -57,6 +62,50 @@
 #define BROWN_MUSHROOM 25
 #define MYCELIUM 26
 #define RED_MUSHROOM 27
+#define SPRUCE_PLANKS 28
+#define SPRUCE_LOG 29
+#define SPRUCE_LEAVES 30
+#define JUNGLE_PLANKS 31
+#define JUNGLE_LOG 32
+#define JUNGLE_LEAVES 33
+#define RED_SAND 34
+#define RED_SANDSTONE 35
+#define TERRACOTTA 36
+#define BLACK_TERRACOTTA 37
+#define BLUE_TERRACOTTA 38
+#define BROWN_TERRACOTTA 39
+#define CYAN_TERRACOTTA 40
+#define GRAY_TERRACOTTA 41
+#define GREEN_TERRACOTTA 42
+#define LIGHTBLUE_TERRACOTTA 43
+#define LIGHTGRAY_TERRACOTTA 44
+#define LIME_TERRACOTTA 45
+#define MAGENTA_TERRACOTTA 46
+#define ORANGE_TERRACOTTA 47
+#define PINK_TERRACOTTA 48
+#define PURPLE_TERRACOTTA 49
+#define RED_TERRACOTTA 50
+#define WHITE_TERRACOTTA 51
+#define YELLOW_TERRACOTTA 52
+#define MANGROVE_PLANKS 53
+#define MANGROVE_LOG 54
+#define MANGROVE_LEAVES 55
+#define MUD 56
+#define CLAY 57
+#define GOLD_ORE 58
+#define GOLD_BLOCK 59
+#define DIAMOND_ORE 60
+#define DIAMOND_BLOCK 61
+#define COPPER_ORE 62
+#define COPPER_BLOCK 63
+#define COAL_ORE 64
+#define EMERALD_ORE 65
+#define EMERALD_BLOCK 66
+#define MAGMA 67
+#define OBSIDIAN 68
+#define BLACKSTONE 69
+#define GILDED_BLACKSTONE 70
+#define PODZOL 71
 
 #define ERROR_BLOC 255
 
@@ -73,10 +122,16 @@
 #define PLAINS_BIOME 0
 #define MOUNTAINS_BIOME 1
 #define DESERT_BIOME 2
-#define WATER_BIOME 3
+#define OCEAN_BIOME 3
 #define ICE_BIOME 4
 #define CRISTALPEAKS_BIOME 5
 #define MUSHROOM_BIOME 6
+#define DEBUG_BIOME 7
+#define BEACH_BIOME 8
+#define FROZENBEACH_BIOME 9
+#define FROZENOCEAN_BIOME 10
+#define TAIGA_BIOME 11
+#define MESA_BIOME 12
 
 // ===== Player ===== //
 
@@ -110,8 +165,6 @@
 
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
-
-#define RENDERER_DISTANCE 32.0f
 
 // ===== Lights ===== //
 

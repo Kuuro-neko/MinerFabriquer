@@ -15,6 +15,7 @@
 #include <TP/GUI/HUD.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
 #include <Defines.hpp>
+#include <TP/Scene/WorldGenerator.hpp>
 
 #define CHUNK_SIZE 16
 
@@ -191,6 +192,7 @@ int main(void) {
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glfwSwapInterval(0);
     // Hide the mouse and enable unlimited mouvement
     //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -228,17 +230,8 @@ int main(void) {
     GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl",
                                          "../shader/clouds_fragment_shader.glsl");
 
-
-    HUD hud = HUD(windowWidth, windowHeight);
-    character.setHUD(&hud);
-
-    GLint success;
-    GLchar infoLog[512];
-    glGetShaderiv(cloudsProgramID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(cloudsProgramID, 512, NULL, infoLog);
-        std::cerr << "Shader compile error: " << infoLog << std::endl;
-    }
+    hud = new HUD(windowWidth, windowHeight);
+    character.setHUD(hud);
 
     Texture lightMap = Texture("../textures/lightmap.png");
     lightMap.setSamplerName("LightmapSampler");
@@ -269,19 +262,23 @@ int main(void) {
         std::cout << "No world folder found. Generating a new world..." << std::endl;
 
         std::string saveFolder = Menu::createWorld();
+        std::string seedStr = menu.askSeed();
+        WorldGenerator::getInstance().setSeed(seedStr);
         saveManager.setSaveFolderPath(saveFolder);
-        world.generation();
+        world.initialGeneration();
         saveManager.saveWorldFile(); // Save the world data after generation
         saveManager.createPlayerDataFile();
-
+        
     } else {
         int choice = Menu::chooseLoadOrNewWorld();
         switch (choice) {
             case MENU_CREATE: {
                 std::string saveFolder = Menu::createWorld();
+                std::string seedStr = menu.askSeed();
+                WorldGenerator::getInstance().setSeed(seedStr);
                 std::cout << "Creating world in: " << saveFolder << std::endl;
                 saveManager.setSaveFolderPath(saveFolder);
-                world.generation();
+                world.initialGeneration();
                 saveManager.saveWorldFile(); // Save the world data after generation
                 saveManager.createPlayerDataFile();
                 break;
@@ -290,7 +287,41 @@ int main(void) {
                std::string worldPath = menu.chooseWorld();
                std::cout << "Loading world from: " << worldPath << std::endl;
                saveManager.setSaveFolderPath(worldPath);
-               saveManager.loadWorldFile();
+               std::vector<SaveManager::ChunkColumnEntry> colEntries = saveManager.loadWorldFile();
+               for (const auto &colEntry : colEntries) {
+                    std::shared_ptr<ChunkColumn> column = std::make_shared<ChunkColumn>(colEntry.worldX, colEntry.worldZ);
+                    for (int i = 0; i < CHUNK_SIZE; ++i) {
+                        for (int j = 0; j < CHUNK_SIZE; ++j) {
+                            column->setHeightmapValue(i, j, colEntry.heightmap[i][j]);
+                        }
+                    }
+                    for (int y = GENERATION_SIZE_Y - 1; y >= 0; --y) {
+                        auto newChunk = std::make_shared<VoxelChunk>();
+                        newChunk->translate(glm::vec3(colEntry.worldX * CHUNK_SIZE, y * CHUNK_SIZE, colEntry.worldZ * CHUNK_SIZE));
+                        newChunk->m_chunkCoords = glm::ivec3(colEntry.worldX, y, colEntry.worldZ);
+                        column->addChunk(newChunk);
+
+                        auto chunkEntry = colEntry.chunks[y];
+                        
+                        if (newChunk) {
+                            for (int bx = 0; bx < CHUNK_SIZE; ++bx) {
+                                for (int by = 0; by < CHUNK_SIZE; ++by) {
+                                    for (int bz = 0; bz < CHUNK_SIZE; ++bz) {
+                                        newChunk->generationSetBloc(bx, by, bz, (int) chunkEntry.blocksID[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
+                                        // cast from int8 to int
+                                        newChunk->setLightLevel(bx, by, bz, (int) chunkEntry.lightmap[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    world.addColumn(column);
+                    column->assignWorld(&world);
+                    for (auto &chunk : column->getChunks()) {
+                        world.emplaceChunk(chunk);
+                        chunk->dirty = true;
+                    }
+               }
                saveManager.loadPlayerData();
                break;
            }
@@ -305,7 +336,7 @@ int main(void) {
     saveManager.loadPlayerData();
     std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
     saveManager.startAutoSave();
-
+    world.startWorkerThread();
 
     // Associer le monde au personnage
     character.m_world = &world;
@@ -390,16 +421,22 @@ int main(void) {
         lastFrame = currentFrame;
         world.update(deltaTime);
 
+        
         // Poll inputs
         glfwPollEvents();
+        
+        auto time_a = std::chrono::high_resolution_clock::now();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
         character.listenAction(deltaTime);
         camera.updateTarget(character.getWorldPosition());
         camera.update(deltaTime, window);
 
+
+        world.updateLoadedChunks();
         frustum.update();
         world.updateVisibleChunk(frustum);
+
 
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
@@ -410,6 +447,7 @@ int main(void) {
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         cubemapTexture.draw(camera);
 
         // Use our shader
@@ -437,6 +475,8 @@ int main(void) {
 
         glUseProgram(programID);
 
+
+
         root.draw(programID);
 
         // Restore shader program and matrices for the scene
@@ -447,6 +487,12 @@ int main(void) {
         if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders)) {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
+        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleWireframe)) {
+            world.wireframe = !world.wireframe;
+        }
+        if (characterInputManager.isKeybindPressed({Keybinds::getInstance().getToggleDebug()})) {
+            std::cout << "Seed string : " << WorldGenerator::getInstance().getSeedStr() << std::endl;
+        }
 
 
         character.drawBoundingBox();
@@ -454,8 +500,10 @@ int main(void) {
         zombie->drawBoundingBox();
 
         if (character.isHUDVisible())
-            hud.render();
-        if (character.isHUDVisible()) hud.render();
+            hud->render();
+        if (character.isHUDVisible()) hud->render();
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         clouds.draw(currentFrame, character);
 

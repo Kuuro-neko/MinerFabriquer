@@ -6,6 +6,8 @@
 #include <chrono>
 #include <filesystem>
 
+#include <TP/Scene/WorldGenerator.hpp>
+
 class SaveManager {
 
 private:
@@ -70,8 +72,8 @@ public:
 
 
     struct ChunkEntry {
-        std::vector<uint8_t> blocksID; // 16×16×16 of 1 octets = 4096 octets
-        std::vector<std::vector<int>> lightmap; // 16×16×16 of 1 octets   = 4096 octets
+        std::vector<int8_t> blocksID; // 16×16×16 of 1 octets = 4096 octets
+        std::vector<int8_t> lightmap; // 16×16×16 of 1 octets   = 4096 octets
     };
 
     struct ChunkColumnEntry {
@@ -91,9 +93,9 @@ public:
 
     void saveWorldFile();
 
-    void loadWorldFile();
+    std::vector<ChunkColumnEntry> loadWorldFile();
 
-    void readWorldFile(std::ifstream &in);
+    std::vector<ChunkColumnEntry> readWorldFile(std::ifstream &in);
 
 
     bool isDataFolderContainsOtherFolder();

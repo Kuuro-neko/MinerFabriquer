@@ -143,11 +143,15 @@ public:
     }
 
     float solidValue(int id) {
-        return m_blocs[id].solid;
+        return id != -2 && m_blocs[id].solid;
     }
 
     bool isPartOfGround(int id) {
         return m_blocs[id].ground;
+    }
+
+    bool isStoneOrStoneOre(int id) {
+        return id == STONE || id == IRON_ORE || id == COAL_ORE || id == GOLD_ORE || id == DIAMOND_ORE || id == EMERALD_ORE;
     }
 
     /**

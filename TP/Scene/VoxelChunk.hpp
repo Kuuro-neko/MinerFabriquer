@@ -6,12 +6,23 @@
 
 #include <Defines.hpp>
 
+#include <Exceptions.hpp>
+
+
 class World;
+class ChunkColumn;
+struct UngeneratedBlock {
+    int x;
+    int y;
+    int z;
+    int chunkX;
+    int chunkZ;
+    int bloc;
+};
 
 class VoxelChunk : public SceneNode
 {
 public:
-    VoxelChunk(int sizeX, int sizeY, int sizeZ);
     VoxelChunk();
     ~VoxelChunk();
     /**
@@ -25,7 +36,7 @@ public:
      * @return true 
      * @return false 
      */
-    bool setBloc(int x, int y, int z, int bloc);
+    bool setBloc(int x, int y, int z, int bloc, bool columnFallback = true, bool worldFallback = true);
 
     /**
      * @brief Set a block in the chunk, used for generation so it bypasses some checks
@@ -37,14 +48,19 @@ public:
      * @return true 
      * @return false 
      */
-    bool generationSetBloc(int x, int y, int z, int bloc);
+    bool generationSetBloc(int x, int y, int z, int bloc, bool columnFallback = true, bool worldFallback = true);
 
-    int getBloc(int x, int y, int z);
+    // Allow to save an out of bound bloc to be generated later. Given the coordinates as they are in local with OOB, this functions computes the correction.
+    bool saveUngeneratedBlock(int x, int y, int z, int bloc);
+
+    int getBloc(int x, int y, int z, bool columnFallback = true, bool worldFallback = true);
     int getBlocIncludingNeighbors(int x, int y, int z);
 
-    unsigned short getLightLevelIncludingNeighbors(int x, int y, int z);
+    int getLightLevelIncludingNeighbors(int x, int y, int z);
 
-    unsigned short getFaceLight(int x, int y, int z, int face);
+    int getLightLevel(int x, int y, int z);
+
+    int getFaceLight(int x, int y, int z, int face);
 
     int playerRemoveBlock(int x, int y, int z, unsigned char gamemode);
 
@@ -61,7 +77,7 @@ public:
      * 
      * @param programID 
      */
-    void draw(GLuint programID) override;
+    int drawOpaque(GLuint programID);
     void drawTransparent(GLuint programID);
 
     void cleanupBuffers() override;
@@ -73,19 +89,18 @@ public:
     bool intersects(Ray ray, float maxDistance);
 
     inline glm::vec3 getChunkCoords() const {
-        return glm::vec3(m_chunkCoords.x * m_sizeX, m_chunkCoords.y * m_sizeY, m_chunkCoords.z * m_sizeZ);
+        return glm::vec3(m_chunkCoords.x * CHUNK_SIZE, m_chunkCoords.y * CHUNK_SIZE, m_chunkCoords.z * CHUNK_SIZE);
     }
 
-    int m_sizeX = CHUNK_SIZE;
-    int m_sizeY = CHUNK_SIZE;
-    int m_sizeZ = CHUNK_SIZE;
     bool dirty = true;
     std::vector<std::vector<std::vector<int>>> m_cubes;
     std::vector<std::vector<std::vector<int>>> m_lights;
+    std::vector<UngeneratedBlock> m_unGeneratedBlocks;
     glm::ivec3 m_chunkCoords;
     World *m_world;
-    VoxelMeshObject m_opaqueMesh;
-    VoxelMeshObject m_transparentMesh;
+    std::shared_ptr<ChunkColumn> m_chunkColumn;
+    std::shared_ptr<VoxelMeshObject> m_opaqueMesh;
+    std::shared_ptr<VoxelMeshObject> m_transparentMesh;
 
     // Move Constructor
     VoxelChunk(VoxelChunk&& other) noexcept;
@@ -111,4 +126,5 @@ private:
 
     void addAOValues(int x, int y, int z, unsigned char face, std::vector<float> &ao);
 
+    void addLightValues(int x, int y, int z, unsigned char face, std::vector<int> &lights);
 };
