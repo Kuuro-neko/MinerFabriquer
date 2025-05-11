@@ -8,6 +8,7 @@
 #include "TP/Camera/Frustrum.hpp"
 #include <queue>
 #include <set>
+#include <functional>
 
 #include <TP/Scene/ChunkColumn.hpp>
 
@@ -23,6 +24,9 @@
 #include <condition_variable>
 #include <atomic>
 
+#define TASK_GENERATION 0
+#define TASK_SUPPRESSION 1
+
 class Character;
 class Zombie;
 
@@ -36,6 +40,12 @@ struct IVec3Hash {
     std::size_t operator()(const glm::ivec3 &vec) const {
         return std::hash<int>()(vec.x) ^ (std::hash<int>()(vec.y) << 1) ^ (std::hash<int>()(vec.z) << 2);
     }
+};
+
+struct Task {
+    int x;
+    int z;
+    unsigned char taskType; // 0 for generation, 1 for suppression
 };
 
 class World : public SceneNode {
@@ -55,20 +65,14 @@ private:
 
     std::recursive_mutex worldMutex; // Mutex to lock the chunks data
 
-    std::thread generationThread; // Thread for chunk generation
-    std::queue<std::pair<int, int>> generationQueue;
-    std::mutex generationQueueMutex;
-    std::condition_variable generationQueueCV;
-    std::atomic<bool> generationRunning = true;
+    std::queue<Task> taskQueue;
+    std::mutex taskQueueMutex;
+    std::condition_variable taskQueueCV;
+    
+    std::vector<std::thread> workerThreads; // Thread for chunk generation
+    std::atomic<bool> workerThreadRunning = true;
 
-    std::thread suppressionThread; // Thread for chunk suppression
-    std::queue<std::pair<int, int>> suppressionQueue;
-    std::mutex suppressionQueueMutex;
-    std::condition_variable suppressionQueueCV;
-    std::atomic<bool> suppressionRunning = true;
-
-    void generationLoop();
-    void suppressionLoop();
+    void workerLoop();
 public:
 bool wireframe = false;
     World();
@@ -82,10 +86,8 @@ bool wireframe = false;
 
     void enqueueChunkGeneration(int x, int z);
     void enqueueColumnSuppression(int x, int z);
-    void startGenerationThread();
-    void startSuppressionThread();
-    void stopGenerationThread();
-    void stopSuppressionThread();
+    void startWorkerThread();
+    void stopWorkerThread();
 
     void addColumn(std::shared_ptr<ChunkColumn> column);
 

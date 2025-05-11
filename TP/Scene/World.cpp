@@ -14,114 +14,98 @@ void World::emplaceChunk(std::shared_ptr<VoxelChunk> &chunk) {
     chunks.emplace(chunk->m_chunkCoords, chunk);
 }
 
-void World::generationLoop() {
-    while (generationRunning) {
-        std::unique_lock<std::mutex> lock(generationQueueMutex);
-        generationQueueCV.wait(lock, [&] { return !generationQueue.empty() || !generationRunning; });
+void World::workerLoop() {
+    while (workerThreadRunning) {
+        std::unique_lock<std::mutex> lock(taskQueueMutex);
+        taskQueueCV.wait(lock, [&] { return !taskQueue.empty() || !workerThreadRunning; });
 
-        if (!generationRunning) break;
+        if (!workerThreadRunning) break;
 
-        auto [x, z] = generationQueue.front();
-        generationQueue.pop();
+        auto task = taskQueue.front();
+        taskQueue.pop();
         lock.unlock();
 
-        {
-            // check if column exists 
-            std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
-            auto it = chunkColumns.find(glm::ivec2(x, z));
-            if (it != chunkColumns.end()) {
-                // Column already exists, skip generation
-                continue;
+        if (task.taskType == TASK_GENERATION) {
+            {
+                // check if column exists 
+                std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
+                auto it = chunkColumns.find(glm::ivec2(task.x, task.z));
+                if (it != chunkColumns.end()) {
+                    // Column already exists, skip generation
+                    continue;
+                }
+            }
+
+            auto newColumn = std::make_shared<ChunkColumn>(task.x, task.z);
+            for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
+                auto newChunk = std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
+                newChunk->translate(glm::vec3(task.x * CHUNK_SIZE, y * CHUNK_SIZE, task.z * CHUNK_SIZE));
+                newChunk->m_chunkCoords = glm::ivec3(task.x, y, task.z);
+                newColumn->addChunk(newChunk);
+            }
+    
+            newColumn->generate();
+    
+            {
+                std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
+                chunkColumns.emplace(glm::ivec2(task.x, task.z), newColumn);
+                newColumn->assignWorld(this);
+                for (auto &chunk : newColumn->getChunks()) {
+                    emplaceChunk(chunk);
+                    chunk->dirty = true;
+                }
+                //generateChunkColumn(x, z);  // Actual column generation 
+            }
+        } else if (task.taskType == TASK_SUPPRESSION) {
+            {
+                std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
+                removeChunkColumn(task.x, task.z);  // Actual column suppression
             }
         }
 
-        auto newColumn = std::make_shared<ChunkColumn>(x, z);
-        for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
-            auto newChunk = std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
-            newChunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
-            newChunk->m_chunkCoords = glm::ivec3(x, y, z);
-            newColumn->addChunk(newChunk);
-        }
-
-        newColumn->generate();
-
-        {
-            std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
-            chunkColumns.emplace(glm::ivec2(x, z), newColumn);
-            newColumn->assignWorld(this);
-            for (auto &chunk : newColumn->getChunks()) {
-                emplaceChunk(chunk);
-            }
-            //generateChunkColumn(x, z);  // Actual column generation 
-        }
-    }
-}
-
-void World::suppressionLoop() {
-    while (suppressionRunning) {
-        std::unique_lock<std::mutex> lock(suppressionQueueMutex);
-        suppressionQueueCV.wait(lock, [&] { return !suppressionQueue.empty() || !suppressionRunning; });
-
-        if (!suppressionRunning) break;
-
-        auto [x, z] = suppressionQueue.front();
-        suppressionQueue.pop();
-        lock.unlock();
-
-        {
-            std::unique_lock<std::recursive_mutex> worldLock(worldMutex);
-            removeChunkColumn(x, z);  // Actual column suppression
-        }
+        
     }
 }
 
 void World::enqueueChunkGeneration(int x, int z) {
     {
-        std::lock_guard<std::mutex> lock(generationQueueMutex);
-        generationQueue.push({x, z});
+        std::lock_guard<std::mutex> lock(taskQueueMutex);
+        taskQueue.push({ x, z, TASK_GENERATION });
     }
-    generationQueueCV.notify_one();
+    taskQueueCV.notify_one();
 }
 
 void World::enqueueColumnSuppression(int x, int z) {
     {
-        std::lock_guard<std::mutex> lock(suppressionQueueMutex);
-        suppressionQueue.push({x, z});
+        std::lock_guard<std::mutex> lock(taskQueueMutex);
+        taskQueue.push({ x, z, TASK_SUPPRESSION });
     }
-    suppressionQueueCV.notify_one();
+    taskQueueCV.notify_one();
 }
 
-void World::startGenerationThread() {
-    generationThread = std::thread(&World::generationLoop, this);
+void World::startWorkerThread() {
+    workerThreads.emplace_back(std::thread(&World::workerLoop, this));
+    workerThreads.emplace_back(std::thread(&World::workerLoop, this));
+    workerThreads.emplace_back(std::thread(&World::workerLoop, this));
 }
 
-void World::startSuppressionThread() {
-    suppressionThread = std::thread(&World::suppressionLoop, this);
-}
-
-void World::stopGenerationThread() {
-    generationRunning = false;
-    generationQueueCV.notify_all();
-    if (generationThread.joinable())
-        generationThread.join();
-}
-
-void World::stopSuppressionThread() {
-    suppressionRunning = false;
-    suppressionQueueCV.notify_all();
-    if (suppressionThread.joinable())
-        suppressionThread.join();
+void World::stopWorkerThread() {
+    workerThreadRunning = false;
+    taskQueueCV.notify_all();
+    for (auto &thread : workerThreads) {
+        if (thread.joinable()) {
+            thread.join();
+        }
+    }
 }
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
-    startGenerationThread();
-    startSuppressionThread();
+    startWorkerThread();
 }
 
 World::~World() {
-    stopGenerationThread();
-    stopSuppressionThread();
+    stopWorkerThread();
 }
 
 std::set<std::pair<int, int>> World::getDirtyColumns()
@@ -168,28 +152,6 @@ void World::addColumn(std::shared_ptr<ChunkColumn> column) {
     }
 }
 
-std::shared_ptr<VoxelChunk> World::createEmptyChunk(int x, int y, int z) {
-    std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
-    if (!column) {
-        chunkColumns.emplace(glm::ivec2(x, z), std::make_shared<ChunkColumn>(x, z));
-        column = getChunkColumn(x, z);
-        if (!column) {
-            std::cerr << "[createEmptyChunk] Failed to create ChunkColumn at (" << x << ", " << z << ")" << std::endl;
-            return nullptr;
-        }
-    }
-    std::shared_ptr<VoxelChunk> chunk = getChunk(x, y, z);
-    if (chunk) {
-        return chunk;
-    }
-    chunks.emplace(glm::ivec3(x, y, z), std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
-    chunk = chunks.at(glm::ivec3(x, y, z));
-    chunk->translate(glm::vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE));
-    chunk->m_world = this;
-    chunk->m_chunkCoords = glm::ivec3(x, y, z);
-    column->addChunk(chunk);
-    return chunk;
-}
 
 void World::removeChunkColumn(int x, int z) {
     std::shared_ptr<ChunkColumn> column = getChunkColumn(x, z);
