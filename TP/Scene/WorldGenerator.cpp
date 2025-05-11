@@ -74,7 +74,9 @@ void WorldGenerator::setBaseStone(std::shared_ptr<VoxelChunk> chunk, int x, int 
         if (y + worldAABBMin.y <= baseHeight) {
             chunk->generationSetBloc(x, y, z, STONE, false, false);
         } else if (y + worldAABBMin.y < WATER_LEVEL) {
+            int distanceToWaterLevel = WATER_LEVEL - (y + worldAABBMin.y);
             chunk->generationSetBloc(x, y, z, WATER, false, false);
+            chunk->setLightLevel(x, y, z, std::clamp(15 - distanceToWaterLevel, 0, 15));
         }
     }
 }
