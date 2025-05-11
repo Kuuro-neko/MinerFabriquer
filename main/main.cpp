@@ -191,6 +191,7 @@ int main(void) {
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glfwSwapInterval(0);
     // Hide the mouse and enable unlimited mouvement
     //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -407,6 +408,7 @@ int main(void) {
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         cubemapTexture.draw(camera);
 
         // Use our shader
@@ -434,6 +436,8 @@ int main(void) {
 
         glUseProgram(programID);
 
+
+
         root.draw(programID);
 
         // Restore shader program and matrices for the scene
@@ -444,6 +448,9 @@ int main(void) {
         if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleChunkBorders)) {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
+        if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleWireframe)) {
+            world.wireframe = !world.wireframe;
+        }
 
 
         character.drawBoundingBox();
@@ -453,6 +460,8 @@ int main(void) {
         if (character.isHUDVisible())
             hud->render();
         if (character.isHUDVisible()) hud->render();
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         clouds.draw(currentFrame, character);
 

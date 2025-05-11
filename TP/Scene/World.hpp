@@ -70,6 +70,7 @@ private:
     void generationLoop();
     void suppressionLoop();
 public:
+bool wireframe = false;
     World();
 
     ~World();

@@ -501,8 +501,11 @@ VoxelChunk &VoxelChunk::operator=(VoxelChunk &&other) noexcept
         m_sizeX = other.m_sizeX;
         m_sizeY = other.m_sizeY;
         m_sizeZ = other.m_sizeZ;
+        m_unGeneratedBlocks = std::move(other.m_unGeneratedBlocks);
         m_cubes = std::move(other.m_cubes);
         m_lights = std::move(other.m_lights);
+        m_opaqueMesh = std::move(other.m_opaqueMesh);
+        m_transparentMesh = std::move(other.m_transparentMesh);
     }
     return *this;
 }

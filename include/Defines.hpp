@@ -6,7 +6,7 @@
 
 // ===== Fast access ===== //
 
-#define RENDERER_DISTANCE 16
+#define RENDERER_DISTANCE 12
 #define GENERATION_DISTANCE 8
 
 // ===== Generation & chunks ===== //
@@ -24,8 +24,8 @@
 #define GENERATION_RADIUS_X 8 // X radius of initial generation
 #define GENERATION_SIZE_Y 8 // Y height of initial generation
 #define GENERATION_RADIUS_Z 8 // Z radius of initial generation
-#define GENERATION_SIZE_X  16
-#define GENERATION_SIZE_Z  16
+#define GENERATION_SIZE_X  8
+#define GENERATION_SIZE_Z  8
 
 
 // ===== Bloc database ===== //

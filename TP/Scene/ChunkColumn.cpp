@@ -64,7 +64,7 @@ std::shared_ptr<VoxelChunk> ChunkColumn::getChunkContainingHeight(int y)
 void ChunkColumn::addChunk(std::shared_ptr<VoxelChunk> chunk)
 {
     m_chunks.push_back(chunk);
-    chunk->m_chunkColumn = std::make_shared<ChunkColumn>(*this);
+    chunk->m_chunkColumn = shared_from_this();
     sortChunks();
 }
 

@@ -62,4 +62,29 @@ public:
     void markSkylightDirty(bool value);
     void markChunksAsDirty();
     void sortChunks();
+
+    // Move constructor and assignment operator
+    ChunkColumn(ChunkColumn&& other) noexcept : m_chunkCoords(other.m_chunkCoords), m_chunks(std::move(other.m_chunks)), surfaceHeightmap(std::move(other.surfaceHeightmap)), skyLightdirty(other.skyLightdirty) {
+        other.m_chunkCoords = glm::ivec2(0, 0);
+        other.m_chunks.clear();
+        other.surfaceHeightmap.clear();
+    }
+
+    ChunkColumn& operator=(ChunkColumn&& other) noexcept {
+        if (this != &other) {
+            m_chunkCoords = other.m_chunkCoords;
+            m_chunks = std::move(other.m_chunks);
+            surfaceHeightmap = std::move(other.surfaceHeightmap);
+            skyLightdirty = other.skyLightdirty;
+
+            other.m_chunkCoords = glm::ivec2(0, 0);
+            other.m_chunks.clear();
+            other.surfaceHeightmap.clear();
+        }
+        return *this;
+    }
+
+    // Copy constructor and assignment operator are deleted to prevent copying
+    ChunkColumn(const ChunkColumn&) = delete;
+    ChunkColumn& operator=(const ChunkColumn&) = delete;
 };

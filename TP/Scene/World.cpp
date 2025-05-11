@@ -444,6 +444,8 @@ void World::updateLoadedChunks() {
 
 void World::draw(GLuint programID) {
     glEnable(GL_CULL_FACE);
+    if (wireframe)glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     {
         std::lock_guard<std::recursive_mutex> lock(worldMutex);
         std::set<std::pair<int, int>> dirtyColumns = getDirtyColumns();
@@ -451,10 +453,10 @@ void World::draw(GLuint programID) {
             updateSkyLightsInColumn(x, z);
         }
 
-        int count = 0;
+        //int count = 0;
         for (auto &[key, chunk]: visibleChunks) {
             if(!chunk) continue;
-            count += chunk->drawOpaque(programID);
+            chunk->drawOpaque(programID);
         }
     
         //std::cout << "Drawn " << count << " chunks out of " << chunks.size() << std::endl;
@@ -471,6 +473,7 @@ void World::draw(GLuint programID) {
             chunk->drawTransparent(programID);
         }
     }
+    if (wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_BLEND);
     
 }
