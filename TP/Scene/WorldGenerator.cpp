@@ -2,16 +2,8 @@
 
 #include <utils/Math.hpp>   
 
-WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 100) {
-    // Perlin noise for base terrain
-    baseHeightNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    baseHeightNoise.SetFrequency(0.1f);
-    baseHeightNoise.SetSeed(seed);
-    // Perlin noise for mountains
-    mountainHeightNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    mountainHeightNoise.SetFrequency(0.03f);
-    mountainHeightNoise.SetSeed(seed);
-    // Noise for caves
+WorldGenerator::WorldGenerator() : rng(std::random_device{}()) {
+    // cave noise
     caveNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
     caveNoise.SetFrequency(0.05f);
     caveNoise.SetSeed(seed);
@@ -24,11 +16,10 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
     oreNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
     oreNoise.SetFrequency(0.7f);
     oreNoise.SetSeed(seed);
-    
-    // Noise for water holes
-    waterHolesHeightNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    waterHolesHeightNoise.SetFrequency(0.02f);
-    waterHolesHeightNoise.SetSeed(seed);
+
+    bedrockNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    bedrockNoise.SetFrequency(0.8f);
+    bedrockNoise.SetSeed(seed);
 
     rng.seed(seed);
 
@@ -177,11 +168,11 @@ void WorldGenerator::decorateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, i
             // Bedrock at the bottom of the world
             if (worldAABBMin.y == 0) {
                 chunk->generationSetBloc(x, 0, z, BEDROCK);
-                int r = bedrockRng(rng);
-                if(r < 50) {
+                float noise = bedrockNoise.GetNoise((float) x + i * CHUNK_SIZE, (float) z + k * CHUNK_SIZE);
+                if (noise > -0.6f) {
                     chunk->generationSetBloc(x, 1, z, BEDROCK);
                 }
-                if(r < 25) {
+                if (noise < -0.15f) {
                     chunk->generationSetBloc(x, 2, z, BEDROCK);
                 }
             }

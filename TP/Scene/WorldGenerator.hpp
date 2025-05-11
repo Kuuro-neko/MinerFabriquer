@@ -13,15 +13,12 @@
 
 class WorldGenerator {
 private:
-    FastNoiseLite baseHeightNoise;
-    FastNoiseLite mountainHeightNoise;
     FastNoiseLite caveNoise;
     FastNoiseLite caveNoise2;
     FastNoiseLite oreNoise;
-    FastNoiseLite waterHolesHeightNoise;
+    FastNoiseLite bedrockNoise;
 
     std::mt19937 rng;
-    std::uniform_int_distribution<int> bedrockRng;
 
     int groundLevel = GROUND_LEVEL;
 
