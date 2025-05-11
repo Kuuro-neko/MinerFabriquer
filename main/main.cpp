@@ -17,7 +17,7 @@
 #include <Defines.hpp>
 #include <TP/Scene/WorldGenerator.hpp>
 
-#define CHUNK_SIZE 16
+
 
 GLFWwindow *window;
 
@@ -44,71 +44,6 @@ int displayNormals = 0;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
-void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
-    mesh.vertices.clear();
-    mesh.triangles.clear();
-    mesh.uvs.clear();
-
-    glm::vec3 p[] = {
-            {-size.x, -size.y, -size.z},
-            {size.x,  -size.y, -size.z},
-            {size.x,  size.y,  -size.z},
-            {-size.x, size.y,  -size.z},
-            {-size.x, -size.y, size.z},
-            {size.x,  -size.y, size.z},
-            {size.x,  size.y,  size.z},
-            {-size.x, size.y,  size.z}
-    };
-
-    // Définir les faces du cube avec 4 sommets par face
-    int face_indices[6][4] = {
-            {0, 1, 2, 3}, // back
-            {5, 4, 7, 6}, // front
-            {4, 0, 3, 7}, // left
-            {1, 5, 6, 2}, // right
-            {3, 2, 6, 7}, // top
-            {4, 5, 1, 0}  // bottom
-    };
-
-    for (int i = 0; i < 6; ++i) {
-        // 4 sommets pour chaque face
-        mesh.vertices.push_back(p[face_indices[i][0]]);
-        mesh.vertices.push_back(p[face_indices[i][1]]);
-        mesh.vertices.push_back(p[face_indices[i][2]]);
-        mesh.vertices.push_back(p[face_indices[i][3]]);
-
-        // UVs correspondants (même pour chaque face)
-        mesh.uvs.push_back({0.0f, 0.0f});
-        mesh.uvs.push_back({1.0f, 0.0f});
-        mesh.uvs.push_back({1.0f, 1.0f});
-        mesh.uvs.push_back({0.0f, 1.0f});
-
-        // 2 triangles pour former la face
-        int start = i * 4;
-        mesh.triangles.push_back(start);
-        mesh.triangles.push_back(start + 1);
-        mesh.triangles.push_back(start + 2);
-
-        mesh.triangles.push_back(start);
-        mesh.triangles.push_back(start + 2);
-        mesh.triangles.push_back(start + 3);
-
-
-    }
-
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
-}
 
 
 Character character = Character(
@@ -139,9 +74,6 @@ int main(void) {
     Menu menu;
     SaveManager &saveManager = SaveManager::getInstance();
 
-
-
-
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -149,9 +81,8 @@ int main(void) {
         return -1;
     }
 
-
     camera.init();
-    Frustrum frustum(camera, 4.0f / 3.0f, 0.1f, 100.f);
+    Frustrum frustum(camera, DEFAULT_RATIO, DEFAULT_NEAR_PLANE, DEFAULT_FAR_PLANE);
     frustum.update();
 
     glfwWindowHint(GLFW_SAMPLES, 4);
@@ -239,12 +170,6 @@ int main(void) {
     lightMap.bind(programID);
 
     CubemapTexture cubemapTexture = CubemapTexture(cubemapProgramID);
-
-
-
-    // Get a handle for our "Model View Projection" matrices uniforms
-
-    /****************************************/
 
 
     SceneNode root;
@@ -506,12 +431,6 @@ int main(void) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         clouds.draw(currentFrame, character);
-
-
-
-
-
-
 
         // Swap buffers
         glfwSwapBuffers(window);

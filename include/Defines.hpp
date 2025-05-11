@@ -166,6 +166,10 @@
 #define DEFAULT_ATTACHED false
 #define DEFAULT_MODE 1 // 0 for free camera, 1 for third person camera
 
+#define DEFAULT_RATIO 4.0f / 3.0f
+#define DEFAULT_NEAR_PLANE 0.1f
+#define DEFAULT_FAR_PLANE 100.0f
+
 // ===== Lights ===== //
 
 #define MAX_LIGHT 15 // Maximum light level
