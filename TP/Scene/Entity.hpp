@@ -105,4 +105,11 @@ class Entity : public SceneNode {
     virtual void update(float deltaTime);
     void interpolateBetweenPoses(const EntityPose& pose1, const EntityPose& pose2, float factor);
     void updatePoseAnimation(float deltaTime);
+    virtual void resolveGravity(float& deltaTime) {};
+    virtual void resolveCollisions(float& deltaTime){};
+    virtual void drawWireframe(GLuint wireframeProgramID) {};
+    virtual void setDisplayAABB(bool display){};
+    virtual void drawBoundingBox(GLuint programID) {};
+    virtual void move(const glm::vec3& direction) {};
+    Texture* m_texture = nullptr;
 };

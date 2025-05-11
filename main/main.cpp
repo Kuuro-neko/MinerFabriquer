@@ -10,7 +10,6 @@
 #include "TP/Menu/Menu.hpp"
 #include <TP/GUI/Crosshair.hpp>
 #include <TP/Scene/Entity.hpp>
-#include <TP/Scene/Zombie.hpp>
 #include <TP/Scene/Clouds.hpp>
 #include <TP/GUI/HUD.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
@@ -279,22 +278,11 @@ int main(void) {
     camera.setTarget(character.getWorldPosition());
 
 
-    Zombie* zombie = new Zombie(
-        Transform(
-            glm::vec3(0, 61, 0),
-            DEFAULT_ROTATION,
-            1),
-        &world,
-        &camera
-    );
-    Texture* zombieTexture = new Texture("../textures/zombie.png");
-    zombie->setTexture(zombieTexture);
-    zombie->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
-    root.addChild(zombie);
+
+    world.spawnEntities();
+
     // After creating the zombie in main.cpp, add:
 
-    zombie->setWireframeRenderer(wireframeProgramID);
-    zombie->setDisplayAABB(true);
 
     
 
@@ -366,9 +354,13 @@ int main(void) {
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
 
-        zombie->resolveGravity(deltaTime);
-        world.resolveCollisions(*zombie, &world);
-        zombie->update(deltaTime);
+        world.resolveEntityGravity(deltaTime);
+        world.resolveEntityCollisions(deltaTime);
+        world.updateEntities(deltaTime);
+        //zombie->resolveGravity(deltaTime);
+        //world.resolveCollisions(*zombie, &world);
+  
+        //zombie->update(deltaTime);
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -422,7 +414,7 @@ int main(void) {
 
         character.drawBoundingBox();
 
-        zombie->drawBoundingBox();
+        // zombie->drawBoundingBox();
 
         if (character.isHUDVisible())
             hud->render();

@@ -19,9 +19,9 @@ public:
     Zombie(Transform transform, World* world, Camera* camera);
     ~Zombie();
 
-    void resolveGravity(float& deltaTime);
-    void update(float deltaTime);
+    void resolveGravity(float &deltaTime) override;    // Notez le passage par référence
     void move(glm::vec3 direction);
+    void update(float deltaTime) override;
     void generateZombieMesh(float groundHeight);
     void updateBoundingBox();
     void drawBoundingBox();
@@ -48,6 +48,7 @@ public:
     void setState(ZombieState newState);
     ZombieState currentState = ZOMBIE_IDLE;
 
+
 private:
     World* m_world;
     Camera* camera;
@@ -59,8 +60,9 @@ private:
     float targetUpdateTimer = 0.0f;
     float targetUpdateInterval = 2.0f;
     glm::vec3 targetPosition;
-    bool displayAABB = false; 
-
+    bool displayAABB = false;
+    Texture *m_texture = new Texture("../textures/zombie.png");
+    
 
     float jumpCooldown = 0.0f;
     float jumpCooldownMax = 1.0f;
