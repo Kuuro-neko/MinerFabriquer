@@ -3,7 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
-#include <filesystem>
+
 // if the instance is null, create it else return the existing one -> thread safe
 SaveManager &SaveManager::getInstance()
 {
@@ -11,79 +11,76 @@ SaveManager &SaveManager::getInstance()
     return instance;
 }
 
-void SaveManager::loadPlayerData(Character &character)
+
+void SaveManager::createPlayerDataFile()
 {
+    std::string saveFolder = getSaveFolderPath();
+
+    std::cout << "Creation of a new save folder for character : " << saveFolder + PATH_PLAYER_FILE << std::endl;
+    std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
+    if (!ofs)
+    {
+        std::cerr << "Error creating player data file." << std::endl;
+        return;
+    }
+
+    unsigned char gamemode = character->getGamemode();
+    unsigned char prev = character->GetprevGamemode();
+    float position[3] = {
+            character->getWorldPosition().x,
+            character->getWorldPosition().y,
+            character->getWorldPosition().z};
+
+    ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
+    ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
+    ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
+    ofs.close();
+    std::cout << "Player data file created at: " << saveFolder + PATH_PLAYER_FILE << std::endl;
+}
+
+
+void SaveManager::loadPlayerData()
+{
+    std::string mostRecentPlayerFilePath = getSaveFolderPath() + PATH_PLAYER_FILE;
+
+    std::ifstream ifs(mostRecentPlayerFilePath, std::ios::binary);
+    if (!ifs)
+    {
+        std::cerr << "Error opening file: " << mostRecentPlayerFilePath << std::endl;
+        return;
+    }
+
     unsigned char gamemode;
     unsigned char prev;
     float position[3];
+    int id, quantity;
+    int seedStrSize;
+    std::string seedStr;
 
-    // no actual data -> create the folder
-    if (isSaveFolderEmpty())
+    ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
+    ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
+    ifs.read(reinterpret_cast<char *>(position), sizeof(position));
+    while (ifs.read(reinterpret_cast<char *>(&id), sizeof(id)))
     {
-        std::cout << "Player data file does not exist..." << std::endl;
-        std::cout << "Creating a new player data file..." << std::endl;
-        std::string saveFolder = generateSaveFolderPath();
-      
-        if (!std::filesystem::exists(saveFolder))
-        {
-            std::filesystem::create_directories(saveFolder);
-        }
-    
-
-        std::ofstream file(saveFolder + PATH_PLAYER_FILE);
-        std::ofstream ofs(saveFolder + PATH_PLAYER_FILE, std::ios::binary);
-        std::cout << "Creation of the brand new Save folder at  :" << saveFolder + PATH_PLAYER_FILE << std::endl;
-
-        // Default values from main.cpp
-        gamemode = character.getGamemode();
-        prev = character.GetprevGamemode();
-        float position[3] = {
-            character.getWorldPosition().x,
-            character.getWorldPosition().y,
-            character.getWorldPosition().z};
-
-        // Write the data to the file
-        ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
-        ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
-        ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
-        ofs.close();
-        std::cout << "Player data file created and filled with default values." << std::endl;
+        ifs.read(reinterpret_cast<char *>(&quantity), sizeof(quantity));
+        character->inventory->addItem(ItemStack(id, quantity));
     }
-    else // the file is already created -> we load the data from the file
-    {
-        std::string motRecentFolder = getMostRecentSaveFolder();
-        std::string mostRecentPlayerFilePath = motRecentFolder + PATH_PLAYER_FILE;
 
-        std::cout
-            << "Player data file already exists." << std::endl;
-        std::cout << "Reading data from : " << motRecentFolder << std::endl;
-        std::ifstream ifs(mostRecentPlayerFilePath, std::ios::binary);
-        if (!ifs)
-        {
-            std::cerr << "Error opening file: " << mostRecentPlayerFilePath << std::endl;
-            return;
-        }
-
-        // Read the data from the file
-        ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
-        ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
-        ifs.read(reinterpret_cast<char *>(position), sizeof(position));
-
-        // Set the character's data
-        character.setGamemode(gamemode);
-        character.SetprevGamemode(prev);
-        character.setWorldPosition(position[0], position[1], position[2]);
-        ifs.close();
-        std::cout << "Player data loaded from file." << std::endl;
-    }
+    character->setGamemode(gamemode);
+    character->SetprevGamemode(prev);
+    character->setWorldPosition(position[0], position[1], position[2]);
+    ifs.read(reinterpret_cast<char *>(&seedStrSize), sizeof(size_t));
+    ifs.read(reinterpret_cast<char *>(&seedStr), sizeof(char) * seedStrSize);
+    std::cout << "Seed string : " << seedStr << std::endl;
+    WorldGenerator::getInstance().setSeed(seedStr);
+    ifs.close();
 }
 
 // create the correct folder based on time with the playerData.bin file
-void SaveManager::saveCharacterFile(Character &data)
+void SaveManager::saveCharacterFile()
 {
-    std::string saveFolder = generateSaveFolderPath();
+    std::string saveFolder = getSaveFolderPath();
 
- 
     if (!std::filesystem::exists(saveFolder))
     {
         std::filesystem::create_directories(saveFolder);
@@ -91,7 +88,7 @@ void SaveManager::saveCharacterFile(Character &data)
 
     // File path
     std::string filePath = saveFolder + PATH_PLAYER_FILE;
-    std::cout << "Creation of a new most Recent save folder : " << saveFolder + PATH_PLAYER_FILE << std::endl;
+    std::cout << "Creation of a new save for character : " << filePath << std::endl;
 
     std::ofstream ofs(filePath, std::ios::binary);
     if (!ofs)
@@ -100,22 +97,35 @@ void SaveManager::saveCharacterFile(Character &data)
         return;
     }
 
-    unsigned char gamemode = data.getGamemode();
-    unsigned char prev = data.GetprevGamemode();
+    unsigned char gamemode = character->getGamemode();
+    unsigned char prev = character->GetprevGamemode();
     float position[3] = {
-        data.getWorldPosition().x,
-        data.getWorldPosition().y,
-        data.getWorldPosition().z};
+            character->getWorldPosition().x,
+            character->getWorldPosition().y,
+            character->getWorldPosition().z};
+    int id, quantity;
 
     ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
     ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
     ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
+    for (const auto &item : character->inventory->getItems())
+    {
+        id = item.getItemId();
+        quantity = item.getQuantity();
+        ofs.write(reinterpret_cast<const char *>(&id), sizeof(id));
+        ofs.write(reinterpret_cast<const char *>(&quantity), sizeof(quantity));
+    }
+    std::string seedStr = WorldGenerator::getInstance().getSeedStr();
+    size_t seedStrSize = seedStr.size();
+    ofs.write(reinterpret_cast<const char *>(&seedStrSize), sizeof(size_t));
+    ofs.write(reinterpret_cast<const char *>(seedStr.c_str()), sizeof(char) * seedStrSize);
+    std::cout << "Seed str saved : " << seedStr << std::endl;
     ofs.close();
 
-    std::cout << "Data saved at : " << filePath << std::endl;
+   std::cout << "Data saved at : " << filePath << std::endl;
 }
 
-void SaveManager::startAutoSave(Character &data)
+void SaveManager::startAutoSave()
 {
     if (autoSaveRunning)
     {
@@ -124,9 +134,10 @@ void SaveManager::startAutoSave(Character &data)
     }
 
     autoSaveRunning = true;
-    const std::string autoPlayerFilePath = generateSaveFolderPath() + PATH_PLAYER_FILE;
+    const std::string autoPlayerFilePath = getSaveFolderPath() + PATH_PLAYER_FILE;
     int saveDelayFortheThread = SAVE_DELAY;
-    autoSaveThread = std::thread([this, autoPlayerFilePath, &data, saveDelayFortheThread]()
+    // for the tread we have to define the lambda function and pass the data by reference
+    autoSaveThread = std::thread([this, autoPlayerFilePath, saveDelayFortheThread]()
                                  {
                                      while (autoSaveRunning)
                                      {
@@ -134,10 +145,14 @@ void SaveManager::startAutoSave(Character &data)
                                          if (autoSaveRunning) // Check again to avoid race conditions
                                          {
                                              std::cout << "Auto-saving player data..." << std::endl;
-                                             saveCharacterFile(data);
-
-                                             std::cout << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
+                                             //save all the file that we need (player data, world data)
+                                             std::cout << "Auto-saving world data..." << std::endl;
+                                             saveWorldFile();
+                                             saveCharacterFile();
+                                             std::cout
+                                                     << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
+
                                      } });
 }
 
@@ -145,101 +160,258 @@ void SaveManager::stopAutoSave()
 {
     if (autoSaveRunning)
     {
-        autoSaveRunning = false;
+        autoSaveRunning = false; // Signal the thread to stop
+        autoSaveThread.detach();
         if (autoSaveThread.joinable())
         {
-            autoSaveThread.join();
+            std::cout << "Waiting for auto-save thread to finish..." << std::endl;
+            autoSaveThread.join(); // Wait for the thread to finish
         }
+        else
+        {
+            std::cerr << "Auto-save thread is not joinable." << std::endl;
+        }
+
         std::cout << "Auto-save stopped." << std::endl;
     }
 }
 
-bool SaveManager::isSaveFolderEmpty()
+void SaveManager::setWorld(World *worldInstance)
 {
-    const std::string saveDirectory = PATHSAVES;
-    namespace fs = std::filesystem;
+    this->world = worldInstance;
+}
+void SaveManager::setCharacter(Character *characterInstance)
+{
+    this->character = characterInstance;
+}
 
-    fs::path dirPath(saveDirectory);
-
-    if (!fs::exists(dirPath) || !fs::is_directory(dirPath))
+void SaveManager::saveWorldFile()
+{
+    if (!world)
     {
-        return false;
+        std::cerr << "World instance is not set. Cannot save world data." << std::endl;
+        return;
+    }
+    std::cout << "Begin saving world data..." << std::endl;
+
+
+    std::string filePath = getSaveFolderPath() + PATH_WORLD_FILE;
+
+    // TODO pour le moment on ne fait que la region actuelle mais faudra ajouter un system pour szuvgarder de nouvelle region
+
+    // Creation du header de la region actuelle
+
+    std::ofstream out(filePath, std::ios::binary);
+    if (!out)
+    {
+        std::cerr << "Impossible to create the Saving file" << std::endl;
     }
 
-    for (const auto &entry : fs::directory_iterator(dirPath))
+
+    int countCol = 0;
+    int countChunk = 0;
+    int colTotal = 0;
     {
-        if (entry.is_regular_file() || entry.is_directory())
+        std::unique_lock<std::recursive_mutex> worldLock(world->worldMutex);
+        std::vector<std::shared_ptr<ChunkColumn>> columns = world->getAllColumns();
+        colTotal = columns.size();
+    
+        for (auto &column : columns)
         {
-            return false; // On a trouvé au moins un fichier ou sous-dossier
+            // 2.2 save the data
+            int32_t worldX = column->getChunkCoords().x;
+            int32_t worldZ = column->getChunkCoords().y;
+            out.write(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
+            out.write(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
+        
+            // 2.3 Sauvegarde heightmap
+            out.write(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(int32_t) * 16 * 16);
+        
+            // 2.4 Sauvegarde des 8 chunks
+            std::vector<std::shared_ptr<VoxelChunk>> allChunks = column->getChunks();
+        
+            for (int i = 0; i < 8; ++i)
+            {
+                std::shared_ptr<VoxelChunk> chunk = column->getChunk(i);
+                for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+                {
+                    for (int by = 0; by < CHUNK_SIZE; ++by)
+                    {
+                        for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                        {
+                            // blocID
+                            int8_t blockID = chunk->getBloc(bx, by, bz);
+                            out.write(reinterpret_cast<char *>(&blockID), sizeof(int8_t));
+        
+                            // lightmap
+                            int8_t light = chunk->getLightLevel(bx, by, bz);
+                            out.write(reinterpret_cast<char *>(&light), sizeof(int8_t));
+                        }
+                    }
+                }
+                countChunk++;
+            }
+            countCol++;
         }
     }
 
-    return true; // Aucun fichier utile
+
+    std::cout << "World saved to: " << filePath << std::endl;
+    std::cout<< "Number of columns saved : " << countCol << " / " << colTotal << std::endl;
+    std::cout<< "Number of chunks saved : " << countChunk << " / " << colTotal * 8 << std::endl;
+
 }
-
-std::string SaveManager::getDate(long timestamp)
+// TODO fix why not all chunks is loadings
+std::vector<SaveManager::ChunkColumnEntry> SaveManager::loadWorldFile()
 {
-    std::time_t time = static_cast<std::time_t>(timestamp);
-    std::tm *tm = std::localtime(&time);
 
-    char buffer[17]; // YYYY-MM-DD-HH-MM is 16 characters + null terminator
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d-%H-%M", tm);
+    std::string motRecentFolder = getSaveFolderPath();
+    std::string mostRecentWorldFilePath = motRecentFolder + PATH_WORLD_FILE;
 
-    return std::string(buffer);
-}
-
-long SaveManager::getTimestamp()
-{
-    return static_cast<long>(std::time(nullptr));
-}
-
-std::string SaveManager::generateSaveFolderPath()
-{
-    std::string folderName = "save-" + getDate(getTimestamp());
-    std::filesystem::path fullPath = std::filesystem::path(PATHSAVES) / folderName;
-    return fullPath.string(); // convert to std::string
-}
-
-std::string SaveManager::getMostRecentSaveFolder()
-{
-    const std::string saveDirectory = PATHSAVES;
-    namespace fs = std::filesystem;
-
-    fs::path dirPath(saveDirectory);
-    if (!fs::exists(dirPath) || !fs::is_directory(dirPath))
+  //
+  //  std::cout << "Reading data from : " << motRecentFolder << std::endl;
+    std::ifstream ifs(mostRecentWorldFilePath, std::ios::binary);
+    if (!ifs)
     {
-        return ""; // Return an empty string if the directory doesn't exist
+        std::cerr << "Error opening file: " << mostRecentWorldFilePath << std::endl;
+        exit(1);
     }
 
-    std::string mostRecentFolder;
-    std::time_t mostRecentTime = 0;
+    return readWorldFile(ifs);
+    std::cout<< "Number of chunks read : " << world->getAllChunks().size() << std::endl;
+}
 
-    for (const auto &entry : fs::directory_iterator(dirPath))
+std::vector<SaveManager::ChunkColumnEntry> SaveManager::readWorldFile(std::ifstream &in)
+{
+    if (!world)
     {
-        if (entry.is_directory())
+        std::cerr << "World instance is not set. Cannot load world data." << std::endl;
+        exit(1);
+    }
+
+    // Check if the stream is good and not at EOF
+    if (!in.good()) {
+        std::cerr << "Input stream is in bad state." << std::endl;
+        return {};
+    }
+
+    // Reset file position to beginning if needed
+    in.seekg(0, std::ios::beg);
+
+    // Check file size
+    in.seekg(0, std::ios::end);
+    std::streampos fileSize = in.tellg();
+    in.seekg(0, std::ios::beg);
+    
+    if (fileSize == 0) {
+        std::cerr << "File is empty." << std::endl;
+        return {};
+    }
+    
+    std::cout << "File size: " << fileSize << " bytes" << std::endl;
+
+    std::vector<ChunkColumnEntry> chunkColumnEntries;
+    int countCol = 0;
+    int countChunk = 0;
+    
+    while(in && in.peek() != EOF) {
+        ChunkColumnEntry columnEntry = {};
+        
+        // Read column coordinates
+        if (!in.read(reinterpret_cast<char *>(&columnEntry.worldX), sizeof(int32_t)) ||
+            !in.read(reinterpret_cast<char *>(&columnEntry.worldZ), sizeof(int32_t))) {
+            std::cerr << "Failed to read column coordinates" << std::endl;
+            break;
+        }
+        
+        // Read heightmap
+        if (!in.read(reinterpret_cast<char *>(columnEntry.heightmap), sizeof(int32_t) * 16 * 16)) {
+            std::cerr << "Failed to read heightmap" << std::endl;
+            break;
+        }
+        auto chunkReadError = false;
+        for (int i = 0; i < 8; ++i)
         {
-            std::string folderName = entry.path().filename().string();
-            if (folderName.rfind("save-", 0) == 0) // Check if the folder name starts with "save-"
+            ChunkEntry chunkEntry = {};
+            for (int bx = 0; bx < CHUNK_SIZE; ++bx)
             {
-                std::string timestampStr = folderName.substr(5); // Extract the timestamp part
-                std::tm tm = {};
-                std::istringstream ss(timestampStr);
-                ss >> std::get_time(&tm, "%Y-%m-%d-%H-%M");
-                if (!ss.fail())
+                for (int by = 0; by < CHUNK_SIZE; ++by)
                 {
-                    std::time_t folderTime = std::mktime(&tm);
-                    if (folderTime > mostRecentTime)
+                    for (int bz = 0; bz < CHUNK_SIZE; ++bz)
                     {
-                        mostRecentTime = folderTime;
-                        mostRecentFolder = entry.path().string();
+                        // Read block ID
+                        int8_t blockID;
+                        if (!in.read(reinterpret_cast<char *>(&blockID), sizeof(int8_t))) {
+                            std::cerr << "Failed to read block ID at chunk " << i 
+                                      << " position (" << bx << "," << by << "," << bz << ")" << std::endl;
+                            chunkReadError = true;
+                            break;
+                        }
+                        chunkEntry.blocksID.push_back(blockID);
+
+                        // Read light level
+                        int8_t light;
+                        if (!in.read(reinterpret_cast<char *>(&light), sizeof(int8_t))) {
+                            std::cerr << "Failed to read light level at chunk " << i 
+                                      << " position (" << bx << "," << by << "," << bz << ")" << std::endl;
+                            chunkReadError = true;
+                            break;
+                        }
+                        chunkEntry.lightmap.push_back(light);
                     }
                 }
             }
+            
+            if (!chunkReadError) {
+                columnEntry.chunks[i] = chunkEntry;
+                countChunk++;
+            } else {
+                break;
+            }
+        }
+        
+        if (!chunkReadError) {
+            chunkColumnEntries.push_back(columnEntry);
+            countCol++;
+        } else {
+            break;
         }
     }
-
-    return mostRecentFolder;
+    
+    std::cout << "Number of columns read: " << countCol << std::endl;
+    std::cout << "Number of chunks read: " << countChunk << std::endl;
+    std::cout << "Size of chunkColumnEntries: " << chunkColumnEntries.size() << std::endl;
+    
+    // If we didn't read anything, provide more specific debug info
+    if (countCol == 0) {
+        std::cerr << "Warning: No data was read from the file." << std::endl;
+        std::cerr << "File stream state: " << 
+            (in.good() ? "good" : "") << 
+            (in.eof() ? " eof" : "") << 
+            (in.fail() ? " fail" : "") << 
+            (in.bad() ? " bad" : "") << std::endl;
+    }
+    
+    return chunkColumnEntries;
 }
+
+bool SaveManager::isDataFolderContainsOtherFolder() {
+    for (const auto &entry: std::filesystem::directory_iterator(PATHSAVES)) {
+        if (entry.is_directory()) {
+            std::cout << "Found folder: " << entry.path().filename().string() << std::endl;
+            return true;
+        }
+    }
+    std::cout << "No folders found in PATHSAVES." << std::endl;
+    return false;
+}
+
+
+
+// TODO : pour l'oral parler des types de représentation qui existait avec pour t contre
+// JSON -> lisible mais pas optimisé quand il faut parcourir beaucoup de données + lourd
+// NBT -> format standar créer par mojang pour le jeu Minecraft, il est optimisé pour la vitesse de lecture et d'écriture, mais pas lisible par l'homme mais hyper légéer
+// fonctionne via un arbre binaire de tag qui permet de stocker et de récupérer les données rapidement sans avoir a tout parcourir via les tag
 
 /* great way to test
 SaveManager &saveManager1 = SaveManager::getInstance();

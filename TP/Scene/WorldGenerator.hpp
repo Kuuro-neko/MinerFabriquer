@@ -6,8 +6,8 @@
 #include <TP/Scene/World.hpp>
 #include <TP/Scene/Biomes.hpp>
 
-#define CAVE_BASE_THRESHOLD -0.75f
-#define CAVE_DEPTH_SCALING_FACTOR 0.01f
+#define CAVE_BASE_THRESHOLD -10.1f
+#define CAVE_DEPTH_SCALING_FACTOR 0.015f
 
 #define IRON_THRESHOLD 0.28f
 
@@ -21,22 +21,33 @@ private:
     FastNoiseLite waterHolesHeightNoise;
 
     std::mt19937 rng;
-    std::uniform_int_distribution<int> treeChance;
-    std::uniform_int_distribution<int> ironRodChance;
+    std::uniform_int_distribution<int> bedrockRng;
 
-    int groundLevel = 40;
+    int groundLevel = GROUND_LEVEL;
 
-    int seed = 7772870;
-
+    
     BiomeManager biomeManager = BiomeManager(groundLevel, seed);
-
-    void setBaseStone(VoxelChunk *chunk, int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
-    void generateTerrain(VoxelChunk *chunk, int i, int j, int k, int groundLevel);
-    void addTrees(VoxelChunk *chunk, int x, int z, int baseHeight);
-    void addIronRods(VoxelChunk *chunk, int x, int z, int baseHeight);
-
-public:
+    
+    void setBaseStone(std::shared_ptr<VoxelChunk> , int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
+    void generateTerrain(std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
+    void decorateTerrain(std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
+    
+    
     WorldGenerator();
 
-    void genereteProceduralChunk(VoxelChunk *world, int i, int j, int k);
+
+    std::string seedStr = "default";
+    int seed = stringToInt(seedStr);
+public:
+
+    static WorldGenerator &getInstance() {
+        static WorldGenerator instance;
+        return instance;
+    }
+
+    void setSeed(std::string seed);
+    std::string getSeedStr();
+
+    void genereteProceduralChunk(std::shared_ptr<VoxelChunk> , int i, int j, int k);
+    void decorateProceduralChunk(std::shared_ptr<VoxelChunk> , int i, int j, int k);
 };

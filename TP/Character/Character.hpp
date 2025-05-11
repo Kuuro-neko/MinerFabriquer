@@ -15,6 +15,8 @@
 #include "vector"
 #include <TP/GUI/HUD.hpp>
 #include <Defines.hpp>
+#include "TP/Scene/Entity.hpp"
+
 
 class Character : public SceneNode {
 
@@ -57,6 +59,7 @@ public:
     bool isInWater = false;
 
     void setHUD(HUD* hud) { m_hud = hud; }
+    int isHUDVisible();
 
     void setGamemode(unsigned char gamemode)
     {
@@ -70,6 +73,10 @@ public:
     {
         this->m_transform.m_translation = glm::vec3(x, y, z);
     }
+
+    float getSpeed();
+
+    void setCharacterModel(Entity* model);
 
 private:
 
@@ -112,10 +119,16 @@ private:
     // To not toggle debug if another debug keybind involving toggleDebug Key was inputted
     bool shouldToggleDebug = true;
     bool displayAABB = false;
+    int displayHUD = 1;
     unsigned char gamemode = GAMEMODE_SURVIVAL;
     unsigned char prevGamemode = GAMEMODE_SURVIVAL;
 
     HUD* m_hud = nullptr;
+
+    void alignWithCamera(const glm::vec3& cameraDirection);
+    void initializePlayerAnimations(Entity* characterModel);
+    void createWalkingPoses(Entity* characterModel);
+    Entity* m_characterModel = nullptr;
 };
 
 #endif // CHARACTER_HPP

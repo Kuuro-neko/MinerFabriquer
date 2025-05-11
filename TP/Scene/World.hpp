@@ -8,12 +8,27 @@
 #include "TP/Camera/Frustrum.hpp"
 #include <queue>
 #include <set>
+#include <functional>
 
 #include <TP/Scene/ChunkColumn.hpp>
 
+
+
+
 #include <Defines.hpp>
+#include <utils/Math.hpp>
+
+#include <queue>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+
+#define TASK_GENERATION 0
+#define TASK_SUPPRESSION 1
 
 class Character;
+class Zombie;
 
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2 &vec) const {
@@ -27,11 +42,17 @@ struct IVec3Hash {
     }
 };
 
+struct Task {
+    int x;
+    int z;
+    unsigned char taskType; // 0 for generation, 1 for suppression
+};
+
 class World : public SceneNode {
 private:
-    std::unordered_map<glm::ivec2, ChunkColumn, IVec2Hash> chunkColumns;
-    std::unordered_map<glm::ivec3, VoxelChunk, IVec3Hash> chunks;
-    std::unordered_map<glm::ivec3, VoxelChunk*, IVec3Hash> visibleChunks;
+    std::unordered_map<glm::ivec2, std::shared_ptr<ChunkColumn>, IVec2Hash> chunkColumns;
+    std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> chunks;
+    std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> visibleChunks;
     Camera *camera;
     float time = 12.0f;
     bool doDaylightCycle = true;
@@ -41,33 +62,56 @@ private:
 
     // Update the sky lights for a given chunk x,z in the chunk column
     void updateSkyLightsInColumn(int x, int z);
+
+    
+    std::queue<Task> taskQueue;
+    std::mutex taskQueueMutex;
+    std::condition_variable taskQueueCV;
+    
+    std::vector<std::thread> workerThreads; // Thread for chunk generation
+    std::atomic<bool> workerThreadRunning = true;
+    
+    void workerLoop();
 public:
+    std::recursive_mutex worldMutex; // Mutex to lock the chunks data
+    bool wireframe = false;
     World();
 
     ~World();
 
-    void generation();
+    void initialGeneration();
+
+    void generateChunkColumn(int x, int z);
+    void emplaceChunk(std::shared_ptr<VoxelChunk> &chunk);
+
+    void enqueueChunkGeneration(int x, int z);
+    void enqueueColumnSuppression(int x, int z);
+    void startWorkerThread();
+    void stopWorkerThread();
+
+    void addColumn(std::shared_ptr<ChunkColumn> column);
+    std::vector<std::shared_ptr<ChunkColumn>> getAllColumns() const;
 
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
-    VoxelChunk *createEmptyChunk(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> createEmptyChunk(int x, int y, int z);
 
     // Remove a chunk at the given CHUNK coordinates.
     void removeChunkColumn(int x, int z);
 
     // Get a chunk column at the given CHUNK coordinates
-    ChunkColumn *getChunkColumn(int x, int z);
+    std::shared_ptr<ChunkColumn> getChunkColumn(int x, int z) const;
     
     // Return all chunks in the world
-    std::vector<VoxelChunk *> getAllChunks();
+    std::vector<std::shared_ptr<VoxelChunk> > getAllChunks();
 
     // Get a pointer to the chunk at the given CHUNK coordinates
-    VoxelChunk *getChunk(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> getChunk(int x, int y, int z);
 
     // Get a pointer to the chunk at the given WORLD coordinates
-    VoxelChunk *getChunkContaining(int x, int y, int z);
+    std::shared_ptr<VoxelChunk> getChunkContaining(int x, int y, int z) const;
 
     // Get a pointer to the chunk at the given WORLD coordinates (float version)
-    VoxelChunk *getChunkContaining(glm::vec3 position);
+    std::shared_ptr<VoxelChunk> getChunkContaining(glm::vec3 position) const;
 
     /**
      * @brief Get all the chunks that intersect with the given ray and max distance.
@@ -76,8 +120,9 @@ public:
      * @param maxDistance 
      * @return std::vector<VoxelChunk*> 
      */
-    std::vector<VoxelChunk *> getIntersectedChunks(Ray ray, float maxDistance);
+    std::vector<std::shared_ptr<VoxelChunk> > getIntersectedChunks(Ray ray, float maxDistance);
 
+    void updateLoadedChunks();
     void draw(GLuint programID) override;
 
     /**
@@ -104,6 +149,14 @@ public:
      */
     bool setBloc(int x, int y, int z, int bloc);
 
+        /**
+     * @brief Set a block at the given WORLD coordinates. Does not update the lights (useful for faster generation).
+     * 
+     * 
+     * @return bool True if the block was set, else false
+     */
+    bool generationSetBloc(int x, int y, int z, int bloc);
+
     unsigned short getLightLevel(int x, int y, int z);
 
     /**
@@ -122,7 +175,12 @@ public:
 
     void resolveCollisions(Character &character, World *world);
 
+    void resolveCollisions(Zombie& zombie, World* world);
+
     void resolveCollisionForBlock(Character &character, glm::vec3 blockPosition);
+
+    void resolveCollisionForBlock(Zombie& zombie, glm::vec3 blockPosition);
+
 
     void update(float deltaTime);
 
@@ -149,4 +207,6 @@ public:
 
     // Définit le niveau de lumière d'un bloc.
     void setLightLevel(int x, int y, int z, int lightLevel);
+
+    void addChunkColumn(std::shared_ptr<ChunkColumn> column);
 };

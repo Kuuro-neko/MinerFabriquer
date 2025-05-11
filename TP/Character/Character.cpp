@@ -32,6 +32,11 @@ Character::Character(Transform transform, Camera *camera, World *world, MeshObje
     // on setHightlight la bounding box
 }
 
+void Character::setCharacterModel(Entity* model) {
+    m_characterModel = model;
+    initializePlayerAnimations(m_characterModel);
+}
+
 void Character::move(glm::vec3 direction)
 {
     translate(direction);
@@ -53,6 +58,8 @@ void Character::listenAction(float dt)
     cameraRightNoUp.y = 0.f;
     cameraRightNoUp = normalize(cameraRightNoUp);
     vecteurDirection = glm::vec3(0.f);
+
+    alignWithCamera(cameraFrontNoUp); 
 
     glm::vec3 currentPosition = getWorldPosition();
     int currentBlock = m_world->getBloc(static_cast<int>(currentPosition.x),
@@ -157,6 +164,12 @@ void Character::listenAction(float dt)
         }
     }
 
+    if(keyInput->isKeybindPressed(keybinds->toggleHUD))
+    {
+        std::cout << "[Character] Toggle HUD" << std::endl;
+        displayHUD = displayHUD == 0 ? 1 : 0;
+    }
+
     // ==== Debug binds ====
     if (keyInput->isKeybindPressed(keybinds->toggleBoudingBoxes))
     {
@@ -184,10 +197,11 @@ void Character::listenAction(float dt)
         if (gamemode == GAMEMODE_SPECTATOR)
         {
             gamemode = prevGamemode;
-        
+            displayHUD = 1;
         } else {
             prevGamemode = gamemode;
             gamemode = GAMEMODE_SPECTATOR;
+            displayHUD = 0;
         }
         std::cout << "[Character] Set gamemode to " << gamemodeString(gamemode) << std::endl;
         shouldToggleDebug = false;
@@ -216,7 +230,24 @@ void Character::listenAction(float dt)
     {
         if (shouldToggleDebug)
         {
-            std::cout << "[Character] Toggle debug mode (not implemented)" << std::endl;
+            std::cout << "[Character] Position : " << getWorldPosition().x << ", " << getWorldPosition().y << ", " << getWorldPosition().z << std::endl;
+            std::shared_ptr<VoxelChunk> chunk = m_world->getChunkContaining(getWorldPosition());
+            if (chunk)
+            {
+                int intX = static_cast<int>(getWorldPosition().x);
+                int intY = static_cast<int>(getWorldPosition().y);
+                int intZ = static_cast<int>(getWorldPosition().z);
+                std::cout << "[Character] Integer position : " << intX << ", " << intY << ", " << intZ << std::endl;
+                std::cout << "[Character] Chunk : " << chunk->m_chunkCoords.x << ", " << chunk->m_chunkCoords.y << ", " << chunk->m_chunkCoords.z << std::endl;
+                int id = m_world->getBloc(intX, intY, intZ);
+                std::cout << "[Character] Block containing player : " << BlocDatabase::getInstance().getBloc(id)->name << " (id : " << id << ")" << std::endl;
+                                                                                            
+                std::cout << "[Character] Light level in that block : " << m_world->getLightLevel(intX, intY, intZ) << std::endl;
+            }
+            else
+            {
+                std::cout << "[Character] No chunk found" << std::endl;
+            }
         }
         else
         {
@@ -225,10 +256,27 @@ void Character::listenAction(float dt)
     }
 }
 
+float Character::getSpeed()
+{
+    if (gamemode == GAMEMODE_SPECTATOR)
+    {
+        return this->speed;
+    }
+    if (sneaking)
+    {
+        return this->sneakSpeed;
+    }
+    if (sprinting)
+    {
+        return this->sprintSpeed;
+    }
+    return this->speed;
+}
+
 void Character::updateClosestBlock(BlocDatabase &db)
 {
     Ray ray(camera->getPosition(), glm::normalize(camera->getRotation() * VEC_FRONT));
-    std::vector<VoxelChunk *> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
+    std::vector<std::shared_ptr<VoxelChunk>> chunks = m_world->getIntersectedChunks(ray, maxInteractionDistance);
     intersection = false;
     if (chunks.empty())
     {
@@ -244,11 +292,11 @@ void Character::updateClosestBlock(BlocDatabase &db)
     float minDist = maxInteractionDistance;
 
     // Pour tout bloc des chunks touchés par le rayon
-    for (int x = 0; x < chunks[0]->m_sizeX; ++x)
+    for (int x = 0; x < CHUNK_SIZE; ++x)
     {
-        for (int y = 0; y < chunks[0]->m_sizeY; ++y)
+        for (int y = 0; y < CHUNK_SIZE; ++y)
         {
-            for (int z = 0; z < chunks[0]->m_sizeZ; ++z)
+            for (int z = 0; z < CHUNK_SIZE; ++z)
             {
                 for (int i = 0; i < chunks.size(); ++i)
                 {
@@ -455,6 +503,24 @@ void Character::update(float dt)
     {
         placeCooldown += dt;
     }
+
+    if (m_characterModel) {
+        if (sprinting) {
+            m_characterModel->setState(WALKING); 
+        } else if (glm::length(vecteurDirection) > 0.01f) {
+            m_characterModel->setState(WALKING);
+        } else {
+            m_characterModel->setState(IDLE);
+        }
+        
+        if (glm::length(vecteurDirection) > 0.01f) {
+            glm::vec3 cameraFront = camera->getRotation() * VEC_FRONT;
+            cameraFront.y = 0;
+            alignWithCamera(cameraFront);
+        }
+
+        m_characterModel->updateAnimation(dt);
+    }
     updateBoundingBox();
     AABBRenderer->setHighlight(getMinBoundingBox());
 }
@@ -603,4 +669,99 @@ void Character::resolveGravity(float &deltaTime)
 
     // Met à jour l’état de l’eau (sera utilisé dans listenAction)
     this->isInWater = detectedWater;
+}
+
+void Character::alignWithCamera(const glm::vec3& cameraDirection) {
+    if (gamemode == GAMEMODE_SPECTATOR || !m_characterModel)
+        return;
+        
+    float targetAngle;
+    
+    if (camera->m_attached) { // Mode F5 (vue à la troisième personne)
+        // Calculer une position "regardée" devant la caméra
+        // La distance est fournie par la caméra
+        glm::vec3 camPosCentered = camera->getPosition() + glm::normalize(camera->getRotation() * VEC_FRONT) * 10.0f;
+        glm::vec3 directionToLookAt = camPosCentered - getWorldPosition();
+        directionToLookAt.y = 0.0f;
+        
+        if (glm::length(directionToLookAt) > 0.01f) {
+            directionToLookAt = glm::normalize(directionToLookAt);
+            targetAngle = atan2(directionToLookAt.x, directionToLookAt.z);
+            
+            m_characterModel->m_transform.m_rotation = DEFAULT_ROTATION;
+            m_characterModel->rotate(targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+            m_characterModel->updateModelMatrix();
+        }
+    } else { // Mode FPS (vue à la première personne)
+        targetAngle = atan2(cameraDirection.x, cameraDirection.z);
+        
+        m_characterModel->m_transform.m_rotation = DEFAULT_ROTATION;
+        m_characterModel->rotate(-targetAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+        m_characterModel->updateModelMatrix();
+    }
+}
+
+void Character::initializePlayerAnimations(Entity* characterModel) {
+    characterModel->initializeBasePose();
+    createWalkingPoses(characterModel);
+    
+    std::vector<std::string> idlePoses = {"base"};
+    std::vector<float> idleDurations = {1.0f};
+    characterModel->createAnimationSequence("idle", idlePoses, idleDurations, true);
+    
+    std::vector<std::string> walkPoses = {"walk_left", "base", "walk_right", "base"};
+    std::vector<float> walkDurations = {0.3f, 0.15f, 0.3f, 0.15f};
+    characterModel->createAnimationSequence("walking", walkPoses, walkDurations, true);
+    
+    characterModel->setCurrentSequence("idle");
+}
+
+void Character::createWalkingPoses(Entity* characterModel) {
+    EntityPose& basePose = characterModel->m_poses["base"];
+    
+    // Pose de marche - jambe gauche avant
+    EntityPose walkLeft("walk_left");
+    walkLeft = basePose;
+    
+    // Rotation de la jambe gauche vers l'avant
+    glm::mat3x3 rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.leftLegTransform.m_rotation = rotMatX * walkLeft.leftLegTransform.m_rotation;
+    
+    // Rotation de la jambe droite vers l'arrière
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-15.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.rightLegTransform.m_rotation = rotMatX * walkLeft.rightLegTransform.m_rotation;
+    
+    // Balancer des bras opposés aux jambes
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.leftArmTransform.m_rotation = rotMatX * walkLeft.leftArmTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkLeft.rightArmTransform.m_rotation = rotMatX * walkLeft.rightArmTransform.m_rotation;
+    
+    characterModel->addPose("walk_left", walkLeft);
+    
+    // Pose de marche - jambe droite avant (miroir de la première pose)
+    EntityPose walkRight("walk_right");
+    walkRight = basePose;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-15.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.leftLegTransform.m_rotation = rotMatX * walkRight.leftLegTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.rightLegTransform.m_rotation = rotMatX * walkRight.rightLegTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.leftArmTransform.m_rotation = rotMatX * walkRight.leftArmTransform.m_rotation;
+    
+    rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+    walkRight.rightArmTransform.m_rotation = rotMatX * walkRight.rightArmTransform.m_rotation;
+    
+    characterModel->addPose("walk_right", walkRight);
+}
+
+int Character::isHUDVisible()
+{
+    if (m_hud == nullptr) return 0;
+    if (gamemode == GAMEMODE_SPECTATOR) return 0;
+    return displayHUD;
 }

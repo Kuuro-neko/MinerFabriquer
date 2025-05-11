@@ -202,11 +202,11 @@ namespace imageLoader {
             return;
         }
     }
-//TODO
+
 
 
     void load_png(unsigned char *&pixels, unsigned int &w, unsigned int &h, const string &name, loadedFormat format) {
-        // TODO
+ 
     }
 }
 

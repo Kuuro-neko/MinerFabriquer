@@ -73,6 +73,7 @@ add_executable(MinerFabriquer
         TP/Scene/VoxelChunk.cpp
         TP/Scene/World.cpp
         utils/GLUtils.cpp
+        utils/Math.cpp
         utils/Transform.hpp
         TP/Character/Character.hpp
         TP/Character/Character.cpp
@@ -81,16 +82,18 @@ add_executable(MinerFabriquer
         TP/GUI/Crosshair.cpp
         TP/Camera/Frustrum.cpp
         TP/Camera/Frustrum.hpp
-        main/vertex_shader.glsl
-        main/fragment_shader.glsl
         TP/Scene/WorldGenerator.cpp
         TP/Scene/WorldGenerator.hpp
         TP/Scene/Biomes.cpp
         TP/Scene/Biomes.hpp
         TP/Scene/ChunkColumn.cpp
         TP/Scene/ChunkColumn.hpp
+        TP/Scene/Clouds.cpp
+        TP/Scene/Clouds.hpp
         TP/Scene/Entity.hpp
         TP/Scene/Entity.cpp
+        TP/Scene/Zombie.hpp
+        TP/Scene/Zombie.cpp
         TP/Input/KeyInput.cpp
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
@@ -101,6 +104,8 @@ add_executable(MinerFabriquer
         TP/GUI/Barre.cpp
         TP/FileSystem/SaveManager.cpp
         TP/FileSystem/SaveManager.hpp
+        TP/Menu/Menu.cpp
+        TP/Menu/Menu.hpp
 
 )
 target_link_libraries(MinerFabriquer
