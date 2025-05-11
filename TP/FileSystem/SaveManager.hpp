@@ -6,6 +6,8 @@
 #include <chrono>
 #include <filesystem>
 
+#include <TP/Scene/WorldGenerator.hpp>
+
 class SaveManager {
 
 private:

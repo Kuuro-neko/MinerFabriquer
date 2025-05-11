@@ -3,6 +3,9 @@
 #include <vector>
 #include <utility>
 #include <cmath>
+#include <string>
+
+int stringToInt(const std::string& input);
 
 // Do a % b. Works with a negative a. 
 int betterModulo(int a, int b);

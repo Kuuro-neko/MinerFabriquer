@@ -54,6 +54,8 @@ void SaveManager::loadPlayerData()
     unsigned char prev;
     float position[3];
     int id, quantity;
+    int seedStrSize;
+    std::string seedStr;
 
     ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
     ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
@@ -67,6 +69,10 @@ void SaveManager::loadPlayerData()
     character->setGamemode(gamemode);
     character->SetprevGamemode(prev);
     character->setWorldPosition(position[0], position[1], position[2]);
+    ifs.read(reinterpret_cast<char *>(&seedStrSize), sizeof(size_t));
+    ifs.read(reinterpret_cast<char *>(&seedStr), sizeof(char) * seedStrSize);
+    std::cout << "Seed string : " << seedStr << std::endl;
+    WorldGenerator::getInstance().setSeed(seedStr);
     ifs.close();
 }
 
@@ -109,6 +115,11 @@ void SaveManager::saveCharacterFile()
         ofs.write(reinterpret_cast<const char *>(&id), sizeof(id));
         ofs.write(reinterpret_cast<const char *>(&quantity), sizeof(quantity));
     }
+    std::string seedStr = WorldGenerator::getInstance().getSeedStr();
+    size_t seedStrSize = seedStr.size();
+    ofs.write(reinterpret_cast<const char *>(&seedStrSize), sizeof(size_t));
+    ofs.write(reinterpret_cast<const char *>(seedStr.c_str()), sizeof(char) * seedStrSize);
+    std::cout << "Seed str saved : " << seedStr << std::endl;
     ofs.close();
 
    std::cout << "Data saved at : " << filePath << std::endl;
@@ -197,53 +208,57 @@ void SaveManager::saveWorldFile()
     }
 
 
-
-    std::vector<std::shared_ptr<ChunkColumn>> columns = world->getAllColumns();
-
     int countCol = 0;
     int countChunk = 0;
-    for (auto &column : columns)
+    int colTotal = 0;
     {
-        // 2.2 save the data
-        int32_t worldX = column->getChunkCoords().x;
-        int32_t worldZ = column->getChunkCoords().y;
-        out.write(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
-        out.write(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
+        std::unique_lock<std::recursive_mutex> worldLock(world->worldMutex);
+        std::vector<std::shared_ptr<ChunkColumn>> columns = world->getAllColumns();
+        colTotal = columns.size();
     
-        // 2.3 Sauvegarde heightmap
-        out.write(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(int32_t) * 16 * 16);
-    
-        // 2.4 Sauvegarde des 8 chunks
-        std::vector<std::shared_ptr<VoxelChunk>> allChunks = column->getChunks();
-    
-        for (int i = 0; i < 8; ++i)
+        for (auto &column : columns)
         {
-            std::shared_ptr<VoxelChunk> chunk = column->getChunk(i);
-            for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+            // 2.2 save the data
+            int32_t worldX = column->getChunkCoords().x;
+            int32_t worldZ = column->getChunkCoords().y;
+            out.write(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
+            out.write(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
+        
+            // 2.3 Sauvegarde heightmap
+            out.write(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(int32_t) * 16 * 16);
+        
+            // 2.4 Sauvegarde des 8 chunks
+            std::vector<std::shared_ptr<VoxelChunk>> allChunks = column->getChunks();
+        
+            for (int i = 0; i < 8; ++i)
             {
-                for (int by = 0; by < CHUNK_SIZE; ++by)
+                std::shared_ptr<VoxelChunk> chunk = column->getChunk(i);
+                for (int bx = 0; bx < CHUNK_SIZE; ++bx)
                 {
-                    for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                    for (int by = 0; by < CHUNK_SIZE; ++by)
                     {
-                        // blocID
-                        int8_t blockID = chunk->getBloc(bx, by, bz);
-                        out.write(reinterpret_cast<char *>(&blockID), sizeof(int8_t));
-    
-                        // lightmap
-                        int8_t light = chunk->getLightLevel(bx, by, bz);
-                        out.write(reinterpret_cast<char *>(&light), sizeof(int8_t));
+                        for (int bz = 0; bz < CHUNK_SIZE; ++bz)
+                        {
+                            // blocID
+                            int8_t blockID = chunk->getBloc(bx, by, bz);
+                            out.write(reinterpret_cast<char *>(&blockID), sizeof(int8_t));
+        
+                            // lightmap
+                            int8_t light = chunk->getLightLevel(bx, by, bz);
+                            out.write(reinterpret_cast<char *>(&light), sizeof(int8_t));
+                        }
                     }
                 }
+                countChunk++;
             }
-            countChunk++;
+            countCol++;
         }
-        countCol++;
     }
 
 
     std::cout << "World saved to: " << filePath << std::endl;
-    std::cout<< "Number of columns saved : " << countCol << " / " << columns.size() << std::endl;
-    std::cout<< "Number of chunks saved : " << countChunk << " / " << columns.size() * 8 << std::endl;
+    std::cout<< "Number of columns saved : " << countCol << " / " << colTotal << std::endl;
+    std::cout<< "Number of chunks saved : " << countChunk << " / " << colTotal * 8 << std::endl;
 
 }
 // TODO fix why not all chunks is loadings

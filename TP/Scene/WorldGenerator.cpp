@@ -1,5 +1,6 @@
 #include "WorldGenerator.hpp"
 
+#include <utils/Math.hpp>   
 
 WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 100) {
     // Perlin noise for base terrain
@@ -46,7 +47,20 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()), bedrockRng(0, 10
     biomeManager.addBiome(std::make_unique<MesaBiome>(groundLevel, seed));
 }
 
-void WorldGenerator::genereteProceduralChunk(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k) {
+void WorldGenerator::setSeed(std::string seed)
+{
+    seedStr = seed;
+    this->seed = stringToInt(seed);
+    biomeManager.setSeed(this->seed);
+}
+
+std::string WorldGenerator::getSeedStr()
+{
+    return seedStr;
+}
+
+void WorldGenerator::genereteProceduralChunk(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k)
+{
     //on appel la fonction generateTerrain pour générer le terrain à la coordonée i,j,k
     if (groundLevel + CHUNK_SIZE * 3 < j * CHUNK_SIZE) {
         // Skipping chunks too high to have any generated bloc

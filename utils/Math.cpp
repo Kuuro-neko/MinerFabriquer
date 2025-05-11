@@ -4,6 +4,15 @@
 #include "Math.hpp"
 #include <algorithm>
 
+int stringToInt(const std::string& input) {
+    // Use std::hash to hash the string into a size_t value
+    std::hash<std::string> hasher;
+    size_t hashedValue = hasher(input);
+
+    // Convert the hashed value to an int (may truncate on some systems)
+    return static_cast<int>(hashedValue);
+}
+
 // Do a % b. Works with a negative a. 
 int betterModulo(int a, int b) {
     return a - std::floor(a / (float)b) * b;

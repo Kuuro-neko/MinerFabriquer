@@ -44,6 +44,7 @@ class Biome {
          */
         inline int getId() const { return id; }
         inline int getGroundLevel() const { return groundLevel; }
+        inline void setSeed(int seed) { this->seed = seed; }
         inline int getSeed() const { return seed; }
         inline int getRandom1000() { return random1000(rng); }
         inline float getRandomFloat() { return randomFloat(rng); }
@@ -252,4 +253,9 @@ public:
     float getContinentalness(int x, int z);
     float getWeirdness(int x, int z);
     float getPeaksAndValleys(int x, int z);
+
+    void setSeed(int seed);
+
+    BiomeManager(const BiomeManager&) = delete;
+    BiomeManager& operator=(const BiomeManager&) = delete;
 };

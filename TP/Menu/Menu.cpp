@@ -64,6 +64,19 @@ std::string Menu::createWorld() {
     return savePath;
 }
 
+std::string Menu::askSeed() {
+    std::string seedStr;
+    int seed;
+    std::cout << "Enter the seed : ";
+    std::cin >> seedStr;
+
+    if (seedStr.empty()) {
+        seedStr = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
+    }
+
+    return seedStr;
+}
+
 
 int Menu::chooseLoadOrNewWorld() {
     int choice;

@@ -122,7 +122,7 @@ void ChunkColumn::checkForUngeneratedBlocks(std::shared_ptr<ChunkColumn> neighbo
 
 bool ChunkColumn::generate()
 {
-    WorldGenerator worldGenerator;
+    WorldGenerator& worldGenerator = WorldGenerator::getInstance();
 
     initializeChunks();
 

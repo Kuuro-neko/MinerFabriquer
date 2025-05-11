@@ -63,18 +63,18 @@ private:
     // Update the sky lights for a given chunk x,z in the chunk column
     void updateSkyLightsInColumn(int x, int z);
 
-    std::recursive_mutex worldMutex; // Mutex to lock the chunks data
-
+    
     std::queue<Task> taskQueue;
     std::mutex taskQueueMutex;
     std::condition_variable taskQueueCV;
     
     std::vector<std::thread> workerThreads; // Thread for chunk generation
     std::atomic<bool> workerThreadRunning = true;
-
+    
     void workerLoop();
 public:
-bool wireframe = false;
+    std::recursive_mutex worldMutex; // Mutex to lock the chunks data
+    bool wireframe = false;
     World();
 
     ~World();

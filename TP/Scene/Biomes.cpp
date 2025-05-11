@@ -736,8 +736,8 @@ float BiomeManager::getBaseHeight(int x, int z)
 
 int BiomeManager::getTemperatureClass(float temperature)
 {
-    if (temperature < -0.45f) return TEMPERATURE_COLD;
-    if (temperature < 0.45f) return TEMPERATURE_TEMPERATE;
+    if (temperature < -0.35f) return TEMPERATURE_COLD;
+    if (temperature < 0.35f) return TEMPERATURE_TEMPERATE;
     return TEMPERATURE_WARM;
 }
 
@@ -760,4 +760,20 @@ float BiomeManager::getWeirdness(int x, int z) {
 float BiomeManager::getPeaksAndValleys(int x, int z) {
     //return 1.0f - std::abs(3*std::abs(weirdness.GetNoise((float) x, (float) z))/2);
     return -1.0f*peaksAndValleys.GetNoise((float) x, (float) z)*peaksAndValleys.GetNoise((float) x, (float) z)+0.5f;
+}
+
+void BiomeManager::setSeed(int seed)
+{
+    this->seed = seed;
+    temperature.SetSeed(seed);
+    humidity.SetSeed(seed-1);
+    erosion.SetSeed(seed-2);
+    continentalness.SetSeed(seed-3);
+    weirdness.SetSeed(seed-4);
+    peaksAndValleys.SetSeed(seed-4);
+    biomeNoise.SetSeed(seed-5);
+
+    for (auto& biome : biomes) {
+        biome->setSeed(seed);
+    }
 }

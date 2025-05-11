@@ -15,6 +15,7 @@
 #include <TP/GUI/HUD.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
 #include <Defines.hpp>
+#include <TP/Scene/WorldGenerator.hpp>
 
 #define CHUNK_SIZE 16
 
@@ -261,6 +262,8 @@ int main(void) {
         std::cout << "No world folder found. Generating a new world..." << std::endl;
 
         std::string saveFolder = Menu::createWorld();
+        std::string seedStr = menu.askSeed();
+        WorldGenerator::getInstance().setSeed(seedStr);
         saveManager.setSaveFolderPath(saveFolder);
         world.initialGeneration();
         saveManager.saveWorldFile(); // Save the world data after generation
@@ -271,6 +274,8 @@ int main(void) {
         switch (choice) {
             case MENU_CREATE: {
                 std::string saveFolder = Menu::createWorld();
+                std::string seedStr = menu.askSeed();
+                WorldGenerator::getInstance().setSeed(seedStr);
                 std::cout << "Creating world in: " << saveFolder << std::endl;
                 saveManager.setSaveFolderPath(saveFolder);
                 world.initialGeneration();
@@ -484,6 +489,9 @@ int main(void) {
         }
         if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleWireframe)) {
             world.wireframe = !world.wireframe;
+        }
+        if (characterInputManager.isKeybindPressed({Keybinds::getInstance().getToggleDebug()})) {
+            std::cout << "Seed string : " << WorldGenerator::getInstance().getSeedStr() << std::endl;
         }
 
 

@@ -11,7 +11,6 @@
 
 // ===== Generation & chunks ===== //
 
-#define GENERATION_SEED 115111
 #define GROUND_LEVEL 65.0f
 #define WATER_LEVEL 63
 #define MESA_START_TERRACOTTA 68
