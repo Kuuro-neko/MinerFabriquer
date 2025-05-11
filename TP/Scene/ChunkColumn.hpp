@@ -22,6 +22,11 @@ public:
     }
 
     void initializeChunks();
+    void initializeChunksForRead();
+
+    void setHeightmapValue(int x, int z, int value) {
+        surfaceHeightmap[x][z] = value;
+    }
 
     // Return the chunk at the given CHUNK y coordinate
     std::shared_ptr<VoxelChunk> getChunk(int chunkCoordY);
@@ -50,7 +55,7 @@ public:
     void checkForUngeneratedBlocks(std::shared_ptr<ChunkColumn> neighbor);
     bool generate();
     void assignWorld(World *world);
-
+    
     int getLightLevel(int x, int y, int z);
     bool getBloc(int x, int y, int z);
     bool setBloc(int x, int y, int z, int bloc);

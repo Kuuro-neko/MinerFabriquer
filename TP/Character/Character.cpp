@@ -292,11 +292,11 @@ void Character::updateClosestBlock(BlocDatabase &db)
     float minDist = maxInteractionDistance;
 
     // Pour tout bloc des chunks touchés par le rayon
-    for (int x = 0; x < chunks[0]->m_sizeX; ++x)
+    for (int x = 0; x < CHUNK_SIZE; ++x)
     {
-        for (int y = 0; y < chunks[0]->m_sizeY; ++y)
+        for (int y = 0; y < CHUNK_SIZE; ++y)
         {
-            for (int z = 0; z < chunks[0]->m_sizeZ; ++z)
+            for (int z = 0; z < CHUNK_SIZE; ++z)
             {
                 for (int i = 0; i < chunks.size(); ++i)
                 {

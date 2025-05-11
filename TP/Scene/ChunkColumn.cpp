@@ -12,13 +12,26 @@ void ChunkColumn::sortChunks()
     });
 }
 
+void ChunkColumn::initializeChunksForRead()
+{
+    m_chunks.clear();
+    for (int y = GENERATION_SIZE_Y-1; y >= 0; y--) {
+        std::shared_ptr<VoxelChunk> chunk = std::make_shared<VoxelChunk>();
+        m_chunks.emplace_back(chunk);
+        m_chunks.back()->translate(glm::vec3(m_chunkCoords.x * CHUNK_SIZE, y * CHUNK_SIZE, m_chunkCoords.y * CHUNK_SIZE));
+        m_chunks.back()->m_chunkCoords = glm::ivec3(m_chunkCoords.x, y, m_chunkCoords.y);
+        m_chunks.back()->m_chunkColumn = shared_from_this();
+    }
+}
+
+
 void ChunkColumn::initializeChunks()
 {
     free();
     allocateSurfaceHeightMap();
 
     for (int y = GENERATION_SIZE_Y-1; y >= 0; y--) {
-        m_chunks.emplace_back(std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE));
+        m_chunks.emplace_back(std::make_shared<VoxelChunk>());
         m_chunks.back()->translate(glm::vec3(m_chunkCoords.x * CHUNK_SIZE, y * CHUNK_SIZE, m_chunkCoords.y * CHUNK_SIZE));
         m_chunks.back()->m_chunkCoords = glm::ivec3(m_chunkCoords.x, y, m_chunkCoords.y);
         m_chunks.back()->m_chunkColumn = shared_from_this();

@@ -265,7 +265,7 @@ int main(void) {
         world.initialGeneration();
         saveManager.saveWorldFile(); // Save the world data after generation
         saveManager.createPlayerDataFile();
-
+        
     } else {
         int choice = Menu::chooseLoadOrNewWorld();
         switch (choice) {
@@ -282,7 +282,40 @@ int main(void) {
                std::string worldPath = menu.chooseWorld();
                std::cout << "Loading world from: " << worldPath << std::endl;
                saveManager.setSaveFolderPath(worldPath);
-               saveManager.loadWorldFile();
+               std::vector<SaveManager::ChunkColumnEntry> colEntries = saveManager.loadWorldFile();
+               for (const auto &colEntry : colEntries) {
+                    std::shared_ptr<ChunkColumn> column = std::make_shared<ChunkColumn>(colEntry.worldX, colEntry.worldZ);
+                    for (int i = 0; i < CHUNK_SIZE; ++i) {
+                        for (int j = 0; j < CHUNK_SIZE; ++j) {
+                            column->setHeightmapValue(i, j, colEntry.heightmap[i][j]);
+                        }
+                    }
+                    for (int y = GENERATION_SIZE_Y - 1; y >= 0; --y) {
+                        auto newChunk = std::make_shared<VoxelChunk>();
+                        newChunk->translate(glm::vec3(colEntry.worldX * CHUNK_SIZE, y * CHUNK_SIZE, colEntry.worldZ * CHUNK_SIZE));
+                        newChunk->m_chunkCoords = glm::ivec3(colEntry.worldX, y, colEntry.worldZ);
+                        column->addChunk(newChunk);
+
+                        auto chunkEntry = colEntry.chunks[y];
+                        
+                        if (newChunk) {
+                            for (int bx = 0; bx < CHUNK_SIZE; ++bx) {
+                                for (int by = 0; by < CHUNK_SIZE; ++by) {
+                                    for (int bz = 0; bz < CHUNK_SIZE; ++bz) {
+                                        newChunk->generationSetBloc(bx, by, bz, chunkEntry.blocksID[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
+                                        newChunk->setLightLevel(bx, by, bz, chunkEntry.lightmap[bx * CHUNK_SIZE * CHUNK_SIZE + by * CHUNK_SIZE + bz]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    world.addColumn(column);
+                    column->assignWorld(&world);
+                    for (auto &chunk : column->getChunks()) {
+                        world.emplaceChunk(chunk);
+                        chunk->dirty = true;
+                    }
+               }
                saveManager.loadPlayerData();
                break;
            }
@@ -297,7 +330,7 @@ int main(void) {
     saveManager.loadPlayerData();
     std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
     saveManager.startAutoSave();
-
+    world.startWorkerThread();
 
     // Associer le monde au personnage
     character.m_world = &world;

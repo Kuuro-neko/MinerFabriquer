@@ -17,4 +17,4 @@
  * @param z_offset offset on the z axis relative to the chunk's position
  * @param size Default size is 1.0f and should probably not be changed
  */
-void addSquareGeometry(VoxelMeshObject &mesh, int bloc, unsigned char face, float x_offset = 0.0f, float y_offset = 0.0f, float z_offset = 0.0f, bool lowerTop = false, float size = 1.0f);
+void addSquareGeometry(std::shared_ptr<VoxelMeshObject> mesh, int bloc, unsigned char face, float x_offset = 0.0f, float y_offset = 0.0f, float z_offset = 0.0f, bool lowerTop = false, float size = 1.0f);

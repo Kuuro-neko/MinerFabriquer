@@ -84,8 +84,8 @@ void WorldGenerator::setBaseStone(std::shared_ptr<VoxelChunk> chunk, int x, int 
  * @param groundLevel 
  */
 void WorldGenerator::generateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k, int groundLevel) {
-    for (int x = 0; x < chunk->m_sizeX; ++x) {
-        for (int z = 0; z < chunk->m_sizeZ; ++z) {
+    for (int x = 0; x < CHUNK_SIZE; ++x) {
+        for (int z = 0; z < CHUNK_SIZE; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk
             // so x and z are local to the chunk and x + worldAABBMin.x and z + worldAABBMin.z are the world pos (useful for the noises)
             glm::ivec3 worldAABBMin = glm::ivec3(
@@ -105,7 +105,7 @@ void WorldGenerator::generateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, i
             currentBiome->applySurface(chunk, x, z, baseHeight, worldAABBMin);
 
             // Generate ores in stone blocs
-            for (int y = 0; y < chunk->m_sizeY; y++) {
+            for (int y = 0; y < CHUNK_SIZE; y++) {
                 if (chunk->getBloc(x, y, z) == STONE) { // Replaces only stone
                     float oreNoiseValue = oreNoise.GetNoise((float) x + i * CHUNK_SIZE,
                                                             (float) y + j * CHUNK_SIZE,
@@ -117,7 +117,7 @@ void WorldGenerator::generateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, i
             }
 
             // Generate caves on ground blocs
-            for (int y = 0; y < chunk->m_sizeY; y++) { // Replaces ground blocs
+            for (int y = 0; y < CHUNK_SIZE; y++) { // Replaces ground blocs
                 if (BlocDatabase::getInstance().isPartOfGround(chunk->getBloc(x, y, z))) {
                     float caveNoiseValue = caveNoise.GetNoise((float) x + i * CHUNK_SIZE,
                                                                (float) y + j * CHUNK_SIZE,
@@ -140,8 +140,8 @@ void WorldGenerator::generateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, i
 }
 
 void WorldGenerator::decorateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, int j, int k, int groundLevel) {
-    for (int x = 0; x < chunk->m_sizeX; ++x) {
-        for (int z = 0; z < chunk->m_sizeZ; ++z) {
+    for (int x = 0; x < CHUNK_SIZE; ++x) {
+        for (int z = 0; z < CHUNK_SIZE; ++z) {
             // worldAABBMin.xyz are the world pos of the min pos of the chunk
             // so x and z are local to the chunk and x + worldAABBMin.x and z + worldAABBMin.z are the world pos (useful for the noises)
             glm::ivec3 worldAABBMin = glm::ivec3(

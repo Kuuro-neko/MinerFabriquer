@@ -196,77 +196,58 @@ void SaveManager::saveWorldFile()
         std::cerr << "Impossible to create the Saving file" << std::endl;
     }
 
-    // Header Part that will contains the offset and lenght but for now ir's empty
-    constexpr int REGION_WIDTH = GENERATION_SIZE_X;
-    constexpr int REGION_DEPTH = GENERATION_SIZE_Z;
-    constexpr int REGION_SIZE = REGION_WIDTH * REGION_DEPTH;
 
-    // 1. Write and reserve the space for the header file
-    std::vector<ChunkColumnEntry> toc(REGION_SIZE);                   // Table of Contents
-    out.seekp(REGION_SIZE * sizeof(ChunkColumnEntry), std::ios::beg); // we save the space for futur adresse and content
 
-    // 2. then we get all the data from the chunkColumn (posX, posY, heightmap, and the chunks)
+    std::vector<std::shared_ptr<ChunkColumn>> columns = world->getAllColumns();
 
-    for (int z = 0; z < REGION_DEPTH; ++z)
+    int countCol = 0;
+    int countChunk = 0;
+    for (auto &column : columns)
     {
-        for (int x = 0; x < REGION_WIDTH; ++x)
+        // 2.2 save the data
+        int32_t worldX = column->getChunkCoords().x;
+        int32_t worldZ = column->getChunkCoords().y;
+        out.write(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
+        out.write(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
+    
+        // 2.3 Sauvegarde heightmap
+        out.write(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(int32_t) * 16 * 16);
+    
+        // 2.4 Sauvegarde des 8 chunks
+        std::vector<std::shared_ptr<VoxelChunk>> allChunks = column->getChunks();
+    
+        for (int i = 0; i < 8; ++i)
         {
-            int index = z * REGION_WIDTH + x;
-            std::shared_ptr<ChunkColumn> column = world->getChunkColumn(x, z);
-            if (!column)
-                continue;
-
-            // 2.1 write the offset before writing new data
-            std::streampos offset = out.tellp();
-
-            // 2.2 save the data
-            int32_t worldX = column->getChunkCoords().x;
-            int32_t worldZ = column->getChunkCoords().y;
-            out.write(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
-            out.write(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
-
-            // 2.3 Sauvegarde heightmap
-            out.write(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(column->getSurfaceHeightMap()));
-
-            // 2.4 Sauvegarde des 8 chunks
-            std::vector<std::shared_ptr<VoxelChunk>> allChunks = column->getChunks();
-
-            for (int i = 0; i < 8; ++i)
+            std::shared_ptr<VoxelChunk> chunk = column->getChunk(i);
+            for (int bx = 0; bx < CHUNK_SIZE; ++bx)
             {
-                std::shared_ptr<VoxelChunk> chunk = column->getChunk(i);
-                for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+                for (int by = 0; by < CHUNK_SIZE; ++by)
                 {
-                    for (int by = 0; by < CHUNK_SIZE; ++by)
+                    for (int bz = 0; bz < CHUNK_SIZE; ++bz)
                     {
-                        for (int bz = 0; bz < CHUNK_SIZE; ++bz)
-                        {
-                            // blocID
-                            uint16_t blockID = chunk->getBloc(bx, by, bz);
-                            out.write(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
-
-                            // lightmap
-                            uint8_t light = chunk->getLightLevelIncludingNeighbors(bx, by, bz);
-                            out.write(reinterpret_cast<char *>(&light), sizeof(uint8_t));
-                        }
+                        // blocID
+                        int32_t blockID = chunk->getBloc(bx, by, bz);
+                        out.write(reinterpret_cast<char *>(&blockID), sizeof(int32_t));
+    
+                        // lightmap
+                        int32_t light = chunk->getLightLevel(bx, by, bz);
+                        out.write(reinterpret_cast<char *>(&light), sizeof(int32_t));
                     }
                 }
             }
-
-            std::streampos end = out.tellp();
-            toc[index].offset = static_cast<uint32_t>(offset);
-            toc[index].length = static_cast<uint32_t>(end - offset);
+            countChunk++;
         }
+        countCol++;
     }
 
-    // 3. Revenir au début et écrire la vraie table des matières
-    out.seekp(0, std::ios::beg);
-    out.write(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
 
     std::cout << "World saved to: " << filePath << std::endl;
-    std::cout<< "Number of chunks saved : " << world->getAllChunks().size() << std::endl;
+    std::cout<< "Number of columns saved : " << countCol << " / " << columns.size() << std::endl;
+    std::cout<< "Number of chunks saved : " << countChunk << " / " << columns.size() * 8 << std::endl;
+
 }
 // TODO fix why not all chunks is loadings
-void SaveManager::loadWorldFile()
+std::vector<SaveManager::ChunkColumnEntry> SaveManager::loadWorldFile()
 {
 
     std::string motRecentFolder = getSaveFolderPath();
@@ -278,88 +259,125 @@ void SaveManager::loadWorldFile()
     if (!ifs)
     {
         std::cerr << "Error opening file: " << mostRecentWorldFilePath << std::endl;
-        return;
+        exit(1);
     }
 
-    readWorldFile(ifs);
+    return readWorldFile(ifs);
     std::cout<< "Number of chunks read : " << world->getAllChunks().size() << std::endl;
 }
 
-void SaveManager::readWorldFile(std::ifstream &in)
+std::vector<SaveManager::ChunkColumnEntry> SaveManager::readWorldFile(std::ifstream &in)
 {
     if (!world)
     {
         std::cerr << "World instance is not set. Cannot load world data." << std::endl;
-        return;
+        exit(1);
     }
 
-    constexpr int REGION_WIDTH = GENERATION_SIZE_X;
-    constexpr int REGION_DEPTH = GENERATION_SIZE_Z;
-    constexpr int REGION_SIZE = REGION_WIDTH * REGION_DEPTH; // 16 * 16 = 256
+    // Check if the stream is good and not at EOF
+    if (!in.good()) {
+        std::cerr << "Input stream is in bad state." << std::endl;
+        return {};
+    }
 
-    //Read the header (table of contents)
-    std::vector<ChunkColumnEntry> toc(REGION_SIZE);
-    in.read(reinterpret_cast<char *>(toc.data()), REGION_SIZE * sizeof(ChunkColumnEntry));
+    // Reset file position to beginning if needed
+    in.seekg(0, std::ios::beg);
 
-    //Read the chunk column data
-    for (int z = 0; z < REGION_DEPTH; ++z)
-    {
-        for (int x = 0; x < REGION_WIDTH; ++x)
+    // Check file size
+    in.seekg(0, std::ios::end);
+    std::streampos fileSize = in.tellg();
+    in.seekg(0, std::ios::beg);
+    
+    if (fileSize == 0) {
+        std::cerr << "File is empty." << std::endl;
+        return {};
+    }
+    
+    std::cout << "File size: " << fileSize << " bytes" << std::endl;
+
+    std::vector<ChunkColumnEntry> chunkColumnEntries;
+    int countCol = 0;
+    int countChunk = 0;
+    
+    while(in && in.peek() != EOF) {
+        ChunkColumnEntry columnEntry = {};
+        
+        // Read column coordinates
+        if (!in.read(reinterpret_cast<char *>(&columnEntry.worldX), sizeof(int32_t)) ||
+            !in.read(reinterpret_cast<char *>(&columnEntry.worldZ), sizeof(int32_t))) {
+            std::cerr << "Failed to read column coordinates" << std::endl;
+            break;
+        }
+        
+        // Read heightmap
+        if (!in.read(reinterpret_cast<char *>(columnEntry.heightmap), sizeof(int32_t) * 16 * 16)) {
+            std::cerr << "Failed to read heightmap" << std::endl;
+            break;
+        }
+        auto chunkReadError = false;
+        for (int i = 0; i < 8; ++i)
         {
-            int index = z * REGION_WIDTH + x;
-            ChunkColumnEntry &entry = toc[index];
-
-            // Skip empty entries
-            if (entry.length == 0)
-                continue;
-
-            // Seek to the offset of the chunk column data
-            in.seekg(entry.offset, std::ios::beg);
-
-            // Read the chunk column metadata
-            int32_t worldX, worldZ;
-            in.read(reinterpret_cast<char *>(&worldX), sizeof(int32_t));
-            in.read(reinterpret_cast<char *>(&worldZ), sizeof(int32_t));
-
-            // Create a new chunk column
-            std::shared_ptr<ChunkColumn> column = std::make_shared<ChunkColumn>(worldX, worldZ);
-            column->initializeChunks();
-
-            // Read the heightmap data from the corresponding chunk column
-            in.read(reinterpret_cast<char *>(column->getSurfaceHeightMap()), sizeof(column->getSurfaceHeightMap()));
-
-            // Write the 8 chunks of the current column
-            for (int i = 0; i < GENERATION_SIZE_Y; ++i)
+            ChunkEntry chunkEntry = {};
+            for (int bx = 0; bx < CHUNK_SIZE; ++bx)
             {
-                std::shared_ptr<VoxelChunk> chunk = column->getChunk(i);
-                for (int bx = 0; bx < CHUNK_SIZE; ++bx)
+                for (int by = 0; by < CHUNK_SIZE; ++by)
                 {
-                    for (int by = 0; by < CHUNK_SIZE; ++by)
+                    for (int bz = 0; bz < CHUNK_SIZE; ++bz)
                     {
-                        for (int bz = 0; bz < CHUNK_SIZE; ++bz)
-                        {
-                            // Read block ID
-                            uint16_t blockID;
-                            in.read(reinterpret_cast<char *>(&blockID), sizeof(uint16_t));
-                            chunk->generationSetBloc(bx, by, bz, blockID);
-
-                            // Read light level
-                            uint8_t light;
-                            in.read(reinterpret_cast<char *>(&light), sizeof(uint8_t));
-                            chunk->setLightLevel(bx, by, bz, light);
+                        // Read block ID
+                        int32_t blockID;
+                        if (!in.read(reinterpret_cast<char *>(&blockID), sizeof(int32_t))) {
+                            std::cerr << "Failed to read block ID at chunk " << i 
+                                      << " position (" << bx << "," << by << "," << bz << ")" << std::endl;
+                            chunkReadError = true;
+                            break;
                         }
+                        chunkEntry.blocksID.push_back(blockID);
+
+                        // Read light level
+                        int32_t light;
+                        if (!in.read(reinterpret_cast<char *>(&light), sizeof(int32_t))) {
+                            std::cerr << "Failed to read light level at chunk " << i 
+                                      << " position (" << bx << "," << by << "," << bz << ")" << std::endl;
+                            chunkReadError = true;
+                            break;
+                        }
+                        chunkEntry.lightmap.push_back(light);
                     }
                 }
             }
-
-            // Add the chunk column to the world
-            world->addColumn(column);
-            column->assignWorld(world);
-            for (auto &chunk : column->getChunks()) {
-                world->emplaceChunk(chunk);
+            
+            if (!chunkReadError) {
+                columnEntry.chunks[i] = chunkEntry;
+                countChunk++;
+            } else {
+                break;
             }
         }
+        
+        if (!chunkReadError) {
+            chunkColumnEntries.push_back(columnEntry);
+            countCol++;
+        } else {
+            break;
+        }
     }
+    
+    std::cout << "Number of columns read: " << countCol << std::endl;
+    std::cout << "Number of chunks read: " << countChunk << std::endl;
+    std::cout << "Size of chunkColumnEntries: " << chunkColumnEntries.size() << std::endl;
+    
+    // If we didn't read anything, provide more specific debug info
+    if (countCol == 0) {
+        std::cerr << "Warning: No data was read from the file." << std::endl;
+        std::cerr << "File stream state: " << 
+            (in.good() ? "good" : "") << 
+            (in.eof() ? " eof" : "") << 
+            (in.fail() ? " fail" : "") << 
+            (in.bad() ? " bad" : "") << std::endl;
+    }
+    
+    return chunkColumnEntries;
 }
 
 bool SaveManager::isDataFolderContainsOtherFolder() {

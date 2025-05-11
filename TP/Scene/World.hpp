@@ -90,6 +90,7 @@ bool wireframe = false;
     void stopWorkerThread();
 
     void addColumn(std::shared_ptr<ChunkColumn> column);
+    std::vector<std::shared_ptr<ChunkColumn>> getAllColumns() const;
 
     // Create an empty chunk at the given CHUNK coordinates and return a pointer to it.
     std::shared_ptr<VoxelChunk> createEmptyChunk(int x, int y, int z);

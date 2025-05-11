@@ -23,7 +23,6 @@ struct UngeneratedBlock {
 class VoxelChunk : public SceneNode
 {
 public:
-    VoxelChunk(int sizeX, int sizeY, int sizeZ);
     VoxelChunk();
     ~VoxelChunk();
     /**
@@ -90,12 +89,9 @@ public:
     bool intersects(Ray ray, float maxDistance);
 
     inline glm::vec3 getChunkCoords() const {
-        return glm::vec3(m_chunkCoords.x * m_sizeX, m_chunkCoords.y * m_sizeY, m_chunkCoords.z * m_sizeZ);
+        return glm::vec3(m_chunkCoords.x * CHUNK_SIZE, m_chunkCoords.y * CHUNK_SIZE, m_chunkCoords.z * CHUNK_SIZE);
     }
 
-    int m_sizeX = CHUNK_SIZE;
-    int m_sizeY = CHUNK_SIZE;
-    int m_sizeZ = CHUNK_SIZE;
     bool dirty = true;
     std::vector<std::vector<std::vector<int>>> m_cubes;
     std::vector<std::vector<std::vector<int>>> m_lights;
@@ -103,8 +99,8 @@ public:
     glm::ivec3 m_chunkCoords;
     World *m_world;
     std::shared_ptr<ChunkColumn> m_chunkColumn;
-    VoxelMeshObject m_opaqueMesh;
-    VoxelMeshObject m_transparentMesh;
+    std::shared_ptr<VoxelMeshObject> m_opaqueMesh;
+    std::shared_ptr<VoxelMeshObject> m_transparentMesh;
 
     // Move Constructor
     VoxelChunk(VoxelChunk&& other) noexcept;

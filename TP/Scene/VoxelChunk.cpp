@@ -4,15 +4,16 @@
 #include <TP/Character/Character.hpp>
 #include "VoxelChunk.hpp"
 
-VoxelChunk::VoxelChunk(int sizeX, int sizeY, int sizeZ) : SceneNode(Transform(), nullptr, nullptr), m_sizeX(sizeX), m_sizeY(sizeY), m_sizeZ(sizeZ)
+VoxelChunk::VoxelChunk() : SceneNode(Transform(), nullptr, nullptr)
 {
-    allocateCubes();
-    m_opaqueMesh = VoxelMeshObject();
-    m_transparentMesh = VoxelMeshObject();
-}
-VoxelChunk::VoxelChunk() : VoxelChunk(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)
-{
-    allocateCubes();
+    try {
+        allocateCubes();
+        m_opaqueMesh = std::make_shared<VoxelMeshObject>();
+        m_transparentMesh = std::make_shared<VoxelMeshObject>();
+    } catch (const std::exception& e) {
+        std::cerr << "Exception in VoxelChunk constructor: " << e.what() << std::endl;
+        throw;
+    }
 }
 VoxelChunk::~VoxelChunk() {
     //cleanup();
@@ -20,14 +21,14 @@ VoxelChunk::~VoxelChunk() {
 
 bool VoxelChunk::setBloc(int x, int y, int z, int bloc, bool columnFallback, bool worldFallback) {
     //std::cout << "Setting " << BlocDatabase::getInstance().getBloc(bloc)->name << " at " << x << ", " << y << ", " << z << std::endl;
-    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+    if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
         if (worldFallback) {
-            return m_world->setBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ, bloc);
+            return m_world->setBloc(x + m_chunkCoords.x * CHUNK_SIZE, y + m_chunkCoords.y * CHUNK_SIZE, z + m_chunkCoords.z * CHUNK_SIZE, bloc);
         } else {
             return false;
         }
     }
-    if (y < 0 || y >= m_sizeY) {
+    if (y < 0 || y >= CHUNK_SIZE) {
         if (columnFallback) {
             return m_chunkColumn->setBloc(x, y, z, bloc);
         } else {
@@ -53,25 +54,25 @@ bool VoxelChunk::saveUngeneratedBlock(int x, int y, int z, int bloc) {
     int chunkZ = m_chunkCoords.z;
     if (x < 0) {
         while(targetX < 0) {
-            targetX += m_sizeX;
+            targetX += CHUNK_SIZE;
             chunkX--;
         }
     }
-    if (x >= m_sizeX) {
-        while(targetX >= m_sizeX) {
-            targetX -= m_sizeX;
+    if (x >= CHUNK_SIZE) {
+        while(targetX >= CHUNK_SIZE) {
+            targetX -= CHUNK_SIZE;
             chunkX++;
         }
     }
     if (z < 0) {
         while(targetZ < 0) {
-            targetZ += m_sizeZ;
+            targetZ += CHUNK_SIZE;
             chunkZ--;
         }
     }
-    if (z >= m_sizeZ) {
-        while(targetZ >= m_sizeZ) {
-            targetZ -= m_sizeZ;
+    if (z >= CHUNK_SIZE) {
+        while(targetZ >= CHUNK_SIZE) {
+            targetZ -= CHUNK_SIZE;
             chunkZ++;
         }
     }
@@ -87,10 +88,10 @@ bool VoxelChunk::saveUngeneratedBlock(int x, int y, int z, int bloc) {
 }
 
 bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc, bool columnFallback, bool worldFallback) {
-    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+    if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
         saveUngeneratedBlock(x, y, z, bloc);
     }
-    if (y < 0 || y >= m_sizeY) {
+    if (y < 0 || y >= CHUNK_SIZE) {
         if (columnFallback) {
             return m_chunkColumn->generationSetBloc(x, y, z, bloc);
         } else {
@@ -104,12 +105,12 @@ bool VoxelChunk::generationSetBloc(int x, int y, int z, int bloc, bool columnFal
 }
 
 int VoxelChunk::getBloc(int x, int y, int z, bool columnFallback, bool worldFallback) {
-    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
+    if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
         throw ChunkOOBException(x, y, z, m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z);
     }
-    if (y < 0 || y >= m_sizeY) {
+    if (y < 0 || y >= CHUNK_SIZE) {
         if (columnFallback) {
-            return m_chunkColumn->getBloc(x, y + m_chunkCoords.y * m_sizeY, z);
+            return m_chunkColumn->getBloc(x, y + m_chunkCoords.y * CHUNK_SIZE, z);
         } else {
             throw ChunkOOBException(x, y, z, m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z);
         } 
@@ -118,29 +119,29 @@ int VoxelChunk::getBloc(int x, int y, int z, bool columnFallback, bool worldFall
 }
 
 int VoxelChunk::getBlocIncludingNeighbors(int x, int y, int z) {
-    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
-        return m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+    if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
+        return m_world->getBloc(x + m_chunkCoords.x * CHUNK_SIZE, y + m_chunkCoords.y * CHUNK_SIZE, z + m_chunkCoords.z * CHUNK_SIZE);
     }
-    if (y < 0 || y >= m_sizeY) {
-        return m_world->getBloc(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
-        //return m_chunkColumn->getBloc(x, y + m_chunkCoords.y * m_sizeY, z); TODO make this work, not critical
+    if (y < 0 || y >= CHUNK_SIZE) {
+        return m_world->getBloc(x + m_chunkCoords.x * CHUNK_SIZE, y + m_chunkCoords.y * CHUNK_SIZE, z + m_chunkCoords.z * CHUNK_SIZE);
+        //return m_chunkColumn->getBloc(x, y + m_chunkCoords.y * CHUNK_SIZE, z); TODO make this work, not critical
     }
     return m_cubes[x][y][z];
 }
 
 int VoxelChunk::getLightLevelIncludingNeighbors(int x, int y, int z) {
-    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ) {
-        return m_world->getLightLevel(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
+    if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
+        return m_world->getLightLevel(x + m_chunkCoords.x * CHUNK_SIZE, y + m_chunkCoords.y * CHUNK_SIZE, z + m_chunkCoords.z * CHUNK_SIZE);
     }
-    if (y < 0 || y >= m_sizeY) {
-        //return m_world->getLightLevel(x + m_chunkCoords.x * m_sizeX, y + m_chunkCoords.y * m_sizeY, z + m_chunkCoords.z * m_sizeZ);
-        return m_chunkColumn->getLightLevel(x, y + m_chunkCoords.y * m_sizeY, z);
+    if (y < 0 || y >= CHUNK_SIZE) {
+        //return m_world->getLightLevel(x + m_chunkCoords.x * CHUNK_SIZE, y + m_chunkCoords.y * CHUNK_SIZE, z + m_chunkCoords.z * CHUNK_SIZE);
+        return m_chunkColumn->getLightLevel(x, y + m_chunkCoords.y * CHUNK_SIZE, z);
     }
     return getLightLevel(x, y, z);
 }
 
 int VoxelChunk::getLightLevel(int x, int y, int z) {
-    if (x < 0 || x >= m_sizeX || z < 0 || z >= m_sizeZ || y < 0 || y >= m_sizeY) {
+    if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE || y < 0 || y >= CHUNK_SIZE) {
         throw ChunkOOBException(x, y, z, m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z);
     }
     return m_lights[x][y][z];
@@ -148,7 +149,7 @@ int VoxelChunk::getLightLevel(int x, int y, int z) {
 
 int VoxelChunk::playerRemoveBlock(int x, int y, int z, unsigned char gamemode)
 {
-    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ)
+    if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
     {
         std::cout << "Error: Out of bounds" << std::endl;
         return -1;
@@ -306,21 +307,21 @@ void VoxelChunk::addLightValues(int x, int y, int z, unsigned char face, std::ve
 void VoxelChunk::generateMesh()
 {
     // std::cout << "Generating mesh at chunk coords (" << m_chunkCoords.x << ", " << m_chunkCoords.y << ", " << m_chunkCoords.z << ")" << std::endl;
-    m_opaqueMesh.vertices.clear();
-    m_opaqueMesh.triangles.clear();
-    m_opaqueMesh.uvs.clear();
-    m_opaqueMesh.normals.clear();
-    m_opaqueMesh.lights.clear();
-    m_opaqueMesh.ao.clear();
+    m_opaqueMesh->vertices.clear();
+    m_opaqueMesh->triangles.clear();
+    m_opaqueMesh->uvs.clear();
+    m_opaqueMesh->normals.clear();
+    m_opaqueMesh->lights.clear();
+    m_opaqueMesh->ao.clear();
 
     int neighbor;
 
     // Loop through all the cubes in the chunk. If a cube has a face that is not adjacent to another non opaque cube, add a face to the mesh
-    for (int x = 0; x < m_sizeX; x++)
+    for (int x = 0; x < CHUNK_SIZE; x++)
     {
-        for (int y = 0; y < m_sizeY; y++)
+        for (int y = 0; y < CHUNK_SIZE; y++)
         {
-            for (int z = 0; z < m_sizeZ; z++)
+            for (int z = 0; z < CHUNK_SIZE; z++)
             {
                 if (m_cubes[x][y][z] != AIR && BlocDatabase::getInstance().isOpaque(m_cubes[x][y][z]))
                 {
@@ -329,63 +330,63 @@ void VoxelChunk::generateMesh()
                     if (opaqueNeighborCheck(neighbor))
                     {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_EAST, x, y, z);
-                        addLightValues(x, y, z, FACE_EAST, m_opaqueMesh.lights);
-                        addAOValues(x, y, z, FACE_EAST, m_opaqueMesh.ao);
+                        addLightValues(x, y, z, FACE_EAST, m_opaqueMesh->lights);
+                        addAOValues(x, y, z, FACE_EAST, m_opaqueMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (opaqueNeighborCheck(neighbor))
                     {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_WEST, x, y, z);
-                        addLightValues(x, y, z, FACE_WEST, m_opaqueMesh.lights);
-                        addAOValues(x, y, z, FACE_WEST, m_opaqueMesh.ao);
+                        addLightValues(x, y, z, FACE_WEST, m_opaqueMesh->lights);
+                        addAOValues(x, y, z, FACE_WEST, m_opaqueMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (opaqueNeighborCheck(neighbor))
                     {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_BOTTOM, x, y, z);
-                        addLightValues(x, y, z, FACE_BOTTOM, m_opaqueMesh.lights);
-                        addAOValues(x, y, z, FACE_BOTTOM, m_opaqueMesh.ao);
+                        addLightValues(x, y, z, FACE_BOTTOM, m_opaqueMesh->lights);
+                        addAOValues(x, y, z, FACE_BOTTOM, m_opaqueMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (opaqueNeighborCheck(neighbor))
                     {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_TOP, x, y, z);
-                        addLightValues(x, y, z, FACE_TOP, m_opaqueMesh.lights);
-                        addAOValues(x, y, z, FACE_TOP, m_opaqueMesh.ao);
+                        addLightValues(x, y, z, FACE_TOP, m_opaqueMesh->lights);
+                        addAOValues(x, y, z, FACE_TOP, m_opaqueMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (opaqueNeighborCheck(neighbor))
                     {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_SOUTH, x, y, z);
-                        addLightValues(x, y, z, FACE_SOUTH, m_opaqueMesh.lights);
-                        addAOValues(x, y, z, FACE_SOUTH, m_opaqueMesh.ao);
+                        addLightValues(x, y, z, FACE_SOUTH, m_opaqueMesh->lights);
+                        addAOValues(x, y, z, FACE_SOUTH, m_opaqueMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (opaqueNeighborCheck(neighbor))
                     {
                         addSquareGeometry(m_opaqueMesh, m_cubes[x][y][z], FACE_NORTH, x, y, z);
-                        addLightValues(x, y, z, FACE_NORTH, m_opaqueMesh.lights);
-                        addAOValues(x, y, z, FACE_NORTH, m_opaqueMesh.ao);
+                        addLightValues(x, y, z, FACE_NORTH, m_opaqueMesh->lights);
+                        addAOValues(x, y, z, FACE_NORTH, m_opaqueMesh->ao);
                     }
                 }
             }
         }
     }
-    m_opaqueMesh.initializeBuffers();
+    m_opaqueMesh->initializeBuffers();
 
-    m_transparentMesh.vertices.clear();
-    m_transparentMesh.triangles.clear();
-    m_transparentMesh.uvs.clear();
-    m_transparentMesh.normals.clear();
-    m_transparentMesh.lights.clear();
-    m_transparentMesh.ao.clear();
+    m_transparentMesh->vertices.clear();
+    m_transparentMesh->triangles.clear();
+    m_transparentMesh->uvs.clear();
+    m_transparentMesh->normals.clear();
+    m_transparentMesh->lights.clear();
+    m_transparentMesh->ao.clear();
 
     // Loop through all the cubes in the chunk. If a cube has a face that is not adjacent to another non opaque cube, add a face to the mesh
-    for (int x = 0; x < m_sizeX; x++)
+    for (int x = 0; x < CHUNK_SIZE; x++)
     {
-        for (int y = 0; y < m_sizeY; y++)
+        for (int y = 0; y < CHUNK_SIZE; y++)
         {
-            for (int z = 0; z < m_sizeZ; z++)
+            for (int z = 0; z < CHUNK_SIZE; z++)
             {
                 if (m_cubes[x][y][z] != AIR && !BlocDatabase::getInstance().isOpaque(m_cubes[x][y][z]))
                 {
@@ -394,85 +395,85 @@ void VoxelChunk::generateMesh()
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_EAST))
                     {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_EAST, x, y, z);
-                        addLightValues(x, y, z, FACE_EAST, m_transparentMesh.lights);
-                        addAOValues(x, y, z, FACE_EAST, m_transparentMesh.ao);
+                        addLightValues(x, y, z, FACE_EAST, m_transparentMesh->lights);
+                        addAOValues(x, y, z, FACE_EAST, m_transparentMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x + 1, y, z);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_WEST))
                     {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_WEST, x, y, z);
-                        addLightValues(x, y, z, FACE_WEST, m_transparentMesh.lights);
-                        addAOValues(x, y, z, FACE_WEST, m_transparentMesh.ao);
+                        addLightValues(x, y, z, FACE_WEST, m_transparentMesh->lights);
+                        addAOValues(x, y, z, FACE_WEST, m_transparentMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y - 1, z);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_BOTTOM))
                     {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_BOTTOM, x, y, z);
-                        addLightValues(x, y, z, FACE_BOTTOM, m_transparentMesh.lights);
-                        addAOValues(x, y, z, FACE_BOTTOM, m_transparentMesh.ao);
+                        addLightValues(x, y, z, FACE_BOTTOM, m_transparentMesh->lights);
+                        addAOValues(x, y, z, FACE_BOTTOM, m_transparentMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y + 1, z);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_TOP))
                     {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_TOP, x, y, z, m_cubes[x][y][z] == WATER && getBlocIncludingNeighbors(x, y + 1, z) != WATER);
-                        addLightValues(x, y, z, FACE_TOP, m_transparentMesh.lights);
-                        addAOValues(x, y, z, FACE_TOP, m_transparentMesh.ao);
+                        addLightValues(x, y, z, FACE_TOP, m_transparentMesh->lights);
+                        addAOValues(x, y, z, FACE_TOP, m_transparentMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z - 1);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_SOUTH))
                     {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_SOUTH, x, y, z);
-                        addLightValues(x, y, z, FACE_SOUTH, m_transparentMesh.lights);
-                        addAOValues(x, y, z, FACE_SOUTH, m_transparentMesh.ao);
+                        addLightValues(x, y, z, FACE_SOUTH, m_transparentMesh->lights);
+                        addAOValues(x, y, z, FACE_SOUTH, m_transparentMesh->ao);
                     }
                     neighbor = getBlocIncludingNeighbors(x, y, z + 1);
                     if (transparentNeighborCheck(neighbor, m_cubes[x][y][z], FACE_NORTH))
                     {
                         addSquareGeometry(m_transparentMesh, m_cubes[x][y][z], FACE_NORTH, x, y, z);
-                        addLightValues(x, y, z, FACE_NORTH, m_transparentMesh.lights);
-                        addAOValues(x, y, z, FACE_NORTH, m_transparentMesh.ao);
+                        addLightValues(x, y, z, FACE_NORTH, m_transparentMesh->lights);
+                        addAOValues(x, y, z, FACE_NORTH, m_transparentMesh->ao);
                     }
                 }
             }
         }
     }
-    m_transparentMesh.initializeBuffers();
+    m_transparentMesh->initializeBuffers();
     dirty = false;
 }
 
 int VoxelChunk::drawOpaque(GLuint programID) {
     if (dirty) generateMesh();
-    if (m_opaqueMesh.vertices.size() == 0) return 0;
+    if (m_opaqueMesh->vertices.size() == 0) return 0;
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
 
     // TextureAtlas::getInstance().bind(programID);
     PBRTextureAtlas::getInstance().bind(programID);
-    m_opaqueMesh.draw(programID);
+    m_opaqueMesh->draw(programID);
 
     return 1;
 }
 
 void VoxelChunk::drawTransparent(GLuint programID) {
-    if (m_transparentMesh.vertices.size() == 0) return;
+    if (m_transparentMesh->vertices.size() == 0) return;
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
 
     // TextureAtlas::getInstance().bind(programID);
     PBRTextureAtlas::getInstance().bind(programID);
-    m_transparentMesh.draw(programID);
+    m_transparentMesh->draw(programID);
 }
 
 void VoxelChunk::cleanupBuffers()
 {
-    m_opaqueMesh.cleanupBuffers();
+    m_opaqueMesh->cleanupBuffers();
 }
 
 bool VoxelChunk::contains(glm::vec3 point)
 {
-    return point.x >= getWorldPosition().x && point.x <= getWorldPosition().x + m_sizeX &&
-           point.y >= getWorldPosition().y && point.y <= getWorldPosition().y + m_sizeY &&
-           point.z >= getWorldPosition().z && point.z <= getWorldPosition().z + m_sizeZ;
+    return point.x >= getWorldPosition().x && point.x <= getWorldPosition().x + CHUNK_SIZE &&
+           point.y >= getWorldPosition().y && point.y <= getWorldPosition().y + CHUNK_SIZE &&
+           point.z >= getWorldPosition().z && point.z <= getWorldPosition().z + CHUNK_SIZE;
 }
 
 bool VoxelChunk::contains(Ray ray)
@@ -482,12 +483,12 @@ bool VoxelChunk::contains(Ray ray)
 
 bool VoxelChunk::intersects(Ray ray, float maxDistance)
 {
-    return contains(ray) || ray.rayIntersectsAABB(ray, getWorldPosition(), getWorldPosition() + glm::vec3(m_sizeX, m_sizeY, m_sizeZ), maxDistance);
+    return contains(ray) || ray.rayIntersectsAABB(ray, getWorldPosition(), getWorldPosition() + glm::vec3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE), maxDistance);
 }
 
 // Move Constructor
 VoxelChunk::VoxelChunk(VoxelChunk &&other) noexcept
-    : SceneNode(std::move(other)), m_sizeX(other.m_sizeX), m_sizeY(other.m_sizeY), m_sizeZ(other.m_sizeZ), m_cubes(std::move(other.m_cubes)), m_lights(std::move(other.m_lights))
+    : SceneNode(std::move(other)), m_cubes(std::move(other.m_cubes)), m_lights(std::move(other.m_lights))
 {
 }
 
@@ -498,9 +499,6 @@ VoxelChunk &VoxelChunk::operator=(VoxelChunk &&other) noexcept
     {
         cleanup(); // Free existing resources
         SceneNode::operator=(std::move(other));
-        m_sizeX = other.m_sizeX;
-        m_sizeY = other.m_sizeY;
-        m_sizeZ = other.m_sizeZ;
         m_unGeneratedBlocks = std::move(other.m_unGeneratedBlocks);
         m_cubes = std::move(other.m_cubes);
         m_lights = std::move(other.m_lights);
@@ -512,8 +510,10 @@ VoxelChunk &VoxelChunk::operator=(VoxelChunk &&other) noexcept
 
 void VoxelChunk::allocateCubes()
 {
-    m_cubes = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, AIR)));
-    m_lights = std::vector<std::vector<std::vector<int>>>(m_sizeX, std::vector<std::vector<int>>(m_sizeY, std::vector<int>(m_sizeZ, MIN_LIGHT)));
+    m_cubes.clear();
+    m_lights.clear();
+    m_cubes = std::vector<std::vector<std::vector<int>>>(CHUNK_SIZE, std::vector<std::vector<int>>(CHUNK_SIZE, std::vector<int>(CHUNK_SIZE, AIR)));
+    m_lights = std::vector<std::vector<std::vector<int>>>(CHUNK_SIZE, std::vector<std::vector<int>>(CHUNK_SIZE, std::vector<int>(CHUNK_SIZE, MIN_LIGHT)));
 }
 
 void VoxelChunk::cleanup()
@@ -524,12 +524,12 @@ void VoxelChunk::cleanup()
 
 // Mark neighboring chunks as dirty if the block is on the edge of the chunk
 void VoxelChunk::markDirtyNeighbors(int x, int y, int z) {
-    if (x == 0 || x == m_sizeX - 1 || y == 0 || y == m_sizeY - 1 || z == 0 || z == m_sizeZ - 1) {
+    if (x == 0 || x == CHUNK_SIZE - 1 || y == 0 || y == CHUNK_SIZE - 1 || z == 0 || z == CHUNK_SIZE - 1) {
         std::vector<std::shared_ptr<VoxelChunk>> neighbors;
         if (x == 0) {
             neighbors.push_back(m_world->getChunk(m_chunkCoords.x - 1, m_chunkCoords.y, m_chunkCoords.z));
         }
-        else if (x == m_sizeX - 1)
+        else if (x == CHUNK_SIZE - 1)
         {
             neighbors.push_back(m_world->getChunk(m_chunkCoords.x + 1, m_chunkCoords.y, m_chunkCoords.z));
         }
@@ -537,7 +537,7 @@ void VoxelChunk::markDirtyNeighbors(int x, int y, int z) {
         {
             neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y - 1, m_chunkCoords.z));
         }
-        else if (y == m_sizeY - 1)
+        else if (y == CHUNK_SIZE - 1)
         {
             neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y + 1, m_chunkCoords.z));
         }
@@ -545,7 +545,7 @@ void VoxelChunk::markDirtyNeighbors(int x, int y, int z) {
         {
             neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z - 1));
         }
-        else if (z == m_sizeZ - 1)
+        else if (z == CHUNK_SIZE - 1)
         {
             neighbors.push_back(m_world->getChunk(m_chunkCoords.x, m_chunkCoords.y, m_chunkCoords.z + 1));
         }
@@ -563,10 +563,10 @@ void VoxelChunk::setLightLevel(int x, int y, int z, unsigned char lightLevel)
 {
     if (lightLevel > MAX_LIGHT || lightLevel < MIN_LIGHT)
     {
-        std::cout << "Error: Light level out of bounds" << std::endl;
+        std::cout << "Error: Light level is too high or too low : " << (int)lightLevel << std::endl;
         return;
     }
-    if (x < 0 || x >= m_sizeX || y < 0 || y >= m_sizeY || z < 0 || z >= m_sizeZ)
+    if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
     {
         std::cout << "Error: Out of bounds Lights" << std::endl;
         return;

@@ -38,7 +38,7 @@ void World::workerLoop() {
 
             auto newColumn = std::make_shared<ChunkColumn>(task.x, task.z);
             for (int y = 0; y <= GENERATION_SIZE_Y; ++y) {
-                auto newChunk = std::make_shared<VoxelChunk>(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
+                auto newChunk = std::make_shared<VoxelChunk>();
                 newChunk->translate(glm::vec3(task.x * CHUNK_SIZE, y * CHUNK_SIZE, task.z * CHUNK_SIZE));
                 newChunk->m_chunkCoords = glm::ivec3(task.x, y, task.z);
                 newColumn->addChunk(newChunk);
@@ -101,11 +101,19 @@ void World::stopWorkerThread() {
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
-    startWorkerThread();
 }
 
 World::~World() {
     stopWorkerThread();
+}
+
+std::vector<std::shared_ptr<ChunkColumn>> World::getAllColumns() const
+{
+    std::vector<std::shared_ptr<ChunkColumn>> columns;
+    for (auto &[key, column]: chunkColumns) {
+        columns.push_back(column);
+    }
+    return columns;
 }
 
 std::set<std::pair<int, int>> World::getDirtyColumns()
@@ -370,7 +378,7 @@ void World::updateLoadedChunks() {
     glm::vec3 pos = camera->getPosition();
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(pos);
     if (!chunk) {
-        std::cout << "No chunk found at camera position" << std::endl;
+        //std::cout << "No chunk found at camera position" << std::endl;
         return;
     }
     int chunkX = chunk->m_chunkCoords.x;
@@ -792,10 +800,6 @@ void World::addChunkColumn(std::shared_ptr<ChunkColumn> column)
         return;
     }
 
-    // Récupérer les coordonnées de la colonne
-    glm::ivec2 columnCoords = column->getChunkCoords();
-
-    // Ajouter la colonne à la map des chunkColumns
-    chunkColumns[columnCoords] = column;
+    chunkColumns.emplace(column->getChunkCoords(), column);
 
 }
