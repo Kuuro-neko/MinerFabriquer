@@ -744,7 +744,7 @@ Biome* BiomeManager::getBiomeById(int id)
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
-    return getBiomeById(DESERT_BIOME);
+    //return getBiomeById(DESERT_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);

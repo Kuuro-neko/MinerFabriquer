@@ -6,7 +6,7 @@
 #include <TP/Scene/World.hpp>
 #include <TP/Scene/Biomes.hpp>
 
-#define CAVE_BASE_THRESHOLD -0.3f
+#define CAVE_BASE_THRESHOLD -0.0f
 #define CAVE_DEPTH_SCALING_FACTOR 0.018f
 
 #define IRON_THRESHOLD 0.5f
