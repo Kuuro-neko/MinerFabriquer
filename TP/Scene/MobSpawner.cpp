@@ -13,16 +13,25 @@ void MobSpawner::spawnZombiesInLoadedChunks()
         playerPosition.y / CHUNK_SIZE,
         playerPosition.z / CHUNK_SIZE);
 
+    // Generate a list of candidate chunks within the spawn radius
+    std::vector<std::shared_ptr<VoxelChunk>> candidateChunks;
     for (auto &chunk : loadedChunks)
     {
-        // Calculate the distance from the player to the chunk
         glm::ivec3 chunkCoords = chunk->m_chunkCoords;
         float distanceToPlayer = glm::distance(glm::vec3(chunkCoords), glm::vec3(playerChunkCoords));
-
-        // Only consider chunks within a certain radius and randomly decide to spawn zombies
-        if (distanceToPlayer <= SPAWN_RADIUS && dis(gen) < ZOMBIE_SPAWN_PROBABILITY)
+        if (distanceToPlayer <= SPAWN_RADIUS)
         {
-    
+            candidateChunks.push_back(chunk);
+        }
+    }
+
+    // Randomly select chunks from the candidate list
+    std::shuffle(candidateChunks.begin(), candidateChunks.end(), gen);
+
+    for (auto &chunk : candidateChunks)
+    {
+        if (dis(gen) < ZOMBIE_SPAWN_PROBABILITY)
+        {
             for (int x = 0; x < CHUNK_SIZE && chunk->entitiesNumber < MAX_ENTITIES_PER_CHUNK; ++x)
             {
                 for (int y = 0; y < CHUNK_SIZE && chunk->entitiesNumber < MAX_ENTITIES_PER_CHUNK; ++y)
@@ -32,9 +41,9 @@ void MobSpawner::spawnZombiesInLoadedChunks()
                         if (isCaveBlock(chunk, x, y, z) && dis(gen) < zombie_SpawnProbability && chunk->entitiesNumber < MAX_ENTITIES_PER_CHUNK)
                         {
                             glm::vec3 worldPos = glm::vec3(
-                                chunkCoords.x * CHUNK_SIZE + x,
-                                chunkCoords.y * CHUNK_SIZE + y,
-                                chunkCoords.z * CHUNK_SIZE + z);
+                                chunk->m_chunkCoords.x * CHUNK_SIZE + x,
+                                chunk->m_chunkCoords.y * CHUNK_SIZE + y,
+                                chunk->m_chunkCoords.z * CHUNK_SIZE + z);
                             spawnZombieAt(worldPos);
                             chunk->entitiesNumber++;
                         }
@@ -49,7 +58,7 @@ bool MobSpawner::isCaveBlock(std::shared_ptr<VoxelChunk> chunk, int x, int y, in
 {
     int lightLevel = chunk->getLightLevel(x, y, z);
     int blockType = chunk->getBloc(x, y, z);
-    return lightLevel == 0 && blockType == AIR && y < GROUND_LEVEL;
+    return lightLevel == 0 && blockType == AIR;
 }
 
 void MobSpawner::spawnZombieAt(glm::vec3 position)

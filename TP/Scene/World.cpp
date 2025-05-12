@@ -962,12 +962,10 @@ void World::addChunkColumn(std::shared_ptr<ChunkColumn> column)
 
 void World::spawnEntities()
 {
-    spawnZombies();
-}
-void World::spawnZombies()
-{
+    //zombies
     m_mobSpawner->spawnZombiesInLoadedChunks();
 }
+
 
 void World::updateEntities(float &deltaTime)
 {
