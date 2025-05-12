@@ -68,7 +68,8 @@ add_executable(MinerFabriquer
         TP/Camera/Camera_Helper.cpp
         TP/Scene/SceneNode.cpp
         TP/Scene/BlocTypes.cpp
-        TP/Scene/Texture.cpp
+        TP/Textures/Texture.cpp
+        TP/Textures/TextureManager.cpp
         TP/Scene/MeshObject.cpp
         TP/Scene/VoxelChunk.cpp
         TP/Scene/World.cpp
@@ -90,10 +91,10 @@ add_executable(MinerFabriquer
         TP/Scene/ChunkColumn.hpp
         TP/Scene/Clouds.cpp
         TP/Scene/Clouds.hpp
-        TP/Scene/Entity.hpp
-        TP/Scene/Entity.cpp
-        TP/Scene/Zombie.hpp
-        TP/Scene/Zombie.cpp
+        TP/Entities/Entity.hpp
+        TP/Entities/Entity.cpp
+        TP/Entities/Zombie.hpp
+        TP/Entities/Zombie.cpp
         TP/Input/KeyInput.cpp
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
@@ -106,6 +107,9 @@ add_executable(MinerFabriquer
         TP/FileSystem/SaveManager.hpp
         TP/Menu/Menu.cpp
         TP/Menu/Menu.hpp
+        TP/Entities/HumanoidEntity.hpp
+        TP/Entities/HumanoidEntity.cpp
+        TP/Entities/HumanoidPose.hpp
 
 )
 target_link_libraries(MinerFabriquer

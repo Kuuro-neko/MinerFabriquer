@@ -3,7 +3,7 @@
 
 #include "utils/Transform.hpp"
 #include "TP/Scene/MeshObject.hpp"
-#include "TP/Scene/Texture.hpp"
+#include "../Textures/Texture.hpp"
 #include "TP/Scene/SceneNode.hpp"
 #include "TP/Camera/Camera.hpp"
 #include "TP/Scene/VoxelChunk.hpp"
@@ -15,8 +15,7 @@
 #include "vector"
 #include <TP/GUI/HUD.hpp>
 #include <Defines.hpp>
-#include "TP/Scene/Entity.hpp"
-
+#include "../Entities/HumanoidEntity.hpp" 
 
 class Character : public SceneNode {
 
@@ -76,7 +75,9 @@ public:
 
     float getSpeed();
 
-    void setCharacterModel(Entity* model);
+    void setCharacterModel(HumanoidEntity *model);
+    void initializePlayerAnimations(HumanoidEntity *characterModel);
+    void createWalkingPoses(HumanoidEntity *characterModel);
 
 private:
 
@@ -126,9 +127,7 @@ private:
     HUD* m_hud = nullptr;
 
     void alignWithCamera(const glm::vec3& cameraDirection);
-    void initializePlayerAnimations(Entity* characterModel);
-    void createWalkingPoses(Entity* characterModel);
-    Entity* m_characterModel = nullptr;
+    HumanoidEntity *m_characterModel = nullptr;
 };
 
 #endif // CHARACTER_HPP

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <TP/Scene/Texture.hpp>
+#include <TP/Textures/Texture.hpp>
 #include <TP/Scene/MeshObject.hpp>  
 #include <utils/Transform.hpp>
 #include <TP/Character/Character.hpp>

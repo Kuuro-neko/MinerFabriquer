@@ -9,15 +9,14 @@
 #include "TP/Character/Character.hpp"
 #include "TP/Menu/Menu.hpp"
 #include <TP/GUI/Crosshair.hpp>
-#include <TP/Scene/Entity.hpp>
-#include <TP/Scene/Zombie.hpp>
+#include <TP/Entities/Entity.hpp>
 #include <TP/Scene/Clouds.hpp>
 #include <TP/GUI/HUD.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
 #include <Defines.hpp>
 #include <TP/Scene/WorldGenerator.hpp>
-
-#define CHUNK_SIZE 16
+#include "../TP/Entities/HumanoidEntity.hpp"
+#include <TP/Textures/TextureManager.hpp>
 
 GLFWwindow *window;
 
@@ -44,76 +43,11 @@ int displayNormals = 0;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
-void create_cube_textured(glm::vec3 size, MeshObject &mesh) {
-    mesh.vertices.clear();
-    mesh.triangles.clear();
-    mesh.uvs.clear();
-
-    glm::vec3 p[] = {
-            {-size.x, -size.y, -size.z},
-            {size.x,  -size.y, -size.z},
-            {size.x,  size.y,  -size.z},
-            {-size.x, size.y,  -size.z},
-            {-size.x, -size.y, size.z},
-            {size.x,  -size.y, size.z},
-            {size.x,  size.y,  size.z},
-            {-size.x, size.y,  size.z}
-    };
-
-    // Définir les faces du cube avec 4 sommets par face
-    int face_indices[6][4] = {
-            {0, 1, 2, 3}, // back
-            {5, 4, 7, 6}, // front
-            {4, 0, 3, 7}, // left
-            {1, 5, 6, 2}, // right
-            {3, 2, 6, 7}, // top
-            {4, 5, 1, 0}  // bottom
-    };
-
-    for (int i = 0; i < 6; ++i) {
-        // 4 sommets pour chaque face
-        mesh.vertices.push_back(p[face_indices[i][0]]);
-        mesh.vertices.push_back(p[face_indices[i][1]]);
-        mesh.vertices.push_back(p[face_indices[i][2]]);
-        mesh.vertices.push_back(p[face_indices[i][3]]);
-
-        // UVs correspondants (même pour chaque face)
-        mesh.uvs.push_back({0.0f, 0.0f});
-        mesh.uvs.push_back({1.0f, 0.0f});
-        mesh.uvs.push_back({1.0f, 1.0f});
-        mesh.uvs.push_back({0.0f, 1.0f});
-
-        // 2 triangles pour former la face
-        int start = i * 4;
-        mesh.triangles.push_back(start);
-        mesh.triangles.push_back(start + 1);
-        mesh.triangles.push_back(start + 2);
-
-        mesh.triangles.push_back(start);
-        mesh.triangles.push_back(start + 2);
-        mesh.triangles.push_back(start + 3);
-
-
-    }
-
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, 0, -1)); // back
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, 0, 1)); // front
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(-1, 0, 0)); // left
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(1, 0, 0)); // right
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, 1, 0)); // top
-    for (int i = 0; i < 4; ++i)
-        mesh.normals.push_back(glm::vec3(0, -1, 0)); // bottom
-}
 
 
 Character* character = new Character(
         Transform(
-                glm::vec3(0, 61, 0),
+                glm::vec3(0, GROUND_LEVEL+8, 0),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -139,9 +73,6 @@ int main(void) {
     Menu menu;
     SaveManager &saveManager = SaveManager::getInstance();
 
-
-
-
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -149,9 +80,8 @@ int main(void) {
         return -1;
     }
 
-
     camera.init();
-    Frustrum frustum(camera, 4.0f / 3.0f, 0.1f, 100.f);
+    Frustrum frustum(camera, DEFAULT_RATIO, DEFAULT_NEAR_PLANE, DEFAULT_FAR_PLANE);
     frustum.update();
 
     glfwWindowHint(GLFW_SAMPLES, 4);
@@ -241,30 +171,27 @@ int main(void) {
     CubemapTexture cubemapTexture = CubemapTexture(cubemapProgramID);
 
 
-
-    // Get a handle for our "Model View Projection" matrices uniforms
-
-    /****************************************/
-
-
     SceneNode root;
-    World world = World();
-    root.addChild(&world);
-    world.setCamera(camera);
-    world.setDoDaylightCycle(false);
+    World *world = new World();
+    root.addChild(world);
+    root.addChild(character); 
+    world->setCamera(camera);
+    world->setDoDaylightCycle(false);
+
+   
 
     //pass the world to the save manager
-    saveManager.setWorld(&world);
+    saveManager.setWorld(world);
     saveManager.setCharacter(character);
 
     if (!saveManager.isDataFolderContainsOtherFolder()) {
-        std::cout << "No world folder found. Generating a new world..." << std::endl;
+        std::cout << "No world folder found. Generating a new world->.." << std::endl;
 
         std::string saveFolder = Menu::createWorld();
         std::string seedStr = menu.askSeed();
         WorldGenerator::getInstance().setSeed(seedStr);
         saveManager.setSaveFolderPath(saveFolder);
-        world.initialGeneration();
+        world->initialGeneration();
         saveManager.saveWorldFile(); // Save the world data after generation
         saveManager.createPlayerDataFile();
         saveManager.createSeedFile();
@@ -277,7 +204,7 @@ int main(void) {
                 WorldGenerator::getInstance().setSeed(seedStr);
                 std::cout << "Creating world in: " << saveFolder << std::endl;
                 saveManager.setSaveFolderPath(saveFolder);
-                world.initialGeneration();
+                world->initialGeneration();
                 saveManager.saveWorldFile(); // Save the world data after generation
                 saveManager.createPlayerDataFile();
                 saveManager.createSeedFile();
@@ -315,10 +242,10 @@ int main(void) {
                             }
                         }
                     }
-                    world.addColumn(column);
-                    column->assignWorld(&world);
+                    world->addColumn(column);
+                    column->assignWorld(world);
                     for (auto &chunk : column->getChunks()) {
-                        world.emplaceChunk(chunk);
+                        world->emplaceChunk(chunk);
                         chunk->dirty = true;
                     }
                }
@@ -337,49 +264,24 @@ int main(void) {
     std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
     saveManager.startAutoSave();
     saveManager.saveSeedFile();
-    world.startWorkerThread();
+    world->startWorkerThread();
 
     // Associer le monde au personnage
-    character->m_world = &world;
+    character->m_world = world;
 
     // Ajouter le personnage au monde
-    Entity *characterModel = new Entity();
+    HumanoidEntity *characterModel = new HumanoidEntity();
+
+    // The rest of your code can remain the same:
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f);
-    PBRTexture* playerTexture = new PBRTexture("../textures/steve/steve.png", 
-                                             "../textures/steve/steve_normal.png",
-                                             "../textures/steve/steve_roughness.png",
-                                             "../textures/steve/steve_metallic.png");
-    characterModel->setTexture(playerTexture);
+
+    characterModel->setTexture(TextureManager::getInstance().getPBRTexture("steve"));
     character->addChild(characterModel);
     character->setCharacterModel(characterModel);
     
     character->setWireframeRenderers(wireframeProgramID);
     camera.setTarget(character->getWorldPosition());
-
-
-    Zombie* zombie = new Zombie(
-        Transform(
-            glm::vec3(0, 61, 0),
-            DEFAULT_ROTATION,
-            1),
-        &world,
-        &camera
-    );
-    PBRTexture* zombieTexture = new PBRTexture("../textures/zombie/zombie.png",
-                                             "../textures/zombie/zombie_normal.png",
-                                             "../textures/zombie/zombie_roughness.png",
-                                             "../textures/zombie/zombie_metallic.png");
-    zombie->setTexture(zombieTexture);
-    zombie->rotate(glm::radians(180.0f), glm::vec3(0, 1, 0));
-    root.addChild(zombie);
-    root.addChild(character);
-    // After creating the zombie in main.cpp, add:
-
-    zombie->setWireframeRenderer(wireframeProgramID);
-    zombie->setDisplayAABB(true);
-
-    
 
     Texture cloudTex = Texture("../textures/clouds.png");
     Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
@@ -421,13 +323,12 @@ int main(void) {
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
-
     do {
         UpdateFPS();
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        world.update(deltaTime);
+        world->update(deltaTime);
 
         
         // Poll inputs
@@ -441,17 +342,20 @@ int main(void) {
         camera.update(deltaTime, window);
 
 
-        world.updateLoadedChunks();
+        world->updateLoadedChunks();
         frustum.update();
-        world.updateVisibleChunk(frustum);
+        world->updateVisibleChunk(frustum);
 
 
-        world.resolveCollisions(*character, &world);
+        world->resolveCollisions(*character, world);
         character->resolveGravity(deltaTime);
 
-        zombie->resolveGravity(deltaTime);
-        world.resolveCollisions(*zombie, &world);
-        zombie->update(deltaTime);
+        
+        world->renderEntities( wireframeProgramID);
+        world->resolveEntityGravity(deltaTime);
+        world->resolveEntityCollisions(deltaTime);
+        world->updateEntities(deltaTime);
+       
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -470,7 +374,7 @@ int main(void) {
         GLuint camPos = glGetUniformLocation(programID, "camPos");
         glUniform3f(camPos, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
         GLuint time = glGetUniformLocation(programID, "time");
-        glUniform1f(time, world.getTime());
+        glUniform1f(time, world->getTime());
 
         lightMap.bind(programID);
 
@@ -496,16 +400,18 @@ int main(void) {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
         if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleWireframe)) {
-            world.wireframe = !world.wireframe;
+            world->wireframe = !world->wireframe;
         }
         if (characterInputManager.isKeybindPressed({Keybinds::getInstance().getToggleDebug()})) {
             std::cout << "Seed string : " << WorldGenerator::getInstance().getSeedStr() << std::endl;
         }
-
+        if (characterInputManager.isKeybindPressed({Keybinds::getInstance().spawnEntities})) {
+            world->spawnEntities();
+        }
 
         character->drawBoundingBox();
 
-        zombie->drawBoundingBox();
+
 
         if (character->isHUDVisible())
             hud->render();
@@ -514,12 +420,6 @@ int main(void) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         clouds.draw(currentFrame, *character);
-
-
-
-
-
-
 
         // Swap buffers
         glfwSwapBuffers(window);

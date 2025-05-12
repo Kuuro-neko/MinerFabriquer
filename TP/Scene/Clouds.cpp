@@ -5,7 +5,6 @@
 
 Clouds::Clouds(Texture &cloudTex, float speed, GLuint programID)
 {
-    std::cout << "Before GL state: " << glGetError() << std::endl;
     // Set the texture binding index to the next free binding index
     texture = &cloudTex;
     texture->setSamplerName("cloudTexture");
@@ -53,7 +52,6 @@ Clouds::Clouds(Texture &cloudTex, float speed, GLuint programID)
         DEFAULT_ROTATION,
         RENDERER_DISTANCE*width
     );
-    std::cout << "After GL state: " << glGetError() << std::endl;
 }
 
 void Clouds::draw(float time, Character &character)
