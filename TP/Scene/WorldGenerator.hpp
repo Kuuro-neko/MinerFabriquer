@@ -9,7 +9,11 @@
 #define CAVE_BASE_THRESHOLD -0.3f
 #define CAVE_DEPTH_SCALING_FACTOR 0.018f
 
-#define IRON_THRESHOLD 0.28f
+#define IRON_THRESHOLD 0.5f
+#define COAL_THRESHOLD 0.42f
+#define GOLD_THRESHOLD 0.53f
+#define DIAMOND_THRESHOLD 0.69f
+#define EMERALD_THRESHOLD 0.65f
 
 class WorldGenerator {
 private:
