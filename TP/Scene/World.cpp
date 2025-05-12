@@ -6,6 +6,7 @@
 #include "World.hpp"
 #include <unordered_set>
 #include <TP/Entities/Zombie.hpp>
+#include <TP/Entities/Projectiles/TNTProjectile.hpp>
 #include <TP/Textures/TextureManager.hpp>
 #include "MobSpawner.hpp"
 #include <chrono>
@@ -722,6 +723,10 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 
 void World::update(float deltaTime)
 {
+    for (auto &tnt : tntProjectiles)
+    {
+        tnt->update(deltaTime);
+    }
     if (doDaylightCycle)
         time += deltaTime;
 }
@@ -967,6 +972,22 @@ void World::spawnEntities()
     m_mobSpawner->spawnZombiesInLoadedChunks();
 }
 
+void World::spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID)
+{
+    TNTProjectile* tnt = new TNTProjectile(pos, vel, 0.9f, this, programID);
+    tntProjectiles.push_back(tnt);
+    getParent()->addChild(tnt);
+}
+
+void World::removeTNT(TNTProjectile* tnt)
+{
+    auto it = std::find(tntProjectiles.begin(), tntProjectiles.end(), tnt);
+    if (it != tntProjectiles.end())
+    {
+        getParent()->removeChild(tnt);
+        tntProjectiles.erase(it);
+    }
+}
 
 void World::updateEntities(float &deltaTime)
 {

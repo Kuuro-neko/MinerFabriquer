@@ -109,6 +109,7 @@
 #define GILDED_BLACKSTONE 70
 #define PODZOL 71
 #define CACTUS 72
+#define TNT 73
 
 #define ERROR_BLOC 255
 
@@ -247,3 +248,7 @@ const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 #define MAX_ENTITIES_PER_CHUNK 3
 #define SPAWN_RADIUS 32.0f
 #define MAX_ENTITIES 100
+
+// ===== TNT Projectile ===== //
+#define TNT_PROJ_SPEED 10.0f
+#define TNT_EXPLOSION_RADIUS 5.0f
