@@ -582,11 +582,11 @@ void Character::drawBoundingBox()
 
 void Character::draw(GLuint programID)
 {
-    SceneNode::draw(programID);
     targetCubeRenderer->drawWireframeCube(
         glm::vec3(1.f, 1.f, 1.f),
         camera->getViewMatrix(),
         camera->getProjectionMatrix());
+    SceneNode::draw(programID);
 }
 /**
  * \brief fonction qui gère la gravité du personnage

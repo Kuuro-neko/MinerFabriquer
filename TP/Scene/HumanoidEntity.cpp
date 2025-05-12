@@ -147,11 +147,6 @@ void HumanoidEntity::cleanupBuffers()
     Entity::cleanupBuffers();
 }
 
-void HumanoidEntity::draw(GLuint programID)
-{
-    Entity::draw(programID);
-}
-
 void HumanoidEntity::setHeadMesh(MeshObject *mesh)
 {
     m_head->m_mesh = mesh;

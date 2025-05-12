@@ -48,6 +48,7 @@ public:
     std::vector<int> toggleSpectator = {toggleDebug, GLFW_KEY_N};
     std::vector<int> toggleCreative = {toggleDebug, GLFW_KEY_J};
     std::vector<int> reloadChunkMeshes = {toggleDebug, GLFW_KEY_Q};
+    std::vector<int> spawnEntities = {toggleDebug, GLFW_KEY_E};
 
     std::vector<int> togglePerspectiveAlternative = {GLFW_KEY_C};
     std::vector<int> togglePerspective = {GLFW_KEY_F5};

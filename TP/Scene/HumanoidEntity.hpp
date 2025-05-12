@@ -71,7 +71,6 @@ public:
 
     // Override entity methods
     void setTexture(PBRTexture *texture) override;
-    void draw(GLuint programID) override;
     void cleanupBuffers() override;
 
     // Humanoid mesh generation

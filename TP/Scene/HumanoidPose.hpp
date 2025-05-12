@@ -68,8 +68,6 @@ public:
     void setRightLegMesh(MeshObject *mesh);
 
     // Override entity methods
-    void setTexture(Texture *texture) override;
-    void draw(GLuint programID) override;
     void cleanupBuffers() override;
 
     // Humanoid mesh generation

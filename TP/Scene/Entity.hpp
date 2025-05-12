@@ -1,7 +1,8 @@
 #pragma once
+
 #include <TP/Scene/SceneNode.hpp>
 #include <TP/Scene/MeshObject.hpp>
-#include <TP/Scene/Texture.hpp>
+#include <TP/Textures/Texture.hpp>
 #include <utils/Transform.hpp>
 #include <map>
 #include <string>

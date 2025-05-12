@@ -6,6 +6,7 @@
 #include "World.hpp"
 #include <unordered_set>
 #include <TP/Scene/Zombie.hpp>
+#include <TP/Textures/TextureManager.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -976,6 +977,13 @@ void World::spawnZombies()
     std::cout << "Zombie spawned at " << zombie->getWorldPosition().x << ", " << zombie->getWorldPosition().y << ", " << zombie->getWorldPosition().z << std::endl;
     // zombie->setWireframeRenderer(programID);
     // zombie->setDisplayAABB(true);
+    zombie->setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+
+    if(!firstZombie) { // On cache sous le tapis le premier zombie buggé
+        zombie->translate(glm::vec3(0.0f, -10000.0f, 0.0f));
+        firstZombie = true;
+        spawnEntities();
+    }
 }
 
 void World::updateEntities(float &deltaTime)

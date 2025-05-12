@@ -51,6 +51,7 @@ struct Task {
 
 class World : public SceneNode {
 private:
+    bool firstZombie = false;
     std::unordered_map<glm::ivec2, std::shared_ptr<ChunkColumn>, IVec2Hash> chunkColumns;
     std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> chunks;
     std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> visibleChunks;

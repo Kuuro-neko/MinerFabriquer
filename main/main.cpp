@@ -15,7 +15,8 @@
 #include <TP/FileSystem/SaveManager.hpp>
 #include <Defines.hpp>
 #include <TP/Scene/WorldGenerator.hpp>
-#include "TP/Scene/HumanoidEntity.hpp"
+#include "../TP/Scene/HumanoidEntity.hpp"
+#include <TP/Textures/TextureManager.hpp>
 
 GLFWwindow *window;
 
@@ -171,26 +172,26 @@ int main(void) {
 
 
     SceneNode root;
-    World world = World();
-    root.addChild(&world);
+    World *world = new World();
+    root.addChild(world);
     root.addChild(character); 
-    world.setCamera(camera);
-    world.setDoDaylightCycle(false);
+    world->setCamera(camera);
+    world->setDoDaylightCycle(false);
 
    
 
     //pass the world to the save manager
-    saveManager.setWorld(&world);
+    saveManager.setWorld(world);
     saveManager.setCharacter(character);
 
     if (!saveManager.isDataFolderContainsOtherFolder()) {
-        std::cout << "No world folder found. Generating a new world..." << std::endl;
+        std::cout << "No world folder found. Generating a new world->.." << std::endl;
 
         std::string saveFolder = Menu::createWorld();
         std::string seedStr = menu.askSeed();
         WorldGenerator::getInstance().setSeed(seedStr);
         saveManager.setSaveFolderPath(saveFolder);
-        world.initialGeneration();
+        world->initialGeneration();
         saveManager.saveWorldFile(); // Save the world data after generation
         saveManager.createPlayerDataFile();
         saveManager.createSeedFile();
@@ -203,7 +204,7 @@ int main(void) {
                 WorldGenerator::getInstance().setSeed(seedStr);
                 std::cout << "Creating world in: " << saveFolder << std::endl;
                 saveManager.setSaveFolderPath(saveFolder);
-                world.initialGeneration();
+                world->initialGeneration();
                 saveManager.saveWorldFile(); // Save the world data after generation
                 saveManager.createPlayerDataFile();
                 saveManager.createSeedFile();
@@ -241,10 +242,10 @@ int main(void) {
                             }
                         }
                     }
-                    world.addColumn(column);
-                    column->assignWorld(&world);
+                    world->addColumn(column);
+                    column->assignWorld(world);
                     for (auto &chunk : column->getChunks()) {
-                        world.emplaceChunk(chunk);
+                        world->emplaceChunk(chunk);
                         chunk->dirty = true;
                     }
                }
@@ -263,10 +264,10 @@ int main(void) {
     std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
     saveManager.startAutoSave();
     saveManager.saveSeedFile();
-    world.startWorkerThread();
+    world->startWorkerThread();
 
     // Associer le monde au personnage
-    character->m_world = &world;
+    character->m_world = world;
 
     // Ajouter le personnage au monde
     HumanoidEntity *characterModel = new HumanoidEntity();
@@ -274,11 +275,8 @@ int main(void) {
     // The rest of your code can remain the same:
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f);
-    PBRTexture* playerTexture = new PBRTexture("../textures/steve/steve.png", 
-                                             "../textures/steve/steve_normal.png",
-                                             "../textures/steve/steve_roughness.png",
-                                             "../textures/steve/steve_metallic.png");
-    characterModel->setTexture(playerTexture);
+
+    characterModel->setTexture(TextureManager::getInstance().getPBRTexture("steve"));
     character->addChild(characterModel);
     character->setCharacterModel(characterModel);
     
@@ -324,14 +322,13 @@ int main(void) {
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-    world.spawnEntities();
 
     do {
         UpdateFPS();
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        world.update(deltaTime);
+        world->update(deltaTime);
 
         
         // Poll inputs
@@ -345,19 +342,19 @@ int main(void) {
         camera.update(deltaTime, window);
 
 
-        world.updateLoadedChunks();
+        world->updateLoadedChunks();
         frustum.update();
-        world.updateVisibleChunk(frustum);
+        world->updateVisibleChunk(frustum);
 
 
-        world.resolveCollisions(*character, &world);
+        world->resolveCollisions(*character, world);
         character->resolveGravity(deltaTime);
 
         
-        world.renderEntities( wireframeProgramID);
-        world.resolveEntityGravity(deltaTime);
-        world.resolveEntityCollisions(deltaTime);
-        world.updateEntities(deltaTime);
+        world->renderEntities( wireframeProgramID);
+        world->resolveEntityGravity(deltaTime);
+        world->resolveEntityCollisions(deltaTime);
+        world->updateEntities(deltaTime);
        
 
         // Clear the screen
@@ -377,7 +374,7 @@ int main(void) {
         GLuint camPos = glGetUniformLocation(programID, "camPos");
         glUniform3f(camPos, camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
         GLuint time = glGetUniformLocation(programID, "time");
-        glUniform1f(time, world.getTime());
+        glUniform1f(time, world->getTime());
 
         lightMap.bind(programID);
 
@@ -403,13 +400,14 @@ int main(void) {
             displayNormals = displayNormals == 0 ? 1 : 0;
         }
         if (characterInputManager.isKeybindPressed(Keybinds::getInstance().toggleWireframe)) {
-            world.wireframe = !world.wireframe;
+            world->wireframe = !world->wireframe;
         }
         if (characterInputManager.isKeybindPressed({Keybinds::getInstance().getToggleDebug()})) {
             std::cout << "Seed string : " << WorldGenerator::getInstance().getSeedStr() << std::endl;
-            world.spawnEntities();
         }
-
+        if (characterInputManager.isKeybindPressed({Keybinds::getInstance().spawnEntities})) {
+            world->spawnEntities();
+        }
 
         character->drawBoundingBox();
 

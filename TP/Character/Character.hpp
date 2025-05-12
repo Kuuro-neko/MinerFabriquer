@@ -3,7 +3,7 @@
 
 #include "utils/Transform.hpp"
 #include "TP/Scene/MeshObject.hpp"
-#include "TP/Scene/Texture.hpp"
+#include "../Textures/Texture.hpp"
 #include "TP/Scene/SceneNode.hpp"
 #include "TP/Camera/Camera.hpp"
 #include "TP/Scene/VoxelChunk.hpp"

@@ -7,7 +7,7 @@
 
 #include <GL/glew.h>
 #include <TP/Scene/BlocTypes.hpp>
-#include <TP/Scene/Texture.hpp>
+#include <TP/Textures/Texture.hpp>
 #include <TP/Scene/MeshObject.hpp>
 #include <iostream>
 #include <utils/GLUtils.hpp>
