@@ -242,3 +242,4 @@ const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 #define ZOMBIE_SPAWN_PROBABILITY 0.1f
 #define MAX_ENTITIES_PER_CHUNK 3
 #define SPAWN_RADIUS 32.0f
+#define MAX_ENTITIES 100

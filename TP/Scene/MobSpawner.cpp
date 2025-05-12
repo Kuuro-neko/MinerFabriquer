@@ -38,13 +38,14 @@ void MobSpawner::spawnZombiesInLoadedChunks()
                 {
                     for (int z = 0; z < CHUNK_SIZE && chunk->entitiesNumber < MAX_ENTITIES_PER_CHUNK; ++z)
                     {
-                        if (isCaveBlock(chunk, x, y, z) && dis(gen) < zombie_SpawnProbability && chunk->entitiesNumber < MAX_ENTITIES_PER_CHUNK)
+                        if (isCaveBlock(chunk, x, y, z) && dis(gen) < zombie_SpawnProbability && chunk->entitiesNumber < MAX_ENTITIES_PER_CHUNK && m_world->getActiveEntitiesNumber() < MAX_ENTITIES)
                         {
                             glm::vec3 worldPos = glm::vec3(
                                 chunk->m_chunkCoords.x * CHUNK_SIZE + x,
                                 chunk->m_chunkCoords.y * CHUNK_SIZE + y,
                                 chunk->m_chunkCoords.z * CHUNK_SIZE + z);
                             spawnZombieAt(worldPos);
+                            m_world->setActiveEntitiesNumber(m_world->getActiveEntitiesNumber() + 1);
                             chunk->entitiesNumber++;
                         }
                     }
@@ -70,6 +71,6 @@ void MobSpawner::spawnZombieAt(glm::vec3 position)
     zombie->setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
     m_world->getParent()->addChild(zombie);
     m_world->addEntity(std::shared_ptr<Entity>(zombie));
-    
-    //std::cout << "Zombie spawned at " << position.x << ", " << position.y << ", " << position.z << std::endl;
+
+    // std::cout << "Zombie spawned at " << position.x << ", " << position.y << ", " << position.z << std::endl;
 }

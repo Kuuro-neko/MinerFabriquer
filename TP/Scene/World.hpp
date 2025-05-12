@@ -75,6 +75,8 @@ private:
 
     MobSpawner *m_mobSpawner;
 
+    int activeEntitiesNumber = 0;
+
     void workerLoop();
 public:
     std::recursive_mutex worldMutex; // Mutex to lock the chunks data
@@ -226,5 +228,11 @@ public:
     void resolveEntityCollisions(float &deltaTime);
     inline void addEntity(std::shared_ptr<Entity> entity) {
         entities.push_back(entity);
+    }
+    inline int getActiveEntitiesNumber() {
+        return activeEntitiesNumber;
+    }
+    inline void setActiveEntitiesNumber(int number) {
+        activeEntitiesNumber = number;
     }
 };
