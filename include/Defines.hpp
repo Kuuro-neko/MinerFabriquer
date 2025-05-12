@@ -237,3 +237,8 @@ const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 
 // ===== Zombie ===== //
 #define ZOMBIE_DISTANCE_FINDING_PLAYER 7.0f
+
+// ===== MobSpawner ===== //
+#define ZOMBIE_SPAWN_PROBABILITY 0.1f
+#define MAX_ENTITIES_PER_CHUNK 3
+#define SPAWN_RADIUS 32.0f

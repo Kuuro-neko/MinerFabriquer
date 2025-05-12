@@ -14,8 +14,6 @@
 #include <TP/Entities/Entity.hpp>
 
 
-
-
 #include <Defines.hpp>
 #include <utils/Math.hpp>
 
@@ -30,6 +28,7 @@
 
 class Character;
 class Zombie;
+class MobSpawner;
 
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2 &vec) const {
@@ -73,6 +72,8 @@ private:
     std::atomic<bool> workerThreadRunning = true;
 
     std::vector<std::shared_ptr<Entity>> entities;
+
+    MobSpawner *m_mobSpawner;
 
     void workerLoop();
 public:
@@ -174,7 +175,11 @@ public:
 
     void updateVisibleChunk(Frustrum &frustum);
 
-    void setCamera(Camera &camera);
+    void setCamera(Camera &camera);\
+
+    inline Camera* getCamera() {
+        return camera;
+    }
 
     void resolveCollisions(Character &character, World *world);
 
@@ -219,4 +224,7 @@ public:
     void renderEntities(GLuint& programID);
     void resolveEntityGravity(float& deltaTime);
     void resolveEntityCollisions(float &deltaTime);
+    inline void addEntity(std::shared_ptr<Entity> entity) {
+        entities.push_back(entity);
+    }
 };
