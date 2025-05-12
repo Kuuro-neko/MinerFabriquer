@@ -353,7 +353,7 @@ int main(void) {
 
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
-
+        world.renderEntities(programID);
         world.resolveEntityGravity(deltaTime);
         world.resolveEntityCollisions(deltaTime);
         world.updateEntities(deltaTime);

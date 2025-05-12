@@ -6,6 +6,7 @@
 #include "World.hpp"
 #include <unordered_set>
 #include <TP/Scene/Zombie.hpp>
+#include <> 
 
 #include <chrono>
 #include <iostream>
@@ -966,13 +967,19 @@ void World::spawnZombies()
 {
     Zombie *zombie = new Zombie(
         Transform(
-            glm::vec3(0, 61, 0),
+            glm::vec3(0.0f, 64.f, 0.0f),
             DEFAULT_ROTATION,
-            1),
+            DEFAULT_SCALE),
         this,
         camera);
-    entities.push_back(std::shared_ptr<Entity>(zombie));
+    PBRTexture *zombieTexture = new PBRTexture("../textures/zombie/zombie.png",
+                                               "../textures/zombie/zombie_normal.png",
+                                               "../textures/zombie/zombie_roughness.png",
+                                               "../textures/zombie/zombie_metallic.png");
 
+    std::cout << camera->getPosition().x << ", " << camera->getPosition().y << ", " << camera->getPosition().z << std::endl;
+    entities.push_back(std::shared_ptr<Entity>(zombie));
+    std::cout << "Zombie added to world." << std::endl;
 }
 
 void World::updateEntities(float deltaTime)
@@ -980,19 +987,20 @@ void World::updateEntities(float deltaTime)
     for (auto &entity : entities)
     {
         entity->update(deltaTime);
-        std::cout << "Entity position: " << entity->getWorldPosition().x << ", " << entity->getWorldPosition().y << ", " << entity->getWorldPosition().z << std::endl;
-    }
+        }
 }
 
 void World::renderEntities(GLuint programID)
 {
     for (auto &entity : entities)
     {
+        std::cout << "Rendering entity at: " << entity->getWorldPosition().x << ", "
+                  << entity->getWorldPosition().y << ", "
+                  << entity->getWorldPosition().z << std::endl;
         entity->draw(programID);
-        entity->drawWireframe(programID);
-        entity->drawBoundingBox(programID);
-        // zombie->setWireframeRenderer(wireframeProgramID);
-        // zombie->setDisplayAABB(true);
+        // entity->drawWireframe(programID);
+        // entity->drawBoundingBox(programID);
+
     }
 }
 void World::resolveEntityGravity(float deltaTime)
@@ -1009,6 +1017,9 @@ void World::resolveEntityCollisions(float deltaTime)
         //entity->resolveCollisions(deltaTime); //TODO A FAIRE + TARD
         if (auto zombie = dynamic_cast<Zombie *>(entity.get()))
         {
+            std::cout << "Resolving collisions for zombie at: " << zombie->getWorldPosition().x << ", "
+                      << zombie->getWorldPosition().y << ", "
+                      << zombie->getWorldPosition().z << std::endl;
             resolveCollisions(*zombie, this);
         }
        
