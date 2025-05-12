@@ -11,6 +11,7 @@
 #include <functional>
 
 #include <TP/Scene/ChunkColumn.hpp>
+#include <TP/Entities/Entity.hpp>
 
 
 
@@ -50,6 +51,7 @@ struct Task {
 
 class World : public SceneNode {
 private:
+    bool firstZombie = false;
     std::unordered_map<glm::ivec2, std::shared_ptr<ChunkColumn>, IVec2Hash> chunkColumns;
     std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> chunks;
     std::unordered_map<glm::ivec3, std::shared_ptr<VoxelChunk>, IVec3Hash> visibleChunks;
@@ -70,7 +72,9 @@ private:
     
     std::vector<std::thread> workerThreads; // Thread for chunk generation
     std::atomic<bool> workerThreadRunning = true;
-    
+
+    std::vector<std::shared_ptr<Entity>> entities;
+
     void workerLoop();
 public:
     std::recursive_mutex worldMutex; // Mutex to lock the chunks data
@@ -209,4 +213,11 @@ public:
     void setLightLevel(int x, int y, int z, int lightLevel);
 
     void addChunkColumn(std::shared_ptr<ChunkColumn> column);
+
+    void spawnEntities();
+    void spawnZombies();
+    void updateEntities(float& deltaTime);
+    void renderEntities(GLuint& programID);
+    void resolveEntityGravity(float& deltaTime);
+    void resolveEntityCollisions(float &deltaTime);
 };

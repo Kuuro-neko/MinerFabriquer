@@ -32,7 +32,8 @@ Character::Character(Transform transform, Camera *camera, World *world, MeshObje
     // on setHightlight la bounding box
 }
 
-void Character::setCharacterModel(Entity* model) {
+void Character::setCharacterModel(HumanoidEntity *model)
+{
     m_characterModel = model;
     initializePlayerAnimations(m_characterModel);
 }
@@ -504,16 +505,23 @@ void Character::update(float dt)
         placeCooldown += dt;
     }
 
-    if (m_characterModel) {
-        if (sprinting) {
-            m_characterModel->setState(WALKING); 
-        } else if (glm::length(vecteurDirection) > 0.01f) {
+    if (m_characterModel)
+    {
+        if (sprinting)
+        {
             m_characterModel->setState(WALKING);
-        } else {
+        }
+        else if (glm::length(vecteurDirection) > 0.01f)
+        {
+            m_characterModel->setState(WALKING);
+        }
+        else
+        {
             m_characterModel->setState(IDLE);
         }
-        
-        if (glm::length(vecteurDirection) > 0.01f) {
+
+        if (glm::length(vecteurDirection) > 0.01f)
+        {
             glm::vec3 cameraFront = camera->getRotation() * VEC_FRONT;
             cameraFront.y = 0;
             alignWithCamera(cameraFront);
@@ -574,11 +582,11 @@ void Character::drawBoundingBox()
 
 void Character::draw(GLuint programID)
 {
-    SceneNode::draw(programID);
     targetCubeRenderer->drawWireframeCube(
         glm::vec3(1.f, 1.f, 1.f),
         camera->getViewMatrix(),
         camera->getProjectionMatrix());
+    SceneNode::draw(programID);
 }
 /**
  * \brief fonction qui gère la gravité du personnage
@@ -701,64 +709,65 @@ void Character::alignWithCamera(const glm::vec3& cameraDirection) {
     }
 }
 
-void Character::initializePlayerAnimations(Entity* characterModel) {
+void Character::initializePlayerAnimations(HumanoidEntity *characterModel)
+{
     characterModel->initializeBasePose();
     createWalkingPoses(characterModel);
-    
+
     std::vector<std::string> idlePoses = {"base"};
     std::vector<float> idleDurations = {1.0f};
     characterModel->createAnimationSequence("idle", idlePoses, idleDurations, true);
-    
+
     std::vector<std::string> walkPoses = {"walk_left", "base", "walk_right", "base"};
     std::vector<float> walkDurations = {0.3f, 0.15f, 0.3f, 0.15f};
     characterModel->createAnimationSequence("walking", walkPoses, walkDurations, true);
-    
+
     characterModel->setCurrentSequence("idle");
 }
 
-void Character::createWalkingPoses(Entity* characterModel) {
-    EntityPose& basePose = characterModel->m_poses["base"];
-    
+void Character::createWalkingPoses(HumanoidEntity *characterModel)
+{
+    EntityPose &basePose = characterModel->m_poses["base"];
+
     // Pose de marche - jambe gauche avant
     EntityPose walkLeft("walk_left");
     walkLeft = basePose;
-    
+
     // Rotation de la jambe gauche vers l'avant
     glm::mat3x3 rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkLeft.leftLegTransform.m_rotation = rotMatX * walkLeft.leftLegTransform.m_rotation;
-    
+
     // Rotation de la jambe droite vers l'arrière
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-15.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkLeft.rightLegTransform.m_rotation = rotMatX * walkLeft.rightLegTransform.m_rotation;
-    
+
     // Balancer des bras opposés aux jambes
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkLeft.leftArmTransform.m_rotation = rotMatX * walkLeft.leftArmTransform.m_rotation;
-    
+
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkLeft.rightArmTransform.m_rotation = rotMatX * walkLeft.rightArmTransform.m_rotation;
-    
+
     characterModel->addPose("walk_left", walkLeft);
-    
+
     // Pose de marche - jambe droite avant (miroir de la première pose)
     EntityPose walkRight("walk_right");
     walkRight = basePose;
-    
+
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-15.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkRight.leftLegTransform.m_rotation = rotMatX * walkRight.leftLegTransform.m_rotation;
-    
+
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkRight.rightLegTransform.m_rotation = rotMatX * walkRight.rightLegTransform.m_rotation;
-    
+
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkRight.leftArmTransform.m_rotation = rotMatX * walkRight.leftArmTransform.m_rotation;
-    
+
     rotMatX = glm::mat3x3(glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
     walkRight.rightArmTransform.m_rotation = rotMatX * walkRight.rightArmTransform.m_rotation;
-    
-    characterModel->addPose("walk_right", walkRight);
-}
 
+    characterModel->addPose("walk_right", walkRight);
+} 
 int Character::isHUDVisible()
 {
     if (m_hud == nullptr) return 0;
