@@ -110,6 +110,8 @@ add_executable(MinerFabriquer
         TP/Entities/HumanoidEntity.hpp
         TP/Entities/HumanoidEntity.cpp
         TP/Entities/HumanoidPose.hpp
+        TP/Scene/MobSpawner.cpp
+        TP/Scene/MobSpawner.hpp
 
 )
 target_link_libraries(MinerFabriquer

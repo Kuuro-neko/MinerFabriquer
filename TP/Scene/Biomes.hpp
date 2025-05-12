@@ -145,12 +145,31 @@ class BeachBiome : public Biome {
     public:
         BeachBiome(int groundLevel, int seed) : Biome(groundLevel, BEACH_BIOME, seed) {}
         void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
-        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override; 
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
+};
+
+class TropicalBeachBiome : public Biome {
+    public:
+        TropicalBeachBiome(int groundLevel, int seed) : Biome(groundLevel, TROPICALBEACH_BIOME, seed) {}
+        void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
+        void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override;
+        void addTropicalTree(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height);
 };
 
 class FrozenBeachBiome : public Biome {
+    private:
+        FastNoiseLite iceNoise;
     public:
         FrozenBeachBiome(int groundLevel, int seed) : Biome(groundLevel, FROZENBEACH_BIOME, seed) {
+            iceNoise = FastNoiseLite();
+            iceNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+            iceNoise.SetFrequency(0.05f);
+            iceNoise.SetSeed(getSeed());
+            iceNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+            iceNoise.SetFractalOctaves(2);
+            iceNoise.SetFractalLacunarity(2.0f);
+            iceNoise.SetFractalGain(5.0f);
+            iceNoise.SetFractalWeightedStrength(5.0f);
         }
         void applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) override;
         void decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight) override; 

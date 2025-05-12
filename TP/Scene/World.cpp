@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <TP/Entities/Zombie.hpp>
 #include <TP/Textures/TextureManager.hpp>
-
+#include "MobSpawner.hpp"
 #include <chrono>
 #include <iostream>
 
@@ -117,6 +117,7 @@ void World::stopWorkerThread()
 
 World::World() : SceneNode(Transform(), new MeshObject(), nullptr)
 {
+    m_mobSpawner = new MobSpawner(this);
 }
 
 World::~World()
@@ -495,6 +496,7 @@ void World::updateLoadedChunks()
 
 void World::draw(GLuint programID)
 {
+    meshesGenerated = 0;
     glEnable(GL_CULL_FACE);
     if (wireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -961,24 +963,10 @@ void World::addChunkColumn(std::shared_ptr<ChunkColumn> column)
 
 void World::spawnEntities()
 {
-    spawnZombies();
+    //zombies
+    m_mobSpawner->spawnZombiesInLoadedChunks();
 }
-void World::spawnZombies()
-{
-    Zombie *zombie = new Zombie(
-        Transform(
-            glm::vec3(0.0f, GROUND_LEVEL+8, 0.0f),
-            DEFAULT_ROTATION,
-            DEFAULT_SCALE),
-        this,
-        camera);
-    this->getParent()->addChild(zombie);
-    entities.push_back(std::shared_ptr<Entity>(zombie));
-    std::cout << "Zombie spawned at " << zombie->getWorldPosition().x << ", " << zombie->getWorldPosition().y << ", " << zombie->getWorldPosition().z << std::endl;
-    // zombie->setWireframeRenderer(programID);
-    // zombie->setDisplayAABB(true);
-    zombie->setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
-}
+
 
 void World::updateEntities(float &deltaTime)
 {

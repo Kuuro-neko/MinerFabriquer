@@ -442,7 +442,10 @@ void VoxelChunk::generateMesh()
 }
 
 int VoxelChunk::drawOpaque(GLuint programID) {
-    if (dirty) generateMesh();
+    if (dirty && m_world->meshesGenerated < m_world->maxMeshPerFrame) {
+        generateMesh();
+        m_world->meshesGenerated++;
+    }
     if (m_opaqueMesh->vertices.size() == 0) return 0;
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);

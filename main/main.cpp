@@ -122,7 +122,8 @@ int main(void) {
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSwapInterval(0);
+    //glfwSwapInterval(0);
+    
     // Hide the mouse and enable unlimited mouvement
     //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -285,6 +286,8 @@ int main(void) {
 
     Texture cloudTex = Texture("../textures/clouds.png");
     Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
+
+    world->spawnEntities();
 
 
 /*     Entity* Mr_Vincell = new Entity();
