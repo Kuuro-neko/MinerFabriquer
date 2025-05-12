@@ -257,7 +257,6 @@ int main(void) {
     saveManager.setWorld(&world);
     saveManager.setCharacter(character);
 
-
     if (!saveManager.isDataFolderContainsOtherFolder()) {
         std::cout << "No world folder found. Generating a new world..." << std::endl;
 
@@ -268,7 +267,7 @@ int main(void) {
         world.initialGeneration();
         saveManager.saveWorldFile(); // Save the world data after generation
         saveManager.createPlayerDataFile();
-        
+        saveManager.createSeedFile();
     } else {
         int choice = Menu::chooseLoadOrNewWorld();
         switch (choice) {
@@ -281,6 +280,7 @@ int main(void) {
                 world.initialGeneration();
                 saveManager.saveWorldFile(); // Save the world data after generation
                 saveManager.createPlayerDataFile();
+                saveManager.createSeedFile();
                 break;
             }
            case MENU_LOAD: {
@@ -322,7 +322,7 @@ int main(void) {
                         chunk->dirty = true;
                     }
                }
-               saveManager.loadPlayerData();
+               saveManager.readSeedFile();
                break;
            }
             default:

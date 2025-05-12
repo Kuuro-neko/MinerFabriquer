@@ -42,7 +42,12 @@ void WorldGenerator::setSeed(std::string seed)
 {
     seedStr = seed;
     this->seed = stringToInt(seed);
+    caveNoise2.SetSeed(this->seed);
+    caveNoise.SetSeed(this->seed);
+    oreNoise.SetSeed(this->seed);
+    bedrockNoise.SetSeed(this->seed);
     biomeManager.setSeed(this->seed);
+    std::cout << "Seed set to (str : " << seed << ") (int : " << this->seed << ")" << std::endl;
 }
 
 std::string WorldGenerator::getSeedStr()
