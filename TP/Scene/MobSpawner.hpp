@@ -5,6 +5,7 @@
 #include <TP/Scene/VoxelChunk.hpp>
 #include <TP/Entities/Zombie.hpp>
 #include <TP/Scene/World.hpp>
+#include <TP/Scene/WorldGenerator.hpp>
 #include <random>
 
 

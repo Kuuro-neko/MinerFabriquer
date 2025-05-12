@@ -4,6 +4,7 @@
 #include "HumanoidEntity.hpp"
 #include <Defines.hpp>
 #include "TP/Scene/Renderer.hpp"
+#include <TP/Scene/WorldGenerator.hpp>
 
 class World;
 class Camera;
@@ -110,6 +111,8 @@ private:
     void handlePursuitState(float deltaTime);
     void handleAttackState(float deltaTime);
     void faceTarget(glm::vec3 targetPos, float &deltaTime);
+
+    void setZombieTexture();
 };
 
 #endif

@@ -21,6 +21,8 @@ Zombie::Zombie(Transform transform, World *world, Camera *camera) : HumanoidEnti
     updateBoundingBox();
     currentState = ZOMBIE_IDLE;
     targetPosition = transform.m_translation;
+    setZombieTexture();
+    //setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
 }
 
 Zombie::~Zombie()
@@ -523,4 +525,22 @@ void Zombie::createAttackPoses()
     attackStrike.rightArmTransform.m_rotation = rotMatX;
 
     addPose("attack_strike", attackStrike);
+}
+void Zombie::setZombieTexture()
+{
+   int biomeID = WorldGenerator::getInstance().biomeManager.getBiome(getWorldPosition().x, getWorldPosition().z)->getId();
+   if(biomeID == 0)
+   {
+       setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+   }
+   else if(biomeID == 1)
+   {
+       //setTexture(TextureManager::getInstance().getPBRTexture("zombie_snow"));
+       setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+   }
+   else
+   {
+      // setTexture(TextureManager::getInstance().getPBRTexture("zombie_desert"));
+      setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+   }
 }

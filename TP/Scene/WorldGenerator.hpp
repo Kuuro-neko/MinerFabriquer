@@ -27,7 +27,7 @@ private:
     int groundLevel = GROUND_LEVEL;
 
     
-    BiomeManager biomeManager = BiomeManager(groundLevel, seed);
+
     
     void setBaseStone(std::shared_ptr<VoxelChunk> , int x, int z, const glm::ivec3 &worldAABBMin, int baseHeight);
     void generateTerrain(std::shared_ptr<VoxelChunk> , int i, int j, int k, int groundLevel);
@@ -40,7 +40,7 @@ private:
     std::string seedStr = "default";
     int seed = stringToInt(seedStr);
 public:
-
+    BiomeManager biomeManager = BiomeManager(groundLevel, seed);
     static WorldGenerator &getInstance() {
         static WorldGenerator instance;
         return instance;

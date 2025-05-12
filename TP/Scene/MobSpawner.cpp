@@ -40,10 +40,12 @@ void MobSpawner::spawnZombiesInLoadedChunks()
                     {
                         if (isCaveBlock(chunk, x, y, z) && dis(gen) < zombie_SpawnProbability && chunk->entitiesNumber < MAX_ENTITIES_PER_CHUNK && m_world->getActiveEntitiesNumber() < MAX_ENTITIES)
                         {
+                            // get the type of biome zhere
                             glm::vec3 worldPos = glm::vec3(
                                 chunk->m_chunkCoords.x * CHUNK_SIZE + x,
                                 chunk->m_chunkCoords.y * CHUNK_SIZE + y,
                                 chunk->m_chunkCoords.z * CHUNK_SIZE + z);
+                                
                             spawnZombieAt(worldPos);
                             m_world->setActiveEntitiesNumber(m_world->getActiveEntitiesNumber() + 1);
                             chunk->entitiesNumber++;
@@ -64,11 +66,15 @@ bool MobSpawner::isCaveBlock(std::shared_ptr<VoxelChunk> chunk, int x, int y, in
 
 void MobSpawner::spawnZombieAt(glm::vec3 position)
 {
+   
+
+
     Zombie *zombie = new Zombie(
         Transform(position, DEFAULT_ROTATION, DEFAULT_SCALE),
         m_world,
         m_world->getCamera());
-    zombie->setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+
+        
     m_world->getParent()->addChild(zombie);
     m_world->addEntity(std::shared_ptr<Entity>(zombie));
 
