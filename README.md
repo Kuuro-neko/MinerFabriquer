@@ -1,6 +1,5 @@
 # MinerFabriquer
-
-![MinerFabriquer](assets/screenshot.webp)
+<img src="assets/screenshot.webp" width=50% height=50%>
 
 # Build and run the game
 
