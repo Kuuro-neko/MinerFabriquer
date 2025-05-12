@@ -106,6 +106,7 @@
 #define BLACKSTONE 69
 #define GILDED_BLACKSTONE 70
 #define PODZOL 71
+#define CACTUS 72
 
 #define ERROR_BLOC 255
 
@@ -132,6 +133,7 @@
 #define FROZENOCEAN_BIOME 10
 #define TAIGA_BIOME 11
 #define MESA_BIOME 12
+#define TROPICALBEACH_BIOME 13
 
 // ===== Player ===== //
 

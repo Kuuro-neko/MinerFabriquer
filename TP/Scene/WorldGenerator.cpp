@@ -36,6 +36,7 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()) {
     biomeManager.addBiome(std::make_unique<FrozenOceanBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<TaigaBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<MesaBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<TropicalBeachBiome>(groundLevel, seed));
 }
 
 void WorldGenerator::setSeed(std::string seed)

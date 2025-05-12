@@ -115,7 +115,12 @@ void DesertBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, 
 
 void DesertBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
-
+    if (getRandomFloat() < 0.998f) return;
+    if (chunk->getBloc(x, baseHeight + 2, z) != AIR) return;
+    int height = getRandomFloat() * 2 + 2;
+    for (int i = 0; i < height; i++) {
+        chunk->generationSetBloc(x, baseHeight + i, z, CACTUS);
+    }
 }
 
 /// ========================= ///
@@ -419,6 +424,49 @@ void BeachBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int b
 {
 }
 
+/// ============================== ///
+/// ===== TropicalBeachBiome ===== ///
+/// ============================== ///
+
+void TropicalBeachBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
+{
+    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
+}
+
+void TropicalBeachBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
+{
+    //if (chunk->getBloc(x, baseHeight, z) != SAND) return;
+    if (chunk->getBloc(x, baseHeight+2, z) != AIR) return;
+
+    if (getRandomFloat() < 0.9985f) return;
+
+    int height = getRandom1000() % 3 + 6;
+    addTropicalTree(chunk, x, z, baseHeight + 1, height);
+}
+
+void TropicalBeachBiome::addTropicalTree(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height)
+{
+    for (int y = 0; y < height-1; y++) {
+        chunk->generationSetBloc(x, baseHeight + y, z, JUNGLE_LOG);
+    }
+    int leafradius = 1;
+    chunk->generationSetBloc(x, baseHeight + height, z, JUNGLE_LEAVES);
+    chunk->generationSetBloc(x, baseHeight + height-1, z, JUNGLE_LEAVES);
+    for (int y = height-2; y >= height - 4; y--) {
+        chunk->generationSetBloc(x+leafradius, baseHeight + y, z, JUNGLE_LEAVES);
+        chunk->generationSetBloc(x-leafradius, baseHeight + y, z, JUNGLE_LEAVES);
+        chunk->generationSetBloc(x, baseHeight + y, z+leafradius, JUNGLE_LEAVES);
+        chunk->generationSetBloc(x, baseHeight + y, z-leafradius, JUNGLE_LEAVES);
+        chunk->generationSetBloc(x+leafradius, baseHeight + y+1, z+leafradius, JUNGLE_LEAVES);
+        chunk->generationSetBloc(x-leafradius, baseHeight + y+1, z-leafradius, JUNGLE_LEAVES);
+        chunk->generationSetBloc(x-leafradius, baseHeight + y+1, z+leafradius, JUNGLE_LEAVES);
+        chunk->generationSetBloc(x+leafradius, baseHeight + y+1, z-leafradius, JUNGLE_LEAVES);
+        leafradius = std::min(leafradius + 1, 2);
+    }
+}
+
 /// ============================ ///
 /// ===== FrozenBeachBiome ===== ///
 /// ============================ ///
@@ -696,7 +744,7 @@ Biome* BiomeManager::getBiomeById(int id)
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
-    //return getBiomeById(OCEAN_BIOME);
+    return getBiomeById(DESERT_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);
@@ -714,10 +762,13 @@ Biome *BiomeManager::getBiome(int x, int z)
             return getBiomeById(BEACH_BIOME);
         }
     } else if (continentalnessSpline.intervals[2].isInInterval(continentalness)) { // COAST
-        if (temperature == TEMPERATURE_COLD) {
-            return getBiomeById(FROZENBEACH_BIOME);
-        } else {
-            return getBiomeById(BEACH_BIOME);
+        switch(temperature) {
+            case TEMPERATURE_COLD:
+                return getBiomeById(FROZENBEACH_BIOME);
+            case TEMPERATURE_TEMPERATE:
+                return getBiomeById(BEACH_BIOME);
+            case TEMPERATURE_WARM:
+                return getBiomeById(TROPICALBEACH_BIOME);
         }
     } else if (continentalnessSpline.intervals[3].isInInterval(continentalness)) { // NEAR INLAND
         switch(temperature) {
