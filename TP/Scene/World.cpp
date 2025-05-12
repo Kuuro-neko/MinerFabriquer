@@ -978,12 +978,6 @@ void World::spawnZombies()
     // zombie->setWireframeRenderer(programID);
     // zombie->setDisplayAABB(true);
     zombie->setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
-
-    if(!firstZombie) { // On cache sous le tapis le premier zombie buggé
-        zombie->translate(glm::vec3(0.0f, -10000.0f, 0.0f));
-        firstZombie = true;
-        spawnEntities();
-    }
 }
 
 void World::updateEntities(float &deltaTime)
