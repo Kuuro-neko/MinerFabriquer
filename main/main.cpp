@@ -15,8 +15,7 @@
 #include <TP/FileSystem/SaveManager.hpp>
 #include <Defines.hpp>
 #include <TP/Scene/WorldGenerator.hpp>
-
-
+#include "TP/Scene/HumanoidEntity.hpp"
 
 GLFWwindow *window;
 
@@ -266,10 +265,12 @@ int main(void) {
     character.m_world = &world;
 
     // Ajouter le personnage au monde
-    Entity *characterModel = new Entity();
+    HumanoidEntity *characterModel = new HumanoidEntity();
+
+    // The rest of your code can remain the same:
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f);
-    Texture* playerTexture = new Texture("../textures/steve.png");
+    Texture *playerTexture = new Texture("../textures/steve.png");
     characterModel->setTexture(playerTexture);
     character.addChild(characterModel);
     character.setCharacterModel(characterModel);

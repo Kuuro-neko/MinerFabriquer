@@ -15,8 +15,7 @@
 #include "vector"
 #include <TP/GUI/HUD.hpp>
 #include <Defines.hpp>
-#include "TP/Scene/Entity.hpp"
-
+#include "TP/Scene/HumanoidEntity.hpp" 
 
 class Character : public SceneNode {
 
@@ -76,7 +75,9 @@ public:
 
     float getSpeed();
 
-    void setCharacterModel(Entity* model);
+    void setCharacterModel(HumanoidEntity *model);
+    void initializePlayerAnimations(HumanoidEntity *characterModel);
+    void createWalkingPoses(HumanoidEntity *characterModel);
 
 private:
 
@@ -126,9 +127,7 @@ private:
     HUD* m_hud = nullptr;
 
     void alignWithCamera(const glm::vec3& cameraDirection);
-    void initializePlayerAnimations(Entity* characterModel);
-    void createWalkingPoses(Entity* characterModel);
-    Entity* m_characterModel = nullptr;
+    HumanoidEntity *m_characterModel = nullptr;
 };
 
 #endif // CHARACTER_HPP

@@ -106,6 +106,9 @@ add_executable(MinerFabriquer
         TP/FileSystem/SaveManager.hpp
         TP/Menu/Menu.cpp
         TP/Menu/Menu.hpp
+        TP/Scene/HumanoidEntity.hpp
+        TP/Scene/HumanoidEntity.cpp
+        TP/Scene/HumanoidPose.hpp
 
 )
 target_link_libraries(MinerFabriquer
