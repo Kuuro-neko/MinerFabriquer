@@ -1,7 +1,7 @@
 #include "HumanoidEntity.hpp"
 
 // Helper function for textured cube creation
-void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
+void create_cube_textured2(glm::vec3 size, VoxelMeshObject &mesh,
                            glm::vec4 uvNorth, glm::vec4 uvSouth, glm::vec4 uvWest, glm::vec4 uvEast,
                            glm::vec4 uvUp, glm::vec4 uvDown)
 {
@@ -64,6 +64,15 @@ void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
         mesh.triangles.push_back(start);
         mesh.triangles.push_back(start + 2);
         mesh.triangles.push_back(start + 3);
+
+        mesh.lights.push_back(15);
+        mesh.lights.push_back(15);
+        mesh.lights.push_back(15);
+        mesh.lights.push_back(15);
+
+        mesh.ao.push_back(3);
+        mesh.ao.push_back(3);
+        mesh.ao.push_back(3);
     }
 
     // Normals for each face
@@ -99,12 +108,12 @@ HumanoidEntity::HumanoidEntity() : Entity()
     m_leftLeg = new SceneNode();
     m_rightLeg = new SceneNode();
 
-    m_torsoMesh = new MeshObject();
-    m_headMesh = new MeshObject();
-    m_leftArmMesh = new MeshObject();
-    m_rightArmMesh = new MeshObject();
-    m_leftLegMesh = new MeshObject();
-    m_rightLegMesh = new MeshObject();
+    m_torsoMesh = new VoxelMeshObject();
+    m_headMesh = new VoxelMeshObject();
+    m_leftArmMesh = new VoxelMeshObject();
+    m_rightArmMesh = new VoxelMeshObject();
+    m_leftLegMesh = new VoxelMeshObject();
+    m_rightLegMesh = new VoxelMeshObject();
 
     this->addChild(m_head);
     this->addChild(m_leftArm);
@@ -173,14 +182,9 @@ void HumanoidEntity::setRightLegMesh(MeshObject *mesh)
     m_rightLeg->m_mesh = mesh;
 }
 
-void HumanoidEntity::setTexture(Texture *texture)
+void HumanoidEntity::setTexture(PBRTexture *texture)
 {
     Entity::setTexture(texture);
-    m_head->m_texture = texture;
-    m_leftArm->m_texture = texture;
-    m_rightArm->m_texture = texture;
-    m_leftLeg->m_texture = texture;
-    m_rightLeg->m_texture = texture;
 }
 
 glm::vec4 HumanoidEntity::pixelCoordsToUV(int imageWidth, int imageHeight, int startX, int startY, int endX, int endY, bool flipY, bool flipX)

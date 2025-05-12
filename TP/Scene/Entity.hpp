@@ -35,8 +35,8 @@ public:
     virtual void setDisplayAABB(bool display) {};
 
     // Texture handling
-    virtual void setTexture(Texture *texture);
-    Texture *getTexture() const { return m_texture; }
+    virtual void setTexture(PBRTexture *texture);
+    PBRTexture *getTexture() const { return m_pbr_texture; }
 
     // Draw methods
     void draw(GLuint programID) override;
@@ -46,9 +46,9 @@ public:
     inline void setIsFPS(bool *FPSActive) { this->FPSActive = FPSActive; }
     void setFPSActive(bool *attached);
     bool isFPSActive();
-
+    
+    PBRTexture* m_pbr_texture = nullptr;
 protected:
     bool *FPSActive = nullptr;
-    Texture *m_texture = nullptr;
     World *m_world = nullptr;
 };

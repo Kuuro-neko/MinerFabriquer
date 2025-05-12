@@ -126,23 +126,57 @@ public:
     }
 };
 
+class PBRTexture : Texture {
+private:
+    Texture m_texture;
+    Texture m_normals;
+    Texture m_roughness;
+    Texture m_metallic;
+public:
+    PBRTexture(std::string textureName, std::string normalName, std::string roughnessName, std::string metallicName) {
+        m_texture = Texture(textureName.c_str());
+        m_texture.genTexture();
+        m_texture.setSamplerName("TextureSampler");
+
+        m_normals = Texture(normalName.c_str());
+        m_normals.genTexture();
+        m_normals.setSamplerName("NormalsSampler");
+
+        m_roughness = Texture(roughnessName.c_str());
+        m_roughness.genTexture();
+        m_roughness.setSamplerName("RoughnessSampler");
+
+        m_metallic = Texture(metallicName.c_str());
+        m_metallic.genTexture();
+        m_metallic.setSamplerName("MetallicSampler");
+    }
+
+    void bind(GLuint programID) {
+        m_texture.bind(programID);
+        m_normals.bind(programID);
+        m_roughness.bind(programID);
+        m_metallic.bind(programID);
+    }
+};
+
+
 class PBRTextureAtlas {
 private:
     PBRTextureAtlas(int resolution = 32) {
         std::string resolutionStr = std::to_string(resolution);
-        m_texture = Texture(("../textures/texture_atlas_x" + resolutionStr + ".png").c_str());
+        m_texture = Texture(("../textures/blocks/texture_atlas_x" + resolutionStr + ".png").c_str());
         m_texture.genTexture();
         m_texture.setSamplerName("TextureSampler");
 
-        m_normals = Texture(("../textures/normal_atlas_x" + resolutionStr + ".png").c_str());
+        m_normals = Texture(("../textures/blocks/normal_atlas_x" + resolutionStr + ".png").c_str());
         m_normals.genTexture();
         m_normals.setSamplerName("NormalsSampler");
 
-        m_roughness = Texture(("../textures/roughness_atlas_x" + resolutionStr + ".png").c_str());
+        m_roughness = Texture(("../textures/blocks/roughness_atlas_x" + resolutionStr + ".png").c_str());
         m_roughness.genTexture();
         m_roughness.setSamplerName("RoughnessSampler");
 
-        m_metallic = Texture(("../textures/metallic_atlas_x" + resolutionStr + ".png").c_str());
+        m_metallic = Texture(("../textures/blocks/metallic_atlas_x" + resolutionStr + ".png").c_str());
         m_metallic.genTexture();
         m_metallic.setSamplerName("MetallicSampler");
     }

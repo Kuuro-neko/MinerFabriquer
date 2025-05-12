@@ -14,6 +14,7 @@ void Entity::draw(GLuint programID)
 {
     if (isFPSActive())
     {
+        m_pbr_texture->bind(programID);
         SceneNode::draw(programID);
     }
 }
@@ -24,9 +25,9 @@ void Entity::cleanupBuffers()
     SceneNode::cleanupBuffers();
 }
 
-void Entity::setTexture(Texture *texture)
+void Entity::setTexture(PBRTexture *texture)
 {
-    m_texture = texture;
+    m_pbr_texture = texture;
 }
 
 void Entity::setFPSActive(bool *attached)

@@ -70,7 +70,7 @@ public:
     void setRightLegMesh(MeshObject *mesh);
 
     // Override entity methods
-    void setTexture(Texture *texture) override;
+    void setTexture(PBRTexture *texture) override;
     void draw(GLuint programID) override;
     void cleanupBuffers() override;
 
@@ -99,12 +99,12 @@ protected:
     SceneNode *m_rightLeg;
 
     // Mesh objects for body parts
-    MeshObject *m_torsoMesh;
-    MeshObject *m_headMesh;
-    MeshObject *m_leftArmMesh;
-    MeshObject *m_rightArmMesh;
-    MeshObject *m_leftLegMesh;
-    MeshObject *m_rightLegMesh;
+    VoxelMeshObject *m_torsoMesh;
+    VoxelMeshObject *m_headMesh;
+    VoxelMeshObject *m_leftArmMesh;
+    VoxelMeshObject *m_rightArmMesh;
+    VoxelMeshObject *m_leftLegMesh;
+    VoxelMeshObject *m_rightLegMesh;
 
     std::map<std::string, AnimationSequence> m_sequences;
     AnimationSequence *m_currentSequence = nullptr;
@@ -126,7 +126,7 @@ protected:
 };
 
 // Function declaration - move implementation to cpp file
-void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
+void create_cube_textured2(glm::vec3 size, VoxelMeshObject &mesh,
                            glm::vec4 uvNorth, glm::vec4 uvSouth,
                            glm::vec4 uvWest, glm::vec4 uvEast,
                            glm::vec4 uvUp, glm::vec4 uvDown);

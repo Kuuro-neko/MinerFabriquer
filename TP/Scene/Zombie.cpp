@@ -21,7 +21,11 @@ Zombie::Zombie(Transform transform, World *world, Camera *camera) : HumanoidEnti
     updateBoundingBox();
     currentState = ZOMBIE_IDLE;
     targetPosition = transform.m_translation;
-    setTexture(new Texture("../textures/zombie.png"));
+    PBRTexture* zombieTexture = new PBRTexture("../textures/zombie/zombie.png",
+        "../textures/zombie/zombie_normal.png",
+        "../textures/zombie/zombie_roughness.png",
+        "../textures/zombie/zombie_metallic.png");
+    Entity::setTexture(zombieTexture);
 }
 
 Zombie::~Zombie()
@@ -359,10 +363,14 @@ void Zombie::resolveGravity(float &deltaTime)
     }
 }
 
+void Zombie::draw(GLuint programID)
+{
+    Entity::draw(programID);
+}
+
 void Zombie::setState(ZombieState newState)
 {
-    if (newState != currentState)
-    {
+    if (newState != currentState) {
         currentState = newState;
         HumanoidEntity::setState(static_cast<EntityState>(newState));
     }

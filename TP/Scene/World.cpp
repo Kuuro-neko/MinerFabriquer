@@ -958,21 +958,22 @@ void World::addChunkColumn(std::shared_ptr<ChunkColumn> column)
     chunkColumns.emplace(column->getChunkCoords(), column);
 }
 
-void World::spawnEntities(GLuint& programID)
+void World::spawnEntities()
 {
-    spawnZombies(programID);
+    spawnZombies();
 }
-void World::spawnZombies(GLuint& programID)
+void World::spawnZombies()
 {
     Zombie *zombie = new Zombie(
         Transform(
-            glm::vec3(0.0f, 64.f, 0.0f),
+            glm::vec3(0.0f, GROUND_LEVEL+8, 0.0f),
             DEFAULT_ROTATION,
             DEFAULT_SCALE),
         this,
         camera);
     this->getParent()->addChild(zombie);
     entities.push_back(std::shared_ptr<Entity>(zombie));
+    std::cout << "Zombie spawned at " << zombie->getWorldPosition().x << ", " << zombie->getWorldPosition().y << ", " << zombie->getWorldPosition().z << std::endl;
     // zombie->setWireframeRenderer(programID);
     // zombie->setDisplayAABB(true);
 }

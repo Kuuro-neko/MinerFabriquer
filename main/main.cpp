@@ -44,9 +44,9 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 
 
-Character character = Character(
+Character* character = new Character(
         Transform(
-                glm::vec3(0, 61, 0),
+                glm::vec3(0, GROUND_LEVEL+8, 0),
                 DEFAULT_ROTATION,
                 1),
         &camera
@@ -95,7 +95,7 @@ int main(void) {
     KeyInput menuInputManager = KeyInput(Keybinds::getInstance().getKeysToMonitorForMenu());
     menuInputManager.setIsEnabled(false);
     KeyInput::setupKeyInputs(*window);
-    character.setKeyInput(&characterInputManager);
+    character->setKeyInput(&characterInputManager);
     camera.setKeyInput(&characterInputManager);
 
 
@@ -153,14 +153,14 @@ int main(void) {
                                             "../shader/fragment_shader_wireframe.glsl");
     Renderer renderer = Renderer(wireframeProgramID);
     Renderer rendererCharacterBoundingBox = Renderer(wireframeProgramID);
-    rendererCharacterBoundingBox.setHighlight(character.getMinBoundingBox());
+    rendererCharacterBoundingBox.setHighlight(character->getMinBoundingBox());
     GLuint cubemapProgramID = LoadShaders("../shader/cubemap_vertex_shader.glsl",
                                           "../shader/cubemap_fragment_shader.glsl");
     GLuint cloudsProgramID = LoadShaders("../shader/clouds_vertex_shader.glsl",
                                          "../shader/clouds_fragment_shader.glsl");
 
     hud = new HUD(windowWidth, windowHeight);
-    character.setHUD(hud);
+    character->setHUD(hud);
 
     Texture lightMap = Texture("../textures/lightmap.png");
     lightMap.setSamplerName("LightmapSampler");
@@ -173,13 +173,15 @@ int main(void) {
     SceneNode root;
     World world = World();
     root.addChild(&world);
+    root.addChild(character); 
     world.setCamera(camera);
     world.setDoDaylightCycle(false);
 
+   
+
     //pass the world to the save manager
     saveManager.setWorld(&world);
-    saveManager.setCharacter(&character);
-
+    saveManager.setCharacter(character);
 
     if (!saveManager.isDataFolderContainsOtherFolder()) {
         std::cout << "No world folder found. Generating a new world..." << std::endl;
@@ -191,7 +193,7 @@ int main(void) {
         world.initialGeneration();
         saveManager.saveWorldFile(); // Save the world data after generation
         saveManager.createPlayerDataFile();
-        
+        saveManager.createSeedFile();
     } else {
         int choice = Menu::chooseLoadOrNewWorld();
         switch (choice) {
@@ -204,6 +206,7 @@ int main(void) {
                 world.initialGeneration();
                 saveManager.saveWorldFile(); // Save the world data after generation
                 saveManager.createPlayerDataFile();
+                saveManager.createSeedFile();
                 break;
             }
            case MENU_LOAD: {
@@ -245,7 +248,7 @@ int main(void) {
                         chunk->dirty = true;
                     }
                }
-               saveManager.loadPlayerData();
+               saveManager.readSeedFile();
                break;
            }
             default:
@@ -259,10 +262,11 @@ int main(void) {
     saveManager.loadPlayerData();
     std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
     saveManager.startAutoSave();
+    saveManager.saveSeedFile();
     world.startWorkerThread();
 
     // Associer le monde au personnage
-    character.m_world = &world;
+    character->m_world = &world;
 
     // Ajouter le personnage au monde
     HumanoidEntity *characterModel = new HumanoidEntity();
@@ -270,22 +274,16 @@ int main(void) {
     // The rest of your code can remain the same:
     characterModel->setFPSActive(&camera.m_attached);
     characterModel->generateHumanoidMesh(-0.38f);
-    Texture *playerTexture = new Texture("../textures/steve.png");
+    PBRTexture* playerTexture = new PBRTexture("../textures/steve/steve.png", 
+                                             "../textures/steve/steve_normal.png",
+                                             "../textures/steve/steve_roughness.png",
+                                             "../textures/steve/steve_metallic.png");
     characterModel->setTexture(playerTexture);
-    character.addChild(characterModel);
-    character.setCharacterModel(characterModel);
-    root.addChild(&character);
-    character.setWireframeRenderers(wireframeProgramID);
-    camera.setTarget(character.getWorldPosition());
-
-
-
-    world.spawnEntities(wireframeProgramID);
-
-
-
-
+    character->addChild(characterModel);
+    character->setCharacterModel(characterModel);
     
+    character->setWireframeRenderers(wireframeProgramID);
+    camera.setTarget(character->getWorldPosition());
 
     Texture cloudTex = Texture("../textures/clouds.png");
     Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
@@ -320,13 +318,13 @@ int main(void) {
 
 
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
-        character.scrollCallback(window, xOffset, yOffset);
+        character->scrollCallback(window, xOffset, yOffset);
     });
 
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
     GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-
+    world.spawnEntities();
 
     do {
         UpdateFPS();
@@ -342,8 +340,8 @@ int main(void) {
         auto time_a = std::chrono::high_resolution_clock::now();
 
         // on change listen action, on met à jour un vecteur de direction qui est !=1 quand un touche est tapé sinon 0
-        character.listenAction(deltaTime);
-        camera.updateTarget(character.getWorldPosition());
+        character->listenAction(deltaTime);
+        camera.updateTarget(character->getWorldPosition());
         camera.update(deltaTime, window);
 
 
@@ -352,9 +350,8 @@ int main(void) {
         world.updateVisibleChunk(frustum);
 
 
-        world.resolveCollisions(character, &world);
-
-        character.resolveGravity(deltaTime);
+        world.resolveCollisions(*character, &world);
+        character->resolveGravity(deltaTime);
 
         
         world.renderEntities( wireframeProgramID);
@@ -410,20 +407,21 @@ int main(void) {
         }
         if (characterInputManager.isKeybindPressed({Keybinds::getInstance().getToggleDebug()})) {
             std::cout << "Seed string : " << WorldGenerator::getInstance().getSeedStr() << std::endl;
+            world.spawnEntities();
         }
 
 
-        character.drawBoundingBox();
+        character->drawBoundingBox();
 
 
 
-        if (character.isHUDVisible())
+        if (character->isHUDVisible())
             hud->render();
-        if (character.isHUDVisible()) hud->render();
+        if (character->isHUDVisible()) hud->render();
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        clouds.draw(currentFrame, character);
+        clouds.draw(currentFrame, *character);
 
         // Swap buffers
         glfwSwapBuffers(window);

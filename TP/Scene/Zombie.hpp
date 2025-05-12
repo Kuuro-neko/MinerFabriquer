@@ -8,6 +8,8 @@
 class World;
 class Camera;
 
+
+
 enum ZombieState
 {
     ZOMBIE_IDLE = IDLE,
@@ -51,6 +53,9 @@ public:
     }
     glm::vec3 vecteurDirection = glm::vec3(0.0f);
 
+    void draw(GLuint programID) override;
+    ZombieState currentState = ZOMBIE_IDLE;
+
 private:
     // Movement and physics properties
     glm::vec3 velocity = glm::vec3(0.0f);
@@ -86,9 +91,6 @@ private:
     std::vector<glm::vec3> boundingBox;
     Renderer *AABBRenderer = nullptr;
     bool displayAABB = false;
-
-    // State management
-    ZombieState currentState = ZOMBIE_IDLE;
 
     // Private methods
     void initializeZombieAnimations();
