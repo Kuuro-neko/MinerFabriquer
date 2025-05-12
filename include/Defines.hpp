@@ -11,6 +11,8 @@
 
 // ===== Generation & chunks ===== //
 
+#define MAX_MESH_PER_FRAME 2 // Number of meshes to be genrated by main thread per frame. Lower value will maintain fps at risk of showing more empty chunks. 2 is reasonably good for a i5-11600KF
+
 #define GROUND_LEVEL 65.0f
 #define WATER_LEVEL 63
 #define MESA_START_TERRACOTTA 67

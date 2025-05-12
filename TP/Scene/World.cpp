@@ -495,6 +495,7 @@ void World::updateLoadedChunks()
 
 void World::draw(GLuint programID)
 {
+    meshesGenerated = 0;
     glEnable(GL_CULL_FACE);
     if (wireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
