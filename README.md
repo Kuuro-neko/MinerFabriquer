@@ -1,3 +1,13 @@
+# MinerFabriquer
+
+![MinerFabriquer](assets/screenshot.webp)
+
+# Build and run the game
+
+```
+./Devtools/build.sh && ./build/launch-MinerFabriquer.sh
+```
+
 # Controls (Azerty layout)
 
 ## Gameplay
