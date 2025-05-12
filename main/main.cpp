@@ -281,7 +281,7 @@ int main(void) {
 
     world.spawnEntities(wireframeProgramID);
 
-    // After creating the zombie in main.cpp, add:
+
 
 
     
@@ -352,15 +352,15 @@ int main(void) {
 
 
         world.resolveCollisions(character, &world);
+
         character.resolveGravity(deltaTime);
+
+        
         world.renderEntities( wireframeProgramID);
         world.resolveEntityGravity(deltaTime);
         world.resolveEntityCollisions(deltaTime);
         world.updateEntities(deltaTime);
-        //zombie->resolveGravity(deltaTime);
-        //world.resolveCollisions(*zombie, &world);
-  
-        //zombie->update(deltaTime);
+       
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -414,7 +414,7 @@ int main(void) {
 
         character.drawBoundingBox();
 
-        // zombie->drawBoundingBox();
+
 
         if (character.isHUDVisible())
             hud->render();

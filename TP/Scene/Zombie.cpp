@@ -208,7 +208,7 @@ void Zombie::handleAttackState(float deltaTime) {
     attackCooldown += deltaTime;
     
     if (attackCooldown >= attackCooldownMax) {
-        std::cout << "Zombie attacks!" << std::endl;
+       // std::cout << "Zombie attacks!" << std::endl;
         attackCooldown = 0.0f;
     }
     // updateTargetPosition(deltaTime);

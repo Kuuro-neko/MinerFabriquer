@@ -973,13 +973,9 @@ void World::spawnZombies(GLuint programID)
         this,
         camera);
         this->getParent()->addChild(zombie);
-    Texture *zombieTexture = new Texture("../textures/zombie.png");
-    zombie->setTexture(zombieTexture);
-    std::cout << camera->getPosition().x << ", " << camera->getPosition().y << ", " << camera->getPosition().z << std::endl;
-    entities.push_back(std::shared_ptr<Entity>(zombie));
-    std::cout << "Zombie added to world." << std::endl;
-    zombie->setWireframeRenderer(programID);
-    zombie->setDisplayAABB(true);
+   entities.push_back(std::shared_ptr<Entity>(zombie));
+    // zombie->setWireframeRenderer(programID);
+    // zombie->setDisplayAABB(true);
 }
 
 void World::updateEntities(float deltaTime)
@@ -994,9 +990,6 @@ void World::renderEntities(GLuint programID)
 {
     for (auto &entity : entities)
     {
-        std::cout << "Rendering entity at: " << entity->getWorldPosition().x << ", "
-                  << entity->getWorldPosition().y << ", "
-                  << entity->getWorldPosition().z << std::endl;
         entity->draw(programID);
 
     }
@@ -1012,7 +1005,7 @@ void World::resolveEntityCollisions(float deltaTime)
 {
     for (auto &entity : entities)
     {
-        //entity->resolveCollisions(deltaTime); //TODO A FAIRE + TARD
+        // entity->resolveCollisions(deltaTime); //TODO A FAIRE + TARD car code horrible, met cette fonction dans le zombie dans Zombie et non dans world
         if (auto zombie = dynamic_cast<Zombie *>(entity.get()))
         {
             std::cout << "Resolving collisions for zombie at: " << zombie->getWorldPosition().x << ", "
