@@ -336,6 +336,7 @@ int main(void) {
     saveManager.loadPlayerData();
     std::cout << "World loaded from: " << saveManager.getSaveFolderPath() << std::endl;
     saveManager.startAutoSave();
+    saveManager.saveSeedFile();
     world.startWorkerThread();
 
     // Associer le monde au personnage

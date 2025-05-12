@@ -209,7 +209,6 @@ void SaveManager::startAutoSave()
                                              std::cout << "Auto-saving world data..." << std::endl;
                                              saveWorldFile();
                                              saveCharacterFile();
-                                             saveSeedFile();
                                              std::cout
                                                      << "Player data auto-saved to file: " << autoPlayerFilePath << std::endl;
                                          }
