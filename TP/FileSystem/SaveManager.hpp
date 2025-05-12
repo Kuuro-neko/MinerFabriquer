@@ -58,6 +58,11 @@ public:
 
     void createPlayerDataFile();
 
+    void createSeedFile();
+
+    void saveSeedFile();
+    void readSeedFile();
+
     //-----world data---------//
 
     // the way the world is saved ->

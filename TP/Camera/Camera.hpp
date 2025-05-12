@@ -90,7 +90,7 @@ private:
     glm::vec3 m_relativePos = CAMERA_POSITION_RELATIVE_TO_PLAYER;
     glm::vec3 m_targetDeltaPos;
     glm::vec3 m_targetPrev;
-    float m_distance = 10.0f;
+    float m_distance = 2.0f;
 
     bool m_sprinting = false;
 	float m_deltaFov = 0.0f;

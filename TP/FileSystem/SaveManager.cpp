@@ -3,7 +3,6 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
-
 // if the instance is null, create it else return the existing one -> thread safe
 SaveManager &SaveManager::getInstance()
 {
@@ -11,6 +10,77 @@ SaveManager &SaveManager::getInstance()
     return instance;
 }
 
+void SaveManager::createSeedFile()
+{
+    std::string saveFolder = getSaveFolderPath();
+
+    std::cout << "Creation of a new save folder for character : " << saveFolder + PATH_SEED << std::endl;
+    std::ofstream ofs(saveFolder + PATH_SEED, std::ios::binary);
+    if (!ofs)
+    {
+        std::cerr << "Error creating seed file." << std::endl;
+        return;
+    }
+
+    std::string seedStr = WorldGenerator::getInstance().getSeedStr();
+    int seedStrSize = seedStr.size();
+    ofs.write(reinterpret_cast<const char *>(&seedStrSize), sizeof(int));
+    if (seedStrSize > 0) {
+        ofs.write(seedStr.data(), seedStrSize); // Write string content
+    }
+    std::cout << "Seed file created at: " << saveFolder + PATH_SEED << std::endl;
+}
+
+void SaveManager::saveSeedFile()
+{
+    int seedStrSize = 0;
+    std::string seedStr;
+
+    std::string saveFolder = getSaveFolderPath();
+    std::cout << "Saving seed at : " << saveFolder + PATH_SEED << std::endl;
+    std::ofstream ofs(saveFolder + PATH_SEED, std::ios::binary);
+
+    if (!ofs)
+    {
+        std::cerr << "Error creating seed file." << std::endl;
+        return;
+    }
+
+    seedStr = WorldGenerator::getInstance().getSeedStr();
+    seedStrSize = seedStr.size();
+    ofs.write(reinterpret_cast<const char *>(&seedStrSize), sizeof(int));
+    if (seedStrSize > 0)
+    {
+        ofs.write(seedStr.data(), seedStrSize); // Write string content
+    }
+    std::cout << "Seed file created at: " << saveFolder + PATH_SEED << std::endl;
+}
+
+void SaveManager::readSeedFile()
+{
+    int seedStrSize = 0;
+    std::string seedStr;
+
+    std::string mostRecentSeedFilePath = getSaveFolderPath() + PATH_SEED;
+    std::ifstream ifs(mostRecentSeedFilePath, std::ios::binary);
+    if (!ifs)
+    {
+        std::cerr << "Error opening file: " << mostRecentSeedFilePath << std::endl;
+        return;
+    }
+    ifs.read(reinterpret_cast<char *>(&seedStrSize), sizeof(int));
+    if (seedStrSize > 0)
+    {
+        seedStr.resize(seedStrSize);
+        ifs.read(&seedStr[0], seedStrSize); // Read string content
+        WorldGenerator::getInstance().setSeed(seedStr);
+    }
+    else
+    {
+        std::cerr << "Error reading seed file." << std::endl;
+    }
+    std::cout << "Seed file read at: " << mostRecentSeedFilePath << std::endl;
+}
 
 void SaveManager::createPlayerDataFile()
 {
@@ -54,12 +124,11 @@ void SaveManager::loadPlayerData()
     unsigned char prev;
     float position[3];
     int id, quantity;
-    int seedStrSize;
-    std::string seedStr;
 
     ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
     ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
     ifs.read(reinterpret_cast<char *>(position), sizeof(position));
+
     while (ifs.read(reinterpret_cast<char *>(&id), sizeof(id)))
     {
         ifs.read(reinterpret_cast<char *>(&quantity), sizeof(quantity));
@@ -69,10 +138,6 @@ void SaveManager::loadPlayerData()
     character->setGamemode(gamemode);
     character->SetprevGamemode(prev);
     character->setWorldPosition(position[0], position[1], position[2]);
-    ifs.read(reinterpret_cast<char *>(&seedStrSize), sizeof(size_t));
-    ifs.read(reinterpret_cast<char *>(&seedStr), sizeof(char) * seedStrSize);
-    std::cout << "Seed string : " << seedStr << std::endl;
-    WorldGenerator::getInstance().setSeed(seedStr);
     ifs.close();
 }
 
@@ -115,11 +180,6 @@ void SaveManager::saveCharacterFile()
         ofs.write(reinterpret_cast<const char *>(&id), sizeof(id));
         ofs.write(reinterpret_cast<const char *>(&quantity), sizeof(quantity));
     }
-    std::string seedStr = WorldGenerator::getInstance().getSeedStr();
-    size_t seedStrSize = seedStr.size();
-    ofs.write(reinterpret_cast<const char *>(&seedStrSize), sizeof(size_t));
-    ofs.write(reinterpret_cast<const char *>(seedStr.c_str()), sizeof(char) * seedStrSize);
-    std::cout << "Seed str saved : " << seedStr << std::endl;
     ofs.close();
 
    std::cout << "Data saved at : " << filePath << std::endl;

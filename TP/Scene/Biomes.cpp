@@ -11,10 +11,25 @@
 
 void PlainsBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, GRASS);
+    int minChunkY = worldAABBMin.y;
+    int maxChunkY = worldAABBMin.y + CHUNK_SIZE - 1;
+    
+    // Skip if no part of the layer structure is in this chunk
+    if (baseHeight - 3 > maxChunkY || baseHeight < minChunkY) {
+        return;
+    }
+    
+    // Place blocks only at the specific depths needed
+    for (int depth = 0; depth <= 3; depth++) {
+        int worldY = baseHeight - depth;
+        if (worldY >= minChunkY && worldY <= maxChunkY) {
+            int localY = worldY - minChunkY;
+            
+            // Set appropriate block type based on depth
+            int blockType = (depth == 0) ? GRASS : DIRT;
+            chunk->generationSetBloc(x, localY, z, blockType);
+        }
+    }
 }
 
 void PlainsBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
@@ -77,13 +92,25 @@ int MoutainsBiome::getSnowHeight(float baseNoise)
 
 void DesertBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    chunk->generationSetBloc(x, baseHeight - 6 - worldAABBMin.y, z, SANDSTONE);
-    chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SANDSTONE);
-    chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, SANDSTONE);
-    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SAND);
-    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
+    int minChunkY = worldAABBMin.y;
+    int maxChunkY = worldAABBMin.y + CHUNK_SIZE - 1;
+    
+    // Skip if no part of the layer structure is in this chunk
+    if (baseHeight - 6 > maxChunkY || baseHeight < minChunkY) {
+        return;
+    }
+    
+    // Place blocks only at the specific depths needed
+    for (int depth = 0; depth <= 6; depth++) {
+        int worldY = baseHeight - depth;
+        if (worldY >= minChunkY && worldY <= maxChunkY) {
+            int localY = worldY - minChunkY;
+            
+            // Set appropriate block type based on depth
+            int blockType = (depth <= 3) ? SAND : SANDSTONE;
+            chunk->generationSetBloc(x, localY, z, blockType);
+        }
+    }
 }
 
 void DesertBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
@@ -97,19 +124,31 @@ void DesertBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int 
 
 void OceanBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    chunk->generationSetBloc(x, baseHeight - 6 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SAND);
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SAND);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SAND);
+    int minChunkY = worldAABBMin.y;
+    int maxChunkY = worldAABBMin.y + CHUNK_SIZE - 1;
+    
+    // Skip if no part of the layer structure is in this chunk
+    if (baseHeight - 6 > maxChunkY || baseHeight < minChunkY) {
+        return;
+    }
+    
+    // Place blocks only at the specific depths needed
+    for (int depth = 0; depth <= 6; depth++) {
+        int worldY = baseHeight - depth;
+        if (worldY >= minChunkY && worldY <= maxChunkY) {
+            int localY = worldY - minChunkY;
+            
+            // Set appropriate block type based on depth
+            int blockType = (depth <= 2) ? SAND : SMOOTH_BASALT;
+            chunk->generationSetBloc(x, localY, z, blockType);
+        }
+    }
 }
 
 void OceanBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     //if (chunk->getBloc(x, baseHeight, z) != SAND) return;
-    if (chunk->getBloc(x, baseHeight+3, z) != WATER) return;
+    if (chunk->getBloc(x, baseHeight+3, z) == AIR) return;
     if (getRandomFloat() < 0.998f) return;
 
     if (coralNoise.GetNoise((float) x,(float) z) > 0.1f) {
@@ -146,12 +185,25 @@ void OceanBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int b
 
 void IceBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SNOW);
-    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SNOW);
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SNOW);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SNOW);
+    int minChunkY = worldAABBMin.y;
+    int maxChunkY = worldAABBMin.y + CHUNK_SIZE - 1;
+    
+    // Skip if no part of the layer structure is in this chunk
+    if (baseHeight - 5 > maxChunkY || baseHeight < minChunkY) {
+        return;
+    }
+    
+    // Place blocks only at the specific depths needed
+    for (int depth = 0; depth <= 5; depth++) {
+        int worldY = baseHeight - depth;
+        if (worldY >= minChunkY && worldY <= maxChunkY) {
+            int localY = worldY - minChunkY;
+            
+            // Set appropriate block type based on depth
+            int blockType = (depth <= 3) ? SNOW : DIRT;
+            chunk->generationSetBloc(x, localY, z, blockType);
+        }
+    }
 }
 
 void IceBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
@@ -209,13 +261,12 @@ void IceBiome::addIceSpike(std::shared_ptr<VoxelChunk> chunk, int x, int z, int 
 
 void CristalPeaksBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    int r = getRandom1000();
-    if (r % 23 < 10) chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, SMOOTH_BASALT);
-    if (r % 50 < 25) chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, SMOOTH_BASALT);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, SMOOTH_BASALT);
+    chunk->generationSetBloc(x, baseHeight - 5 - worldAABBMin.y, z, BLACKSTONE);
+    chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, BLACKSTONE);
+    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, BLACKSTONE);
+    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, BLACKSTONE);
+    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, BLACKSTONE);
+    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, BLACKSTONE);
 }
 
 void CristalPeaksBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
@@ -229,10 +280,13 @@ void CristalPeaksBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z
             }
         }
         float noiseValue = amethystNoise.GetNoise((float)x+chunk->m_chunkCoords.x * CHUNK_SIZE,(float) y, (float)z+chunk->m_chunkCoords.z * CHUNK_SIZE);
-        if (noiseValue < 0.05f) {
-            chunk->generationSetBloc(wX, y, wZ, AMETHYST);
-        } else if (noiseValue < 0.09f) {
-            chunk->generationSetBloc(wX, y, wZ, CALCITE);
+        if (noiseValue < -0.09f) {
+            chunk->generationSetBloc(x, y, z, AIR);
+            chunk->generationSetBloc(x, y-1, z, AMETHYST);
+        } else if (noiseValue < -0.03f) {
+            chunk->generationSetBloc(x, y, z, CALCITE);
+        } else if (noiseValue < 0.03f) {
+            chunk->generationSetBloc(x, y+1, z, SMOOTH_BASALT);
         }
     }
 }
@@ -427,12 +481,24 @@ void FrozenOceanBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z,
 /// ===== TaigaBiome ===== ///
 /// ====================== ///
 
-void TaigaBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
-{
-    chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, DIRT);
-    chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, PODZOL);
+void TaigaBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin) {
+    int minChunkY = worldAABBMin.y;
+    int maxChunkY = worldAABBMin.y + CHUNK_SIZE - 1;
+    
+    if (baseHeight < minChunkY - 3 || baseHeight > maxChunkY) {
+        return;
+    }
+    
+    for (int depth = 0; depth <= 3; depth++) {
+        int worldY = baseHeight - depth;
+        if (worldY >= minChunkY && worldY <= maxChunkY) {
+            int localY = worldY - minChunkY;
+            
+            // Set the appropriate block type based on depth
+            int b = (depth == 0) ? PODZOL : DIRT;
+            chunk->generationSetBloc(x, localY, z, b);
+        }
+    }
 }
 
 void TaigaBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
@@ -444,11 +510,6 @@ void TaigaBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int b
 
 void TaigaBiome::addSpruceTree(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, int height)
 {
-    /*int floor = chunk->getBloc(x, baseHeight-1, z);
-    int floorAbove = chunk->getBloc(x, baseHeight, z);
-    if (floor != PODZOL) return;
-    if (floorAbove != AIR) return;*/
-
     int actualHeight = 6 + 2 * height;
     chunk->generationSetBloc(x, baseHeight, z, DIRT);
     for (int dx = -3; dx <= 3; dx++) {
@@ -479,23 +540,37 @@ void TaigaBiome::addSpruceTree(std::shared_ptr<VoxelChunk> chunk, int x, int z, 
 
 void MesaBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight, glm::ivec3 worldAABBMin)
 {
-    if (worldAABBMin.y + CHUNK_SIZE > MESA_START_TERRACOTTA) {
-        for (int y = 15; y >= 0; y--) {
-            if (worldAABBMin.y + y >= MESA_START_TERRACOTTA) {
-                int b = chunk->getBloc(x, y, z);
-                if ( b != AIR)
-                chunk->generationSetBloc(x, y, z, getTerracottaPatternAt(worldAABBMin.y + y - MESA_START_TERRACOTTA));
-            } else {
-                break;
-            }
+
+    // Process each Y position in the chunk
+    for (int localY = 0; localY < CHUNK_SIZE; localY++) {
+        int worldY = worldAABBMin.y + localY;
+        
+        // Skip if we're above the surface height
+        if (worldY > baseHeight) continue;
+        
+        int blockType = chunk->getBloc(x, localY, z);
+        bool isReplaceable = (blockType == STONE || blockType == RED_SANDSTONE || blockType == RED_SAND || 
+                             BlocDatabase::getInstance().isStoneOrStoneOre(blockType));
+        
+        if (!isReplaceable) continue;
+        
+        // Terracotta pattern between MESA_START_TERRACOTTA and baseHeight
+        if (worldY >= MESA_START_TERRACOTTA && worldY <= baseHeight) {
+            chunk->generationSetBloc(x, localY, z, getTerracottaPatternAt(worldY - MESA_START_TERRACOTTA));
         }
-    }
-    if (BlocDatabase::getInstance().isStoneOrStoneOre(chunk->getBloc(x, baseHeight, z))) {
-        chunk->generationSetBloc(x, baseHeight - 4 - worldAABBMin.y, z, RED_SANDSTONE);
-        chunk->generationSetBloc(x, baseHeight - 3 - worldAABBMin.y, z, RED_SANDSTONE);
-        chunk->generationSetBloc(x, baseHeight - 2 - worldAABBMin.y, z, RED_SAND);
-        chunk->generationSetBloc(x, baseHeight - 1 - worldAABBMin.y, z, RED_SAND);
-        chunk->generationSetBloc(x, baseHeight - worldAABBMin.y, z, RED_SAND);
+        // Red sand surface layers only below MESA_START_TERRACOTTA
+        else if (worldY < MESA_START_TERRACOTTA) {
+            int depth = baseHeight - worldY;
+            
+            if (depth <= 2) {
+                // Top 3 layers: RED_SAND (depth 0, 1, 2)
+                chunk->generationSetBloc(x, localY, z, RED_SAND);
+            } else if (depth <= 4) {
+                // Next 2 layers: RED_SANDSTONE (depth 3, 4)
+                chunk->generationSetBloc(x, localY, z, RED_SANDSTONE);
+            }
+            // Deeper layers remain unchanged
+        }
     }
 }
 
@@ -580,8 +655,8 @@ BiomeManager::BiomeManager(int groundLevel, int seed) : groundLevel(groundLevel)
     biomeNoise.SetSeed(seed-5);
 
     continentalnessSpline = Spline(
-        {-1.2f, -0.6f, -0.15f,  0.11f, 0.35f, 0.6f, 1.2f},
-        {-50.0f,-40.0f,-3.0f,4.0f,10.0f,30.0f,40.0f}
+        {-1.2f, -0.6f, -0.25f,  -0.09f, 0.4f, 0.65f, 1.2f},
+        {-50.0f,-40.0f,-3.0f,4.0f,10.0f,40.0f,50.0f}
     );
 
     erosionSpline = Spline(
@@ -621,7 +696,7 @@ Biome* BiomeManager::getBiomeById(int id)
 
 Biome *BiomeManager::getBiome(int x, int z)
 {
-    //return getBiomeById(MESA_BIOME);
+    //return getBiomeById(OCEAN_BIOME);
     float continentalness = getContinentalness(x, z);
     float weirdness = getWeirdness(x, z);
     float erosion = getErosion(x, z);

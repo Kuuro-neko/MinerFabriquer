@@ -6,22 +6,19 @@
 #include <TP/Scene/World.hpp>
 #include <TP/Scene/Biomes.hpp>
 
-#define CAVE_BASE_THRESHOLD -10.1f
-#define CAVE_DEPTH_SCALING_FACTOR 0.015f
+#define CAVE_BASE_THRESHOLD -0.3f
+#define CAVE_DEPTH_SCALING_FACTOR 0.018f
 
 #define IRON_THRESHOLD 0.28f
 
 class WorldGenerator {
 private:
-    FastNoiseLite baseHeightNoise;
-    FastNoiseLite mountainHeightNoise;
     FastNoiseLite caveNoise;
     FastNoiseLite caveNoise2;
     FastNoiseLite oreNoise;
-    FastNoiseLite waterHolesHeightNoise;
+    FastNoiseLite bedrockNoise;
 
     std::mt19937 rng;
-    std::uniform_int_distribution<int> bedrockRng;
 
     int groundLevel = GROUND_LEVEL;
 

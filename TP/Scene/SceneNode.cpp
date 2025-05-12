@@ -37,7 +37,7 @@ void SceneNode::draw(GLuint programID) {
         glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
         
         if (m_texture) {
-            m_texture->bind(programID);
+           // m_texture->bind(programID);
         }
         
         m_mesh->draw(programID);
