@@ -11,6 +11,8 @@
 
 // ===== Generation & chunks ===== //
 
+#define MAX_MESH_PER_FRAME 2 // Number of meshes to be genrated by main thread per frame. Lower value will maintain fps at risk of showing more empty chunks. 2 is reasonably good for a i5-11600KF
+
 #define GROUND_LEVEL 65.0f
 #define WATER_LEVEL 63
 #define MESA_START_TERRACOTTA 67
@@ -106,6 +108,7 @@
 #define BLACKSTONE 69
 #define GILDED_BLACKSTONE 70
 #define PODZOL 71
+#define CACTUS 72
 
 #define ERROR_BLOC 255
 
@@ -132,6 +135,7 @@
 #define FROZENOCEAN_BIOME 10
 #define TAIGA_BIOME 11
 #define MESA_BIOME 12
+#define TROPICALBEACH_BIOME 13
 
 // ===== Player ===== //
 

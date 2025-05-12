@@ -76,6 +76,8 @@ private:
 
     void workerLoop();
 public:
+    int maxMeshPerFrame = MAX_MESH_PER_FRAME; // Max number of meshes to generate per frame
+    int meshesGenerated = 0;
     std::recursive_mutex worldMutex; // Mutex to lock the chunks data
     bool wireframe = false;
     World();
