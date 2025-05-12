@@ -586,6 +586,7 @@ void Character::draw(GLuint programID)
         glm::vec3(1.f, 1.f, 1.f),
         camera->getViewMatrix(),
         camera->getProjectionMatrix());
+    m_characterModel->m_pbr_texture->bind(programID);
     SceneNode::draw(programID);
 }
 /**

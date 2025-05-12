@@ -14,6 +14,7 @@ void Entity::draw(GLuint programID)
 {
     if (isFPSActive())
     {
+        glUseProgram(programID);
         m_pbr_texture->bind(programID);
         SceneNode::draw(programID);
     }
