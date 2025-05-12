@@ -82,6 +82,12 @@ void TNTProjectile::draw(GLuint programID)
 void TNTProjectile::update(float deltaTime)
 {
     translate(m_velocity * deltaTime);
+    m_velocity.y -= 9.81f * deltaTime; // Apply gravity
+    if (m_time > m_timeToLive)
+    {
+        explode(getWorldPosition().x, getWorldPosition().y, getWorldPosition().z);
+    }
+    m_time += deltaTime;
     updateBoundingBox();
 
     // Check for collisions with blocks
@@ -96,10 +102,57 @@ void TNTProjectile::update(float deltaTime)
             {
                 int blockId = m_world->getBloc(x, y, z);
 
-                if (blockId != AIR)
+                if (blockId != AIR && blockId != WATER)
                 {
-                    explode(x, y, z);
-                    return;
+                    // correction de la velocite
+                    glm::vec3 blockPosition = glm::vec3(x, y, z);
+                    glm::vec3 blockMin = blockPosition;
+                    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+                    // Check if the bounding box of the TNT intersects with the block
+                    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
+                        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
+                        maxBB.z > blockMin.z && minBB.z < blockMax.z)
+                    {
+                        // Calculate the overlaps on each axis
+                        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
+                        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
+                        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
+
+                        // Determine the axis with the smallest depth of collision
+                        if (overlapX < overlapY && overlapX < overlapZ)
+                        { // X axis
+                            if (m_velocity.x > 0 && getWorldPosition().x < blockPosition.x)
+                            {
+                                m_velocity.x = 0; // Block movement to the right
+                            }
+                            else if (m_velocity.x < 0 && getWorldPosition().x > blockPosition.x)
+                            {
+                                m_velocity.x = 0; // Block movement to the left
+                            }
+                        }
+                        else if (overlapY < overlapX && overlapY < overlapZ)
+                        { // Y axis
+                            if (m_velocity.y > 0 && getWorldPosition().y < blockPosition.y)
+                            {
+                                m_velocity.y = 0; // Block movement up
+                            }
+                            else if (m_velocity.y < 0 && getWorldPosition().y > blockPosition.y)
+                            {
+                                m_velocity.y = 0; // Block movement down
+                            }
+                        }
+                        else
+                        { // Z axis
+                            if (m_velocity.z > 0 && getWorldPosition().z < blockPosition.z)
+                            {
+                                m_velocity.z = 0; // Block movement forward
+                            }
+                            else if (m_velocity.z < 0 && getWorldPosition().z > blockPosition.z)
+                            {
+                                m_velocity.z = 0; // Block movement backward
+                            }
+                        }
+                    }
                 }
             }
         }

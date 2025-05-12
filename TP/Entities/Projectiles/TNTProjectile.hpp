@@ -17,6 +17,9 @@ private:
 
     glm::vec3 AABBmin;
     glm::vec3 AABBmax;
+
+    float m_time = 0.0f;
+    float m_timeToLive = 5.0f; // Time to live in seconds
 public:
     TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World* world, GLuint programID);
     ~TNTProjectile();
