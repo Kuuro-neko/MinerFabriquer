@@ -1,5 +1,5 @@
 #include "Entity.hpp"
-void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
+void create_cube_textured2(glm::vec3 size, VoxelMeshObject &mesh,
     glm::vec4 uvNorth = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
     glm::vec4 uvSouth = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
     glm::vec4 uvWest = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
@@ -65,6 +65,15 @@ void create_cube_textured2(glm::vec3 size, MeshObject &mesh,
         mesh.triangles.push_back(start);
         mesh.triangles.push_back(start + 2);
         mesh.triangles.push_back(start + 3);
+
+        mesh.lights.push_back(15);
+        mesh.lights.push_back(15);
+        mesh.lights.push_back(15);
+        mesh.lights.push_back(15);
+
+        mesh.ao.push_back(3);
+        mesh.ao.push_back(3);
+        mesh.ao.push_back(3);
     }
 
     // Normals for each face
@@ -83,12 +92,12 @@ Entity::Entity() {
     m_leftLeg = new SceneNode();
     m_rightLeg = new SceneNode();
 
-    m_torsoMesh = new MeshObject();
-    m_headMesh = new MeshObject();
-    m_leftArmMesh = new MeshObject();
-    m_rightArmMesh = new MeshObject();
-    m_leftLegMesh = new MeshObject();
-    m_rightLegMesh = new MeshObject();
+    m_torsoMesh = new VoxelMeshObject();
+    m_headMesh = new VoxelMeshObject();
+    m_leftArmMesh = new VoxelMeshObject();
+    m_rightArmMesh = new VoxelMeshObject();
+    m_leftLegMesh = new VoxelMeshObject();
+    m_rightLegMesh = new VoxelMeshObject();
 
 
     this->addChild(m_head);
@@ -116,31 +125,32 @@ Entity::~Entity() {
 }
 
 void Entity::draw(GLuint programID) {
+    if (m_pbr_texture) m_pbr_texture->bind(programID);
     if(isFPSActive()) SceneNode::draw(programID);
     else return;
 }
 
-void Entity::setHeadMesh(MeshObject* mesh) {
+void Entity::setHeadMesh(VoxelMeshObject* mesh) {
     m_head->m_mesh = mesh;
 }
 
-void Entity::setTorsoMesh(MeshObject* mesh) {
+void Entity::setTorsoMesh(VoxelMeshObject* mesh) {
     this->m_mesh = mesh;
 }
 
-void Entity::setLeftArmMesh(MeshObject* mesh) {
+void Entity::setLeftArmMesh(VoxelMeshObject* mesh) {
     m_leftArm->m_mesh = mesh;
 }
 
-void Entity::setRightArmMesh(MeshObject* mesh) {
+void Entity::setRightArmMesh(VoxelMeshObject* mesh) {
     m_rightArm->m_mesh = mesh;
 }
 
-void Entity::setLeftLegMesh(MeshObject* mesh) {
+void Entity::setLeftLegMesh(VoxelMeshObject* mesh) {
     m_leftLeg->m_mesh = mesh;
 }
 
-void Entity::setRightLegMesh(MeshObject* mesh) {
+void Entity::setRightLegMesh(VoxelMeshObject* mesh) {
     m_rightLeg->m_mesh = mesh;
 }
 
@@ -346,15 +356,9 @@ void Entity::generateHumanoidMesh(float baseHeight) {
 }
 
 
+void Entity::setTexture(PBRTexture* texture) {
 
-void Entity::setTexture(Texture* texture) {
-
-    this->m_texture = texture;
-    m_head->m_texture = texture;
-    m_leftArm->m_texture = texture;
-    m_rightArm->m_texture = texture;
-    m_leftLeg->m_texture = texture;
-    m_rightLeg->m_texture = texture;
+    this->m_pbr_texture = texture;
 }
 
 

@@ -44,6 +44,8 @@ public:
         this->displayAABB = display;
     }
 
+    void draw(GLuint programID) override;
+
     ZombieState getState() const { return static_cast<ZombieState>(m_currentState); }
     void setState(ZombieState newState);
     ZombieState currentState = ZOMBIE_IDLE;

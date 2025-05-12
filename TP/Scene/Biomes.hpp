@@ -112,7 +112,7 @@ class CristalPeaksBiome : public Biome {
     public:
         CristalPeaksBiome(int groundLevel, int seed) : Biome(groundLevel, CRISTALPEAKS_BIOME, seed) {
             amethystNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
-            amethystNoise.SetFrequency(0.05f);
+            amethystNoise.SetFrequency(0.12f);
             amethystNoise.SetSeed(seed);
             amethystNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
             amethystNoise.SetFractalOctaves(1);
