@@ -102,14 +102,19 @@ class Entity : public SceneNode {
     void createAnimationSequence(const std::string& name, const std::vector<std::string>& poseNames, 
                                 const std::vector<float>& durations, bool loop = true);
     void setCurrentSequence(const std::string& sequenceName);
-    virtual void update(float deltaTime);
     void interpolateBetweenPoses(const EntityPose& pose1, const EntityPose& pose2, float factor);
     void updatePoseAnimation(float deltaTime);
+
+    // MOB FUNCTIONS TO SPECCITY TO EACH MOB
     virtual void resolveGravity(float& deltaTime) {};
-    virtual void resolveCollisions(float& deltaTime){};
-    virtual void drawWireframe(GLuint wireframeProgramID) {};
-    virtual void setDisplayAABB(bool display){};
-    virtual void drawBoundingBox(GLuint programID) {};
+    void resolveCollisions(float& deltaTime){};
+    virtual void drawWireframe(GLuint& wireframeProgramID) {};
+    virtual void setDisplayAABB(bool& display) {};
+    virtual void drawBoundingBox(GLuint& programID) {};
     virtual void move(const glm::vec3& direction) {};
+    virtual void updateBoundingBox() {};
+    virtual void drawBoundingBox() {};
+    virtual void update(float& deltaTime){};
+
     Texture* m_texture = nullptr;
 };

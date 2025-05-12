@@ -213,10 +213,10 @@ public:
 
     void addChunkColumn(std::shared_ptr<ChunkColumn> column);
 
-    void spawnEntities(GLuint programID);
-    void spawnZombies(GLuint programID);
-    void updateEntities(float deltaTime);
-    void renderEntities(GLuint programID);
-    void resolveEntityGravity(float deltaTime);
-    void resolveEntityCollisions(float deltaTime);
+    void spawnEntities(GLuint& programID);
+    void spawnZombies(GLuint& programID);
+    void updateEntities(float& deltaTime);
+    void renderEntities(GLuint& programID);
+    void resolveEntityGravity(float& deltaTime);
+    void resolveEntityCollisions(float &deltaTime);
 };

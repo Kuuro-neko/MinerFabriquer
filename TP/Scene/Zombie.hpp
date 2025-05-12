@@ -19,12 +19,13 @@ public:
     Zombie(Transform transform, World* world, Camera* camera);
     ~Zombie();
 
-    void resolveGravity(float &deltaTime) override;    // Notez le passage par référence
-    void move(glm::vec3 direction);
-    void update(float deltaTime) override;
-    void generateZombieMesh(float groundHeight);
-    void updateBoundingBox();
-    void drawBoundingBox();
+    void resolveGravity(float& deltaTime) override;
+    void move(const glm::vec3& direction) override;
+    void update(float& deltaTime) override;
+    void generateZombieMesh(float&  groundHeight);
+    void updateBoundingBox() override;
+    void drawBoundingBox() override;
+
     
     
     glm::vec3 getMinBoundingBox();

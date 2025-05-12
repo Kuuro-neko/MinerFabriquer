@@ -8,7 +8,8 @@ Zombie::Zombie(Transform transform, World* world, Camera* camera) : Entity() {
     m_world = world;
     this->camera = camera;
     m_transform = transform;
-    generateZombieMesh(0.0f);
+    float groundHeight = 0.0F;
+    generateZombieMesh(groundHeight);
     initializeZombieAnimations();
     setState(ZOMBIE_IDLE);
     this->setFPSActive(new bool(true));
@@ -23,7 +24,7 @@ Zombie::~Zombie() {
     }
 }
 
-void Zombie::generateZombieMesh(float groundHeight) {
+void Zombie::generateZombieMesh(float& groundHeight) {
     generateHumanoidMesh(groundHeight);
 
     m_leftArm->rotate(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -37,12 +38,12 @@ void Zombie::generateZombieMesh(float groundHeight) {
     
 }
 
-void Zombie::move(glm::vec3 direction) {
+void Zombie::move(const glm::vec3& direction) {
     translate(direction);
     updateBoundingBox();
 }
 
-void Zombie::update(float deltaTime) {
+void Zombie::update(float& deltaTime) {
     // return;
     updateState(deltaTime);
 

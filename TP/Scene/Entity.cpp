@@ -539,6 +539,3 @@ void Entity::interpolateBetweenPoses(const EntityPose& pose1, const EntityPose& 
     m_rightLeg->updateModelMatrix();
 }
 
-void Entity::update(float deltaTime) {
-    updateAnimation(deltaTime);
-}

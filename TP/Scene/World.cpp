@@ -7,7 +7,6 @@
 #include <unordered_set>
 #include <TP/Scene/Zombie.hpp>
 
-
 #include <chrono>
 #include <iostream>
 
@@ -959,11 +958,11 @@ void World::addChunkColumn(std::shared_ptr<ChunkColumn> column)
     chunkColumns.emplace(column->getChunkCoords(), column);
 }
 
-void World::spawnEntities(GLuint programID)
+void World::spawnEntities(GLuint& programID)
 {
     spawnZombies(programID);
 }
-void World::spawnZombies(GLuint programID)
+void World::spawnZombies(GLuint& programID)
 {
     Zombie *zombie = new Zombie(
         Transform(
@@ -972,47 +971,43 @@ void World::spawnZombies(GLuint programID)
             DEFAULT_SCALE),
         this,
         camera);
-        this->getParent()->addChild(zombie);
-   entities.push_back(std::shared_ptr<Entity>(zombie));
+    this->getParent()->addChild(zombie);
+    entities.push_back(std::shared_ptr<Entity>(zombie));
     // zombie->setWireframeRenderer(programID);
     // zombie->setDisplayAABB(true);
 }
 
-void World::updateEntities(float deltaTime)
+void World::updateEntities(float &deltaTime)
 {
+  
     for (auto &entity : entities)
     {
         entity->update(deltaTime);
-        }
+    }
 }
 
-void World::renderEntities(GLuint programID)
+void World::renderEntities(GLuint &programID)
 {
     for (auto &entity : entities)
     {
         entity->draw(programID);
-
     }
 }
-void World::resolveEntityGravity(float deltaTime)
+void World::resolveEntityGravity(float &deltaTime)
 {
     for (auto &entity : entities)
     {
         entity->resolveGravity(deltaTime);
     }
 }
-void World::resolveEntityCollisions(float deltaTime)
+void World::resolveEntityCollisions(float &deltaTime)
 {
     for (auto &entity : entities)
     {
         // entity->resolveCollisions(deltaTime); //TODO A FAIRE + TARD car code horrible, met cette fonction dans le zombie dans Zombie et non dans world
         if (auto zombie = dynamic_cast<Zombie *>(entity.get()))
         {
-            std::cout << "Resolving collisions for zombie at: " << zombie->getWorldPosition().x << ", "
-                      << zombie->getWorldPosition().y << ", "
-                      << zombie->getWorldPosition().z << std::endl;
             resolveCollisions(*zombie, this);
         }
-       
     }
 }
