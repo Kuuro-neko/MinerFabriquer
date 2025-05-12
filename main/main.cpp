@@ -279,7 +279,7 @@ int main(void) {
 
 
 
-    world.spawnEntities();
+    world.spawnEntities(wireframeProgramID);
 
     // After creating the zombie in main.cpp, add:
 
@@ -353,7 +353,7 @@ int main(void) {
 
         world.resolveCollisions(character, &world);
         character.resolveGravity(deltaTime);
-        world.renderEntities(programID);
+        world.renderEntities( wireframeProgramID);
         world.resolveEntityGravity(deltaTime);
         world.resolveEntityCollisions(deltaTime);
         world.updateEntities(deltaTime);

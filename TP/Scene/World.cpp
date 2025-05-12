@@ -6,7 +6,7 @@
 #include "World.hpp"
 #include <unordered_set>
 #include <TP/Scene/Zombie.hpp>
-#include <> 
+
 
 #include <chrono>
 #include <iostream>
@@ -959,11 +959,11 @@ void World::addChunkColumn(std::shared_ptr<ChunkColumn> column)
     chunkColumns.emplace(column->getChunkCoords(), column);
 }
 
-void World::spawnEntities()
+void World::spawnEntities(GLuint programID)
 {
-    spawnZombies();
+    spawnZombies(programID);
 }
-void World::spawnZombies()
+void World::spawnZombies(GLuint programID)
 {
     Zombie *zombie = new Zombie(
         Transform(
@@ -972,14 +972,14 @@ void World::spawnZombies()
             DEFAULT_SCALE),
         this,
         camera);
-    PBRTexture *zombieTexture = new PBRTexture("../textures/zombie/zombie.png",
-                                               "../textures/zombie/zombie_normal.png",
-                                               "../textures/zombie/zombie_roughness.png",
-                                               "../textures/zombie/zombie_metallic.png");
-
+        this->getParent()->addChild(zombie);
+    Texture *zombieTexture = new Texture("../textures/zombie.png");
+    zombie->setTexture(zombieTexture);
     std::cout << camera->getPosition().x << ", " << camera->getPosition().y << ", " << camera->getPosition().z << std::endl;
     entities.push_back(std::shared_ptr<Entity>(zombie));
     std::cout << "Zombie added to world." << std::endl;
+    zombie->setWireframeRenderer(programID);
+    zombie->setDisplayAABB(true);
 }
 
 void World::updateEntities(float deltaTime)
@@ -998,8 +998,6 @@ void World::renderEntities(GLuint programID)
                   << entity->getWorldPosition().y << ", "
                   << entity->getWorldPosition().z << std::endl;
         entity->draw(programID);
-        // entity->drawWireframe(programID);
-        // entity->drawBoundingBox(programID);
 
     }
 }
