@@ -209,6 +209,10 @@ void IceBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, int
             chunk->generationSetBloc(x, localY, z, blockType);
         }
     }
+
+    if (baseHeight < WATER_LEVEL-1) {
+        chunk->generationSetBloc(x, WATER_LEVEL-1, z, ICE);
+    }
 }
 
 void IceBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
@@ -438,7 +442,8 @@ void TropicalBeachBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, 
 void TropicalBeachBiome::decorate(std::shared_ptr<VoxelChunk> chunk, int x, int z, int baseHeight)
 {
     //if (chunk->getBloc(x, baseHeight, z) != SAND) return;
-    if (chunk->getBloc(x, baseHeight+2, z) != AIR) return;
+    if (chunk->getBloc(x, baseHeight+1, z) != AIR) return;
+    if (baseHeight < GROUND_LEVEL) return;
 
     if (getRandomFloat() < 0.9985f) return;
 
@@ -482,12 +487,10 @@ void FrozenBeachBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, in
             chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
         }
     }
-    if (blocAbove == WATER || bloc == WATER) {
-        chunk->generationSetBloc(x, WATER_LEVEL - 1 - worldAABBMin.y, z, ICE);
-        for (int y = 1; y < 3; y++) {
-            chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
+    if (baseHeight < WATER_LEVEL) {
+        if (iceNoise.GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) > -0.4f) {
+            chunk->generationSetBloc(x, WATER_LEVEL-1, z, ICE);
         }
-
     }
 }
 
@@ -510,14 +513,10 @@ void FrozenOceanBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, in
             chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
         }
     }
-    if (blocAbove == WATER || bloc == WATER) {
+    if (baseHeight < WATER_LEVEL) {
         if (iceNoise.GetNoise((float) x + worldAABBMin.x,(float) z + worldAABBMin.z) > -0.4f) {
-            chunk->generationSetBloc(x, WATER_LEVEL - 1 - worldAABBMin.y, z, ICE);
+            chunk->generationSetBloc(x, WATER_LEVEL-1, z, ICE);
         }
-        for (int y = 1; y < 3; y++) {
-            chunk->generationSetBloc(x, baseHeight - y - worldAABBMin.y, z, SAND);
-        }
-
     }
 }
 
@@ -546,6 +545,10 @@ void TaigaBiome::applySurface(std::shared_ptr<VoxelChunk> chunk, int x, int z, i
             int b = (depth == 0) ? PODZOL : DIRT;
             chunk->generationSetBloc(x, localY, z, b);
         }
+    }
+
+    if (baseHeight < WATER_LEVEL) {
+        chunk->generationSetBloc(x, WATER_LEVEL-1, z, ICE);
     }
 }
 
