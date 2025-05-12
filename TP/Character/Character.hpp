@@ -15,7 +15,7 @@
 #include "vector"
 #include <TP/GUI/HUD.hpp>
 #include <Defines.hpp>
-#include "TP/Scene/HumanoidEntity.hpp" 
+#include "../Entities/HumanoidEntity.hpp" 
 
 class Character : public SceneNode {
 

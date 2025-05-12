@@ -9,13 +9,13 @@
 #include "TP/Character/Character.hpp"
 #include "TP/Menu/Menu.hpp"
 #include <TP/GUI/Crosshair.hpp>
-#include <TP/Scene/Entity.hpp>
+#include <TP/Entities/Entity.hpp>
 #include <TP/Scene/Clouds.hpp>
 #include <TP/GUI/HUD.hpp>
 #include <TP/FileSystem/SaveManager.hpp>
 #include <Defines.hpp>
 #include <TP/Scene/WorldGenerator.hpp>
-#include "../TP/Scene/HumanoidEntity.hpp"
+#include "../TP/Entities/HumanoidEntity.hpp"
 #include <TP/Textures/TextureManager.hpp>
 
 GLFWwindow *window;

@@ -91,10 +91,10 @@ add_executable(MinerFabriquer
         TP/Scene/ChunkColumn.hpp
         TP/Scene/Clouds.cpp
         TP/Scene/Clouds.hpp
-        TP/Scene/Entity.hpp
-        TP/Scene/Entity.cpp
-        TP/Scene/Zombie.hpp
-        TP/Scene/Zombie.cpp
+        TP/Entities/Entity.hpp
+        TP/Entities/Entity.cpp
+        TP/Entities/Zombie.hpp
+        TP/Entities/Zombie.cpp
         TP/Input/KeyInput.cpp
         TP/Input/KeyInput.hpp
         TP/Input/KeyBinds.hpp
@@ -107,9 +107,9 @@ add_executable(MinerFabriquer
         TP/FileSystem/SaveManager.hpp
         TP/Menu/Menu.cpp
         TP/Menu/Menu.hpp
-        TP/Scene/HumanoidEntity.hpp
-        TP/Scene/HumanoidEntity.cpp
-        TP/Scene/HumanoidPose.hpp
+        TP/Entities/HumanoidEntity.hpp
+        TP/Entities/HumanoidEntity.cpp
+        TP/Entities/HumanoidPose.hpp
 
 )
 target_link_libraries(MinerFabriquer

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "World.hpp"
 #include <unordered_set>
-#include <TP/Scene/Zombie.hpp>
+#include <TP/Entities/Zombie.hpp>
 #include <TP/Textures/TextureManager.hpp>
 
 #include <chrono>

@@ -11,7 +11,7 @@
 #include <functional>
 
 #include <TP/Scene/ChunkColumn.hpp>
-#include <TP/Scene/Entity.hpp>
+#include <TP/Entities/Entity.hpp>
 
 
 
