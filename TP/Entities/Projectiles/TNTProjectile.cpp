@@ -5,7 +5,7 @@
 TNTProjectile::TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID)
     : Projectile(position, velocity * TNT_PROJ_SPEED, radius, TNT_PROJ_SPEED, world, programID)
 {
-    generateTNTMesh();
+    generateMesh();
 }
 
 TNTProjectile::~TNTProjectile()
@@ -35,7 +35,7 @@ void TNTProjectile::explode(int x, int y, int z)
     m_world->removeTNT(this);
 }
 
-void TNTProjectile::generateTNTMesh()
+void TNTProjectile::generateMesh()
 {
     BlockData *tntData = BlocDatabase::getInstance().getBloc(TNT);
     m_tntMesh = std::make_shared<VoxelMeshObject>();

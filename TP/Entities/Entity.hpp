@@ -47,6 +47,8 @@ public:
     inline void setIsFPS(bool *FPSActive) { this->FPSActive = FPSActive; }
     void setFPSActive(bool *attached);
     bool isFPSActive();
+
+    virtual void generateMesh() {};
     
     PBRTexture* m_pbr_texture = nullptr;
 protected:

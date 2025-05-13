@@ -18,7 +18,7 @@ public:
     virtual ~TNTProjectile() override;
 
     void explode(int x, int y, int z);
-    void generateTNTMesh();
+    void generateMesh() override;
 
     // Overridden methods from Projectile
     void draw(GLuint programID) override;

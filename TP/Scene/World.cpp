@@ -734,9 +734,9 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 
 void World::update(float deltaTime)
 {
-    for (auto &tnt : projectiles)
+    for (auto &projectile : projectiles)
     {
-        tnt->update(deltaTime);
+        projectile->update(deltaTime);
     }
     if (doDaylightCycle)
         time += deltaTime;

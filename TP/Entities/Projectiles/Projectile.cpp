@@ -153,3 +153,8 @@ glm::vec3 Projectile::getMaxBoundingBox()
 {
     return m_AABBmax;
 }
+
+void Projectile::generateMesh()
+{
+    // Default behavior - to be overridden by derived classes
+}

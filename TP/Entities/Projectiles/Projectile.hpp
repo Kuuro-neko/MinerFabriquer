@@ -36,7 +36,7 @@ public:
     virtual void update(float deltaTime);
     virtual void onCollision(const glm::vec3 &collisionNormal);
     virtual void onExpire(); // Called when time to live expires
-
+    virtual void generateMesh(); // Pure virtual
     // Bounding box methods
     virtual void updateBoundingBox() override;
     virtual glm::vec3 getMinBoundingBox() override;

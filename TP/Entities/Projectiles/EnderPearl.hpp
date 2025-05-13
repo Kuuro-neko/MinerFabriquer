@@ -14,13 +14,13 @@
 // EnderPearl(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID);
 //     virtual ~EnderPearl() override;
 
-//     // void teleport(int x, int y, int z);
-//     // void generateEnderPearlMesh();
+//     void teleport(int x, int y, int z);
+//     void generateEnderPearlMesh();
 
-//     // // Overridden methods from Projectile
-//     // void draw(GLuint programID) override;
-//     // void onExpire() override;
-//     // void clear() override;
+//     // Overridden methods from Projectile
+//     void draw(GLuint programID) override;
+//     void onExpire() override;
+//     void clear() override;
 
 
 

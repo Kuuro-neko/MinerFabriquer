@@ -6,7 +6,7 @@
 // EnderPearl::EnderPearl(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID)
 //     : Projectile(position, velocity * ENDERPEARL_PROJ_SPEED, radius, ENDERPEARL_PROJ_SPEED, world, programID)
 // {
-//     //generateEnderPearlMesh();
+//     generateEnderPearlMesh();
 // }
 
 // EnderPearl::~EnderPearl()
@@ -14,3 +14,4 @@
 //     clear();
 // }
 
+// void EnderPearl::generated
