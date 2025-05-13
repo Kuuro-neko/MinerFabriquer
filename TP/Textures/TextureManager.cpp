@@ -1,4 +1,5 @@
 #include <TP/Textures/TextureManager.hpp>
+#include "TextureManager.hpp"
 
 TextureManager::TextureManager() {
     addPBRTexture("blocks", new PBRTexture("../textures/blocks/texture_atlas_x32.png",

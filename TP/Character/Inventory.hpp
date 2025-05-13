@@ -35,14 +35,13 @@ public:
                 return;
             }
         }
-        if (items.size() >= inventorySize) {
-            std::cout << "Inventory is full!" << std::endl;
-            return;
+        for (auto& stack : items) {
+            if (stack.getItemId() == AIR) {
+                stack = itemStack;
+                return;
+            }
         }
-        items.push_back(itemStack);
-        if (items.size() == 1) {
-            selectedItem = 0;
-        }
+        std::cout << "Inventory is full, cannot add item: " << itemStack.getItemName() << std::endl;
     }
     void removeItem(int itemId, int quantity) {
         for (auto& stack : items) {
