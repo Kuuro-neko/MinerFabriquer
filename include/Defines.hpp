@@ -120,6 +120,10 @@
 #define FACE_TOP 16
 #define FACE_BOTTOM 32
 
+// ===== Item database ===== //
+
+#define ENDER_PEARL 0
+
 // ===== Biomes ===== //
 
 #define PLAINS_BIOME 0

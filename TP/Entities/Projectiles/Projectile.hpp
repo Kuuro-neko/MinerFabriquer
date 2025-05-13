@@ -63,4 +63,5 @@ protected:
     bool checkCollisions(float deltaTime, glm::vec3 &outCollisionNormal);
     bool isExpired() const { return m_time >= m_timeToLive; }
     void addBlockToMesh(int blockType);
+    void addBillBoardToMesh(int itemType);
 };
