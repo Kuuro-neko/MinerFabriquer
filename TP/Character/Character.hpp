@@ -57,7 +57,7 @@ public:
     void resolveGravity(float &deltaTime);
     bool isInWater = false;
 
-    void setHUD(HUD* hud) { m_hud = hud; }
+    void setHUD(HUD* hud);
     int isHUDVisible();
 
     void setGamemode(unsigned char gamemode)

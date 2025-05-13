@@ -44,6 +44,11 @@ void Character::move(glm::vec3 direction)
     camera->setPosition(getWorldPosition() + CAMERA_POSITION_RELATIVE_TO_PLAYER);
 }
 
+void Character::setHUD(HUD* hud) {
+    m_hud = hud;
+    m_hud->getBarre()->setInventory(inventory);
+}
+
 /**
  * \brief fonction qui réalise les actions en fonction de la touche détectée
  * @param key

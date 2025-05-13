@@ -78,7 +78,7 @@ void Barre::render() {
     for (int i = 0; i < slots.size(); ++i) {
         glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(slots[i][0], slots[i][1], 0.0f));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
-        glUniform1i(isSelectedUniform, i == m_selectedSlot ? 1 : 0);
+        glUniform1i(isSelectedUniform, i == inventory->getSelectedIndex() ? 1 : 0);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
