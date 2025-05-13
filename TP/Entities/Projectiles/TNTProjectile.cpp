@@ -93,6 +93,11 @@ void TNTProjectile::update(float deltaTime)
     // Check for collisions with blocks
     glm::vec3 minBB = getMinBoundingBox();
     glm::vec3 maxBB = getMaxBoundingBox();
+    
+    // Store the original velocity for reflection calculations
+    glm::vec3 originalVelocity = m_velocity;
+    bool hasCollided = false;
+    glm::vec3 collisionNormal(0.0f);
 
     for (int x = static_cast<int>(std::floor(minBB.x)); x <= static_cast<int>(std::floor(maxBB.x)); ++x)
     {
@@ -104,10 +109,10 @@ void TNTProjectile::update(float deltaTime)
 
                 if (blockId != AIR && blockId != WATER)
                 {
-                    // correction de la velocite
                     glm::vec3 blockPosition = glm::vec3(x, y, z);
                     glm::vec3 blockMin = blockPosition;
                     glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
+                    
                     // Check if the bounding box of the TNT intersects with the block
                     if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
                         maxBB.y > blockMin.y && minBB.y < blockMax.y &&
@@ -118,44 +123,52 @@ void TNTProjectile::update(float deltaTime)
                         float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
                         float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
 
-                        // Determine the axis with the smallest depth of collision
+                        // Determine collision normal based on the smallest overlap
+                        hasCollided = true;
+                        
                         if (overlapX < overlapY && overlapX < overlapZ)
-                        { // X axis
-                            if (m_velocity.x > 0 && getWorldPosition().x < blockPosition.x)
-                            {
-                                m_velocity.x = 0; // Block movement to the right
-                            }
-                            else if (m_velocity.x < 0 && getWorldPosition().x > blockPosition.x)
-                            {
-                                m_velocity.x = 0; // Block movement to the left
+                        { // X axis collision
+                            float centerX = getWorldPosition().x + m_radius/2;
+                            if (centerX < blockPosition.x) {
+                                collisionNormal += glm::vec3(-1, 0, 0); // Left collision
+                            } else {
+                                collisionNormal += glm::vec3(1, 0, 0);  // Right collision
                             }
                         }
                         else if (overlapY < overlapX && overlapY < overlapZ)
-                        { // Y axis
-                            if (m_velocity.y > 0 && getWorldPosition().y < blockPosition.y)
-                            {
-                                m_velocity.y = 0; // Block movement up
-                            }
-                            else if (m_velocity.y < 0 && getWorldPosition().y > blockPosition.y)
-                            {
-                                m_velocity.y = 0; // Block movement down
+                        { // Y axis collision
+                            float centerY = getWorldPosition().y + m_radius/2;
+                            if (centerY < blockPosition.y) {
+                                collisionNormal += glm::vec3(0, -1, 0); // Bottom collision
+                            } else {
+                                collisionNormal += glm::vec3(0, 1, 0);  // Top collision
                             }
                         }
                         else
-                        { // Z axis
-                            if (m_velocity.z > 0 && getWorldPosition().z < blockPosition.z)
-                            {
-                                m_velocity.z = 0; // Block movement forward
-                            }
-                            else if (m_velocity.z < 0 && getWorldPosition().z > blockPosition.z)
-                            {
-                                m_velocity.z = 0; // Block movement backward
+                        { // Z axis collision
+                            float centerZ = getWorldPosition().z + m_radius/2;
+                            if (centerZ < blockPosition.z) {
+                                collisionNormal += glm::vec3(0, 0, -1); // Back collision
+                            } else {
+                                collisionNormal += glm::vec3(0, 0, 1);  // Front collision
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    // Apply bounce physics if there was a collision
+    if (hasCollided && glm::length(collisionNormal) > 0) {
+        // Normalize the collision normal
+        collisionNormal = glm::normalize(collisionNormal);
+        float bounceFactor = 0.4f;
+        //  v' = v - 2 * dot(v, n) * n
+        float dotProduct = glm::dot(originalVelocity, collisionNormal);
+        m_velocity = originalVelocity - (1.0f + bounceFactor) * dotProduct * collisionNormal;
+        
+        m_velocity *= 0.9f; // energy loss
     }
 }
 
