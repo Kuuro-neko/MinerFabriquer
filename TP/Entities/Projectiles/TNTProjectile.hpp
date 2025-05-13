@@ -22,5 +22,5 @@ public:
     void draw(GLuint programID) override;
     void onExpire() override;
     void clear() override;
-    // Deliberately NOT overriding onCollision to preserve bouncing behavior
+
 };
