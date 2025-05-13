@@ -252,3 +252,9 @@ const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 // ===== TNT Projectile ===== //
 #define TNT_PROJ_SPEED 10.0f
 #define TNT_EXPLOSION_RADIUS 5.0f
+
+// ===== Ender Pearl ===== //
+#define ENDERPEARL_PROJ_SPEED 10.0f
+#define ENDERPEARL_TELEPORT_RADIUS 32.0f
+#define ENDERPEARL_TELEPORT_HEIGHT 2.0f
+#define ENDERPEARL_TELEPORT_COOLDOWN 0.5f

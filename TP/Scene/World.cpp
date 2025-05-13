@@ -734,7 +734,7 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 
 void World::update(float deltaTime)
 {
-    for (auto &tnt : tntProjectiles)
+    for (auto &tnt : projectiles)
     {
         tnt->update(deltaTime);
     }
@@ -986,17 +986,17 @@ void World::spawnEntities()
 void World::spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID)
 {
     TNTProjectile* tnt = new TNTProjectile(pos, vel, 0.9f, this, programID);
-    tntProjectiles.push_back(tnt);
+    projectiles.push_back(tnt);
     getParent()->addChild(tnt);
 }
 
 void World::removeTNT(TNTProjectile* tnt)
 {
-    auto it = std::find(tntProjectiles.begin(), tntProjectiles.end(), tnt);
-    if (it != tntProjectiles.end())
+    auto it = std::find(projectiles.begin(), projectiles.end(), tnt);
+    if (it != projectiles.end())
     {
         getParent()->removeChild(tnt);
-        tntProjectiles.erase(it);
+        projectiles.erase(it);
     }
 }
 

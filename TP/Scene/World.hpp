@@ -29,6 +29,7 @@
 class Character;
 class Zombie;
 class MobSpawner;
+class Projectile;
 class TNTProjectile;
 
 struct IVec2Hash {
@@ -73,7 +74,7 @@ private:
     std::atomic<bool> workerThreadRunning = true;
 
     std::vector<std::shared_ptr<Entity>> entities;
-    std::vector<TNTProjectile *> tntProjectiles;
+    std::vector<Projectile *> projectiles;
 
     MobSpawner *m_mobSpawner;
 

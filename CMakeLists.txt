@@ -116,6 +116,8 @@ add_executable(MinerFabriquer
         TP/Entities/Projectiles/Projectile.cpp
         TP/Entities/Projectiles/TNTProjectile.cpp
         TP/Entities/Projectiles/TNTProjectile.hpp
+        TP/Entities/Projectiles/EnderPearl.cpp
+        TP/Entities/Projectiles/EnderPearl.hpp
 
 )
 target_link_libraries(MinerFabriquer

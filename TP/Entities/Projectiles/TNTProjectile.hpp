@@ -5,14 +5,7 @@
 #include <TP/Scene/World.hpp>
 #include <memory>
 
-// Assuming these constants are defined elsewhere
-#ifndef TNT_EXPLOSION_RADIUS
-#define TNT_EXPLOSION_RADIUS 3.0f
-#endif
 
-#ifndef TNT_PROJ_SPEED
-#define TNT_PROJ_SPEED 10.0f
-#endif
 
 class TNTProjectile : public Projectile
 {
