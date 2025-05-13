@@ -6,3 +6,4 @@ main/MinerFabriquer
 Devtools/*
 !Devtools/build.sh
 /saves/*
+!saves/.gitkeep
