@@ -226,6 +226,8 @@ std::shared_ptr<VoxelChunk> World::getChunk(int x, int y, int z)
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode)
 {
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
+    if(!chunk)
+        return -1;
     std::shared_ptr<ChunkColumn> column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column)
         return -1;
@@ -268,6 +270,8 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode)
 int World::removeBlock(int x, int y, int z)
 {
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
+    if(!chunk)
+        return -1;
     std::shared_ptr<ChunkColumn> column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column)
         return -1;

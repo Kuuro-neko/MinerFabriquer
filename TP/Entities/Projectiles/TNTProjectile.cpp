@@ -35,7 +35,7 @@ void TNTProjectile::explode(int x, int y, int z)
                 float dist = std::sqrt(i * i + j * j + k * k);
                 if (dist > m_explosionRadius)
                     continue;
-                m_world->removeBlock(x + i, y + j, z + k);
+                m_world->playerRemoveBlock(x + i, y + j, z + k, GAMEMODE_SURVIVAL);
             }
         }
     }
