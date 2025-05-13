@@ -17,10 +17,23 @@
 #include <TP/Scene/WorldGenerator.hpp>
 #include "../TP/Entities/HumanoidEntity.hpp"
 #include <TP/Textures/TextureManager.hpp>
-#include <TP/Scene/ItemTypes.hpp>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/ItemTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 
 GLFWwindow *window;
+
+#include <unistd.h>
+#include <iostream>
+#include <limits.h>
+
+void printWorkingDirectory() {
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) != nullptr) {
+        std::cout << "Current working directory: " << cwd << std::endl;
+    } else {
+        perror("getcwd() error");
+    }
+}
 
 using namespace std;
 using namespace glm;
@@ -72,6 +85,7 @@ void UpdateFPS() {
 }
 
 int main(void) {
+    printWorkingDirectory();
     Menu menu;
     SaveManager &saveManager = SaveManager::getInstance();
 

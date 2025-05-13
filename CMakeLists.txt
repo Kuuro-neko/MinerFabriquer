@@ -67,8 +67,8 @@ add_executable(MinerFabriquer
         TP/Camera/Camera.cpp
         TP/Camera/Camera_Helper.cpp
         TP/Scene/SceneNode.cpp
-        TP/Scene/BlocTypes.cpp
-        TP/Scene/ItemTypes.cpp
+        TP/Database/BlocTypes.cpp
+        TP/Database/ItemTypes.cpp
         TP/Textures/Texture.cpp
         TP/Textures/TextureManager.cpp
         TP/Scene/MeshObject.cpp
@@ -142,6 +142,7 @@ if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode")
     add_custom_command(
             TARGET MinerFabriquer POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/main/"
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/database
             COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TP1${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_SOURCE_DIR}/main/"
     )
     add_custom_command(
@@ -149,6 +150,9 @@ if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode")
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_SOURCE_DIR}/database/Blocs.csv
             ${CMAKE_BINARY_DIR}/database/Blocs.csv
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/database/Items.csv
+            ${CMAKE_BINARY_DIR}/database/Items.csv
     )
 elseif (${CMAKE_GENERATOR} MATCHES "Xcode")
 

@@ -1,5 +1,5 @@
 #include <TP/Scene/Biomes.hpp>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <algorithm>
 #include "Biomes.hpp"
 #include <random>

@@ -1,4 +1,4 @@
-#include <TP/Scene/ItemTypes.hpp>
+#include <TP/Database/ItemTypes.hpp>
 #include <vector>
 
 std::pair<float, float> ItemData::getTexCoords(unsigned char side) {

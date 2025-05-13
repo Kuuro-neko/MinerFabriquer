@@ -1,6 +1,6 @@
 #include "EnderPearl.hpp"
 #include <utils/GLUtils.hpp>
-#include "TP/Scene/BlocTypes.hpp"
+#include "../../Database/BlocTypes.hpp"
 #include <TP/Scene/World.hpp>
 
 EnderPearl::EnderPearl(Character *character, glm::vec3 velocity, float radius, World *world, GLuint programID)

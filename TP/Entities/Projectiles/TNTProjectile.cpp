@@ -1,5 +1,5 @@
 #include "TNTProjectile.hpp"
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <utils/GLUtils.hpp>
 
 TNTProjectile::TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID)

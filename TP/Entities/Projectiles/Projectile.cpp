@@ -1,5 +1,5 @@
 #include "Projectile.hpp"
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <utils/GLUtils.hpp>
 
 Projectile::Projectile(glm::vec3 position, glm::vec3 velocity, float radius,

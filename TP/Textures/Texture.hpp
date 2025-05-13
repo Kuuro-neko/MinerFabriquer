@@ -2,7 +2,7 @@
 
 #include <stb_image.h>
 #include <GL/glew.h>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <TP/Camera/Camera.hpp>
 
 #define DONT_INCREMENT_BINDING 0
