@@ -17,8 +17,23 @@
 #include <TP/Scene/WorldGenerator.hpp>
 #include "../TP/Entities/HumanoidEntity.hpp"
 #include <TP/Textures/TextureManager.hpp>
+#include <TP/Database/ItemTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 
 GLFWwindow *window;
+
+#include <unistd.h>
+#include <iostream>
+#include <limits.h>
+
+void printWorkingDirectory() {
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) != nullptr) {
+        std::cout << "Current working directory: " << cwd << std::endl;
+    } else {
+        perror("getcwd() error");
+    }
+}
 
 using namespace std;
 using namespace glm;
@@ -70,6 +85,7 @@ void UpdateFPS() {
 }
 
 int main(void) {
+    printWorkingDirectory();
     Menu menu;
     SaveManager &saveManager = SaveManager::getInstance();
 
@@ -122,7 +138,8 @@ int main(void) {
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSwapInterval(0);
+    //glfwSwapInterval(0);
+    
     // Hide the mouse and enable unlimited mouvement
     //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -266,6 +283,9 @@ int main(void) {
     saveManager.saveSeedFile();
     world->startWorkerThread();
 
+    BlocDatabase::getInstance();
+    ItemDatabase::getInstance();
+
     // Associer le monde au personnage
     character->m_world = world;
 
@@ -285,6 +305,8 @@ int main(void) {
 
     Texture cloudTex = Texture("../textures/clouds.png");
     Clouds clouds = Clouds(cloudTex, 0.0005f, cloudsProgramID);
+
+    world->spawnEntities();
 
 
 /*     Entity* Mr_Vincell = new Entity();
@@ -387,7 +409,7 @@ int main(void) {
 
         glUseProgram(programID);
 
-
+        
 
         root.draw(programID);
 
@@ -407,6 +429,14 @@ int main(void) {
         }
         if (characterInputManager.isKeybindPressed({Keybinds::getInstance().spawnEntities})) {
             world->spawnEntities();
+        }
+        if (characterInputManager.isKeybindPressed({Keybinds::getInstance().fireTNT})) {
+            world->spawnTNT(camera.getPosition(), camera.getFront(), programID);
+        }
+        if (characterInputManager.isKeybindPressed({Keybinds::getInstance().fireEnderPearl}))
+        {
+            std::cout << "Ender pearl fired" << std::endl;
+            world->spawnEnderPearl(character, camera.getFront(), programID);
         }
 
         character->drawBoundingBox();

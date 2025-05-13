@@ -2,7 +2,7 @@
 #include "GLUtils.hpp"
 #include <vector>
 #include <glm/glm.hpp>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <Defines.hpp>
 
 /**
@@ -42,10 +42,10 @@ void addQuadToTriangles(std::vector<unsigned short> &triangles, int vertexInsert
  * @param texCoords 
  */
 void addUvs(std::vector<glm::vec2> &uvs, std::pair<float, float> texCoords) {
-    uvs.push_back(glm::vec2(texCoords.first, texCoords.second + TEXTUREATLAS_COORD_UNIT_X32));
     uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_COORD_UNIT_X32, texCoords.second + TEXTUREATLAS_COORD_UNIT_X32));
-    uvs.push_back(glm::vec2(texCoords.first, texCoords.second));
+    uvs.push_back(glm::vec2(texCoords.first, texCoords.second + TEXTUREATLAS_COORD_UNIT_X32));
     uvs.push_back(glm::vec2(texCoords.first + TEXTUREATLAS_COORD_UNIT_X32, texCoords.second));
+    uvs.push_back(glm::vec2(texCoords.first, texCoords.second));
 }
 
 void addNormals(std::vector<glm::vec3> &normals, unsigned char face) {

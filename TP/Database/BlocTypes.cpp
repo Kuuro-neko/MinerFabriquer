@@ -1,4 +1,4 @@
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <vector>
 
 std::pair<float, float> BlockData::getTexCoords(unsigned char side) {

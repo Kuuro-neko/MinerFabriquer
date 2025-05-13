@@ -33,6 +33,11 @@ public:
 
     glm::quat getRotation() const { return m_rotation; }
 
+    glm::vec3 getFront() const {
+        // Transform the forward vector (0,0,-1) by the camera's rotation quaternion
+        return glm::rotate(m_rotation, VEC_FRONT);
+    }
+
     //View
     glm::mat4 m_viewMatrix;
     glm::mat4 m_projectionMatrix;

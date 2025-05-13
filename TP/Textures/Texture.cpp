@@ -1,5 +1,5 @@
 #include <TP/Textures/Texture.hpp>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <external/stb_image/stb_image.h>
 #include "Texture.hpp"
 

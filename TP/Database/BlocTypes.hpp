@@ -7,8 +7,6 @@
 
 #include <Defines.hpp>
 
-#define TEXTUREATLAS_UNIT 0.06250f
-
 /**
  * @brief Class representing a block data
  * 
@@ -17,12 +15,12 @@ class BlockData {
 public:
     int id = 255;
     std::string name = "Error";
-    float xTexSide = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the side texture
-    float yTexSide = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the side texture
-    float xTexTop = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the top texture
-    float yTexTop = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the top texture
-    float xTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.x coordinate for the bottom texture
-    float yTexBottom = 15.0f * TEXTUREATLAS_UNIT; // UV.y coordinate for the bottom texture
+    float xTexSide = 15.0f * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32; // UV.x coordinate for the side texture
+    float yTexSide = 15.0f * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32; // UV.y coordinate for the side texture
+    float xTexTop = 15.0f * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32; // UV.x coordinate for the top texture
+    float yTexTop = 15.0f * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32; // UV.y coordinate for the top texture
+    float xTexBottom = 15.0f * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32; // UV.x coordinate for the bottom texture
+    float yTexBottom = 15.0f * (TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32) + TEXTUREATLAS_COORD_UNIT_OFFSET_X32; // UV.y coordinate for the bottom texture
     float opaque = 1.0f; // Opacity of the block (1.0f = opaque, 0.0f = transparent)
     float solid = 1.0f; // True if the block is solid (can be walked on)
     bool breakable = false; // True if the block can be broken in survival

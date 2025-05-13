@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <TP/Textures/Texture.hpp>
 #include <TP/Scene/MeshObject.hpp>
 #include <iostream>

@@ -442,13 +442,16 @@ void VoxelChunk::generateMesh()
 }
 
 int VoxelChunk::drawOpaque(GLuint programID) {
-    if (dirty) generateMesh();
+    if (dirty && m_world->meshesGenerated < m_world->maxMeshPerFrame) {
+        generateMesh();
+        m_world->meshesGenerated++;
+    }
     if (m_opaqueMesh->vertices.size() == 0) return 0;
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
 
     // TextureAtlas::getInstance().bind(programID);
-    PBRTextureAtlas::getInstance().bind(programID);
+    TextureManager::getInstance().getPBRTexture("blocks")->bind(programID);
     m_opaqueMesh->draw(programID);
 
     return 1;
@@ -460,7 +463,7 @@ void VoxelChunk::drawTransparent(GLuint programID) {
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
 
     // TextureAtlas::getInstance().bind(programID);
-    PBRTextureAtlas::getInstance().bind(programID);
+    TextureManager::getInstance().getPBRTexture("blocks")->bind(programID);
     m_transparentMesh->draw(programID);
 }
 

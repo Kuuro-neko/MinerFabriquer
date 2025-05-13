@@ -13,7 +13,7 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()) {
     caveNoise2.SetSeed(seed);
 
     // Noise for ores
-    oreNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+    oreNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     oreNoise.SetFrequency(0.7f);
     oreNoise.SetSeed(seed);
 
@@ -36,6 +36,7 @@ WorldGenerator::WorldGenerator() : rng(std::random_device{}()) {
     biomeManager.addBiome(std::make_unique<FrozenOceanBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<TaigaBiome>(groundLevel, seed));
     biomeManager.addBiome(std::make_unique<MesaBiome>(groundLevel, seed));
+    biomeManager.addBiome(std::make_unique<TropicalBeachBiome>(groundLevel, seed));
 }
 
 void WorldGenerator::setSeed(std::string seed)
@@ -119,11 +120,28 @@ void WorldGenerator::generateTerrain(std::shared_ptr<VoxelChunk> chunk, int i, i
             // Generate ores in stone blocs
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 if (chunk->getBloc(x, y, z) == STONE) { // Replaces only stone
-                    float oreNoiseValue = oreNoise.GetNoise((float) x + i * CHUNK_SIZE,
-                                                            (float) y + j * CHUNK_SIZE,
-                                                            (float) z + k * CHUNK_SIZE);
+                    float wX = x + i * CHUNK_SIZE;
+                    float wY = y + j * CHUNK_SIZE;
+                    float wZ = z + k * CHUNK_SIZE;
+                    float oreNoiseValue = oreNoise.GetNoise(wX, wY, wZ);
                     if (oreNoiseValue > IRON_THRESHOLD) {
                         chunk->generationSetBloc(x, y, z, IRON_ORE);
+                    }
+                    oreNoiseValue = oreNoise.GetNoise(wX + 100, wY + 100, wZ + 100);
+                    if (oreNoiseValue > COAL_THRESHOLD) {
+                        chunk->generationSetBloc(x, y, z, COAL_ORE);
+                    }
+                    oreNoiseValue = oreNoise.GetNoise(wX + 200, wY + 200, wZ + 200);
+                    if (oreNoiseValue > GOLD_THRESHOLD) {
+                        chunk->generationSetBloc(x, y, z, GOLD_ORE);
+                    }
+                    oreNoiseValue = oreNoise.GetNoise(wX + 300, wY + 300, wZ + 300);
+                    if (oreNoiseValue > DIAMOND_THRESHOLD) {
+                        chunk->generationSetBloc(x, y, z, DIAMOND_ORE);
+                    }
+                    oreNoiseValue = oreNoise.GetNoise(wX + 400, wY + 400, wZ + 400);
+                    if (oreNoiseValue > EMERALD_THRESHOLD) {
+                        chunk->generationSetBloc(x, y, z, EMERALD_ORE);
                     }
                 }
             }

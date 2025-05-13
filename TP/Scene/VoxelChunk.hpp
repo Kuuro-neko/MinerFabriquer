@@ -1,8 +1,9 @@
 #pragma once
 
 #include <TP/Scene/SceneNode.hpp>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <common/fastNoiseLit.h>
+#include <TP/Textures/TextureManager.hpp>
 
 #include <Defines.hpp>
 
@@ -115,6 +116,11 @@ public:
     VoxelChunk& operator=(const VoxelChunk& other) = delete;
 
     void setLightLevel(int x, int y, int z, unsigned char lightLevel);
+
+    int8_t entitiesNumber = 0;
+    inline int8_t getEntitiesNumber() const {
+        return entitiesNumber;
+    }
     
 
 private:

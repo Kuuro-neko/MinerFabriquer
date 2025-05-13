@@ -11,6 +11,8 @@
 
 // ===== Generation & chunks ===== //
 
+#define MAX_MESH_PER_FRAME 2 // Number of meshes to be genrated by main thread per frame. Lower value will maintain fps at risk of showing more empty chunks. 2 is reasonably good for a i5-11600KF
+
 #define GROUND_LEVEL 65.0f
 #define WATER_LEVEL 63
 #define MESA_START_TERRACOTTA 67
@@ -28,8 +30,6 @@
 
 
 // ===== Bloc database ===== //
-
-#define TEXTUREATLAS_COORD_UNIT 0.0625f
 
 #define TEXTUREATLAS_COORD_UNIT_OFFSET_X32 0.00625f
 #define TEXTUREATLAS_COORD_UNIT_X32 0.05f
@@ -106,6 +106,9 @@
 #define BLACKSTONE 69
 #define GILDED_BLACKSTONE 70
 #define PODZOL 71
+#define CACTUS 72
+#define TNT 73
+#define ENDER_PEARL 74
 
 #define ERROR_BLOC 255
 
@@ -116,6 +119,10 @@
 #define FACE_WEST 8
 #define FACE_TOP 16
 #define FACE_BOTTOM 32
+
+// ===== Item database ===== //
+
+#define ENDER_PEARL 0
 
 // ===== Biomes ===== //
 
@@ -132,6 +139,7 @@
 #define FROZENOCEAN_BIOME 10
 #define TAIGA_BIOME 11
 #define MESA_BIOME 12
+#define TROPICALBEACH_BIOME 13
 
 // ===== Player ===== //
 
@@ -228,7 +236,7 @@ constexpr short AO_Bottom_deltas [4][3] = {
 const std::string PATH_PLAYER_FILE = "/playerData.bin";
 const std::string PATH_SEED = "/seed.bin";
 const std::string PATHSAVES = "../saves/";
-#define SAVE_DELAY 20 // seconds
+#define SAVE_DELAY 40 // seconds
 const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 
 // ===== Menu ===== //
@@ -237,3 +245,16 @@ const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 
 // ===== Zombie ===== //
 #define ZOMBIE_DISTANCE_FINDING_PLAYER 7.0f
+
+// ===== MobSpawner ===== //
+#define ZOMBIE_SPAWN_PROBABILITY 0.1f
+#define MAX_ENTITIES_PER_CHUNK 3
+#define SPAWN_RADIUS 32.0f
+#define MAX_ENTITIES 100
+
+// ===== TNT Projectile ===== //
+#define TNT_PROJ_SPEED 10.0f
+#define TNT_EXPLOSION_RADIUS 5.0f
+
+// ===== Ender Pearl ===== //
+#define ENDERPEARL_PROJ_SPEED 20.0f

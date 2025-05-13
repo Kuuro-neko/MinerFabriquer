@@ -14,8 +14,6 @@
 #include <TP/Entities/Entity.hpp>
 
 
-
-
 #include <Defines.hpp>
 #include <utils/Math.hpp>
 
@@ -30,6 +28,9 @@
 
 class Character;
 class Zombie;
+class MobSpawner;
+class Projectile;
+class TNTProjectile;
 
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2 &vec) const {
@@ -73,9 +74,16 @@ private:
     std::atomic<bool> workerThreadRunning = true;
 
     std::vector<std::shared_ptr<Entity>> entities;
+    std::vector<Projectile *> projectiles;
+
+    MobSpawner *m_mobSpawner;
+
+    int activeEntitiesNumber = 0;
 
     void workerLoop();
 public:
+    int maxMeshPerFrame = MAX_MESH_PER_FRAME; // Max number of meshes to generate per frame
+    int meshesGenerated = 0;
     std::recursive_mutex worldMutex; // Mutex to lock the chunks data
     bool wireframe = false;
     World();
@@ -174,7 +182,11 @@ public:
 
     void updateVisibleChunk(Frustrum &frustum);
 
-    void setCamera(Camera &camera);
+    void setCamera(Camera &camera);\
+
+    inline Camera* getCamera() {
+        return camera;
+    }
 
     void resolveCollisions(Character &character, World *world);
 
@@ -215,8 +227,20 @@ public:
 
     void spawnEntities();
     void spawnZombies();
+    void spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID);
+    void spawnEnderPearl(Character* character, glm::vec3 vel, GLuint programID);
+    void removeTNT(Projectile* projectile);
     void updateEntities(float& deltaTime);
     void renderEntities(GLuint& programID);
     void resolveEntityGravity(float& deltaTime);
     void resolveEntityCollisions(float &deltaTime);
+    inline void addEntity(std::shared_ptr<Entity> entity) {
+        entities.push_back(entity);
+    }
+    inline int getActiveEntitiesNumber() {
+        return activeEntitiesNumber;
+    }
+    inline void setActiveEntitiesNumber(int number) {
+        activeEntitiesNumber = number;
+    }
 };
