@@ -142,7 +142,7 @@ void Projectile::onCollision(const glm::vec3 &collisionNormal)
 void Projectile::onExpire()
 {
     // Base implementation - remove from world
-    m_world->removeTNT(this);
+    m_world->removeProjectile(this);
 }
 
 void Projectile::updateBoundingBox()
