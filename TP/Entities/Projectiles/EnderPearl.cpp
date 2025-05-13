@@ -1,6 +1,6 @@
 #include "EnderPearl.hpp"
 #include <utils/GLUtils.hpp>
-#include "TP/Scene/BlocTypes.hpp"
+#include "../../Database/BlocTypes.hpp"
 #include <TP/Scene/World.hpp>
 
 EnderPearl::EnderPearl(Character *character, glm::vec3 velocity, float radius, World *world, GLuint programID)
@@ -18,8 +18,7 @@ EnderPearl::~EnderPearl()
 
 void EnderPearl::generateMesh()
 {
-    // TODO: Change to Ender Pearl block when available
-    addBlockToMesh(TNT);
+    addBillBoardToMesh(ENDER_PEARL);
 }
 
 void EnderPearl::onCollision(const glm::vec3 &collisionNormal)
@@ -34,6 +33,44 @@ void EnderPearl::onCollision(const glm::vec3 &collisionNormal)
 
     // Call base expiration to remove from world
     onExpire();
+}
+
+void EnderPearl::draw(GLuint programID)
+{
+    glDisable(GL_CULL_FACE);
+    // depth test thing
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // orienter vers la caméra
+    glm::vec3 cameraPos = m_world->getCamera()->getPosition();
+    glm::vec3 objectPos = getWorldPosition();
+    
+    glm::vec3 up = VEC_UP;
+    
+    glm::vec3 look = glm::normalize(cameraPos - objectPos);
+    glm::vec3 right = glm::normalize(glm::cross(up, look));
+    up = glm::cross(look, right);
+    
+    glm::mat4 ModelMatrix = glm::mat4(1.0f);
+    
+    // set la rotation
+    ModelMatrix[0] = glm::vec4(right, 0.0f);
+    ModelMatrix[1] = glm::vec4(up, 0.0f);
+    ModelMatrix[2] = glm::vec4(look, 0.0f);
+    
+    // set translation et scaling
+    ModelMatrix[3] = glm::vec4(objectPos, 1.0f);
+    ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
+
+
+    TextureManager::getInstance().getPBRTexture("items")->bind(programID);
+    GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
+    glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
+    m_mesh->draw(programID);
+
+    glEnable(GL_CULL_FACE);
 }
 
 void EnderPearl::teleport(int x, int y, int z)

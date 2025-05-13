@@ -2,7 +2,7 @@
 #include "GLUtils.hpp"
 #include <vector>
 #include <glm/glm.hpp>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <Defines.hpp>
 
 /**

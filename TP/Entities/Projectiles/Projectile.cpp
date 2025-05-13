@@ -1,5 +1,5 @@
 #include "Projectile.hpp"
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <utils/GLUtils.hpp>
 
 Projectile::Projectile(glm::vec3 position, glm::vec3 velocity, float radius,
@@ -38,17 +38,6 @@ void Projectile::update(float deltaTime)
     if (checkCollisions(deltaTime, collisionNormal))
     {
         onCollision(collisionNormal);
-    }
-}
-
-void Projectile::draw(GLuint programID)
-{
-    if (m_mesh)
-    {
-        PBRTextureAtlas::getInstance().bind(programID);
-        GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
-        glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
-        m_mesh->draw(programID);
     }
 }
 
@@ -201,12 +190,39 @@ void Projectile::addBlockToMesh(int blockType)
     m_mesh->ao.clear();
 
     // Add geometry for all faces
-    addSquareGeometry(m_mesh, blockType, FACE_BOTTOM, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_mesh, blockType, FACE_TOP, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_mesh, blockType, FACE_WEST, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_mesh, blockType, FACE_EAST, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_mesh, blockType, FACE_NORTH, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_mesh, blockType, FACE_SOUTH, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_BOTTOM, -0.5f, 0.5f, -0.5f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_TOP, -0.5f, 0.5f, -0.5f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_WEST, -0.5f, 0.5f, -0.5f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_EAST, -0.5f, 0.5f, -0.5f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_NORTH, -0.5f, 0.5f, -0.5f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_SOUTH, -0.5f, 0.5f, -0.5f, false, m_radius);
+
+    // Add lighting information
+    for (int i = 0; i < m_mesh->vertices.size(); i++)
+    {
+        m_mesh->lights.push_back(15);
+        m_mesh->ao.push_back(3);
+    }
+
+    m_mesh->initializeBuffers();
+}
+
+void Projectile::addBillBoardToMesh(int itemType)
+{
+    if (!m_mesh)
+    {
+        m_mesh = std::make_shared<VoxelMeshObject>();
+    }
+
+    m_mesh->vertices.clear();
+    m_mesh->triangles.clear();
+    m_mesh->uvs.clear();
+    m_mesh->normals.clear();
+    m_mesh->lights.clear();
+    m_mesh->ao.clear();
+
+    // Add geometry for all faces
+    addSquareGeometry(m_mesh, itemType, FACE_SOUTH, -0.5f, 1.0f, 0.5f, false, m_radius);
 
     // Add lighting information
     for (int i = 0; i < m_mesh->vertices.size(); i++)

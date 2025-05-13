@@ -31,8 +31,6 @@
 
 // ===== Bloc database ===== //
 
-#define TEXTUREATLAS_COORD_UNIT 0.0625f
-
 #define TEXTUREATLAS_COORD_UNIT_OFFSET_X32 0.00625f
 #define TEXTUREATLAS_COORD_UNIT_X32 0.05f
 
@@ -121,6 +119,10 @@
 #define FACE_WEST 8
 #define FACE_TOP 16
 #define FACE_BOTTOM 32
+
+// ===== Item database ===== //
+
+#define ENDER_PEARL 0
 
 // ===== Biomes ===== //
 

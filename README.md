@@ -23,6 +23,8 @@
 
 <img src="assets/f.png" alt="F" height="20 " style="image-rendering: pixelated;"/> Throw a TNT
 
+<img src="assets/r.png" alt="R" height="20 " style="image-rendering: pixelated;"/> Throw an ender pearl
+
 <img src="assets/lmb.png" alt="LMB" height="20 " style="image-rendering: pixelated;"/> Break block
 
 <img src="assets/rmb.png" alt="RMB" height="20 " style="image-rendering: pixelated;"/> Place block

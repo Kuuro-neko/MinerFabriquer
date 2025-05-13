@@ -2,7 +2,7 @@
 #pragma once
 
 #include <string>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 
 class ItemStack {
 public:

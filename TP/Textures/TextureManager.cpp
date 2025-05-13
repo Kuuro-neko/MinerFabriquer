@@ -1,6 +1,16 @@
 #include <TP/Textures/TextureManager.hpp>
 
 TextureManager::TextureManager() {
+    addPBRTexture("blocks", new PBRTexture("../textures/blocks/texture_atlas_x32.png",
+        "../textures/blocks/normal_atlas_x32.png",
+        "../textures/blocks/roughness_atlas_x32.png",
+        "../textures/blocks/metallic_atlas_x32.png"));
+
+    addPBRTexture("items", new PBRTexture("../textures/items/texture_atlas_x32.png",
+        "../textures/items/normal_atlas_x32.png",
+        "../textures/items/roughness_atlas_x32.png",
+        "../textures/items/metallic_atlas_x32.png"));
+    
     addPBRTexture("zombie", new PBRTexture("../textures/zombie/zombie.png",
         "../textures/zombie/zombie_normal.png",
         "../textures/zombie/zombie_roughness.png",

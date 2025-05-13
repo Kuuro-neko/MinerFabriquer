@@ -14,6 +14,7 @@ public:
     EnderPearl(Character *character, glm::vec3 velocity, float radius, World *world, GLuint programID);
     virtual ~EnderPearl() override;
 
+    void draw(GLuint programID) override;
     void teleport(int x, int y, int z);
     void generateMesh() override;
     void onCollision(const glm::vec3 &collisionNormal) override;

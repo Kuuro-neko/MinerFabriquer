@@ -1,7 +1,7 @@
 #pragma once
 
 #include <TP/Scene/SceneNode.hpp>
-#include <TP/Scene/BlocTypes.hpp>
+#include <TP/Database/BlocTypes.hpp>
 #include <common/fastNoiseLit.h>
 #include <TP/Textures/TextureManager.hpp>
 
