@@ -87,5 +87,5 @@ void EnderPearl::teleport(int x, int y, int z)
 {
 
     // Teleport the player to the specified position
-    m_character->setWorldPosition(x, y, z);
+    m_character->setWorldPosition(x, y+1, z); // =1 to prevent teleporting inside a block
 }
