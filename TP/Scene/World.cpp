@@ -838,11 +838,11 @@ void World::resolveCollisions(Character &character, World *world)
     glm::vec3 maxBB = character.getMaxBoundingBox();
 
     // Parcours des blocs proches de la bounding box du personnage
-    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x)
+    for (int x = static_cast<int>(std::floor(minBB.x)); x <= static_cast<int>(std::floor(maxBB.x)); ++x)
     {
-        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y)
+        for (int y = static_cast<int>(std::floor(minBB.y)); y <= static_cast<int>(std::floor(maxBB.y)); ++y)
         {
-            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z)
+            for (int z = static_cast<int>(std::floor(minBB.z)); z <= static_cast<int>(std::floor(maxBB.z)); ++z)
             {
                 int blockType = world->getBloc(x, y, z);
 
@@ -873,11 +873,11 @@ void World::resolveCollisions(Zombie &zombie, World *world)
     glm::vec3 &direction = zombie.vecteurDirection;
 
     // Traiter les collisions avec les blocs dans la boîte englobante
-    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x)
+    for (int x = static_cast<int>(std::floor(minBB.x)); x <= static_cast<int>(std::floor(maxBB.x)); ++x)
     {
-        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y)
+        for (int y = static_cast<int>(std::floor(minBB.y)); y <= static_cast<int>(std::floor(maxBB.y)); ++y)
         {
-            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z)
+            for (int z = static_cast<int>(std::floor(minBB.z)); z <= static_cast<int>(std::floor(maxBB.z)); ++z)
             {
                 int blockType = world->getBloc(x, y, z);
 
