@@ -225,6 +225,7 @@ std::shared_ptr<VoxelChunk> World::getChunk(int x, int y, int z)
 
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode)
 {
+    if(y < 0) return -1;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if(!chunk)
         return -1;
@@ -269,6 +270,7 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode)
 
 int World::removeBlock(int x, int y, int z)
 {
+    if(y < 0) return -1;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if(!chunk)
         return -1;
@@ -313,6 +315,7 @@ int World::removeBlock(int x, int y, int z)
 
 bool World::setBloc(int x, int y, int z, int bloc)
 {
+    if(y < 0) return false;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk)
     {
@@ -359,6 +362,7 @@ bool World::setBloc(int x, int y, int z, int bloc)
 
 bool World::generationSetBloc(int x, int y, int z, int bloc)
 {
+    if (y < 0) return false;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk)
     {
@@ -387,6 +391,7 @@ unsigned short World::getLightLevel(int x, int y, int z)
 
 int World::getBloc(int x, int y, int z)
 {
+    if (y < 0) return OUT_OF_BOUNDS_BLOC;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk)
     {
@@ -401,6 +406,7 @@ int World::getBloc(int x, int y, int z)
 
 std::shared_ptr<VoxelChunk> World::getChunkContaining(int x, int y, int z) const
 {
+    if (y < 0) return nullptr;
     int chunkCoordX = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
     int chunkCoordY = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
     int chunkCoordZ = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
@@ -416,6 +422,7 @@ std::shared_ptr<VoxelChunk> World::getChunkContaining(int x, int y, int z) const
 
 std::shared_ptr<VoxelChunk> World::getChunkContaining(glm::vec3 position) const
 {
+    if (position.y < 0) return nullptr;
     int x = static_cast<int>(position.x);
     int y = static_cast<int>(position.y);
     int z = static_cast<int>(position.z);
