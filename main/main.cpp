@@ -411,6 +411,9 @@ int main(void) {
         if (characterInputManager.isKeybindPressed({Keybinds::getInstance().spawnEntities})) {
             world->spawnEntities();
         }
+        if (characterInputManager.isKeybindPressed({Keybinds::getInstance().fireTNT})) {
+            world->spawnTNT(camera.getPosition(), camera.getFront(), programID);
+        }
 
         character->drawBoundingBox();
 

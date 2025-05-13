@@ -21,6 +21,8 @@
 
 <img src="assets/e.png" alt="E" height="20 " style="image-rendering: pixelated;"/> Open inventory
 
+<img src="assets/f.png" alt="F" height="20 " style="image-rendering: pixelated;"/> Throw a TNT
+
 <img src="assets/lmb.png" alt="LMB" height="20 " style="image-rendering: pixelated;"/> Break block
 
 <img src="assets/rmb.png" alt="RMB" height="20 " style="image-rendering: pixelated;"/> Place block

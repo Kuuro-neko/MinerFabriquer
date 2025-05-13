@@ -12,6 +12,7 @@ std::vector<int> Keybinds::getKeysToMonitorForCharacter() {
     keys.insert(keys.end(), breakBlock.begin(), breakBlock.end());
     keys.insert(keys.end(), placeBlock.begin(), placeBlock.end());
     keys.insert(keys.end(), openInventory.begin(), openInventory.end());
+    keys.insert(keys.end(), fireTNT.begin(), fireTNT.end());
     keys.insert(keys.end(), selectBlock.begin(), selectBlock.end());
     keys.insert(keys.end(), toggleHUD.begin(), toggleHUD.end());
     keys.insert(keys.end(), takeScreenshot.begin(), takeScreenshot.end());

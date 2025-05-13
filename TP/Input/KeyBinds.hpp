@@ -31,6 +31,7 @@ public:
     std::vector<int> sneak = {GLFW_KEY_LEFT_SHIFT};
     std::vector<int> sprint = {GLFW_KEY_Q};
     std::vector<int> openInventory = {GLFW_KEY_E};
+    std::vector<int> fireTNT = {GLFW_KEY_F};
     std::vector<int> breakBlock = {GLFW_MOUSE_BUTTON_LEFT};
     std::vector<int> placeBlock = {GLFW_MOUSE_BUTTON_RIGHT};
     std::vector<int> selectBlock = {GLFW_MOUSE_BUTTON_MIDDLE};

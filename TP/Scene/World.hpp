@@ -29,6 +29,7 @@
 class Character;
 class Zombie;
 class MobSpawner;
+class TNTProjectile;
 
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2 &vec) const {
@@ -72,6 +73,7 @@ private:
     std::atomic<bool> workerThreadRunning = true;
 
     std::vector<std::shared_ptr<Entity>> entities;
+    std::vector<TNTProjectile *> tntProjectiles;
 
     MobSpawner *m_mobSpawner;
 
@@ -224,6 +226,8 @@ public:
 
     void spawnEntities();
     void spawnZombies();
+    void spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID);
+    void removeTNT(TNTProjectile* tnt);
     void updateEntities(float& deltaTime);
     void renderEntities(GLuint& programID);
     void resolveEntityGravity(float& deltaTime);

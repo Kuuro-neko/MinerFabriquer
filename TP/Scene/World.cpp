@@ -6,6 +6,7 @@
 #include "World.hpp"
 #include <unordered_set>
 #include <TP/Entities/Zombie.hpp>
+#include <TP/Entities/Projectiles/TNTProjectile.hpp>
 #include <TP/Textures/TextureManager.hpp>
 #include "MobSpawner.hpp"
 #include <chrono>
@@ -224,7 +225,10 @@ std::shared_ptr<VoxelChunk> World::getChunk(int x, int y, int z)
 
 int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode)
 {
+    if(y < 0) return -1;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
+    if(!chunk)
+        return -1;
     std::shared_ptr<ChunkColumn> column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column)
         return -1;
@@ -266,7 +270,10 @@ int World::playerRemoveBlock(int x, int y, int z, unsigned char gamemode)
 
 int World::removeBlock(int x, int y, int z)
 {
+    if(y < 0) return -1;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
+    if(!chunk)
+        return -1;
     std::shared_ptr<ChunkColumn> column = getChunkColumn(chunk->m_chunkCoords.x, chunk->m_chunkCoords.z);
     if (!column)
         return -1;
@@ -308,6 +315,7 @@ int World::removeBlock(int x, int y, int z)
 
 bool World::setBloc(int x, int y, int z, int bloc)
 {
+    if(y < 0) return false;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk)
     {
@@ -354,6 +362,7 @@ bool World::setBloc(int x, int y, int z, int bloc)
 
 bool World::generationSetBloc(int x, int y, int z, int bloc)
 {
+    if (y < 0) return false;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk)
     {
@@ -382,6 +391,7 @@ unsigned short World::getLightLevel(int x, int y, int z)
 
 int World::getBloc(int x, int y, int z)
 {
+    if (y < 0) return OUT_OF_BOUNDS_BLOC;
     std::shared_ptr<VoxelChunk> chunk = getChunkContaining(x, y, z);
     if (chunk)
     {
@@ -396,6 +406,7 @@ int World::getBloc(int x, int y, int z)
 
 std::shared_ptr<VoxelChunk> World::getChunkContaining(int x, int y, int z) const
 {
+    if (y < 0) return nullptr;
     int chunkCoordX = (x < 0) ? (x - CHUNK_SIZE + 1) / CHUNK_SIZE : x / CHUNK_SIZE;
     int chunkCoordY = (y < 0) ? (y - CHUNK_SIZE + 1) / CHUNK_SIZE : y / CHUNK_SIZE;
     int chunkCoordZ = (z < 0) ? (z - CHUNK_SIZE + 1) / CHUNK_SIZE : z / CHUNK_SIZE;
@@ -411,6 +422,7 @@ std::shared_ptr<VoxelChunk> World::getChunkContaining(int x, int y, int z) const
 
 std::shared_ptr<VoxelChunk> World::getChunkContaining(glm::vec3 position) const
 {
+    if (position.y < 0) return nullptr;
     int x = static_cast<int>(position.x);
     int y = static_cast<int>(position.y);
     int z = static_cast<int>(position.z);
@@ -722,6 +734,10 @@ void World::resolveCollisionForBlock(Character &character, glm::vec3 blockPositi
 
 void World::update(float deltaTime)
 {
+    for (auto &tnt : tntProjectiles)
+    {
+        tnt->update(deltaTime);
+    }
     if (doDaylightCycle)
         time += deltaTime;
 }
@@ -833,11 +849,11 @@ void World::resolveCollisions(Character &character, World *world)
     glm::vec3 maxBB = character.getMaxBoundingBox();
 
     // Parcours des blocs proches de la bounding box du personnage
-    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x)
+    for (int x = static_cast<int>(std::floor(minBB.x)); x <= static_cast<int>(std::floor(maxBB.x)); ++x)
     {
-        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y)
+        for (int y = static_cast<int>(std::floor(minBB.y)); y <= static_cast<int>(std::floor(maxBB.y)); ++y)
         {
-            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z)
+            for (int z = static_cast<int>(std::floor(minBB.z)); z <= static_cast<int>(std::floor(maxBB.z)); ++z)
             {
                 int blockType = world->getBloc(x, y, z);
 
@@ -868,11 +884,11 @@ void World::resolveCollisions(Zombie &zombie, World *world)
     glm::vec3 &direction = zombie.vecteurDirection;
 
     // Traiter les collisions avec les blocs dans la boîte englobante
-    for (int x = static_cast<int>(minBB.x); x <= static_cast<int>(maxBB.x); ++x)
+    for (int x = static_cast<int>(std::floor(minBB.x)); x <= static_cast<int>(std::floor(maxBB.x)); ++x)
     {
-        for (int y = static_cast<int>(minBB.y); y <= static_cast<int>(maxBB.y); ++y)
+        for (int y = static_cast<int>(std::floor(minBB.y)); y <= static_cast<int>(std::floor(maxBB.y)); ++y)
         {
-            for (int z = static_cast<int>(minBB.z); z <= static_cast<int>(maxBB.z); ++z)
+            for (int z = static_cast<int>(std::floor(minBB.z)); z <= static_cast<int>(std::floor(maxBB.z)); ++z)
             {
                 int blockType = world->getBloc(x, y, z);
 
@@ -967,6 +983,22 @@ void World::spawnEntities()
     m_mobSpawner->spawnZombiesInLoadedChunks();
 }
 
+void World::spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID)
+{
+    TNTProjectile* tnt = new TNTProjectile(pos, vel, 0.9f, this, programID);
+    tntProjectiles.push_back(tnt);
+    getParent()->addChild(tnt);
+}
+
+void World::removeTNT(TNTProjectile* tnt)
+{
+    auto it = std::find(tntProjectiles.begin(), tntProjectiles.end(), tnt);
+    if (it != tntProjectiles.end())
+    {
+        getParent()->removeChild(tnt);
+        tntProjectiles.erase(it);
+    }
+}
 
 void World::updateEntities(float &deltaTime)
 {
