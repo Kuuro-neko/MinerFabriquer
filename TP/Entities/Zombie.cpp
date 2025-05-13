@@ -529,18 +529,16 @@ void Zombie::createAttackPoses()
 void Zombie::setZombieTexture()
 {
    int biomeID = WorldGenerator::getInstance().biomeManager.getBiome(getWorldPosition().x, getWorldPosition().z)->getId();
-   if(biomeID == 0)
+   if(biomeID == ICE_BIOME || biomeID == FROZENOCEAN_BIOME || biomeID == FROZENBEACH_BIOME || biomeID == TAIGA_BIOME)
    {
-       setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+       setTexture(TextureManager::getInstance().getPBRTexture("ice_zombie"));
    }
-   else if(biomeID == 1)
+   else if(biomeID == DESERT_BIOME || biomeID == MESA_BIOME)
    {
-       //setTexture(TextureManager::getInstance().getPBRTexture("zombie_snow"));
-       setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+       setTexture(TextureManager::getInstance().getPBRTexture("husk"));
    }
    else
    {
-      // setTexture(TextureManager::getInstance().getPBRTexture("zombie_desert"));
-      setTexture(TextureManager::getInstance().getPBRTexture("zombie"));
+      setTexture(TextureManager::getInstance().getPBRTexture("zombie")); // Default to normal zombie
    }
 }
