@@ -5,13 +5,11 @@
 #include <TP/Scene/World.hpp>
 #include <memory>
 
-
-
 class TNTProjectile : public Projectile
 {
 private:
     float m_explosionRadius = TNT_EXPLOSION_RADIUS;
-    std::shared_ptr<VoxelMeshObject> m_tntMesh;
+    std::shared_ptr<VoxelMeshObject> m_mesh;
 
 public:
     TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID);
@@ -24,4 +22,5 @@ public:
     void draw(GLuint programID) override;
     void onExpire() override;
     void clear() override;
+
 };

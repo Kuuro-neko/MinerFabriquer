@@ -32,35 +32,37 @@ void TNTProjectile::explode(int x, int y, int z)
         }
     }
 
-    m_world->removeTNT(this);
+    m_world->removeTNT(this);  // TODO Changed from removeTNT to more generic removeProjectile
 }
 
 void TNTProjectile::generateMesh()
 {
-    BlockData *tntData = BlocDatabase::getInstance().getBloc(TNT);
-    m_tntMesh = std::make_shared<VoxelMeshObject>();
-
-    m_tntMesh->vertices.clear();
-    m_tntMesh->triangles.clear();
-    m_tntMesh->uvs.clear();
-    m_tntMesh->normals.clear();
-    m_tntMesh->lights.clear();
-    m_tntMesh->ao.clear();
-
-    addSquareGeometry(m_tntMesh, TNT, FACE_BOTTOM, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_tntMesh, TNT, FACE_TOP, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_tntMesh, TNT, FACE_WEST, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_tntMesh, TNT, FACE_EAST, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_tntMesh, TNT, FACE_NORTH, 0.f, 0.f, 0.f, false, m_radius);
-    addSquareGeometry(m_tntMesh, TNT, FACE_SOUTH, 0.f, 0.f, 0.f, false, m_radius);
-
-    for (int i = 0; i < m_tntMesh->vertices.size(); i++)
+    if (!m_mesh)
     {
-        m_tntMesh->lights.push_back(15);
-        m_tntMesh->ao.push_back(3);
+        m_mesh = std::make_shared<VoxelMeshObject>();
     }
 
-    m_tntMesh->initializeBuffers();
+    m_mesh->vertices.clear();
+    m_mesh->triangles.clear();
+    m_mesh->uvs.clear();
+    m_mesh->normals.clear();
+    m_mesh->lights.clear();
+    m_mesh->ao.clear();
+
+    addSquareGeometry(m_mesh, TNT, FACE_BOTTOM, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, TNT, FACE_TOP, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, TNT, FACE_WEST, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, TNT, FACE_EAST, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, TNT, FACE_NORTH, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, TNT, FACE_SOUTH, 0.f, 0.f, 0.f, false, m_radius);
+
+    for (int i = 0; i < m_mesh->vertices.size(); i++)
+    {
+        m_mesh->lights.push_back(15);
+        m_mesh->ao.push_back(3);
+    }
+
+    m_mesh->initializeBuffers();
 }
 
 void TNTProjectile::draw(GLuint programID)
@@ -68,7 +70,7 @@ void TNTProjectile::draw(GLuint programID)
     PBRTextureAtlas::getInstance().bind(programID);
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
-    m_tntMesh->draw(programID);
+    m_mesh->draw(programID);
 }
 
 void TNTProjectile::onExpire()
@@ -79,14 +81,14 @@ void TNTProjectile::onExpire()
 
 void TNTProjectile::clear()
 {
-    if (m_tntMesh)
+    if (m_mesh)
     {
-        m_tntMesh->cleanupBuffers();
-        m_tntMesh->vertices.clear();
-        m_tntMesh->triangles.clear();
-        m_tntMesh->uvs.clear();
-        m_tntMesh->normals.clear();
-        m_tntMesh->lights.clear();
-        m_tntMesh->ao.clear();
+        m_mesh->cleanupBuffers();
+        m_mesh->vertices.clear();
+        m_mesh->triangles.clear();
+        m_mesh->uvs.clear();
+        m_mesh->normals.clear();
+        m_mesh->lights.clear();
+        m_mesh->ao.clear();
     }
 }
