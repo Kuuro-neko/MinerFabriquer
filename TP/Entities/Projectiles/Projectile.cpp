@@ -41,17 +41,6 @@ void Projectile::update(float deltaTime)
     }
 }
 
-void Projectile::draw(GLuint programID)
-{
-    if (m_mesh)
-    {
-        PBRTextureAtlas::getInstance().bind(programID);
-        GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
-        glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
-        m_mesh->draw(programID);
-    }
-}
-
 bool Projectile::checkCollisions(float deltaTime, glm::vec3 &outCollisionNormal)
 {
     // Existing collision detection code

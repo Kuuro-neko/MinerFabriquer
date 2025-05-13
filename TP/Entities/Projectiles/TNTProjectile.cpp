@@ -67,7 +67,7 @@ void TNTProjectile::generateMesh()
 
 void TNTProjectile::draw(GLuint programID)
 {
-    PBRTextureAtlas::getInstance().bind(programID);
+    TextureManager::getInstance().getPBRTexture("blocks")->bind(programID);
     GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
     m_mesh->draw(programID);

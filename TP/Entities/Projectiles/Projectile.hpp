@@ -40,10 +40,6 @@ public:
     inline float getRadius() const { return m_radius; }
     inline void setTimeToLive(float ttl) { m_timeToLive = ttl; }
 
-
-    // Base draw implementation that derived classes can override
-    virtual void draw(GLuint programID) override;
-
     // Physics and update methods
     virtual void update(float deltaTime);
     virtual void onCollision(const glm::vec3 &collisionNormal);

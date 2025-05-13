@@ -90,42 +90,6 @@ private:
     int width, height, nrChannels = 0;
 };
 
-/**
- * @brief TextureAtlas is a singleton class that loads the texture atlas
- * 
- */
-class TextureAtlas {
-private:
-    TextureAtlas() {
-        m_texture = Texture("../textures/texture_atlas.png");
-        m_texture.genTexture();
-    }
-    Texture m_texture;
-public:
-    static TextureAtlas& getInstance() {
-        static TextureAtlas instance;
-        return instance;
-    }
-
-    /**
-     * @brief Get the Texture object
-     * 
-     * @return Texture* 
-     */
-    Texture* getTexture() {
-        return &m_texture;
-    }
-
-    /**
-     * @brief Bind the texture atlas to the given GLSL program
-     * 
-     * @param programID 
-     */
-    void bind(GLuint programID) {
-        m_texture.bind(programID);
-    }
-};
-
 class PBRTexture : Texture {
 private:
     Texture m_texture;
@@ -151,71 +115,6 @@ public:
         m_metallic.setSamplerName("MetallicSampler");
     }
 
-    void bind(GLuint programID) {
-        m_texture.bind(programID);
-        m_normals.bind(programID);
-        m_roughness.bind(programID);
-        m_metallic.bind(programID);
-    }
-};
-
-
-class PBRTextureAtlas {
-private:
-    PBRTextureAtlas(int resolution = 32) {
-        std::string resolutionStr = std::to_string(resolution);
-        m_texture = Texture(("../textures/blocks/texture_atlas_x" + resolutionStr + ".png").c_str());
-        m_texture.genTexture();
-        m_texture.setSamplerName("TextureSampler");
-
-        m_normals = Texture(("../textures/blocks/normal_atlas_x" + resolutionStr + ".png").c_str());
-        m_normals.genTexture();
-        m_normals.setSamplerName("NormalsSampler");
-
-        m_roughness = Texture(("../textures/blocks/roughness_atlas_x" + resolutionStr + ".png").c_str());
-        m_roughness.genTexture();
-        m_roughness.setSamplerName("RoughnessSampler");
-
-        m_metallic = Texture(("../textures/blocks/metallic_atlas_x" + resolutionStr + ".png").c_str());
-        m_metallic.genTexture();
-        m_metallic.setSamplerName("MetallicSampler");
-    }
-    Texture m_texture;
-    Texture m_normals;
-    Texture m_roughness;
-    Texture m_metallic;
-public:
-    static PBRTextureAtlas& getInstance() {
-        static PBRTextureAtlas instance;
-        return instance;
-    }
-
-    /**
-     * @brief Get the Texture object
-     * 
-     * @return Texture* 
-     */
-    Texture* getTexture() {
-        return &m_texture;
-    }
-
-    Texture* getNormals() {
-        return &m_normals;
-    }
-
-    Texture* getRoughness() {
-        return &m_roughness;
-    }
-
-    Texture* getMetallic() {
-        return &m_metallic;
-    }
-
-    /**
-     * @brief Bind the texture atlas to the given GLSL program
-     * 
-     * @param programID 
-     */
     void bind(GLuint programID) {
         m_texture.bind(programID);
         m_normals.bind(programID);

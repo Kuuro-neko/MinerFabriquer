@@ -19,7 +19,7 @@ EnderPearl::~EnderPearl()
 void EnderPearl::generateMesh()
 {
     // TODO: Change to Ender Pearl block when available
-    addBlockToMesh(TNT);
+    addBlockToMesh(MAGMA);
 }
 
 void EnderPearl::onCollision(const glm::vec3 &collisionNormal)
@@ -34,6 +34,14 @@ void EnderPearl::onCollision(const glm::vec3 &collisionNormal)
 
     // Call base expiration to remove from world
     onExpire();
+}
+
+void EnderPearl::draw(GLuint programID)
+{
+    TextureManager::getInstance().getPBRTexture("blocks")->bind(programID);
+    GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
+    glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
+    m_mesh->draw(programID);
 }
 
 void EnderPearl::teleport(int x, int y, int z)

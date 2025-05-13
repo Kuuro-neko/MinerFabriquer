@@ -31,8 +31,6 @@
 
 // ===== Bloc database ===== //
 
-#define TEXTUREATLAS_COORD_UNIT 0.0625f
-
 #define TEXTUREATLAS_COORD_UNIT_OFFSET_X32 0.00625f
 #define TEXTUREATLAS_COORD_UNIT_X32 0.05f
 

@@ -451,7 +451,7 @@ int VoxelChunk::drawOpaque(GLuint programID) {
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
 
     // TextureAtlas::getInstance().bind(programID);
-    PBRTextureAtlas::getInstance().bind(programID);
+    TextureManager::getInstance().getPBRTexture("blocks")->bind(programID);
     m_opaqueMesh->draw(programID);
 
     return 1;
@@ -463,7 +463,7 @@ void VoxelChunk::drawTransparent(GLuint programID) {
     glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
 
     // TextureAtlas::getInstance().bind(programID);
-    PBRTextureAtlas::getInstance().bind(programID);
+    TextureManager::getInstance().getPBRTexture("blocks")->bind(programID);
     m_transparentMesh->draw(programID);
 }
 
