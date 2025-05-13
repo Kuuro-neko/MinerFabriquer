@@ -112,6 +112,8 @@ add_executable(MinerFabriquer
         TP/Entities/HumanoidPose.hpp
         TP/Scene/MobSpawner.cpp
         TP/Scene/MobSpawner.hpp
+        TP/Entities/Projectiles/Projectile.hpp
+        TP/Entities/Projectiles/Projectile.cpp
         TP/Entities/Projectiles/TNTProjectile.cpp
         TP/Entities/Projectiles/TNTProjectile.hpp
 

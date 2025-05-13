@@ -1,28 +1,20 @@
-#include <TP/Entities/Projectiles/TNTProjectile.hpp>
-#include <TP/Scene/BlocTypes.hpp>
-#include <TP/Entities/HumanoidEntity.hpp>
-#include <utils/GLUtils.hpp>
 #include "TNTProjectile.hpp"
+#include <TP/Scene/BlocTypes.hpp>
+#include <utils/GLUtils.hpp>
 
-
-TNTProjectile::TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID) : Entity()
+TNTProjectile::TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID)
+    : Projectile(position, velocity * TNT_PROJ_SPEED, radius, TNT_PROJ_SPEED, world, programID)
 {
-    m_programID = programID;
-    m_world = world;
-    m_velocity = velocity * speed;
-    m_radius = radius;
     generateTNTMesh();
-    SceneNode::translate(position);
 }
 
 TNTProjectile::~TNTProjectile()
 {
     clear();
-    m_tntMesh->cleanupBuffers();
 }
 
 void TNTProjectile::explode(int x, int y, int z)
-{;
+{
     m_world->setBloc(x, y, z, AIR);
 
     // Create an explosion effect
@@ -45,7 +37,7 @@ void TNTProjectile::explode(int x, int y, int z)
 
 void TNTProjectile::generateTNTMesh()
 {
-    BlockData* tntData = BlocDatabase::getInstance().getBloc(TNT);
+    BlockData *tntData = BlocDatabase::getInstance().getBloc(TNT);
     m_tntMesh = std::make_shared<VoxelMeshObject>();
 
     m_tntMesh->vertices.clear();
@@ -79,122 +71,22 @@ void TNTProjectile::draw(GLuint programID)
     m_tntMesh->draw(programID);
 }
 
-void TNTProjectile::update(float deltaTime)
+void TNTProjectile::onExpire()
 {
-    translate(m_velocity * deltaTime);
-    m_velocity.y -= 9.81f * deltaTime; // Apply gravity
-    if (m_time > m_timeToLive)
-    {
-        explode(getWorldPosition().x, getWorldPosition().y, getWorldPosition().z);
-    }
-    m_time += deltaTime;
-    updateBoundingBox();
-
-    // Check for collisions with blocks
-    glm::vec3 minBB = getMinBoundingBox();
-    glm::vec3 maxBB = getMaxBoundingBox();
-    
-    // Store the original velocity for reflection calculations
-    glm::vec3 originalVelocity = m_velocity;
-    bool hasCollided = false;
-    glm::vec3 collisionNormal(0.0f);
-
-    for (int x = static_cast<int>(std::floor(minBB.x)); x <= static_cast<int>(std::floor(maxBB.x)); ++x)
-    {
-        for (int y = static_cast<int>(std::floor(minBB.y)); y <= static_cast<int>(std::floor(maxBB.y)); ++y)
-        {
-            for (int z = static_cast<int>(std::floor(minBB.z)); z <= static_cast<int>(std::floor(maxBB.z)); ++z)
-            {
-                int blockId = m_world->getBloc(x, y, z);
-
-                if (blockId != AIR && blockId != WATER)
-                {
-                    glm::vec3 blockPosition = glm::vec3(x, y, z);
-                    glm::vec3 blockMin = blockPosition;
-                    glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
-                    
-                    // Check if the bounding box of the TNT intersects with the block
-                    if (maxBB.x > blockMin.x && minBB.x < blockMax.x &&
-                        maxBB.y > blockMin.y && minBB.y < blockMax.y &&
-                        maxBB.z > blockMin.z && minBB.z < blockMax.z)
-                    {
-                        // Calculate the overlaps on each axis
-                        float overlapX = std::min(maxBB.x - blockMin.x, blockMax.x - minBB.x);
-                        float overlapY = std::min(maxBB.y - blockMin.y, blockMax.y - minBB.y);
-                        float overlapZ = std::min(maxBB.z - blockMin.z, blockMax.z - minBB.z);
-
-                        // Determine collision normal based on the smallest overlap
-                        hasCollided = true;
-                        
-                        if (overlapX < overlapY && overlapX < overlapZ)
-                        { // X axis collision
-                            float centerX = getWorldPosition().x + m_radius/2;
-                            if (centerX < blockPosition.x) {
-                                collisionNormal += glm::vec3(-1, 0, 0); // Left collision
-                            } else {
-                                collisionNormal += glm::vec3(1, 0, 0);  // Right collision
-                            }
-                        }
-                        else if (overlapY < overlapX && overlapY < overlapZ)
-                        { // Y axis collision
-                            float centerY = getWorldPosition().y + m_radius/2;
-                            if (centerY < blockPosition.y) {
-                                collisionNormal += glm::vec3(0, -1, 0); // Bottom collision
-                            } else {
-                                collisionNormal += glm::vec3(0, 1, 0);  // Top collision
-                            }
-                        }
-                        else
-                        { // Z axis collision
-                            float centerZ = getWorldPosition().z + m_radius/2;
-                            if (centerZ < blockPosition.z) {
-                                collisionNormal += glm::vec3(0, 0, -1); // Back collision
-                            } else {
-                                collisionNormal += glm::vec3(0, 0, 1);  // Front collision
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Apply bounce physics if there was a collision
-    if (hasCollided && glm::length(collisionNormal) > 0) {
-        // Normalize the collision normal
-        collisionNormal = glm::normalize(collisionNormal);
-        float bounceFactor = 0.4f;
-        //  v' = v - 2 * dot(v, n) * n
-        float dotProduct = glm::dot(originalVelocity, collisionNormal);
-        m_velocity = originalVelocity - (1.0f + bounceFactor) * dotProduct * collisionNormal;
-        
-        m_velocity *= 0.9f; // energy loss
-    }
-}
-
-void TNTProjectile::updateBoundingBox()
-{
-    AABBmin = getWorldPosition();
-    AABBmax = getWorldPosition() + glm::vec3(m_radius, m_radius, m_radius);
-}
-
-glm::vec3 TNTProjectile::getMinBoundingBox()
-{
-    return AABBmin;
-}
-
-glm::vec3 TNTProjectile::getMaxBoundingBox()
-{
-    return AABBmax;
+    // When the TNT expires, it explodes
+    explode(getWorldPosition().x, getWorldPosition().y, getWorldPosition().z);
 }
 
 void TNTProjectile::clear()
 {
-    m_tntMesh->cleanupBuffers();
-    m_tntMesh->vertices.clear();
-    m_tntMesh->triangles.clear();
-    m_tntMesh->uvs.clear();
-    m_tntMesh->normals.clear();
-    m_tntMesh->lights.clear();
-    m_tntMesh->ao.clear();
+    if (m_tntMesh)
+    {
+        m_tntMesh->cleanupBuffers();
+        m_tntMesh->vertices.clear();
+        m_tntMesh->triangles.clear();
+        m_tntMesh->uvs.clear();
+        m_tntMesh->normals.clear();
+        m_tntMesh->lights.clear();
+        m_tntMesh->ao.clear();
+    }
 }

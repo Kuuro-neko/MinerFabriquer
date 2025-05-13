@@ -1,37 +1,34 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <TP/Scene/SceneNode.hpp>
+#include "Projectile.hpp"
 #include <TP/Scene/World.hpp>
+#include <memory>
 
-class TNTProjectile : public Entity
+// Assuming these constants are defined elsewhere
+#ifndef TNT_EXPLOSION_RADIUS
+#define TNT_EXPLOSION_RADIUS 3.0f
+#endif
+
+#ifndef TNT_PROJ_SPEED
+#define TNT_PROJ_SPEED 10.0f
+#endif
+
+class TNTProjectile : public Projectile
 {
 private:
-    World* m_world;
-    glm::vec3 m_velocity;
-    float m_radius;
     float m_explosionRadius = TNT_EXPLOSION_RADIUS;
-    float speed = TNT_PROJ_SPEED;
     std::shared_ptr<VoxelMeshObject> m_tntMesh;
-    GLuint m_programID;
 
-    glm::vec3 AABBmin;
-    glm::vec3 AABBmax;
-
-    float m_time = 0.0f;
-    float m_timeToLive = 5.0f; // Time to live in seconds
 public:
-    TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World* world, GLuint programID);
-    ~TNTProjectile();
+    TNTProjectile(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID);
+    virtual ~TNTProjectile() override;
 
     void explode(int x, int y, int z);
     void generateTNTMesh();
-    inline void setVelocity(glm::vec3 velocity) { m_velocity = velocity; }
-    inline void setRadius(float radius) { m_radius = radius; }
+
+    // Overridden methods from Projectile
     void draw(GLuint programID) override;
-    void update(float deltaTime);
-    void updateBoundingBox() override;
-    glm::vec3 getMinBoundingBox() override;
-    glm::vec3 getMaxBoundingBox() override;
-    void clear();
+    void onExpire() override;
+    void clear() override;
 };
