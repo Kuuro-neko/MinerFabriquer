@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <TP/Entities/Zombie.hpp>
 #include <TP/Entities/Projectiles/TNTProjectile.hpp>
+#include <TP/Entities/Projectiles/EnderPearl.hpp>
 #include <TP/Textures/TextureManager.hpp>
 #include "MobSpawner.hpp"
 #include <chrono>
@@ -988,6 +989,13 @@ void World::spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID)
     TNTProjectile* tnt = new TNTProjectile(pos, vel, 0.9f, this, programID);
     projectiles.push_back(tnt);
     getParent()->addChild(tnt);
+}
+
+void World::spawnEnderPearl(glm::vec3 pos, glm::vec3 vel, GLuint programID)
+{
+    Projectile *projectile = new EnderPearl(pos, vel, 0.9f, this, programID);
+    projectiles.push_back(projectile);
+    getParent()->addChild(projectile);
 }
 
 void World::removeTNT(Projectile* projectile)
