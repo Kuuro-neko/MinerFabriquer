@@ -990,12 +990,12 @@ void World::spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID)
     getParent()->addChild(tnt);
 }
 
-void World::removeTNT(TNTProjectile* tnt)
+void World::removeTNT(Projectile* projectile)
 {
-    auto it = std::find(projectiles.begin(), projectiles.end(), tnt);
+    auto it = std::find(projectiles.begin(), projectiles.end(), projectile);
     if (it != projectiles.end())
     {
-        getParent()->removeChild(tnt);
+        getParent()->removeChild(projectile);
         projectiles.erase(it);
     }
 }

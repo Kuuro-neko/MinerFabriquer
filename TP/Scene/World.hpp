@@ -228,7 +228,7 @@ public:
     void spawnEntities();
     void spawnZombies();
     void spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID);
-    void removeTNT(TNTProjectile* tnt);
+    void removeTNT(Projectile* projectile);
     void updateEntities(float& deltaTime);
     void renderEntities(GLuint& programID);
     void resolveEntityGravity(float& deltaTime);
