@@ -3,9 +3,10 @@
 #include "TP/Scene/BlocTypes.hpp"
 #include <TP/Scene/World.hpp>
 
-EnderPearl::EnderPearl(glm::vec3 position, glm::vec3 velocity, float radius, World *world, GLuint programID)
-    : Projectile(position, velocity * ENDERPEARL_PROJ_SPEED, radius, ENDERPEARL_PROJ_SPEED, world, programID)
+EnderPearl::EnderPearl(Character *character, glm::vec3 velocity, float radius, World *world, GLuint programID)
+    : Projectile(character->getWorldPosition(), velocity * ENDERPEARL_PROJ_SPEED, radius, ENDERPEARL_PROJ_SPEED, world, programID)
 {
+    m_character = character;
     generateMesh();
 }
 
@@ -52,13 +53,13 @@ void EnderPearl::draw(GLuint programID)
 
 void EnderPearl::onExpire()
 {
- 
+
     m_world->removeTNT(this); // TODO CHANGE NAME
 }
 
 void EnderPearl::clear()
 {
-    if(m_enderPearlMesh)
+    if (m_enderPearlMesh)
     {
         m_enderPearlMesh->cleanupBuffers();
         m_enderPearlMesh->vertices.clear();
@@ -78,5 +79,13 @@ void EnderPearl::onCollision(const glm::vec3 &collisionNormal)
     int y = static_cast<int>(collisionPoint.y);
     int z = static_cast<int>(collisionPoint.z);
 
-   // teleport(x, y, z);
+    teleport(x, y, z);
+    onExpire(); // Call onExpire to remove the projectile
+}
+
+void EnderPearl::teleport(int x, int y, int z)
+{
+
+    // Teleport the player to the specified position
+    m_character->setWorldPosition(x, y, z);
 }

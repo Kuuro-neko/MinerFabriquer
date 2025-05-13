@@ -991,9 +991,9 @@ void World::spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID)
     getParent()->addChild(tnt);
 }
 
-void World::spawnEnderPearl(glm::vec3 pos, glm::vec3 vel, GLuint programID)
+void World::spawnEnderPearl(Character* character, glm::vec3 vel, GLuint programID)
 {
-    Projectile *projectile = new EnderPearl(pos, vel, 0.9f, this, programID);
+    Projectile *projectile = new EnderPearl(character, vel, 0.9f, this, programID);
     projectiles.push_back(projectile);
     getParent()->addChild(projectile);
 }

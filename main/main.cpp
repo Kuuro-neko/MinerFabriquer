@@ -417,7 +417,7 @@ int main(void) {
         if (characterInputManager.isKeybindPressed({Keybinds::getInstance().fireEnderPearl}))
         {
             std::cout << "Ender pearl fired" << std::endl;
-            world->spawnEnderPearl(camera.getPosition(), camera.getFront(), programID);
+            world->spawnEnderPearl(character, camera.getFront(), programID);
         }
 
         character->drawBoundingBox();
