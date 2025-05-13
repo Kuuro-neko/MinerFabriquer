@@ -1,7 +1,11 @@
 #include "Projectile.hpp"
+#include <TP/Scene/BlocTypes.hpp>
+#include <utils/GLUtils.hpp>
 
-Projectile::Projectile(glm::vec3 position, glm::vec3 velocity, float radius, float speed, World *world, GLuint programID)
-    : Entity(), m_world(world), m_velocity(velocity), m_radius(radius), m_speed(speed), m_programID(programID)
+Projectile::Projectile(glm::vec3 position, glm::vec3 velocity, float radius,
+                       float speed, World *world, GLuint programID)
+    : Entity(), m_world(world), m_velocity(velocity), m_radius(radius),
+      m_speed(speed), m_programID(programID)
 {
     SceneNode::translate(position);
     updateBoundingBox();
@@ -20,7 +24,7 @@ void Projectile::update(float deltaTime)
 
     // Check for expiration
     m_time += deltaTime;
-    if (m_time > m_timeToLive)
+    if (isExpired())
     {
         onExpire();
         return;
@@ -37,8 +41,20 @@ void Projectile::update(float deltaTime)
     }
 }
 
+void Projectile::draw(GLuint programID)
+{
+    if (m_mesh)
+    {
+        PBRTextureAtlas::getInstance().bind(programID);
+        GLuint modelMatrixId = glGetUniformLocation(programID, "ModelMatrix");
+        glUniformMatrix4fv(modelMatrixId, 1, false, &ModelMatrix[0][0]);
+        m_mesh->draw(programID);
+    }
+}
+
 bool Projectile::checkCollisions(float deltaTime, glm::vec3 &outCollisionNormal)
 {
+    // Existing collision detection code
     glm::vec3 minBB = getMinBoundingBox();
     glm::vec3 maxBB = getMaxBoundingBox();
 
@@ -55,6 +71,7 @@ bool Projectile::checkCollisions(float deltaTime, glm::vec3 &outCollisionNormal)
 
                 if (blockId != AIR && blockId != WATER)
                 {
+                    // Existing collision response calculation
                     glm::vec3 blockPosition = glm::vec3(x, y, z);
                     glm::vec3 blockMin = blockPosition;
                     glm::vec3 blockMax = blockPosition + glm::vec3(1.0f);
@@ -135,7 +152,8 @@ void Projectile::onCollision(const glm::vec3 &collisionNormal)
 
 void Projectile::onExpire()
 {
-    // Default behavior - to be overridden by derived classes
+    // Base implementation - remove from world
+    m_world->removeTNT(this);
 }
 
 void Projectile::updateBoundingBox()
@@ -154,7 +172,48 @@ glm::vec3 Projectile::getMaxBoundingBox()
     return m_AABBmax;
 }
 
-void Projectile::generateMesh()
+void Projectile::clear()
 {
-    // Default behavior - to be overridden by derived classes
+    if (m_mesh)
+    {
+        m_mesh->cleanupBuffers();
+        m_mesh->vertices.clear();
+        m_mesh->triangles.clear();
+        m_mesh->uvs.clear();
+        m_mesh->normals.clear();
+        m_mesh->lights.clear();
+        m_mesh->ao.clear();
+    }
+}
+
+void Projectile::addBlockToMesh(int blockType)
+{
+    if (!m_mesh)
+    {
+        m_mesh = std::make_shared<VoxelMeshObject>();
+    }
+
+    m_mesh->vertices.clear();
+    m_mesh->triangles.clear();
+    m_mesh->uvs.clear();
+    m_mesh->normals.clear();
+    m_mesh->lights.clear();
+    m_mesh->ao.clear();
+
+    // Add geometry for all faces
+    addSquareGeometry(m_mesh, blockType, FACE_BOTTOM, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_TOP, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_WEST, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_EAST, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_NORTH, 0.f, 0.f, 0.f, false, m_radius);
+    addSquareGeometry(m_mesh, blockType, FACE_SOUTH, 0.f, 0.f, 0.f, false, m_radius);
+
+    // Add lighting information
+    for (int i = 0; i < m_mesh->vertices.size(); i++)
+    {
+        m_mesh->lights.push_back(15);
+        m_mesh->ao.push_back(3);
+    }
+
+    m_mesh->initializeBuffers();
 }

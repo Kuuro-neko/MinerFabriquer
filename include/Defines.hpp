@@ -110,6 +110,7 @@
 #define PODZOL 71
 #define CACTUS 72
 #define TNT 73
+#define ENDER_PEARL 74
 
 #define ERROR_BLOC 255
 
@@ -233,7 +234,7 @@ constexpr short AO_Bottom_deltas [4][3] = {
 const std::string PATH_PLAYER_FILE = "/playerData.bin";
 const std::string PATH_SEED = "/seed.bin";
 const std::string PATHSAVES = "../saves/";
-#define SAVE_DELAY 20 // seconds
+#define SAVE_DELAY 40 // seconds
 const std::string PATH_WORLD_FILE = "/worldData-0-0.bin";
 
 // ===== Menu ===== //

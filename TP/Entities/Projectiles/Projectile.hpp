@@ -5,6 +5,8 @@
 #include <TP/Scene/World.hpp>
 #include <memory>
 
+
+
 class Projectile : public Entity
 {
 protected:
@@ -14,14 +16,21 @@ protected:
     float m_speed;
     GLuint m_programID;
 
+
+    // Bounding box
     glm::vec3 m_AABBmin;
     glm::vec3 m_AABBmax;
 
+    // Lifetime management
     float m_time = 0.0f;
-    float m_timeToLive = 5.0f; // Default time to live
+    float m_timeToLive = 5.0f;
+
+    // Common mesh that all projectiles use
+    std::shared_ptr<VoxelMeshObject> m_mesh;
 
 public:
-    Projectile(glm::vec3 position, glm::vec3 velocity, float radius, float speed, World *world, GLuint programID);
+    Projectile(glm::vec3 position, glm::vec3 velocity, float radius, float speed,
+               World *world, GLuint programID);
     virtual ~Projectile();
 
     // Getters and setters
@@ -31,21 +40,31 @@ public:
     inline float getRadius() const { return m_radius; }
     inline void setTimeToLive(float ttl) { m_timeToLive = ttl; }
 
-    // Virtual methods that can be overridden
-    virtual void draw(GLuint programID) override = 0; // Pure virtual
+
+    // Base draw implementation that derived classes can override
+    virtual void draw(GLuint programID) override;
+
+    // Physics and update methods
     virtual void update(float deltaTime);
     virtual void onCollision(const glm::vec3 &collisionNormal);
-    virtual void onExpire(); // Called when time to live expires
-    virtual void generateMesh(); // Pure virtual
+
+    // Event handlers
+    virtual void onExpire();
+
+    // Mesh generation
+    virtual void generateMesh() = 0;
+
     // Bounding box methods
     virtual void updateBoundingBox() override;
     virtual glm::vec3 getMinBoundingBox() override;
     virtual glm::vec3 getMaxBoundingBox() override;
 
-    // Utility methods
-    virtual void clear() = 0; // Pure virtual
+    // Common cleanup method with default implementation
+    virtual void clear();
 
 protected:
     // Helper methods
     bool checkCollisions(float deltaTime, glm::vec3 &outCollisionNormal);
+    bool isExpired() const { return m_time >= m_timeToLive; }
+    void addBlockToMesh(int blockType);
 };
