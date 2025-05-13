@@ -17,6 +17,8 @@
 #include <TP/Scene/WorldGenerator.hpp>
 #include "../TP/Entities/HumanoidEntity.hpp"
 #include <TP/Textures/TextureManager.hpp>
+#include <TP/Scene/ItemTypes.hpp>
+#include <TP/Scene/BlocTypes.hpp>
 
 GLFWwindow *window;
 
@@ -266,6 +268,9 @@ int main(void) {
     saveManager.startAutoSave();
     saveManager.saveSeedFile();
     world->startWorkerThread();
+
+    BlocDatabase::getInstance();
+    ItemDatabase::getInstance();
 
     // Associer le monde au personnage
     character->m_world = world;

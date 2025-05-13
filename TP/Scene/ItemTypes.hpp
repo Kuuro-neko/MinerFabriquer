@@ -48,16 +48,15 @@ private:
     std::map<int, ItemData> m_items;
 
     ItemDatabase() {
-        std::string database = "../database/Blocs.csv";
-        io::CSVReader<13> in(database);
+        std::string database = "../database/Items.csv";
+        io::CSVReader<4> in(database);
         in.read_header(io::ignore_extra_column, "Id", "Name", "xTex", "yTex");
         int id;
         std::string name;
         float xTex, yTex;
-        std::cout << "\nBloc database loading..." << std::endl;
+        std::cout << "\nItem database loading..." << std::endl;
         int count = 0;
         while (in.read_row(id, name, xTex, yTex)) {
-            //std::cout << "BlocDatabase: id: " << id << ", name: " << name << ", Side UV: (" << xTexSide << ", " << yTexSide << "), Top UV: (" << xTexTop << ", " << yTexTop << "), Bottom UV: (" << xTexBottom << ", " << yTexBottom << "), Opaque: " << opaque << ", Solid: " << solid << ", Breakable: " << breakable << ", LightLevel: " << lightLevel << ", Ground: " << ground << std::endl;
             ItemData itemData(
                 id, name,
                 xTex, yTex
@@ -65,7 +64,7 @@ private:
             m_items[id] = itemData;
             count++;
         }
-        std::cout << "Bloc database loaded, " << count << " blocs loaded." << std::endl;
+        std::cout << "Item database loaded, " << count << " items loaded." << std::endl;
         m_items[ERROR_BLOC] = ItemData();
     }
 

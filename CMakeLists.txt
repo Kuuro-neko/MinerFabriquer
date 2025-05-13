@@ -68,6 +68,7 @@ add_executable(MinerFabriquer
         TP/Camera/Camera_Helper.cpp
         TP/Scene/SceneNode.cpp
         TP/Scene/BlocTypes.cpp
+        TP/Scene/ItemTypes.cpp
         TP/Textures/Texture.cpp
         TP/Textures/TextureManager.cpp
         TP/Scene/MeshObject.cpp
