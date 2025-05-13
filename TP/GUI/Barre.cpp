@@ -2,6 +2,7 @@
 #include "common/shader.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <TP/Textures/TextureManager.hpp>
 
 
 Barre::Barre(int windowWidth, int windowHeight)
@@ -51,34 +52,68 @@ void Barre::initBuffers() {
 
     unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
 
+    float texCoords[] = {
+        TEXTUREATLAS_COORD_UNIT_OFFSET_X32, TEXTUREATLAS_COORD_UNIT_OFFSET_X32,
+        TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32, TEXTUREATLAS_COORD_UNIT_OFFSET_X32,
+        TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32, TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32,
+        TEXTUREATLAS_COORD_UNIT_OFFSET_X32, TEXTUREATLAS_COORD_UNIT_X32 + TEXTUREATLAS_COORD_UNIT_OFFSET_X32
+    };
+
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
+
+    // Upload vertex data
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(slotVertices), slotVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(slotVertices) + sizeof(texCoords), nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(slotVertices), slotVertices);
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(slotVertices), sizeof(texCoords), texCoords);
+
+    // Vertex positions
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Texture coordinates
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(sizeof(slotVertices)));
+    glEnableVertexAttribArray(1);
+
+    // Upload index data
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
     glBindVertexArray(0);
 }
 
 void Barre::render() {
     glUseProgram(shaderID);
+
+    TextureManager::getInstance().getPBRTexture("blocks")->bindOnlyTexture(shaderID);
+
     GLuint resUniform = glGetUniformLocation(shaderID, "u_resolution");
     glUniform2f(resUniform, m_windowWidth, m_windowHeight);
 
     GLuint modelLoc = glGetUniformLocation(shaderID, "u_model");
     GLuint isSelectedUniform = glGetUniformLocation(shaderID, "u_isSelected");
+    GLuint uvOffsetUniform = glGetUniformLocation(shaderID, "u_uvOffset");
 
     glBindVertexArray(VAO);
     for (int i = 0; i < slots.size(); ++i) {
         glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(slots[i][0], slots[i][1], 0.0f));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
-        glUniform1i(isSelectedUniform, i == m_selectedSlot ? 1 : 0);
+        glUniform1i(isSelectedUniform, i == inventory->getSelectedIndex() ? 1 : 0);
+
+        // Get the texture coordinates for the item in the slot
+        const ItemStack& item = inventory->getItems()[i];
+        if (item.getItemId() != AIR) {
+            std::pair<float, float> texCoords = BlocDatabase::getInstance().getTexCoords(item.getItemId(), 0);
+            glUniform2f(uvOffsetUniform, texCoords.first - TEXTUREATLAS_COORD_UNIT_OFFSET_X32, texCoords.second - TEXTUREATLAS_COORD_UNIT_OFFSET_X32);
+        } else {
+            // Empty slot, set default texture coordinates
+            glUniform2f(uvOffsetUniform, -1.0f, -1.0f);
+        }
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);

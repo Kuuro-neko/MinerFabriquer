@@ -229,7 +229,8 @@ public:
     void spawnZombies();
     void spawnTNT(glm::vec3 pos, glm::vec3 vel, GLuint programID);
     void spawnEnderPearl(Character* character, glm::vec3 vel, GLuint programID);
-    void removeTNT(Projectile* projectile);
+    void removeTNT(Projectile* projectile, float explosionRadius);
+    void removeProjectile(Projectile* projectile);
     void updateEntities(float& deltaTime);
     void renderEntities(GLuint& programID);
     void resolveEntityGravity(float& deltaTime);

@@ -48,20 +48,20 @@
 
 <img src="assets/f1.png" alt="F1" width="20 " style="image-rendering: pixelated;"/> Toggle HUD
 
-<img src="assets/f2.png" alt="F2" width="20 " style="image-rendering: pixelated;"/> Take screenshot
+<img src="assets/f2.png" alt="F2" width="20 " style="image-rendering: pixelated;"/> Take screenshot (Not implemented yet)
 
 ## Debug
 
-<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> Show debug info
+<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> Print debug info to terminal
 
-<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/n.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle between *spectator* and *current* mode
+<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/n.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle between *spectator* and *survival* mode
 
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/j.png" alt="N" width="20 " style="image-rendering: pixelated;"/> Toggle between *creative* and *survival* mode
 
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/z.png" alt="Z" width="20 " style="image-rendering: pixelated;"/> Toggle wireframe mode
 
-<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/g.png" alt="G" width="20 " style="image-rendering: pixelated;"/> Show chunk borders
+<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/g.png" alt="G" width="20 " style="image-rendering: pixelated;"/> Show normals
 
 <img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/b.png" alt="B" width="20 " style="image-rendering: pixelated;"/> Show AABBs
 
-<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/a.png" alt="A" width="20 " style="image-rendering: pixelated;"/> Reload chunk meshes
+<img src="assets/f3.png" alt="F3" width="20 " style="image-rendering: pixelated;"/> + <img src="assets/a.png" alt="A" width="20 " style="image-rendering: pixelated;"/> Reload chunk meshes (Not implemented yet)

@@ -1,8 +1,10 @@
 #version 330 core
 layout(location = 0) in vec2 aPos;
+layout(location = 1) in vec2 aTexCoords;
 
 uniform mat4 u_model;
 uniform vec2 u_resolution;
+out vec2 vUV;
 
 void main()
 {
@@ -14,4 +16,6 @@ void main()
     ndc.y = -ndc.y;
 
     gl_Position = vec4(ndc, 0.0, 1.0);
+
+    vUV = aTexCoords;
 }

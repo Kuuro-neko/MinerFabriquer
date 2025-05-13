@@ -998,7 +998,42 @@ void World::spawnEnderPearl(Character* character, glm::vec3 vel, GLuint programI
     getParent()->addChild(projectile);
 }
 
-void World::removeTNT(Projectile* projectile)
+void World::removeTNT(Projectile* projectile, float explosionRadius)
+{
+    int count = 0;
+
+    auto projectileToRemove = std::find(projectiles.begin(), projectiles.end(), projectile);
+    
+    // Apply explosion forces to all other projectiles in range
+    for (auto it = projectiles.begin(); it != projectiles.end(); ++it)
+    {
+        if (*it == projectile)
+            continue;
+            
+        glm::vec3 otherPos = (*it)->getWorldPosition();
+        float distance = glm::distance(otherPos, projectile->getWorldPosition());
+        if (distance < explosionRadius)
+        {
+            count++;
+            glm::vec3 otherVel = (*it)->getVelocity();
+            glm::vec3 direction = glm::normalize(otherPos - projectile->getWorldPosition());
+            float force = distance / explosionRadius * EXPLOSION_ENTITY_PUSH_STRENGHT;
+            (*it)->setVelocity(glm::vec3(
+                otherVel.x + direction.x * force, 
+                otherVel.y + direction.y * force, 
+                otherVel.z + direction.z * force
+            ));
+        }
+    }
+    // Remove the exploding projectile
+    if (projectileToRemove != projectiles.end())
+    {
+        getParent()->removeChild(*projectileToRemove);
+        projectiles.erase(projectileToRemove);
+    }
+}
+
+void World::removeProjectile(Projectile* projectile)
 {
     auto it = std::find(projectiles.begin(), projectiles.end(), projectile);
     if (it != projectiles.end())

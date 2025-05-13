@@ -32,7 +32,7 @@ void TNTProjectile::explode(int x, int y, int z)
         }
     }
 
-    m_world->removeTNT(this);  // TODO Changed from removeTNT to more generic removeProjectile
+    m_world->removeTNT(this, m_explosionRadius);  // TODO Changed from removeTNT to more generic removeProjectile
 }
 
 void TNTProjectile::generateMesh()

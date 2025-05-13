@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <glm/glm.hpp>
+#include <TP/Character/Inventory.hpp>
 
 
 class Barre {
@@ -18,6 +19,7 @@ public:
     void setSelectedSlot(int selectedSlot);
     int getSelectedSlot() const;
     void nextSelectedSlot(int pos);
+    inline void setInventory(Inventory* inventory) { this->inventory = inventory; }
 
 private:
 
@@ -33,6 +35,8 @@ private:
 
     int m_windowWidth;
     int m_windowHeight;
+
+    Inventory* inventory;
 
     void initSlots();
     void initBuffers();

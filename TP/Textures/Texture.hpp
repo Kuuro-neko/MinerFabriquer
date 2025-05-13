@@ -121,6 +121,10 @@ public:
         m_roughness.bind(programID);
         m_metallic.bind(programID);
     }
+
+    void bindOnlyTexture(GLuint programID) {
+        m_texture.bind(programID);
+    }
 };
 
 class CubemapTexture {
