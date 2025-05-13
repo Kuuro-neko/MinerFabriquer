@@ -202,10 +202,9 @@ void Character::listenAction(float dt)
         std::cout << "[Character] Toggle spectator mode" << std::endl;
         if (gamemode == GAMEMODE_SPECTATOR)
         {
-            gamemode = prevGamemode;
+            gamemode = GAMEMODE_SURVIVAL;
             displayHUD = 1;
         } else {
-            prevGamemode = gamemode;
             gamemode = GAMEMODE_SPECTATOR;
             displayHUD = 0;
         }

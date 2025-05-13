@@ -30,7 +30,6 @@ public:
     inline void applyGravity() {translate(glm::vec3(0.f, -gravity, 0.f));}
     inline glm::vec3 getSize() { return size; }
     inline unsigned char getGamemode() { return gamemode; }
-    inline unsigned char GetprevGamemode() { return prevGamemode; }
     inline void setKeyInput(KeyInput *keyInput) { this->keyInput = keyInput; }
     void draw(GLuint programID) override;
 
@@ -63,10 +62,6 @@ public:
     void setGamemode(unsigned char gamemode)
     {
         this->gamemode = gamemode;
-    }
-    void SetprevGamemode(unsigned char prevGamemode)
-    {
-        this->prevGamemode = prevGamemode;
     }
     void setWorldPosition(float x, float y, float z)
     {
@@ -122,7 +117,6 @@ private:
     bool displayAABB = false;
     int displayHUD = 1;
     unsigned char gamemode = GAMEMODE_SURVIVAL;
-    unsigned char prevGamemode = GAMEMODE_SURVIVAL;
 
     HUD* m_hud = nullptr;
 
