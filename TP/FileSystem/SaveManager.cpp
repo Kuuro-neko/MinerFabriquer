@@ -95,14 +95,12 @@ void SaveManager::createPlayerDataFile()
     }
 
     unsigned char gamemode = character->getGamemode();
-    unsigned char prev = character->GetprevGamemode();
     float position[3] = {
             character->getWorldPosition().x,
             character->getWorldPosition().y,
             character->getWorldPosition().z};
 
     ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
-    ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
     ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
     ofs.close();
     std::cout << "Player data file created at: " << saveFolder + PATH_PLAYER_FILE << std::endl;
@@ -121,12 +119,10 @@ void SaveManager::loadPlayerData()
     }
 
     unsigned char gamemode;
-    unsigned char prev;
     float position[3];
     int id, quantity;
 
     ifs.read(reinterpret_cast<char *>(&gamemode), sizeof(gamemode));
-    ifs.read(reinterpret_cast<char *>(&prev), sizeof(prev));
     ifs.read(reinterpret_cast<char *>(position), sizeof(position));
 
     while (ifs.read(reinterpret_cast<char *>(&id), sizeof(id)))
@@ -136,7 +132,6 @@ void SaveManager::loadPlayerData()
     }
 
     character->setGamemode(gamemode);
-    character->SetprevGamemode(prev);
     character->setWorldPosition(position[0], position[1], position[2]);
     ifs.close();
 }
@@ -163,7 +158,6 @@ void SaveManager::saveCharacterFile()
     }
 
     unsigned char gamemode = character->getGamemode();
-    unsigned char prev = character->GetprevGamemode();
     float position[3] = {
             character->getWorldPosition().x,
             character->getWorldPosition().y,
@@ -171,7 +165,6 @@ void SaveManager::saveCharacterFile()
     int id, quantity;
 
     ofs.write(reinterpret_cast<const char *>(&gamemode), sizeof(gamemode));
-    ofs.write(reinterpret_cast<const char *>(&prev), sizeof(prev));
     ofs.write(reinterpret_cast<const char *>(position), sizeof(position));
     for (const auto &item : character->inventory->getItems())
     {

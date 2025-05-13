@@ -12,6 +12,9 @@ public:
         }
 
     inline const std::string& getItemName() const { return itemData->name; }
+    inline void setItemId(int itemId) {
+        itemData = BlocDatabase::getInstance().getBloc(itemId);
+    }
     inline int getItemId() const { return itemData->id; }
     inline int getQuantity() const { return quantity; }
     inline void setQuantity(int newQuantity) { quantity = newQuantity; }
