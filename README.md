@@ -1,6 +1,6 @@
 # MinerFabriquer
 
-[![Demo video](https://img.youtube.com/vi/J_YORM5HmL0/0.jpg)](https://www.youtube.com/watch?v=J_YORM5HmL0)
+[![Demo video](assets/miniatureGithub.png)](https://www.youtube.com/watch?v=J_YORM5HmL0)
 
 # Build and run the game
 
