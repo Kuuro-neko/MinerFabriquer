@@ -1,5 +1,6 @@
 # MinerFabriquer
-<img src="assets/screenshot.webp" width=50% height=50%>
+
+[![Demo video](https://img.youtube.com/vi/J_YORM5HmL0/0.jpg)](https://www.youtube.com/watch?v=J_YORM5HmL0)
 
 # Build and run the game
 
