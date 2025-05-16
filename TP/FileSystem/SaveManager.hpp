@@ -8,10 +8,11 @@
 
 #include <TP/Scene/WorldGenerator.hpp>
 
-class SaveManager {
+class SaveManager
+{
 
 private:
-    World *world = nullptr; // Pointeur vers l'instance de World
+    World *world = nullptr;         // Pointeur vers l'instance de World
     Character *character = nullptr; // Pointeur vers l'instance de Character
 
 protected:
@@ -20,9 +21,9 @@ protected:
     SaveManager() = default;
 
     // destructeur
-    ~SaveManager() {
+    ~SaveManager()
+    {
         // Stop the auto-save thread if it's running
-
         stopAutoSave();
     }
 
@@ -32,15 +33,23 @@ public:
 
     // Disable copy constructor and assignment operator
     SaveManager(const SaveManager &) = delete;
-
     SaveManager &operator=(const SaveManager &) = delete;
-
     SaveManager(SaveManager &&) = delete;
 
     // Singleton instance -> if instance is null, create a new instance else return the existing one
     static SaveManager &getInstance();
 
     //-----player data---------//
+
+    // Header structure for player data file
+    struct PlayerDataHeader
+    {
+        uint32_t characterDataOffset;
+        uint32_t characterDataSize;
+        uint32_t inventoryOffset;
+        uint32_t inventorySize;
+        uint32_t totalFileSize;
+    };
 
     // return if PATHSAVES contains a folder
     bool isSaveFolderEmpty();
@@ -53,66 +62,78 @@ public:
 
     // function that start the auto save thread and save the player data every X seconds
     void startAutoSave();
-
     void stopAutoSave();
 
     void createPlayerDataFile();
 
-    void createSeedFile();
+    //-----seed data---------//
 
+    // Header structure for seed file
+    struct SeedHeader
+    {
+        uint32_t seedDataOffset;
+        uint32_t seedDataSize;
+        uint32_t totalFileSize;
+    };
+
+    void createSeedFile();
     void saveSeedFile();
     void readSeedFile();
 
     //-----world data---------//
 
-    // the way the world is saved ->
-    // header contaning the offset and the lneght of each region data
+    // Header structure for world file
+    struct WorldFileHeader
+    {
+        uint32_t columnCount;        // Number of chunk columns in the file
+        uint32_t columnsTableOffset; // Offset to the table of column entries
+        uint32_t dataStartOffset;    // Offset to the start of chunk data
+        uint32_t totalFileSize;      // Total size of the file
+    };
 
-    // a region is composed of 32 x 32 chunk columns
-    // each chunk column is composed of 8 chunks, a heightmap and defined by its coordinates
-    // each chunk is composed of 16 x 16 x 16 ID block [octet], a lightmap [16x16x16] octet
+    // Column entry in the header table
+    struct ColumnTableEntry
+    {
+        int32_t worldX;      // X global coordinate
+        int32_t worldZ;      // Z global coordinate
+        uint32_t dataOffset; // Offset to column data
+        uint32_t dataLength; // Length of column data
+    };
 
-    // for the data that we know it,s going to change we go for a vector
-    // for the data that we know it,s not going to change we go for a static array
-
-
-    struct ChunkEntry {
+    struct ChunkEntry
+    {
         std::vector<int8_t> blocksID; // 16×16×16 of 1 octets = 4096 octets
         std::vector<int8_t> lightmap; // 16×16×16 of 1 octets   = 4096 octets
     };
 
-    struct ChunkColumnEntry {
-        int32_t worldX; // X global coordinate
-        int32_t worldZ; // Z global coordinate
-
+    struct ChunkColumnEntry
+    {
+        int32_t worldX;            // X global coordinate
+        int32_t worldZ;            // Z global coordinate
         int32_t heightmap[16][16]; // 1024 * 4 = 4096 octets
-
-        ChunkEntry chunks[8]; // 8 niveaux verticaux
-
-        uint32_t offset; // Region position in the file
-        uint32_t length; // lenght of the region's data in the file
+        ChunkEntry chunks[8];      // 8 niveaux verticaux
+        uint32_t offset;           // Region position in the file
+        uint32_t length;           // lenght of the region's data in the file
     };
 
     void setWorld(World *worldInstance);
     void setCharacter(Character *characterInstance);
 
     void saveWorldFile();
-
     std::vector<ChunkColumnEntry> loadWorldFile();
-
     std::vector<ChunkColumnEntry> readWorldFile(std::ifstream &in);
-
 
     bool isDataFolderContainsOtherFolder();
 
     std::string saveFolderPath;
 
-    inline void setSaveFolderPath(const std::string &path) {
+    inline void setSaveFolderPath(const std::string &path)
+    {
         saveFolderPath = path;
     }
-    inline std::string getSaveFolderPath() {
+
+    inline std::string getSaveFolderPath()
+    {
         return saveFolderPath;
     }
-
-
 };
