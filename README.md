@@ -1,5 +1,7 @@
 # MinerFabriquer
 
+Ceci est une branché créée spécifiquement pour le rendu du projet HAI819I, afin d'avoir une version du code au moment du rendu
+
 [![Demo video](assets/miniatureGithub.png)](https://www.youtube.com/watch?v=J_YORM5HmL0)
 
 # Build and run the game
