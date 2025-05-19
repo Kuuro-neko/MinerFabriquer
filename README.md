@@ -22,7 +22,7 @@ Ceci est une branché créée spécifiquement pour le rendu du projet HAI819I, a
 
 <img src="assets/a.png" alt="A" height="20 " style="image-rendering: pixelated;"/> Sprint
 
-<img src="assets/e.png" alt="E" height="20 " style="image-rendering: pixelated;"/> Open inventory
+<img src="assets/e.png" alt="E" height="20 " style="image-rendering: pixelated;"/> Open inventory (Not yet implemented)
 
 <img src="assets/f.png" alt="F" height="20 " style="image-rendering: pixelated;"/> Throw a TNT
 
